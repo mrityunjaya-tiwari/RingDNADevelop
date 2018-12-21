@@ -1,0 +1,102 @@
+<aura:component controller="CriteriaController" access="global">
+    <aura:attribute name="cadence" type="Cadence__c"/>
+    <aura:attribute name="criteriaSet" type="Object" default="
+                                                              {
+                                                              'criterionPriorityFormula': '',
+                                                              'condition': 'All of the conditions are met (AND)',
+                                                              'executionCriterion': 'Conditions are met',
+                                                              'criterions': {}
+                                                              }
+                                                              "/>  
+    <aura:attribute name="criteriaType" type="String" required = "true"/><!-- Entry or Exit criteria -->
+    <aura:attribute name="columns" access="private" type="String[]" default="['No', 'Field', 'Operator','Value']"/>
+    <aura:attribute name="selectedFields" access="private" type="List"/><!-- not using right now -->
+    <aura:attribute name="isViewMode" type="Boolean"/><!-- Edit, view -->
+    <aura:attribute name="fieldList" type="List"/>
+    <aura:attribute name="contactFieldList" type="List"/>
+    <aura:attribute name="leadFieldList" type="List"/>
+    <aura:attribute name="criteriaList" type="List"/>
+    
+    <aura:method name="setCriteriaList" description="" action="{!c.getCriteriaList}" access="PUBLIC">
+        <aura:attribute name="criteriaSet" type="Object"/>
+    </aura:method>
+    
+    <aura:method name="validateCriterion" action="{!c.validateCriterion}" access="public" />
+    
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
+    <aura:handler name="DynamicFieldRowEvent" event="c:DynamicFieldRowEvent" action="{!c.handleDynamicRowEvent}"/>
+    
+    
+    <fieldset class="slds-form-element slds-form_compound">
+        <form class="slds slds-form slds-m-left_large">
+            
+            <div class="slds-size_1-of-1" >
+                <div >
+                    <aura:if isTrue="{!not(v.criteriaType == 'Action Criteria')}" >
+                        <aura:if isTrue="{!not(v.isViewMode)}" >
+                            <p class="slds-page-header__row slds-truncate rdna-sub-header-bold slds-align_absolute-center slds-m-top_medium" >Cadence {!v.criteriaType}</p>
+                            <p class="slds-align_absolute-center rdna-sub-header" style="padding-top:15px;">Set condition for your cadence {!v.criteriaType}</p>
+                            <aura:set attribute="else">
+                                <p class="slds-page-header__row slds-truncate rdna-field-values-bold  slds-m-top_medium rdna-link-height" >Cadence {!v.criteriaType}</p>
+                                <p class=" rdna-field-values rdna-link-height">Set condition for your cadence {!v.criteriaType}</p>
+                            </aura:set>
+                        </aura:if>	
+                    </aura:if>
+                    <table  class="slds-table">
+                        <thead >
+                            <tr ><p style="padding-top:30px;" ></p></tr>
+                            <tr>
+                                <aura:iteration items="{!v.columns}" var="column">
+                                    <th scope="col">
+                                        <div class="slds-truncate rdna-field-lable" title="">{!column}</div>
+                                    </th>
+                                </aura:iteration> 
+                            </tr>
+                        </thead>
+                        <tbody> 
+                            <aura:if isTrue="{!not(empty(v.contactFieldList) || empty(v.leadFieldList)) || v.isViewMode}">
+                                
+                                <aura:if isTrue="{!'Contact'==v.cadence.RDNACadence__Record_Type__c}">
+                                    <aura:if isTrue="{!not(empty(v.criteriaList))}">
+                                        
+                                        <aura:iteration items="{!v.criteriaList}" var="criteria" indexVar="index">
+                                            <c:DynamicFieldRow aura:id="dynamicRow" isViewMode="{!v.isViewMode}" objectInstance="{!criteria}" fieldList="{!v.contactFieldList}" rowIndex = "{!index}" listPicklistValues="" fieldDataType = ""/>
+                                        </aura:iteration>
+                                    </aura:if>
+                                </aura:if>
+                                
+                                <aura:if isTrue="{!'Lead'==v.cadence.RDNACadence__Record_Type__c}">
+                                    <aura:if isTrue="{!not(empty(v.criteriaList))}">
+                                        <aura:iteration items="{!v.criteriaList}" var="criteria" indexVar="index">
+                                            <c:DynamicFieldRow aura:id="dynamicRow" isViewMode="{!v.isViewMode}" objectInstance="{!criteria}" fieldList="{!v.leadFieldList}" rowIndex = "{!index}" listPicklistValues="" fieldDataType = ""/>
+                                        </aura:iteration>
+                                    </aura:if>
+                                </aura:if>
+                                
+                            </aura:if>
+                            <tr><td colspan="6" class="rdna-bgcolor">
+                                <div class = "slds-form-element__row slds-size_1-of-1 rdna-field-values">
+                                    <aura:if isTrue="{!not(v.isViewMode)}">
+                                        <a onclick="{!c.AddNewRow}">
+                                            <label class="rdna-link-padding slds-m-left_large">+ Add Condition</label>
+                                        </a>    
+                                    </aura:if>
+                            </div></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="" >
+                    <div class="slds-size_1-of-1">
+                        <aura:if isTrue="{!v.criteriaSet}">
+                            <c:ConditionLogic aura:id="customLogic" isViewMode="{!v.isViewMode}" criteriaType="{!v.criteriaType}" selectedCondition="{!v.criteriaSet.condition}" criterionPriorityFormula="{!v.criteriaSet.criterionPriorityFormula}"/>
+                        </aura:if>
+                    </div>
+                </div>
+                
+            </div>
+            
+        </form>
+    </fieldset>
+    
+</aura:component>

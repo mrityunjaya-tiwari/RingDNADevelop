@@ -1,0 +1,33 @@
+.THIS .set-background-default-rdna  {
+    background: rgb(243, 242, 242) !important;
+    font-family: Logical;
+    font-size: 14px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    color: #000000;
+}
+/*updated default for make buttom circle*/
+.THIS .slds-button_icon-more{
+    width: auto !important;
+    line-height: 1.75rem !important;
+    padding: 0 .5rem !important;
+    background-color: #fafafa!important;
+    border-color: #0066ff !important;
+    color: #0066ff !important;
+    border-radius: 25rem !important;
+}
+.THIS .slds-icon {
+    width: 1rem;
+    height: 0rem;
+    fill: rgb(243, 242, 242)!important;
+}
+.THIS .rdna-bgcolour-blue{
+    color: #0066ff !important;
+}
+
+.THIS .rdna-field-lable {
+        background-color: #fafafa!important;
+}

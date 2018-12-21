@@ -1,0 +1,85 @@
+<aura:component controller="ActionDetailViewCtrl" implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,force:hasRecordId,lightning:actionOverride,force:appHostable" access="global"> 
+	
+    <aura:attribute name="record" type="Action__c" default="{'Name': '', 'RDNACadence__Type__c':'', 'RDNACadence__Template_Id__c':'' }"/>
+    <aura:handler name="init" value="{!this }" action="{!c.init }" />
+    <aura:attribute name="recordId" type="Id"/>
+    
+    <!--Cadence List datatable attributes-->
+    <aura:attribute name="cadRawData" type="List"/>
+    <aura:attribute name="cadColumns" type="List"/>
+    <aura:attribute name="cadRowsToLoad" type="Integer" default="5"/>				<!--Rows per page-->
+
+    <!--participants datatable attributes-->
+    <aura:attribute name="partRawData" type="List"/>
+    <aura:attribute name="partColumns" type="List"/>
+    <aura:attribute name="partRowsToLoad" type="Integer" default="5"/>				<!--Rows per page-->
+    <!--create a component attributs -->
+    <aura:attribute name="spinner" type="boolean" default="false"/>
+    <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>
+    
+    <aura:attribute name="themeName" type="String"/>
+    <!-- PAGE HEADER -->
+    <div class="slds-page-header" style="background-color: #fafafa">
+        <!-- LAYOUT GRID -->
+        <div class="slds-grid">
+            <!-- GRID COL -->
+            <div>
+                <img class = "rdna-logo" src="{!$Resource.cadence_icons + '/rdna-logo/rdna-logo@2x.png'}"/>
+            </div>
+            <div class="slds-col slds-has-flexi-truncate slds-m-left_small">
+                <!-- HEADING AREA -->
+                <p class="slds-line-height_reset rdna-header-small">Cadence Actions</p>
+                <h1 class="slds-page-header__title slds-m-right_small slds-align-middle slds-truncate rdna-header-large"  title="New Cadence Actions">{!v.record.Name}</h1>
+                <!-- / HEADING AREA -->
+            </div>
+            <!-- <lightning:button aura:id="newAction" label="Share" onclick="{!c.shareAction}"/> -->
+			<div>
+	            <lightning:button class="slds-p-left_large slds-m-top_large slds-m-right_medium slds-p-right_large rdna-button rdna-button-text" aura:id="editAction" label="Edit" onclick="{!c.editAction}"/>
+   			</div>	
+        </div>
+    
+    
+	    <div class="slds-p-right_medium">
+	        <div class="slds-m-left_xx-large slds-p-top_large">
+
+				<p class="slds-page-header__row slds-truncate slds-align_absolute-center rdna-sub-header-bold" >Action Details</p>
+                <p class="slds-align_absolute-center rdna-sub-header slds-m-bottom_x-large">Following are the details of your cadence action.</p>
+	            <div class="slds-grid slds-gutters slds-m-top_medium slds-grid_align-spread">
+	                <div class="slds-col slds-size_3-of-12">
+	                    <p class="slds-line-height_reset slds-m-bottom_xx-small field-label">Action Name</p>
+	                    <span class="field-value">{!v.record.Name}</span>
+	                </div>
+	                <div class="slds-col slds-size_3-of-12">
+	                    <p class="slds-line-height_reset slds-m-bottom_xx-small field-label">Type</p>
+	                    <span class="field-value">{!v.record.RDNACadence__Type__c}</span>
+	                </div>
+	                <div class="slds-col slds-size_3-of-12">
+	                    <p class="slds-line-height_reset slds-m-bottom_xx-small field-label">Template</p>
+                        <span class="field-value"> <a class="rdna-bgcolor" href="{!'/' + v.record.RDNACadence__Template_Id__c}" target="_blank">{!v.record.RDNACadence__Template_Name__c}</a></span>
+	                </div>
+   	                <div class="slds-col slds-size_3-of-12">
+	                    <p class="slds-line-height_reset slds-m-bottom_xx-small field-label">Activation Type</p>
+	                    <span class="field-value">{!v.record.RDNACadence__Activation_Type__c}</span>
+	                </div>
+	            </div>
+	 
+				<!-- Cadences datatable -->         
+                <p class="slds-page-header__row slds-truncate rdna-field-values-bold  slds-m-top_x-large rdna-link-height" >Cadence Lists</p>
+                <p class=" rdna-field-values rdna-link-height slds-m-top_x-small">List of all related cadence lists associated with this cadence action.</p>
+
+	            <div class="slds-m-top_medium slds-p-right_medium">
+	    			<c:Datatable columns = "{!v.cadColumns}" rawData = "{!v.cadRawData}" rowsToLoad = "{!v.cadRowsToLoad}" hideCheckboxColumn = "true" aura:id = "datatable1"/>    
+				</div>
+				
+				<!-- Participant datatable -->         
+                <p class="slds-page-header__row slds-truncate rdna-field-values-bold  slds-m-top_x-large rdna-link-height" >Participants</p>
+                <p class=" rdna-field-values rdna-link-height slds-m-top_x-small">List of all related participants associated with this cadence action.</p>
+
+	            <div class="slds-m-top_medium slds-p-bottom_medium slds-p-right_medium">
+	    			<c:Datatable columns = "{!v.partColumns}" rawData = "{!v.partRawData}" rowsToLoad = "{!v.partRowsToLoad}" hideCheckboxColumn = "true" aura:id = "datatable2"/>    
+				</div>
+	            
+	        </div>
+	    </div>
+    </div>
+</aura:component>

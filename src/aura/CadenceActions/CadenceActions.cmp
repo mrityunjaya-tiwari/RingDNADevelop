@@ -1,0 +1,105 @@
+<aura:component controller="CadenceActionsController" access="global">
+    <!-- init -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <!-- Action List-->
+    <aura:attribute name="actionList" type = "List" />  
+    <!-- Action Type List-->
+    <aura:attribute name="actionTypeList" type = "List" />  
+    <!-- Disabled property-->
+    <aura:attribute name = "isDisabled" type = "Boolean" default = "false"/>
+    <!--Cadence Objects -->
+    <aura:attribute name="newCadence" type="Cadence__c" default="{ 'sobjectType': 'Cadence__c', 'Name': '','RDNACadence__Record_Type__c':'', 'RDNACadence__Participent_Activation__c':''}"/>
+    <!--CadenceAction List object list -Iterated to add multiple row(Multiple cadence actions) -->
+    <aura:attribute name="cadenceActionList" type="List"/>
+    <aura:attribute name="actionType" type="String"/>
+    <!-- List of action type used in sub component(CadenceActionsDetail) for get which type of 
+   cadenceAction we have to create-->
+    <aura:attribute name="actionTypeListForCadenceAction" type = "List" />  
+    <!--Method  to create cadence action-->
+    <aura:method name="createCadenceAction" action="{!c.createCadenceAction}"
+                 description="Method  to creata cadence action"> 
+    </aura:method>
+    <!-- validation attribute -->
+    <aura:attribute name="isValidationError" type="boolean" default='false' />
+    <aura:attribute name="ValidationError" type="String" default='Validation Error' />
+    <!-- Handle event-->
+    <aura:handler name="cadDynamicRowEvent" event="c:CadDynamicRowEvent" action="{!c.handleCadDynamicRowEvent}"/>
+    <aura:attribute name="entranceCriteriaSet" type="Object"/>
+    <aura:attribute name="contactFieldList" type="List"/>
+    <aura:attribute name="leadFieldList" type="List"/>
+    <!-- CadenceAction Id list to delete cadenceActions -->
+    <aura:attribute name="caIdsList" type="List"/>
+    <!--create a component attributs -->
+    <aura:attribute name="spinner" type="boolean" default="false"/>
+    <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>
+    <div class = "slds-m-left_large">
+        <div class = "slds-form-element slds-size_1-of-1  slds-m-bottom_large slds-m-top_medium " aura:id = "createTaskdiv">
+            <p class="slds-page-header__row slds-truncate rdna-sub-header-bold slds-align_absolute-center" >Cadence Actions</p>
+            <p class= "slds-align_absolute-center rdna-sub-header" style="padding-top:15px;">Add a series of cadence actions based on the existing library</p>
+            <!-- table header -->   
+            <div class="slds-scrollable_x">
+                <table class="slds-table slds-p-right_large slds-m-top--large slds-no-row-hover" background-color="default">
+                    <thead class="">
+                        <aura:if isTrue="{!not(empty(v.actionList) || empty(v.actionTypeListForCadenceAction) )}">
+                            <tr >
+                                <th scope="col" class="rdna-field-lable">
+                                    <div class="slds-truncate" title="">Type</div>
+                                </th>
+                                <th  scope="col" class="rdna-field-lable">
+                                    <div class="slds-truncate" title="Name">Name</div>
+                                </th>
+                                <th scope="col" class="rdna-field-lable">
+                                    <div class="slds-truncate" aura:id="detailDiv" title="TriggerTime">Trigger Time</div>
+                                </th>
+                                <th scope="col" class="rdna-field-lable">
+                                    <div class="slds-truncate" title="Type"></div>
+                                </th>
+                                <th scope="col" class="rdna-field-lable">
+                                    <div class="slds-truncate" title=""> </div>
+                                </th>
+                                <th scope="col" class="rdna-field-lable">
+                                    <div class="slds-truncate" title=""> </div>
+                                </th>
+                            </tr>
+                        </aura:if>
+                    </thead>
+                    <tbody class="slds-theme_shade"> 
+                        <aura:if isTrue="{!not(empty(v.actionList) || empty(v.actionTypeListForCadenceAction) )}">
+                            <aura:iteration items="{!v.cadenceActionList}" var="caObj" indexVar="index">
+                                <c:CadenceActionsDetail aura:id="cadenceActionsDetailId" 
+                                                        cadenceAction="{!caObj}" 
+                                                        newCadence="{!v.newCadence}" 
+                                                        allActionsList ="{!v.actionList}" 
+                                                        actionTypeListForCadenceAction="{!v.actionTypeListForCadenceAction}" 
+                                                        currentIndex = "{!index}"
+                                                        leadFieldList="{!v.leadFieldList}"  
+                                                        contactFieldList="{!v.contactFieldList}"
+                                                        caIdsList="{!v.caIdsList}"
+                                                        isDisabled="{!v.isDisabled}"/>
+                            </aura:iteration>
+                        </aura:if>
+                    </tbody>
+                </table> 
+            </div>
+        </div>
+        <div class = "slds-form-element__row slds-size_1-of-1 slds-align_absolute-center">
+            <!--Validation -->
+            <aura:if isTrue="{!v.isValidationError}">
+                <div aura:id="msg" class="slds-text-color_error slds-text-heading_small slds-text-align_center">
+                    <ui:outputText value="{!v.ValidationError}" />
+                </div>
+            </aura:if>
+        </div>
+        <aura:if isTrue="{!not(v.isDisabled)}">
+            <div class="slds-form-element slds-size_1-of-1 slds-align-content-center slds-p-top_large slds-m-bottom_large "> 
+                <!-- <img class = "actions-icon" src="{!$Resource.cadence_icons + '/add/default/add-icon@3x.png'}"/> -->
+                    <lightning:buttonMenu menuAlignment="bottom-center" aura:id="menu"  iconName="utility:add" class="slds-icon slds-icon_x-small slds-m-right_small" onselect="{! c.AddNewCadenceActions }" alternativeText="Show menu" disabled = "{!v.isDisabled}">
+                        <aura:iteration items="{!v.actionTypeList}" var= "actionType">
+                            <lightning:menuItem value="{!actionType}" label="{!actionType}" />
+                        </aura:iteration>
+                    </lightning:buttonMenu>
+                <span class="slds-m-left_medium rdna-field-values rdna-bgcolour-blue">Add Cadence Actions</span>
+            </div>
+        </aura:if>
+    </div>
+</aura:component>

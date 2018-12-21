@@ -1,0 +1,25 @@
+/*Set table background colour*/
+.THIS .slds-tabs_default  {
+    display: block !important; 
+    background: #fafafa !important;
+}
+/*Remove border from tabset*/
+.THIS .slds-tabs_default__nav{
+    font-family: Logical;
+    font-size: 14px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.43;
+    letter-spacing: normal;
+    color: #cccccc;
+    border: none !important;
+}
+
+/* TAB Styling*/
+.THIS .slds-tabs_default__item.slds-is-active .slds-tabs_default__link{
+    color: #0066ff;
+}
+.THIS .slds-tabs_default__link{
+    color: #cccccc;
+}

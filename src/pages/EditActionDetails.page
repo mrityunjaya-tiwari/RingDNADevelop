@@ -1,0 +1,21 @@
+<apex:page standardcontroller="Action__c" sidebar="false">
+    <script src="/lightning/lightning.out.js"/>
+    <apex:slds />
+    <div id="myDivId3" />
+    <script>
+    	var myUserContext = "{!$User.UITheme}";
+        var recordIds = '{!$CurrentPage.parameters.id}'; 
+        console.log('recordIds'+recordIds);
+        $Lightning.use("RDNACadence:CadenceActionListApp", function() {
+            $Lightning.createComponent(
+                "RDNACadence:ActionDetails",
+                {recordId: recordIds,themeName: myUserContext},
+                "myDivId3",
+                function(cmp) {
+                    console.log('component created');
+                    console.log(cmp);
+                }); 
+        }); 
+        </script>
+    	
+</apex:page>

@@ -1,0 +1,108 @@
+<aura:component access="global">
+    <!--Task object -->
+    <aura:attribute name="taskObj" type="object" default="{ 'sobjectType': 'wrapperTaskField'}"/>
+    <!--Wrapper class having Task fields detail -->
+    <aura:attribute name="wrapperTaskFields" type="List"/>
+    <!--PicklistValues for picklist input -->
+    <aura:attribute name="listPicklistValues" type="List"/>
+    <!--Input task field dataType -->
+    <aura:attribute name="dataType" type="String"/>
+    <!--task field row index -->
+    <aura:attribute name="currentIndex" type="string"/>
+    <!--Event attribute -->
+    <aura:registerEvent name="cadDynamicRowEvent" type="c:CadDynamicRowEvent"/>
+    <!--Field header -->
+    <aura:attribute name="fieldHeader" type="String" default="Field" />
+    <aura:attribute name="valueHeader" type ="String" default="Value"/> 
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler name="change" value="{!v.wrapperTaskFields}" action="{!c.updateTaskField}"/>
+    <!--validateDynamicRowForm -->
+    <aura:method name="validateDynamicRowForm" action="{!c.validateDynamicRowForm}"/>
+    <!-- isrequired-->
+    <aura:attribute name="isrequired" type="Boolean" default ="false"/>
+    <!-- Disabled proerty-->
+    <aura:attribute name = "isDisabled" type = "Boolean" default = "false"/>
+
+    <div class="slds-form-element__control slds-size_1-of-3">
+        <aura:if isTrue="{!v.currentIndex == 0}">
+            <label class="slds-form-element__label" for="input-01">{!v.fieldHeader}</label>
+        </aura:if>
+        
+        <lightning:select aura:id="formValidationId" name="selectTemplateType" 
+                          label="Field Type" required="true" variant = "label-hidden" value="{!v.taskObj.key}" 
+                          messageWhenValueMissing="Please Select Type."
+                          onchange="{!c.updateTaskField}" disabled = "{!v.isDisabled || v.taskObj.key == 'Priority'}">
+            <option value="">Select Field</option> 
+            
+            <aura:iteration items="{!v.wrapperTaskFields}" var="templateObj">               
+                <option value="{!templateObj.key}">{!templateObj.value}</option>
+            </aura:iteration>
+        </lightning:select>
+        
+    </div>
+    <div class="slds-form-element__control slds-size_1-of-3">
+        <aura:if isTrue="{!v.currentIndex == 0}">
+            <label class="slds-form-element__label" for="input-01" >Values</label>
+        </aura:if>
+        <aura:if isTrue="{!v.dataType == 'Picklist'}">
+            <aura:if isTrue="{!v.currentIndex == 0}">
+                <label class="slds-form-element__label" for="input-01">{!v.valueHeader}</label>
+            </aura:if>          
+            <lightning:select aura:id="formValidationId" name="selectPicklistType" 
+                              variant = "label-hidden"  required="true" value="{!v.taskObj.value}" 
+                              messageWhenValueMissing="Please Select Field Value" disabled = "{!v.isDisabled}">
+                <option value="">Select Field value</option>
+                
+                <aura:iteration items="{!v.listPicklistValues}" var="pickListValue">                   
+                    <option value="{!pickListValue}">{!pickListValue}</option>
+                </aura:iteration>
+            </lightning:select>
+
+            
+            <aura:set attribute="else">
+                <aura:if isTrue="{!v.dataType == 'Boolean'}">
+                    <aura:if isTrue="{!v.currentIndex == 0}">
+                        <label class="slds-form-element__label" for="input-01">Values</label>
+                    </aura:if>
+                    <lightning:select aura:id="formValidationId" name="selectBooleanType" 
+                                      variant = "label-hidden" required="true" value="{!v.taskObj.value}" 
+                                      messageWhenValueMissing="Please Select Field Value" disabled = "{!v.isDisabled}">
+                        <option value="">Select Field value</option>
+                        <option value="true">True</option>
+                        <option value="false">False</option>
+                    </lightning:select>
+                    
+                    <aura:set attribute="else">
+                        <aura:if isTrue="{!v.dataType == 'Number'}">                            
+                            <lightning:input type="number" aura:id="formValidationId" 
+                                             name="numbers"
+                                             placeholder="Enter Numbers"
+                                             required="true"
+                                             value="{!v.taskObj.value}"
+                                             messageWhenRangeUnderflow="Enter Numbers"
+                                             disabled = "{!v.isDisabled}"/> 
+                            <aura:set attribute="else">
+                                <lightning:input aura:id="formValidationId" 
+                                                 name="inputString" 
+                                                 required="true"
+                                                 value="{!v.taskObj.value}"
+                                                 placeholder = "Please Enter Details"
+                                                 messageWhenBadInput = "Please Enter Detail"                                                 
+                                                 disabled = "{!v.isDisabled}"/> 
+                            </aura:set>
+                        </aura:if>
+                    </aura:set>
+                </aura:if>
+            </aura:set>
+        </aura:if>
+    </div>
+    <div class="slds-form-element slds-align-content-center slds-p-bottom_x-small ">
+        <aura:if isTrue="{!v.currentIndex > 0}">
+            <aura:if isTrue="{!not(v.isDisabled)}">
+                <a onclick="{!c.removeRow}">
+                    <img class = "Oval" src="{!$Resource.cadence_icons + '/delete/delete@3x.png'}"/>
+                </a>
+            </aura:if>
+        </aura:if>
+    </div>
+</aura:component>

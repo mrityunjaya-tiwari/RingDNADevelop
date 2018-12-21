@@ -1,0 +1,85 @@
+<aura:component controller = 'CadenceDetailsController' access="global">
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}"/> 
+    <!--Event attribute -->
+    <aura:registerEvent name="RecordTypeChangeEvent" type="c:RecordTypeChangeEvent"/>
+    <aura:method name="validateForm" action="{!c.validateForm}"/>
+    <!-- Disabled proerty-->
+    <aura:attribute name = "isDisabled" type = "Boolean" default = "false"/>
+    <!-- Disabled proerty for cadence type-->
+    <aura:attribute name = "disableCadenceType" type = "Boolean" default = "false"/>
+    <!--Action Objects -->
+    <aura:attribute name="newCadence" type="Cadence__c"/>
+    <!--Maching Priority List -->
+    <aura:attribute name="mpList" type="List"/>
+    <!--Activation Type List -->
+    <aura:attribute name="atList" type="List"/>
+    <!-- set this parameter to make participent table visible-->
+    <aura:attribute name= "isShowParticipantsTable" type = "boolean" default = "false"/>
+    <aura:attribute name="toggleRows" type="List" description="" />
+    <aura:attribute name="refreshParticipant" type="Boolean"/>
+    <!--create a component attributs -->
+    <aura:attribute name="spinner" type="boolean" default="false"/>
+    <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>
+    
+    <aura:attribute name="pData" type="List"/>
+    
+    <fieldset class="slds-theme_shade slds-form-element slds-form_compound" style="background-color: #fafafa">
+        <form class="slds-theme_shade slds slds-form slds-m-left_large slds-p-right_large slds-m-top_medium" style="background-color: #fafafa">
+            <aura:if isTrue="{!not(v.isDisabled)}" >
+                <p class="slds-page-header__row slds-truncate slds-align_absolute-center rdna-sub-header-bold" >Cadence Details</p>
+                <p class="slds-align_absolute-center rdna-sub-header" style="padding-top:15px;">Enter the basic cadence details for your new cadence list.</p>
+                <aura:set attribute="else">
+                    <p class="slds-page-header__row slds-truncate rdna-field-values-bold  slds-m-top_medium rdna-link-height" >Cadence Details</p>
+                    <p class=" rdna-field-values rdna-link-height">Enter the basic cadence details for your new cadence list.</p>
+                </aura:set>
+            </aura:if>
+            <div class="slds-form-element__row" style="padding-top:40px">
+                <div class="slds-form-element__control slds-size_1-of-4 rdna-field-lable">
+                    <lightning:input aura:id="formValidationId" label="Cadence Name" class= "rdna-field-values"
+                                     name="actionname"
+                                     value="{!v.newCadence.Name}"
+                                     placeholder = "Enter Cadence Name"
+                                     messageWhenBadInput = "Please Enter Name"
+                                     disabled = "{!v.isDisabled}"
+                                     required="true"/> 
+                </div>
+                <div class="slds-form-element__control slds-size_1-of-4 rdna-field-label">
+                    <lightning:select aura:id="formValidationId" name="selectActionType"  class= "rdna-field-values"
+                                      label="Type" required="true" value="{!v.newCadence.RDNACadence__Record_Type__c}" 
+                                      messageWhenValueMissing="Please Select Record Type."
+                                      disabled = "{!v.isDisabled || v.disableCadenceType}"
+                                      onchange="{!c.fireRecordTypeChangedEvent}">
+                        <option value="">Record Type</option>
+                        <option value="Contact">Contact</option>
+                        <option value="Lead">Lead</option>
+                    </lightning:select>
+                </div>
+                <div class="slds-form-element__control slds-size_1-of-4 rdna-field-lable">
+                    <lightning:select aura:id="formValidationId" name="selectActionType"  class= "rdna-field-values"
+                                      disabled = "{!v.isDisabled}"
+                                      label="Activation Type" required="true" value="{!v.newCadence.RDNACadence__Participent_Activation__c}" 
+                                      messageWhenValueMissing="Please Select Activation Type.">
+                        <option value="">Select Activation Type</option>
+                        <aura:iteration items="{!v.atList}" var="obj">
+                            <option value="{!obj}">{!obj}</option>
+                        </aura:iteration>
+                    </lightning:select>
+                </div>
+                <div class="slds-form-element__control slds-size_1-of-4 rdna-field-lable">
+                    <lightning:select aura:id="formValidationId" name="selectMatchingPriority" 
+                                      disabled = "{!v.isDisabled}" class= "rdna-field-values"
+                                      label="Matching priority" required="true" value="{!v.newCadence.RDNACadence__matching_priority__c}" 
+                                      messageWhenValueMissing="Please Select matching priority.">
+                        <option value="">Matching priority</option>
+                        <aura:iteration items="{!v.mpList}" var="obj">
+                            <option value="{!obj}">{!obj}</option>
+                        </aura:iteration>
+                    </lightning:select>
+                </div>
+            </div>
+            <aura:if isTrue="{!v.isShowParticipantsTable}">
+                <c:ParticipantsList aura:id="partList" recordId="{!v.newCadence.Id}" pData="{!v.pData}" toggleRows = "{!v.toggleRows}" hideCheckboxes="{!not(v.newCadence.RDNACadence__Status__c)}" refreshParticipant = "{!v.refreshParticipant}"/>	 
+            </aura:if>
+        </form>
+    </fieldset>
+</aura:component>

@@ -1,0 +1,227 @@
+<aura:component access="global">
+    <!-- init -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <!-- action type -->
+    <aura:attribute name="actionType" type="String"/>
+    <!-- Action List-->
+    <aura:attribute name="actionList" type = "List" /> 
+    <!-- All Actions List-->
+    <aura:attribute name="allActionsList" type = "List" /> 
+    <!-- wrapperLeadFields List-->
+    <aura:attribute name="wrapperLeadFields" type = "List" />  
+    <!-- wrapperContactFields List-->
+    <aura:attribute name="wrapperContactFields" type = "List" />  
+    <!-- Action Object-->
+    <aura:attribute name="actionObject" type = "RDNACadence__Action__C" default="{ 'sobjectType': 'RDNACadence__Action__C'}"/> 
+    <!--Contact Objects -->
+    <aura:attribute name="ContactObj" type="Contact" default="{ 'sobjectType': 'Contact'}"/>
+    <!--Lead Objects -->
+    <aura:attribute name="LeadObj" type="Lead" default="{ 'sobjectType': 'Lead'}"/>
+    <!-- Cadence Action -->
+    <aura:attribute name="cadenceAction" type = "CadenceAction__c" default="{ 'sobjectType': 'CadenceAction__c'}" />
+    <!--Current Index -->
+    <aura:attribute name="currentIndex" type="string"/>
+    <!--Show fields to updates on objects -->
+    <aura:attribute name="setFieldsToUpdate" type="Boolean" default="false"/>
+    <!--Show criteria fields of action -->
+    <aura:attribute name="setCriteriaFields" type="Boolean" default="false"/>
+    <!--Event attribute -->
+    <aura:registerEvent name="cadDynamicRowEvent" type="c:CadDynamicRowEvent"/>
+    <!-- Handle event -->
+    <aura:handler name="cadDynamicRowEvent" event="c:CadDynamicRowEvent" action="{!c.handleCadDynamicRowEvent}"/>
+    <!--Cadence Objects -->
+    <aura:attribute name="newCadence" type="Cadence__c" default="{ 'sobjectType': 'Cadence__c', 'Name': '','RDNACadence__Record_Type__c':'Contact', 'RDNACadence__Participent_Activation__c':''}"/>
+    <!--List to create fields to update row-->
+    <aura:attribute name="rowToCreateFieldsToUpdate" type="List"/>
+    <aura:attribute name="entranceCriteriaSet" type="Object"/>
+    <!-- Radio fields options -->
+    <aura:attribute name="fieldOptions" type="List" default="[
+                                                             {'label': 'No Field Updates', 'value': 'false'},
+                                                             {'label': 'Field Updates Required', 'value': 'true'}
+                                                             ]"/>
+    <aura:attribute name="fieldOptionsValue" type="String" default="false"/>
+    <!-- Radio Criteria options -->
+    <aura:attribute name="criteriaOptions" type="List" default="[
+                                                                {'label': 'No Additional Criteria', 'value': 'false'},
+                                                                {'label': 'Conditions are met', 'value': 'true'}
+                                                                ]"/>
+    <aura:attribute name="criteriaOptionsValue" type="String" default="false"/>
+    <!-- aura method to get fields to updat -->
+    <aura:method name="getfieldsToUpdate" action="{!c.getfieldsToUpdate}"
+                 description="Method  to get fields to update"> 
+    </aura:method>
+    <aura:attribute name="contactFieldList" type="List"/>
+    <aura:attribute name="leadFieldList" type="List"/>
+    <!-- Disabled property-->
+    <aura:attribute name = "isDisabled" type = "Boolean" default = "false"/>
+    <aura:attribute name = "disableInput" type = "Boolean" default = "false"/>
+    <!--For edit -->
+    <aura:attribute name="actionTypeListForCadenceAction" type = "List" />  
+    <!-- CadenceAction Id list to delete cadenceActions -->
+    <aura:attribute name="caIdsList" type="List"/>
+    <tr  class = "slds-m-around--large">
+        <td class="rdna-table-rows rdna-field-values">
+            <div class="rdna-div">
+                <aura:if isTrue="{!v.actionType == 'Call' || v.actionType == 'Call+Voicemail'}">
+                    <img class = "actions-icon" src="{!$Resource.cadence_icons + '/call/call-icon@3x.png'}"/>
+                </aura:if>
+                <aura:if isTrue="{!v.actionType == 'SMS'}">
+                    <img class = "actions-icon" src="{!$Resource.cadence_icons + '/message/msg-icon@3x.png'}"/> 
+                </aura:if>
+                <aura:if isTrue="{!v.actionType == 'Email'}">
+                    <img class = "actions-icon" src="{!$Resource.cadence_icons + '/email/email-icon@3x.png'}"/> 
+                </aura:if>
+                <aura:if isTrue="{!v.actionType == 'Task'}">
+                    
+                </aura:if>
+                {!' ' + v.actionType}
+            </div>  
+        </td>
+        <td class="rdna-table-rows rdna-field-values">  
+            <div class="slds-truncate rdna-div" aura:id="detailDiv1" title="Name">{!v.actionObject.Name}</div>
+        </td>
+        <td class="rdna-table-rows rdna-field-values">
+            <aura:if isTrue="{!v.cadenceAction.RDNACadence__Trigger_Type__c == 'Immediate'}">
+                <span   aura:id="detailDiv1"> Immediate </span>
+                <aura:set attribute="else">
+                    <aura:if isTrue="{!v.cadenceAction.RDNACadence__Trigger_Type__c == 'Time Based'}">
+                        <span  aura:id="detailDiv1">{!'Days: ' + v.cadenceAction.RDNACadence__Day__c + ' Hours: ' + v.cadenceAction.RDNACadence__Hour__c}</span>
+                        <aura:set attribute="else">
+                        <span  aura:id="detailDiv1"> </span>
+                        </aura:set>
+                    </aura:if>
+                     </aura:set>
+            </aura:if> 
+        </td>
+        <td class="rdna-table-rows rdna-field-values">
+            <div class="slds-truncate" title="Type"></div>
+        </td>
+        <td class="rdna-table-rows rdna-field-values">
+            <div class="slds-truncate" title=""> </div>
+        </td > 
+        <td class="rdna-table-rows rdna-field-values">
+            <div class="slds-float--right slds-align-content-center rdna-bgcolorWhihte">
+                <div class="slds-float--left slds-m-right_large" onclick="{!c.sectionToggle}">
+                    <span class="slds-show" aura:id="detailDiv" ><button class="slds-button slds-button_neutral  rdna-button rdna-button-text"  >Expand</button>
+                    </span>
+                    <span class="slds-hide close-buttom" aura:id="detailDiv" ><button class="slds-button slds-button_brand  rdna-button rdna-button-text"  >Close </button>
+                    </span>
+                </div>
+                <aura:if isTrue="{!not(v.isDisabled)}">
+                    <div class="slds-float--right rdna-bgcolor">
+                        <a onclick="{!c.removeRow}">
+                            <img class = "Ovalhead" src="{!$Resource.cadence_icons + '/delete/delete@3x.png'}"/>
+                        </a>
+                    </div>
+                </aura:if>
+            </div> 
+        </td>
+    </tr> 
+    <tr class="slds-hint-parent ">
+        <td class="rdna-background" colspan="6">
+            <div class="slds-hide slds-m-around--medium slds-size_1-of-1 " aura:id="detailDiv">
+                <div class="slds-box_xx-small">
+                    <fieldset class="slds-form-element slds-form_compound">
+                        <form class="slds slds-form slds-m-left_medium slds-m-right_medium">
+                            <span class="slds-p-top_medium slds-page-header__row rdna-field-values-bold rdna-set-line-height slds-truncate">Action Details</span>
+                            <div class="slds slds-form-element__row slds-size_1-of-1 slds-p-right_large slds-p-top_small ">
+                                <div class="slds-form-element__control slds-size_1-of-3">
+                                    <lightning:select aura:id="formValidationId" name="Action" 
+                                                      label="Action" required="true" 
+                                                      value="{!v.cadenceAction.RDNACadence__Action_Id__c}" 
+                                                      onchange="{!c.setActionObject}"
+                                                      disabled = "{!v.isDisabled}">
+                                        <option value="">Select Action</option>
+                                        <aura:iteration items="{!v.actionList}" var= "actionObj">
+                                            <option value="{!actionObj.Id}">{!actionObj.Name}</option>
+                                        </aura:iteration>
+                                    </lightning:select>
+                                </div>
+                                <div class="slds-form-element__control slds-size_1-of-3">
+                                    <lightning:select aura:id="formValidationId" name="selectActionType" 
+                                                      label="Execute After Delay" required="true" value="{!v.cadenceAction.RDNACadence__Trigger_Type__c}" 
+                                                      onchange="{! c.disablUnitInput }" disabled = "{!v.isDisabled}">
+                                        <option value="">Select Trigger</option>
+                                        <option value="Immediate">Immediate</option>
+                                        <option value="Time Based">Time Based</option>
+                                    </lightning:select>
+                                </div>
+                                <aura:if isTrue="{!v.disableInput}">
+                                    <div class="slds slds-form-element__row slds-form-element__control slds-size_1-of-3">
+                                        <div class="slds-form-element__control slds-size_1-of-2">
+                                            <lightning:input type="number" aura:id="formValidationId" label="Days"
+                                                             name="actionname"
+                                                             value="{!v.cadenceAction.RDNACadence__Day__c}"
+                                                             placeholder = "Enter Days" pattern="[0-9]*" min="0"
+                                                             messageWhenPatternMismatch="Days Can't be less than 0"
+                                                             messageWhenRangeUnderflow="Days Can't be less than 0"
+                                                             required="{!v.disableInput}" disabled = "{!v.isDisabled}"/> 
+                                        </div> 
+                                        <div class="slds-form-element__control slds-size_1-of-2">
+                                            <lightning:input type="number" aura:id="formValidationId" label="Hours"
+                                                             name="actionname"
+                                                             value="{!v.cadenceAction.RDNACadence__Hour__c}"
+                                                             placeholder = "Enter Hours"  pattern="[0-9]*" max="23" min="0"
+                                                             messageWhenPatternMismatch="Hours is not valid"
+                                                             messageWhenBadInput="Please Enter valid Hours (0-23)"
+                                                             messageWhenRangeOverflow="Hours Can't be above 23"
+                                                             messageWhenRangeUnderflow="Hours Can't be less than 0"
+                                                             required="{!v.disableInput}" disabled = "{!v.isDisabled}"/> 
+                                        </div>
+                                    </div>
+                                </aura:if>
+                            </div>
+                            <span class="slds-p-top_medium slds-page-header__row rdna-field-values-bold rdna-set-line-height slds-truncate">Field Updates</span>
+                            <span class="rdna-field-values rdna-set-line-height" style=" padding-bottom:25px;">Field updates required following action completion</span>
+                                <div class = "slds-form-element slds-size_1-of-1 slds-p-bottom_large" >
+
+                                    <aura:iteration items="{!v.rowToCreateFieldsToUpdate}" var="wrapperObj" indexVar="index">
+                                    	
+                                        <div class = "slds-form-element__row slds-size_1-of-1">
+                                            <aura:if isTrue="{!'Lead' ==  v.newCadence.RDNACadence__Record_Type__c}">
+                                                <c:ActionDetailsDynamicRow aura:id="dynamicROw" taskObj="{!wrapperObj}" wrapperTaskFields="{!v.wrapperLeadFields}" currentIndex = "{!index}" isrequired="true" isDisabled="{!v.isDisabled}"/>
+                                                <aura:set attribute="else">
+                                                    <c:ActionDetailsDynamicRow aura:id="dynamicROw" taskObj="{!wrapperObj}" wrapperTaskFields="{!v.wrapperContactFields}" currentIndex = "{!index}" isrequired="true" isDisabled="{!v.isDisabled}"/>
+                                                </aura:set>
+                                            </aura:if>
+                                        </div>
+                                    </aura:iteration>
+                                    <aura:if isTrue="{!not(v.isDisabled)}">
+                                        <div class = "slds-form-element__row slds-size_1-of-1 rdna-field-values rdna-set-link-height">
+                                            <a onclick="{!c.createRowToFieldsUpdate}"> 
+                                                <label>+ Add Field Update</label>
+                                            </a>    
+                                        </div>
+                                    </aura:if>
+                                </div>
+                            <span class="slds-p-top_medium slds-page-header__row rdna-field-values-bold rdna-set-line-height slds-truncate">Criteria</span>
+                            <span class="rdna-field-values rdna-set-line-height slds-truncate">Criteria for Executing Actions</span>
+                            <div class="slds-form-element__control slds-m-top_medium">
+                                <lightning:radioGroup name="radioGroup1"
+                                                      options="{! v.criteriaOptions}"
+                                                      value="{! v.criteriaOptionsValue}"
+                                                      onchange="{! c.handleCriteriaSelectChange }"
+                                                      type="radio" disabled = "{!v.isDisabled}"/>
+                            </div>
+                            <aura:if isTrue="{!v.setCriteriaFields}">
+                                <div class = "slds-form-element slds-size_1-of-1 slds-m-top_small slds-p-bottom_large" >
+                                    <div class = "slds-form-element__row slds-size_1-of-1">
+                                        <aura:if isTrue="{!v.setCriteriaFields}">
+                                            <c:CriterionComponent aura:id="actionCriterionComponent" 
+                                                                  criteriaType="Action Criteria" 
+                                                                  criteriaSet="{!v.entranceCriteriaSet}"  
+                                                                  cadence="{!v.newCadence}"
+                                                                  leadFieldList="{!v.leadFieldList}"  
+                                                                  contactFieldList="{!v.contactFieldList}"
+                                                                  isViewMode = "{!v.isDisabled}"/>
+                                        </aura:if>
+                                    </div>
+                                </div>
+                            </aura:if>
+                        </form>
+                    </fieldset>
+                </div>
+            </div>
+        </td>
+    </tr>
+</aura:component>

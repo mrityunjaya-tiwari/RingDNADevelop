@@ -1,0 +1,42 @@
+.THIS .slds-progress-bar {
+    height: 10px;
+    border-radius: 6px;
+    background-color: #cccccc;
+}
+.THIS .rdna-progress-bar__value_in-progress{
+    background-color:#cccccc !important;
+}
+.THIS .rdna-progress-bar__value_progress_color{
+    color:#cccccc !important;
+}
+.THIS .rdna-progress-bar__value_in-active{
+    background-color:#0066ff !important;
+}
+.THIS .rdna-progress-bar__value_active_color{
+    color:#0066ff !important;
+}
+.THIS .rdna-progress-bar__value_error{
+    background-color: rgb(194, 57, 52) !important;
+}
+.THIS .rdna-progress-bar__value_error_color{
+    color:red !important;
+}
+.THIS .rdna-progress-bar__value_success{
+    background-color:#33cc99 !important;
+}
+.THIS .rdna-progress-bar__value_success_color{
+    color:#33cc99 !important;
+}
+
+.THIS .setRdnaText{
+    font-family: Logical;
+    font-size: 14px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    text-align: center;
+    color:#cccccc;
+}
+/*---------------------------------------------------------*/

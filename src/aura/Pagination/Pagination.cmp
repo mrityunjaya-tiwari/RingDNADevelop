@@ -1,0 +1,42 @@
+<aura:component access="global">
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler name="change" value="{!v.total}" action="{!c.doInit}"/>
+    
+    <aura:registerEvent name="cadencePagination" type="c:CadPagination"/>
+    
+    <aura:attribute name="page" type="integer" description="using for store page Number" default="1"/>
+    <aura:attribute name="pages" type="integer" description="using for store All Pages page Number" default="0"/>
+    <aura:attribute name="pageOffset" type="integer" description="Number of records per page" default="1"/>
+    <aura:attribute name="total" type="integer" description="total records count store"/>
+    <aura:attribute name="selectedNoOfRecords" type="Boolean" default="false"/> 
+    
+    
+    <div class="slds-grid slds-m-top_x-small slds-m-left_x-small">      
+        <div class="slds-col slds-size_2-of-3">
+            <lightning:button disabled="{!v.page == 0 || v.page == 1}" class="rdna-button-text-before slds-text-align_center" aura:id="firstPage" variant="brand" label="First" onclick="{! c.firstPage }" />            
+            <lightning:button disabled="{!v.page == 0 || v.page == 1}" class="rdna-button-text-before slds-text-align_center slds-p-left_x-small slds-p-right_x-small"  aura:id="previousPage" variant="brand" label="Previous" onclick="{! c.previousPage }" />
+            <lightning:button disabled="{!v.page >= v.pages}" class="rdna-button-text-before slds-text-align_center"  variant="brand" aura:id="nextPage" label="Next" onclick="{! c.nextPage }" />            
+            <lightning:button disabled="{!v.page >= v.pages}" class="rdna-button-text-before slds-text-align_center"  aura:id="previousPage" variant="brand" label="Last" onclick="{! c.lastPage }" />
+            <span class="slds-m-left_small rdna-field-values">page {!v.page} of {!v.pages}</span>
+        </div>
+        
+        <aura:if isTrue = "{!v.selectedNoOfRecords}">	
+            
+            <div  class="bottomDropdown rdna-field-values slds-m-top_x-small slds-align--absolute-center slds-m-right_medium" style="padding-left:16%">
+                Records per page: 
+            </div>
+            <div class="slds-float--right slds-size_1-of-10 slds-align--absolute-center slds-p-bottom_x-large slds-m-bottom_large rdna-button-text " >            
+                <ui:inputSelect  class="slds-m-left_small  slds-size_1-of-7 rdna-field-values " aura:id="recordSize" label="" change="{!c.onSelectChange}">
+                    <ui:inputSelectOption text="{!v.total}" label="All" /> 
+                    <ui:inputSelectOption text="25" label="25" value="true"/>
+                    <ui:inputSelectOption text="50" label="50"/>
+                    <ui:inputSelectOption text="100" label="100"/>
+                </ui:inputSelect>
+            </div>
+        </aura:if>   
+        
+    </div>
+    
+    
+</aura:component>

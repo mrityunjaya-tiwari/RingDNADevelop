@@ -1,0 +1,56 @@
+({
+    doInit: function(component, event, helper) {
+        var listEmailTemplate;
+        var id = component.get('v.recordId');
+        var action = component.get("c.initCadenceActionData");
+        helper.createObjectData(component, event);
+        action.setCallback(this, function(response) {
+            var state = response.getState();
+            if (state === "SUCCESS") {
+                listEmailTemplate= response.getReturnValue();
+                component.set('v.listEmailTemplate', listEmailTemplate.listEmailTemplate);
+                component.set('v.wrapperTaskFields', listEmailTemplate.wrapperTaskFields);
+                component.set('v.listToShowInTemplateType', listEmailTemplate.listEmailTemplate);
+                if(id != null) {
+                    helper.getData(component, event, helper, id);
+                }
+            }
+        });
+        $A.enqueueAction(action)
+    },
+    
+    clickCreate: function(component, event, helper) {
+        
+        var newAct = component.get("v.newAction");
+        var name = newAct.Name;
+        newAct.Name = name.trim();
+        component.set("v.newAction", newAct);
+        var isValidActioin = component.find('formValidationId').reduce(function (validSoFar, inputCmp) {
+            inputCmp.showHelpMessageIfInvalid();
+            return validSoFar && inputCmp.get('v.validity').valid;
+        }, true);
+        if(isValidActioin){
+            helper.createAction(component, event,helper);
+        }
+    },
+    
+    createAction : function(component, event,helper) {
+        console.log('Test createAction Js');
+        helper.createAction(component, event,helper);
+    },
+    updateActionType: function (component, event, helper) {
+        helper.updateActionType(component, event, helper);       
+    },
+    AddNewRow : function(component, event, helper){
+        helper.createObjectData(component, event);    
+    },
+    removeRow : function(component, event, helper){
+        helper.removeDeletedRow(component, event); 
+    },
+    onCancel: function(component, event, helper){
+        helper.onCancel(component, event);
+    },
+    handleCadDynamicRowEvent: function(component, event, helper){
+        helper.handleCadDynamicRowEvent(component, event, helper);
+    },
+})

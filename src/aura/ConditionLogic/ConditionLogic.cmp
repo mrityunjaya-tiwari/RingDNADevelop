@@ -1,0 +1,37 @@
+<aura:component>
+	<aura:attribute name="conditionsList" type="List" default="[
+							{'label': 'All of the conditions are met (AND)', 'value':'All of the conditions are met (AND)'},
+							{'label':'Any of the conditions are met (OR)', 'value':'Any of the conditions are met (OR)'}, 
+							{'label':'Customize the logic', 'value':'Custom logic'}
+							]"/>
+	<aura:attribute name="criteriaType" type="String"/>
+	<aura:attribute name="selectedCondition" type="String" default="All of the conditions are met (AND)"/>
+	<aura:attribute name="criterionPriorityFormula" type="String"/>
+	<aura:attribute name="isViewMode" type="Boolean"/>
+	
+	<aura:method name="validateConditions" action="{!c.validateConditions}"/>
+	
+	<div style="padding-top:25px;"><p class = "rdna-field-values-bold">Logic</p></div>
+	<div style=" padding-bottom:25px;"><label class="rdna-field-values">Criteria for {!v.criteriaType}</label></div>
+	
+	<lightning:radioGroup name="Conditions" 
+                          label="" class="all-of-the-condition"
+                          options="{! v.conditionsList }"
+                          value="{! v.selectedCondition }"
+                          type="radio"
+                          disabled="{!v.isViewMode}"
+                          />
+     <aura:if isTrue="{!v.selectedCondition=='Custom logic'}">
+         <lightning:input  aura:id="formValidationId" label="" 
+                          class="slds-size_1-of-3" 
+                          name="criterionPriorityFormula" 
+                          value="{!v.criterionPriorityFormula}"
+                          placeholder = "Enter Conditional Logic."
+                          messageWhenBadInput = "Please Enter Criteria"
+                          messageWhenValueMissing="Please Enter Criteria"
+                          required="true"
+                          disabled="{!v.isViewMode}"
+                          /> 
+     </aura:if>
+     
+</aura:component>

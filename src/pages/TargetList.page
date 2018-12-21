@@ -1,0 +1,19 @@
+<apex:page sidebar="false">
+    <script src="/lightning/lightning.out.js"/>
+    <apex:slds />
+    <apex:includeLightning />
+    <div id="myDivId5" />
+    <script>
+        var myUserContext = "{!$User.UITheme}";
+        $Lightning.use("RDNACadence:CadenceActionListApp", function() {
+            $Lightning.createComponent(
+                "RDNACadence:TargetList",
+                {recordId: '{!$CurrentPage.parameters.id}',themeName: myUserContext},
+                "myDivId5",
+                function(cmp) {
+                    console.log('component created');
+                    console.log(cmp);
+                }); 
+        });
+        </script>
+</apex:page>
