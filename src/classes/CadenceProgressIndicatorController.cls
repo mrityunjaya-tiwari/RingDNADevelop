@@ -64,10 +64,10 @@ public class CadenceProgressIndicatorController {
 */
     public static void createParticipantActionsByCadenceActions(Cadence__c cadenceObj, Map<Id, String> caIds){
         List<SObject> soList = CadenceSelector.getParticipantsOfCadence(cadenceObj.Id , cadenceObj.Record_Type__c);
-        List<Action_on_Participants__c> paList = New List<Action_on_Participants__c>();
+        List<Sequence_Action__c> paList = New List<Sequence_Action__c>();
         for (SObject sObj : soList){
             for(Id caId : caIds.keySet()){
-                Action_on_Participants__c paObj = New Action_on_Participants__c();
+                Sequence_Action__c paObj = New Sequence_Action__c();
                 paObj.CadenceAction_ID__c = caId;
                 paObj.Name = caIds.get(caId);
                 if (cadenceObj.Record_Type__c == CadenceConstants.LEAD_OBJECT_NAME){
@@ -83,7 +83,7 @@ public class CadenceProgressIndicatorController {
     }
     
     public static void deleteParticipantActionsByCadenceActions(List<Id> caIds){
-        List<Action_on_Participants__c> paList = CadenceSelector.getParticipantActionsByCadenceActionsIds(caIds);
+        List<Sequence_Action__c> paList = CadenceSelector.getParticipantActionsByCadenceActionsIds(caIds);
         if (paList.size() > 0){
             delete paList;
         }

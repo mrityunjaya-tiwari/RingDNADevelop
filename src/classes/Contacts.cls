@@ -33,7 +33,7 @@ public class Contacts  extends SObjectDomain {
 
     	Map<Id, Cadence__c> cadMap = CadenceSelector.getActiveCadencesByRecordType(CadenceConstants.CONTACT_OBJECT_NAME);
     	Map<Id, List<CadenceAction__c>> contIdToAllCadActListMap = new Map<Id, List<CadenceAction__c>>();
-		Map<Id, List<Action_on_Participants__c>> partActToPerform = new Map<Id, List<Action_on_Participants__c>>();
+		Map<Id, List<Sequence_Action__c>> partActToPerform = new Map<Id, List<Sequence_Action__c>>();
     	
 		//Creating action on participants 
 		for(Contact cObj : contsWithCadence) {
@@ -43,12 +43,12 @@ public class Contacts  extends SObjectDomain {
         CadenceService.createActionParticipants(contIdToAllCadActListMap, CadenceConstants.CONTACT_OBJECT_NAME); 
 
 		//Getting non performed participant actions 
-		Map<Id, List<Action_on_Participants__c>> partActionsMap = CadenceService.getRemainingParticipantActions(contMap.keySet(), CadenceConstants.CONTACT_OBJECT_NAME);
+		Map<Id, List<Sequence_Action__c>> partActionsMap = CadenceService.getRemainingParticipantActions(contMap.keySet(), CadenceConstants.CONTACT_OBJECT_NAME);
 		
 		//Getting participant action to perform 
 		for(Contact cObj : contMap.values()) {
 			if(cObj.isActivated__c) {
-				List<Action_on_Participants__c> partActList = RuleCriterionMatcher.getMatchingParticipantActions(cadMap.get(cObj.Cadence_Id__c), cObj, partActionsMap.get(cObj.Id), CadenceConstants.CONTACT_OBJECT_NAME);
+				List<Sequence_Action__c> partActList = RuleCriterionMatcher.getMatchingParticipantActions(cadMap.get(cObj.Cadence_Id__c), cObj, partActionsMap.get(cObj.Id), CadenceConstants.CONTACT_OBJECT_NAME);
 				if(!partActList.isEmpty()) {
 					partActToPerform.put(cObj.Id, partActList);		
 				}
@@ -56,7 +56,7 @@ public class Contacts  extends SObjectDomain {
 		}
 
 		//perform participant actions 
-		Map<Id, List<Action_on_Participants__c>> performedPartAct = CadenceService.performParticipantActions(contMap.values(), partActToPerform);
+		Map<Id, List<Sequence_Action__c>> performedPartAct = CadenceService.performParticipantActions(contMap.values(), partActToPerform);
 		
 		//perform participant field update
 		flag = false;
@@ -75,18 +75,18 @@ public class Contacts  extends SObjectDomain {
 			return;
 		}
 		Map<Id, Cadence__c> cadMap = CadenceSelector.getActiveCadencesByRecordType(CadenceConstants.CONTACT_OBJECT_NAME);
-		Map<Id, List<Action_on_Participants__c>> partActToPerform = new Map<Id, List<Action_on_Participants__c>>();
+		Map<Id, List<Sequence_Action__c>> partActToPerform = new Map<Id, List<Sequence_Action__c>>();
 
 		//Getting leadList to process
 		Map<Id, Contact> contMap = new Map<Id, Contact>((List<Contact>)CadenceService.getSObjectsToProcess(records, cadMap, CadenceConstants.CONTACT_OBJECT_NAME));
 		
 		//Getting non performed participant actions 
-		Map<Id, List<Action_on_Participants__c>> partActionsMap = CadenceService.getRemainingParticipantActions(contMap.keySet(), CadenceConstants.CONTACT_OBJECT_NAME);
+		Map<Id, List<Sequence_Action__c>> partActionsMap = CadenceService.getRemainingParticipantActions(contMap.keySet(), CadenceConstants.CONTACT_OBJECT_NAME);
 		
 		//Getting participant action to perform 
 		for(Contact cObj : contMap.values()) {
 			if(cObj.isActivated__c) {
-				List<Action_on_Participants__c> partActList = RuleCriterionMatcher.getMatchingParticipantActions(cadMap.get(cObj.Cadence_Id__c), cObj, partActionsMap.get(cObj.Id), CadenceConstants.CONTACT_OBJECT_NAME);
+				List<Sequence_Action__c> partActList = RuleCriterionMatcher.getMatchingParticipantActions(cadMap.get(cObj.Cadence_Id__c), cObj, partActionsMap.get(cObj.Id), CadenceConstants.CONTACT_OBJECT_NAME);
 				if(!partActList.isEmpty()) {
 					partActToPerform.put(cObj.Id, partActList);		
 				}
@@ -94,7 +94,7 @@ public class Contacts  extends SObjectDomain {
 		}
 
 		//perform participant actions 
-		Map<Id, List<Action_on_Participants__c>> performedPartAct = CadenceService.performParticipantActions(contMap.values(), partActToPerform);
+		Map<Id, List<Sequence_Action__c>> performedPartAct = CadenceService.performParticipantActions(contMap.values(), partActToPerform);
 		
 		//perform participant field update
 		CadenceService.updateSObjectFields(contMap.values(), performedPartAct, CadenceConstants.CONTACT_OBJECT_NAME, false);

@@ -9,6 +9,7 @@
     <!-- datatable attributes -->
     <aura:attribute name="data" type="List"/>
     <aura:attribute name="rawData" type="List"/>
+    <aura:attribute name="rawDataForFilter" type="List"/>
     <aura:attribute name="columns" type="List"/>
     <aura:attribute name="sortedBy" type="String"/>
     <aura:attribute name="sortBy" type="String"/>
@@ -40,32 +41,48 @@
                                  sortedDirection="{!v.sortedDirection}"/>
         </div>                    
         <aura:set attribute="else">
-            <lightning:datatable
-                                 class= "cols-table "
-                                 data="{! v.data }"
-                                 columns="{! v.columns }"
-                                 keyField="id"
-                                 onrowaction="{!c.handleRowAction }" 
-                                 onrowselection="{!c.handleRowSelection}"
-                                 onsort="{!c.updateColumnSorting}"
-                                 sortedBy="{!v.sortedBy}"  
-                                 selectedRows="{!v.selectedRows}"
-                                 hideCheckboxColumn = "True"
-                                 sortedDirection="{!v.sortedDirection}"/>
             <aura:if isTrue = "{! v.selectedNoOfRecords }">
-                <aura:if isTrue = "{!empty(v.rawData)}">
+                <aura:if isTrue = "{!empty(v.rawDataForFilter)}">
                     <div class="slds-align_absolute-center" style="height: 300px;background-color:white">
-                        <p class="rdna-style">There are currently no entries in your Target List.
+                        <p class="rdna-style">There are currently no entries in your Today's List.
                             <p class="rdna-text">To target existing leads or contacts, you can use the Add to Campaign button on Salesforce reports.</p>
                         </p></div>
                     <aura:set attribute="else">
-                        <aura:if isTrue = "{!empty(v.data)}">
+                        <aura:if isTrue = "{!empty(v.rawData)}">
                             <div class="slds-align_absolute-center " style="height: 300px;background-color:white">
                                 <p class="rdna-text-style">Sorry, We couldn't find any results with that name.</p>
                             </div>
+                            <aura:set attribute="else">
+                                <lightning:datatable
+                                                     class= "cols-table "
+                                                     data="{! v.data }"
+                                                     columns="{! v.columns }"
+                                                     keyField="id"
+                                                     onrowaction="{!c.handleRowAction }" 
+                                                     onrowselection="{!c.handleRowSelection}"
+                                                     onsort="{!c.updateColumnSorting}"
+                                                     sortedBy="{!v.sortedBy}"  
+                                                     selectedRows="{!v.selectedRows}"
+                                                     hideCheckboxColumn = "True"
+                                                     sortedDirection="{!v.sortedDirection}"/>
+                            </aura:set>
                         </aura:if>
                     </aura:set>
                 </aura:if>
+                <aura:set attribute="else">
+                    <lightning:datatable
+                                         class= "cols-table "
+                                         data="{! v.data }"
+                                         columns="{! v.columns }"
+                                         keyField="id"
+                                         onrowaction="{!c.handleRowAction }" 
+                                         onrowselection="{!c.handleRowSelection}"
+                                         onsort="{!c.updateColumnSorting}"
+                                         sortedBy="{!v.sortedBy}"  
+                                         selectedRows="{!v.selectedRows}"
+                                         hideCheckboxColumn = "True"
+                                         sortedDirection="{!v.sortedDirection}"/>
+                </aura:set>
             </aura:if>
         </aura:set>
     </aura:if>

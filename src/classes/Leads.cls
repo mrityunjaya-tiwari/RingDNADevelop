@@ -33,7 +33,7 @@ public class Leads  extends SObjectDomain {
 
     	Map<Id, Cadence__c> cadMap = CadenceSelector.getActiveCadencesByRecordType(CadenceConstants.LEAD_OBJECT_NAME);
     	Map<Id, List<CadenceAction__c>> leadIdToAllCadActListMap = new Map<Id, List<CadenceAction__c>>();
-		Map<Id, List<Action_on_Participants__c>> partActToPerform = new Map<Id, List<Action_on_Participants__c>>();
+		Map<Id, List<Sequence_Action__c>> partActToPerform = new Map<Id, List<Sequence_Action__c>>();
     	
 		//Creating action on participants 
 		for(Lead lObj : leadsWithCadence) {
@@ -43,12 +43,12 @@ public class Leads  extends SObjectDomain {
         CadenceService.createActionParticipants(leadIdToAllCadActListMap, CadenceConstants.LEAD_OBJECT_NAME); 
 
 		//Getting non performed participant actions 
-		Map<Id, List<Action_on_Participants__c>> partActionsMap = CadenceService.getRemainingParticipantActions(leadMap.keySet(), CadenceConstants.LEAD_OBJECT_NAME);
+		Map<Id, List<Sequence_Action__c>> partActionsMap = CadenceService.getRemainingParticipantActions(leadMap.keySet(), CadenceConstants.LEAD_OBJECT_NAME);
 		
 		//Getting participant action to perform 
 		for(Lead lObj : leadMap.values()) {
 			if(lObj.isActivated__c) {
-				List<Action_on_Participants__c> partActList = RuleCriterionMatcher.getMatchingParticipantActions(cadMap.get(lObj.Cadence_Id__c), lObj, partActionsMap.get(lObj.Id), CadenceConstants.LEAD_OBJECT_NAME);
+				List<Sequence_Action__c> partActList = RuleCriterionMatcher.getMatchingParticipantActions(cadMap.get(lObj.Cadence_Id__c), lObj, partActionsMap.get(lObj.Id), CadenceConstants.LEAD_OBJECT_NAME);
 				if(!partActList.isEmpty()) {
 					partActToPerform.put(lObj.Id, partActList);		
 				}
@@ -56,7 +56,7 @@ public class Leads  extends SObjectDomain {
 		}
 
 		//perform participant actions 
-		Map<Id, List<Action_on_Participants__c>> performedPartAct = CadenceService.performParticipantActions(leadMap.values(), partActToPerform);
+		Map<Id, List<Sequence_Action__c>> performedPartAct = CadenceService.performParticipantActions(leadMap.values(), partActToPerform);
 		
 		//perform participant field update
 		flag = false;

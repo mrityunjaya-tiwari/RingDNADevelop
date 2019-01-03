@@ -24,8 +24,9 @@ public class PerformCadenceActionBatch implements Database.Batchable<sObject>, D
         
         Set<String> allowedFields = new Set<String>();
         String query = 'Select ';
+        SObjectType r = ((SObject)(Type.forName('Schema.'+objType).newInstance())).getSObjectType();
+        Map<String, Schema.SObjectField> fieldMap  = r.getDescribe().fields.getMap();
         
-        Map<String, Schema.SObjectField> fieldMap = Schema.getGlobalDescribe().get(objType).getDescribe().fields.getMap();
         for (Schema.SObjectField field : fieldMap.values()) {
             Schema.DescribeFieldResult fieldDescribe = field.getDescribe();
             if (!fieldDescribe.isAccessible()) {

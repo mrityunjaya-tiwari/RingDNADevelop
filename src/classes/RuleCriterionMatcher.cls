@@ -86,18 +86,18 @@ public with sharing class RuleCriterionMatcher {
 		return null;
 	}
 	
-	public static List<CadenceAction__c> getMatchingActions(Cadence__c cad, SObject obj, String objName, List<Action_on_Participants__c> partActions) {
+	public static List<CadenceAction__c> getMatchingActions(Cadence__c cad, SObject obj, String objName, List<Sequence_Action__c> partActions) {
 		
 		System.debug('partActions = '+ partActions);
 		
 		List<CadenceAction__c> allCadActions = cad.CadenceActions__r;
 		List<CadenceAction__c> actionsToPerform = new List<CadenceAction__c>();
 		Map<Id, CadenceAction__c> cadActionsMap = new Map<Id, CadenceAction__c>();
-		Map<Id, Action_on_Participants__c> partActionsMap = new Map<Id, Action_on_Participants__c>();
+		Map<Id, Sequence_Action__c> partActionsMap = new Map<Id, Sequence_Action__c>();
 		
 		//Getting action on participants map to cadenceAction
 		if(partActions != null && !partActions.isEmpty()) {
-			for(Action_on_Participants__c partAct : partActions) {
+			for(Sequence_Action__c partAct : partActions) {
 				partActionsMap.put(partAct.CadenceAction_Id__c, partAct);
 			}
 			System.debug('partactionMap = '+ partActionsMap);
@@ -165,10 +165,10 @@ public with sharing class RuleCriterionMatcher {
 	}
 	
 	
-	public static List<Action_on_Participants__c> getMatchingParticipantActions(Cadence__c cad, SObject obj, List<Action_on_Participants__c> partActions, String objName) {
+	public static List<Sequence_Action__c> getMatchingParticipantActions(Cadence__c cad, SObject obj, List<Sequence_Action__c> partActions, String objName) {
 		
 		//Returning if no action to be performed
-		List<Action_on_Participants__c> actionsToPerform = new List<Action_on_Participants__c>();
+		List<Sequence_Action__c> actionsToPerform = new List<Sequence_Action__c>();
 		if(partActions == null || partActions.isEmpty()) {
 			return actionsToPerform;
 		}
@@ -177,7 +177,7 @@ public with sharing class RuleCriterionMatcher {
 		List<CadenceAction__c> remainingCadActions = new List<CadenceAction__c>();
 		
 		//Getting cad actions which are un performed
-		for(Action_on_Participants__c partAct : partActions) {
+		for(Sequence_Action__c partAct : partActions) {
 			remainingCadActions.add(allCadActionMap.get(partAct.CadenceAction_Id__c));
 		}
 		
@@ -190,7 +190,7 @@ public with sharing class RuleCriterionMatcher {
 		Map<Id, CriterionSet> cadActionCriterion = RuleCriterionMatcherHelper.getActionWiseCriterions(remainingCadActions);
 		
 		//Getting matching criterions 
-		for(Action_on_Participants__c partAct : partActions) {
+		for(Sequence_Action__c partAct : partActions) {
 			if(day==0 && hour ==0) {
 				if(partAct == null || partAct.CadenceAction_Id__r.Trigger_Type__c == null) {
 					continue;

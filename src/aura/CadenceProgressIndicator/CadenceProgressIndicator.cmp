@@ -5,7 +5,7 @@
     <aura:attribute name="currentStep" type="string" default="1"/>
     <aura:attribute name="isValid" type="Boolean" default="true"/>
     <aura:attribute name="hasError" type="Boolean" default="false"/>
-    <aura:attribute name="cadenceName" type="String" default="New Cadence"/>
+    <aura:attribute name="cadenceName" type="String" default="New Sequence"/>
     <aura:attribute name="entranceCriteriaSet" type="Object"/>
     <aura:attribute name="exitCriteriaSet" type="Object"/>
     <aura:attribute name="contactFieldList" type="List"/>
@@ -30,8 +30,8 @@
                 <img class = "rdna-logo" src="{!$Resource.cadence_icons + '/rdna-logo/rdna-logo@2x.png'}"/>
             </div>
             <div class="slds-col slds-has-flexi-truncate slds-m-left_small">
-                <p class="slds-line-height_reset rdna-header-small">Cadences</p>
-                <h1 class="slds-page-header__title slds-m-right_small slds-align-middle slds-truncate rdna-header-large"  title="New Cadence Action">{!v.cadenceName}</h1>
+                <p class="slds-line-height_reset rdna-header-small slds-p-left_xx-small">Sequences</p>
+                <h1 class="slds-page-header__title slds-m-right_small slds-align-middle slds-truncate rdna-header-large"  title="New Sequence">{!v.cadenceName}</h1>
             </div>
             <div>
                 <button class="slds-button slds-button_neutral slds-m-right_small slds-p-left_large slds-m-top_large slds-p-right_large rdna-button rdna-button-text" onclick="{!c.goToListView}" >Cancel</button>

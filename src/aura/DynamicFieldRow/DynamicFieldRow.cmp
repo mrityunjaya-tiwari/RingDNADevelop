@@ -26,19 +26,18 @@
     
     <!-- Table Row -->  
 		    <tr>
-                
-                
+
 		        <td class="rdna-field-values" style="padding-top:25px;"> 
 		            {!v.rowIndex + 1} 
 		        </td>
-		        <td class="rdna-field-label slds-size_1-of-3">
+		        <td class="rdna-field-label slds-size_1-of-3">                   
 			        <lightning:select aura:id="criterion" class="rdna-field-values" disabled="{!v.isViewMode}" name="fieldName" value="{!v.objectInstance.fieldName}" required="true" onchange="{!c.setPicklistValues}">
 			        	<option value="">Select Field</option>
 			        	<aura:iteration items="{!v.fieldList}" var="field">
 			        		<option value="{!field.fieldName}">{!field.fieldLabel}</option>
 			        	</aura:iteration> 
 			        </lightning:select>
-		           
+                    
 		        </td>
 		        <td class="rdna-field-label slds-size_1-of-3"><!-- create a map of operators -->
 		            <lightning:select aura:id="criterion" class="rdna-field-values" disabled="{!v.isViewMode}" name="operator" value="{!v.objectInstance.operation}" required="true">
@@ -67,14 +66,16 @@
 			                        <option value="true">True</option>
 			                        <option value="false">False</option>
 			                    </lightning:select>
+                                <!--Edit-->
 				            	<aura:set attribute="else">
-				            		<aura:if isTrue="{!v.fieldDataType == 'Number'}">
-				            			<lightning:input aura:id="criterion" class="rdna-field-values"  disabled="{!v.isViewMode}" type="number"  label=" "
+				            		<aura:if isTrue="{!v.fieldDataType == 'Number'}"> 
+ 			            			<lightning:input aura:id="criterion" class="rdna-field-values"  disabled="{!v.isViewMode}" type="number"  label=" "
 						                        name="numbers"
 						                        placeholder="Enter Numbers"
 						                        required="true"
+                                                min="0"
 						                        value="{!v.objectInstance.value}"
-						                        messageWhenRangeUnderflow="Enter Numbers"/>
+                                                messageWhenRangeUnderflow="Enter Valid Number"/> 
 				                        <aura:set attribute="else">
 				                        	<lightning:input aura:id="criterion" class="rdna-field-values"  disabled="{!v.isViewMode}" label=" "
 			                                    name="inputString" 
@@ -85,6 +86,7 @@
 				                        </aura:set>
 				            		</aura:if>
 				            	</aura:set>
+                                <!--Edit-->
 			            	</aura:if>
 		            </aura:set>
 		            </aura:if>

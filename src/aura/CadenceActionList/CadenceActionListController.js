@@ -3,10 +3,10 @@
         var rowActions = helper.getRowActions.bind(this, cmp);
 
         cmp.set('v.columns', [
-            {label: 'Cadence Action', fieldName: 'linkName', type: 'url', sortable:'true',
+            {label: 'Action', fieldName: 'linkName', type: 'url', sortable:'true',
              typeAttributes: {label: { fieldName: 'name' }, target: '_self', sortable: true}},
             { label: 'Type', fieldName: 'type', type: 'text', sortable: true },
-            { label: 'Number of Cadences', fieldName: 'cadences', type: 'number', sortable: true},
+            { label: 'Number of Sequences', fieldName: 'cadences', type: 'number', sortable: true},
             { label: 'Number of Participants', fieldName: 'participants', type: 'number', sortable: true},
             { label: 'Effectivity', fieldName: 'effectivity', type: 'percentage', sortable: true}, 
             { type: 'action', typeAttributes: { rowActions: rowActions }, cellAttribute : { class: 'rdna-menu-button'} } 

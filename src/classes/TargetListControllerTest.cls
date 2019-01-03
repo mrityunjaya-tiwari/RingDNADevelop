@@ -138,8 +138,8 @@ public class TargetListControllerTest {
     	lead.Title = 'Test';
     	insert lead;
              
-        Action_on_Participants__c paContact= new  Action_on_Participants__c();
-        Action_on_Participants__c paLead= new  Action_on_Participants__c();
+        Sequence_Action__c paContact= new  Sequence_Action__c();
+        Sequence_Action__c paLead= new  Sequence_Action__c();
         paContact.CadenceAction_ID__c= cadenceActioncontact.Id;
         paContact.Contact_Id__c= contact.Id;
         paLead.CadenceAction_ID__c= cadenceActionLead.Id;
@@ -164,12 +164,12 @@ public class TargetListControllerTest {
         //TargetListController.createTask(paList);
         Test.stopTest();
         System.assertEquals(4,contactTargetList.size() );
-        System.assertEquals(actionobjEmail.Template_Id__c, contactTargetList.get(0).emailTempId);
+       // System.assertEquals(actionobjEmail.Template_Id__c, contactTargetList.get(0).emailTempId);
         System.assertEquals(2, leadTargetList.size());
         System.assertEquals(actionobjEmail.Template_Id__c, leadTargetList.get(0).emailTempId);
         
-        paContact=[Select Id,CadenceAction_ID__c from Action_on_Participants__c where Id =:paContact.Id][0];
-        paLead=[Select Id,CadenceAction_ID__c from Action_on_Participants__c where Id =:paLead.Id][0];
+        paContact=[Select Id,CadenceAction_ID__c from Sequence_Action__c where Id =:paContact.Id][0];
+        paLead=[Select Id,CadenceAction_ID__c from Sequence_Action__c where Id =:paLead.Id][0];
         System.assertEquals(paContact.CadenceAction_ID__c, cadenceActioncontact.Id, 'Action on participants, CadenceActionId is not null');
         System.assertEquals(paLead.CadenceAction_ID__c, cadenceActionLead.Id, 'Action on participants, CadenceActionId is not null');    
 
@@ -201,8 +201,8 @@ public class TargetListControllerTest {
     	leadCall.Title = 'Test';
     	insert leadCall;
         
-        Action_on_Participants__c paContactCall= new  Action_on_Participants__c();
-        Action_on_Participants__c paLeadCall= new  Action_on_Participants__c();
+        Sequence_Action__c paContactCall= new  Sequence_Action__c();
+        Sequence_Action__c paLeadCall= new  Sequence_Action__c();
         paContactCall.CadenceAction_ID__c= cadenceActioncontact2.Id;
         paContactCall.Contact_Id__c= contactCall.Id;
         paLeadCall.CadenceAction_ID__c= cadenceActionLead2.Id;
@@ -310,7 +310,7 @@ public class TargetListControllerTest {
         cadenceActionobj1.Trigger_Type__c = 'Immediate';
         insert cadenceActionobj1;
         
-        Action_on_Participants__c paObj= new  Action_on_Participants__c();
+        Sequence_Action__c paObj= new  Sequence_Action__c();
         paobj.Name='samplePA';
         paObj.CadenceAction_ID__c= cadenceActionobj1.Id; 
         insert paobj;
@@ -323,7 +323,7 @@ public class TargetListControllerTest {
         Test.startTest();       
         TargetListController.deletePA(new List<Id>{paobj.Id});
         Test.stopTest();
-        List<Action_on_Participants__c> pa= [Select Id from Action_on_Participants__c where Id = : paobj.Id];
+        List<Sequence_Action__c> pa= [Select Id from Sequence_Action__c where Id = : paobj.Id];
         System.assertEquals(0, pa.size());
     }
 

@@ -34,11 +34,11 @@
                 <div >
                     <aura:if isTrue="{!not(v.criteriaType == 'Action Criteria')}" >
                         <aura:if isTrue="{!not(v.isViewMode)}" >
-                            <p class="slds-page-header__row slds-truncate rdna-sub-header-bold slds-align_absolute-center slds-m-top_medium" >Cadence {!v.criteriaType}</p>
-                            <p class="slds-align_absolute-center rdna-sub-header" style="padding-top:15px;">Set condition for your cadence {!v.criteriaType}</p>
+                            <p class="slds-page-header__row slds-truncate rdna-sub-header-bold slds-align_absolute-center slds-m-top_medium" >Sequence {!v.criteriaType}</p>
+                            <p class="slds-align_absolute-center rdna-sub-header" style="padding-top:15px;">Set condition for your sequence {!v.criteriaType}</p>
                             <aura:set attribute="else">
-                                <p class="slds-page-header__row slds-truncate rdna-field-values-bold  slds-m-top_medium rdna-link-height" >Cadence {!v.criteriaType}</p>
-                                <p class=" rdna-field-values rdna-link-height">Set condition for your cadence {!v.criteriaType}</p>
+                                <p class="slds-page-header__row slds-truncate rdna-field-values-bold  slds-m-top_medium rdna-link-height" >Sequence {!v.criteriaType}</p>
+                                <p class=" rdna-field-values rdna-link-height">Set condition for your sequence {!v.criteriaType}</p>
                             </aura:set>
                         </aura:if>	
                     </aura:if>

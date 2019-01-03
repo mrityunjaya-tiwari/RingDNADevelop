@@ -7,7 +7,7 @@ public class CadenceProgressIndicatorControllerTest {
     public static Action__c action1;
     public static Cadence__c cadence1;
     public static CadenceAction__c cadenceAction1;
-    public static Action_on_Participants__c actionOnParticipants;   
+    public static Sequence_Action__c actionOnParticipants;   
     Public static Final String ACTION_TYPE_Email = 'Email';
     @isTest
     public static void saveCadenceTest(){
@@ -111,7 +111,7 @@ public class CadenceProgressIndicatorControllerTest {
         cadenceAction1.Name='democadenceaction';
         cadenceAction1.Trigger_Type__c= 'Immediate';       
         insert cadenceAction1;
-        actionOnParticipants= new Action_on_Participants__c();
+        actionOnParticipants= new Sequence_Action__c();
         actionOnParticipants.CadenceAction_ID__c= cadenceAction1.Id;
         insert actionOnParticipants;
         Test.startTest();

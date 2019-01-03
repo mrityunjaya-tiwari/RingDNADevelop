@@ -46,8 +46,9 @@
                         record.companyLink = record.company;
                     }
                 });
+                component.set('v.rawDataForFilter', records.tlWList);
                 component.set('v.rawData', records.tlWList);
-                if (records.tlWList.length > 10 || records.tlWList.length == 0){
+                if (records.tlWList.length > 8 || records.tlWList.length == 0){
                     component.set('v.listViewCondition', false);
                 } else{
                     component.set('v.listViewCondition', true);
@@ -261,10 +262,12 @@
         helper.filterObjectType(component, event, helper);
         helper.filterCadenceType(component, event, helper);
         helper.filterActionType(component, event, helper);
+        var records = component.get("v.rawData");
+        component.set('v.totalNumberOfRows', records.length);
     },
     getInputResult:function(component, event, helper){
-        var tData = component.get('v.data');
-        var data = component.get("v.rawData");
+        var tData = component.get('v.rawDataForFilter');
+        var data = component.get("v.rawDataForFilter");
         var term = component.get("v.sStr");
         var results = data, regex;
         try {
@@ -272,7 +275,7 @@
             results = data.filter(row=>helper.serchResult(row, regex));
         } catch(e) {
         }
-        component.set("v.data", results);
+        component.set("v.rawData", results);
         
     },
     serchResult:function(row, regex){
@@ -292,7 +295,7 @@
                ) ;
     },
     filterObjectType:function(component, event, helper){
-        var data = component.get("v.data");
+        var data = component.get("v.rawData");
         var term = component.get("v.otFilter");
         var results = data, regex;
         try {
@@ -300,31 +303,31 @@
             results = data.filter(row=>! row.type.search(regex) );
         } catch(e) {
         }
-        component.set("v.data", results);
+        component.set("v.rawData", results);
         
     },
     filterCadenceType:function(component, event, helper){
-        var data = component.get("v.data");
+        var data = component.get("v.rawData");
         var term = component.get("v.ctFilter");
         var results = data, regex;
         try {
             regex = new RegExp(term, "ig");
-            results = data.filter(row=>! row.cadenceName.search(regex) );
+            results = data.filter(row=> (row.cadenceName == term || term =='') );
         } catch(e) {
         }
-        component.set("v.data", results);
+        component.set("v.rawData", results);
         
     },
     filterActionType:function(component, event, helper){
-        var data = component.get("v.data");
+        var data = component.get("v.rawData");
         var term = component.get("v.atFilter");
         var results = data, regex;
         try {
             regex = new RegExp(term, "ig");
-            results = data.filter(row=>! row.actionType.search(regex) );
+            results = data.filter(row=> (row.actionType == term || term ==''));
         } catch(e) {
         }
-        component.set("v.data", results);
+        component.set("v.rawData", results);
     },
     setFilterData:function(component, event, helper){
         var rawData = component.get('v.rawData');

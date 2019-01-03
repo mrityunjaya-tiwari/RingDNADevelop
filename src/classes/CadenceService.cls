@@ -141,13 +141,13 @@ global class CadenceService {
     }
     
     //This method is to create participant actions  
-    public static List<Action_on_Participants__c> createActionParticipants(Map<Id, List<CadenceAction__c>> objIdToActionMap, String objName) {
+    public static List<Sequence_Action__c> createActionParticipants(Map<Id, List<CadenceAction__c>> objIdToActionMap, String objName) {
 	
-		List<Action_on_Participants__c> partActionsToCreate = new List<Action_on_Participants__c>(); 
+		List<Sequence_Action__c> partActionsToCreate = new List<Sequence_Action__c>(); 
 		for(Id objId : objIdToActionMap.keySet()) {
 			List<CadenceAction__c> cadActions = objIdToActionMap.get(objId);
 			for(CadenceAction__c cadAct : cadActions) {
-	            Action_on_Participants__c partAct = new Action_on_Participants__c();
+	            Sequence_Action__c partAct = new Sequence_Action__c();
 	            partAct.Name = cadAct.Name;
 	            partAct.CadenceAction_ID__c = cadAct.Id;
 	            if(objName.equals(CadenceConstants.LEAD_OBJECT_NAME)) {
@@ -194,16 +194,31 @@ global class CadenceService {
         MapOfSobjList.put('leadListWithCadenceIds',leadListWithCadenceIds);
         return MapOfSobjList;
     }
+    
     /* Method to create email message
      * @Param : sObjectId - List of sobject having email Ids,EmailTemplateId - Email Template Id
 	 */
-    public Static Messaging.MassEmailMessage createEmailMessage(Id sObjectId,Id EmailTemplateId){
-        List<boolean> lstResult = New List<boolean>();
+    public static Messaging.MassEmailMessage createEmailMessage(Id sObjectId,Id EmailTemplateId){
         Messaging.MassEmailMessage mail = new Messaging.MassEmailMessage();
-        mail.setTargetObjectIds(New Id[] { sObjectId });
+        mail.setSaveAsActivity(false);
+        mail.setTargetObjectIds(new List<Id>{sObjectId});
         mail.setTemplateId(EmailTemplateId);
-        return mail;
+        return mail; 
     }
+    
+    public static Task getEmailTask(Id sequenceActionId, String actionName, Id sObjectId, Id templateId) {
+        System.debug('In task of getemail task');
+        System.debug('sequenceActionId = '+ sequenceActionId);
+        Task t = new Task();
+        t.Subject = 'Email: '+ actionName;
+        t.Description = templateId;
+		t.WhoId = sObjectId;
+        t.TaskSubtype = 'Email';
+        t.Sequence_Action__c = sequenceActionId; 
+        System.debug('task showwing = '+ t);
+        return t;
+    }
+    
     /* 
      * Method to perform Task Actions
      * @Param : Id - Id of sobject (Lead/Contact),taskDescription - Json OfTaskObj
@@ -229,36 +244,36 @@ global class CadenceService {
         return objList; 
     }
     
-    public static Map<Id, List<Action_on_Participants__c>> getRemainingParticipantActions(Set<Id> objIds, String objName) {
-		Map<Id, List<Action_on_Participants__c>> objToParticipantActionsMap = new Map<Id, List<Action_on_Participants__c>>(); 
-		List<Action_on_Participants__c> participantActions;
+    public static Map<Id, List<Sequence_Action__c>> getRemainingParticipantActions(Set<Id> objIds, String objName) {
+		Map<Id, List<Sequence_Action__c>> objToParticipantActionsMap = new Map<Id, List<Sequence_Action__c>>(); 
+		List<Sequence_Action__c> participantActions;
 		if(objName.equals(CadenceConstants.LEAD_OBJECT_NAME)) {
-			participantActions = [Select Id, CadenceAction_ID__c, Show_on_Target_List__c, Lead_Id__c, Contact_Id__c, isActionPerformed__c, CadenceAction_Id__r.Day__c,
+			participantActions = [Select Id, Name, CadenceAction_ID__c, Show_on_Target_List__c, Lead_Id__c, Contact_Id__c, isActionPerformed__c, CadenceAction_Id__r.Day__c,
 									 CadenceAction_Id__r.Hour__c, CadenceAction_Id__r.Action_Id__r.Type__c, CadenceAction_Id__r.Fields_To_Update_Action__c,
 									 CadenceAction_Id__r.Action_Id__r.Activation_Type__c, CadenceAction_Id__r.Trigger_Type__c,
-									 CadenceAction_Id__r.Action_Id__r.Task_Description__c, CadenceAction_Id__r.Action_Id__r.Template_Id__c From Action_on_Participants__c 
+									 CadenceAction_Id__r.Action_Id__r.Task_Description__c, CadenceAction_Id__r.Action_Id__r.Template_Id__c From Sequence_Action__c 
 									 where Lead_Id__c IN :objIds AND isActionPerformed__c = false 
 									 order by CadenceAction_Id__r.Day__c, CadenceAction_Id__r.Hour__c];
-		} else { 
-			participantActions = [Select Id, CadenceAction_ID__c, Show_on_Target_List__c, Lead_Id__c, Contact_Id__c, isActionPerformed__c, CadenceAction_Id__r.Day__c,
+		} else {  
+			participantActions = [Select Id, Name, CadenceAction_ID__c, Show_on_Target_List__c, Lead_Id__c, Contact_Id__c, isActionPerformed__c, CadenceAction_Id__r.Day__c,
 						 		     CadenceAction_Id__r.Hour__c, CadenceAction_Id__r.Action_Id__r.Type__c, CadenceAction_Id__r.Fields_To_Update_Action__c,
 						  			 CadenceAction_Id__r.Action_Id__r.Activation_Type__c, CadenceAction_Id__r.Trigger_Type__c,
-						  			 CadenceAction_Id__r.Action_Id__r.Task_Description__c, CadenceAction_Id__r.Action_Id__r.Template_Id__c From Action_on_Participants__c 
+						  			 CadenceAction_Id__r.Action_Id__r.Task_Description__c, CadenceAction_Id__r.Action_Id__r.Template_Id__c From Sequence_Action__c 
 						  			 where Contact_Id__c IN :objIds AND isActionPerformed__c = false 
 						  			 order by CadenceAction_Id__r.Day__c, CadenceAction_Id__r.Hour__c];
 		}
-		for(Action_on_Participants__c partAct : participantActions) {
+		for(Sequence_Action__c partAct : participantActions) {
 			if(objName.equals(CadenceConstants.LEAD_OBJECT_NAME)) {
 				if(objToParticipantActionsMap.containsKey(partAct.Lead_Id__c)) {
 					objToParticipantActionsMap.get(partAct.Lead_Id__c).add(partAct);
 				} else {
-					objToParticipantActionsMap.put(partAct.Lead_Id__c, new List<Action_on_Participants__c>{partAct});
+					objToParticipantActionsMap.put(partAct.Lead_Id__c, new List<Sequence_Action__c>{partAct});
 				}
 			} else {
 				if(objToParticipantActionsMap.containsKey(partAct.Contact_Id__c)) {
 					objToParticipantActionsMap.get(partAct.Contact_Id__c).add(partAct);
 				} else {
-					objToParticipantActionsMap.put(partAct.Contact_Id__c, new List<Action_on_Participants__c>{partAct});
+					objToParticipantActionsMap.put(partAct.Contact_Id__c, new List<Sequence_Action__c>{partAct});
 				}
 			}	
 		}
@@ -280,18 +295,18 @@ global class CadenceService {
 		//Deleting the part action object on changing the cadence  
 		Set<Id> objIds = objIdToCadIdMap.keySet();
 		if(objName.equals(CadenceConstants.LEAD_OBJECT_NAME)) {
-			List<Action_on_Participants__c> partsOfLead = [SELECT Id, Lead_Id__c, Contact_Id__c, CadenceAction_Id__c, CadenceAction_Id__r.Cadence_Id__c FROM Action_on_Participants__c WHERE Lead_Id__c IN :objIds AND isActionPerformed__c=false];
-			List<Action_on_Participants__c> partsToDelete = new List<Action_on_Participants__c>();
-			for(Action_on_Participants__c partAct : partsOflead) {
+			List<Sequence_Action__c> partsOfLead = [SELECT Id, Lead_Id__c, Contact_Id__c, CadenceAction_Id__c, CadenceAction_Id__r.Cadence_Id__c FROM Sequence_Action__c WHERE Lead_Id__c IN :objIds AND isActionPerformed__c=false];
+			List<Sequence_Action__c> partsToDelete = new List<Sequence_Action__c>();
+			for(Sequence_Action__c partAct : partsOflead) {
 				if(objIdToCadIdMap.get(partAct.Lead_Id__c) == partAct.CadenceAction_Id__r.Cadence_Id__c) {
 					partsToDelete.add(partAct);
 				}
 			} 
 			delete partsToDelete;
 		} else {
-			List<Action_on_Participants__c> partsOfContact = [SELECT Id, Lead_Id__c, Contact_Id__c, CadenceAction_Id__c, CadenceAction_Id__r.Cadence_Id__c FROM Action_on_Participants__c WHERE Contact_Id__c IN :objIds AND isActionPerformed__c=false];
-			List<Action_on_Participants__c> partsToDelete = new List<Action_on_Participants__c>();
-			for(Action_on_Participants__c partAct : partsOfContact) {
+			List<Sequence_Action__c> partsOfContact = [SELECT Id, Lead_Id__c, Contact_Id__c, CadenceAction_Id__c, CadenceAction_Id__r.Cadence_Id__c FROM Sequence_Action__c WHERE Contact_Id__c IN :objIds AND isActionPerformed__c=false];
+			List<Sequence_Action__c> partsToDelete = new List<Sequence_Action__c>();
+			for(Sequence_Action__c partAct : partsOfContact) {
 				if(objIdToCadIdMap.get(partAct.Contact_Id__c) == partAct.CadenceAction_Id__r.Cadence_Id__c) {
 					partsToDelete.add(partAct);
 				}
@@ -348,28 +363,28 @@ global class CadenceService {
     }    
      
     
-    public static Map<Id, List<Action_on_Participants__c>> performParticipantActions(List<SObject> objList, Map<Id, List<Action_on_Participants__c>> partActionsMap) {
+    public static Map<Id, List<Sequence_Action__c>> performParticipantActions(List<SObject> objList, Map<Id, List<Sequence_Action__c>> partActionsMap) {
 
-		Map<Id, List<Action_on_Participants__c>> performedPartActions = new Map<Id, List<Action_on_Participants__c>>();
+		Map<Id, List<Sequence_Action__c>> performedPartActions = new Map<Id, List<Sequence_Action__c>>();
 		Map<Id, SObject> objMap = new Map<Id, SObject>(objList); 
-		List<Action_on_Participants__c> partActToUpdate = new List<Action_on_Participants__c>();
+		List<Sequence_Action__c> partActToUpdate = new List<Sequence_Action__c>();
 		List<Task> tasksToCreate = new List<Task>();
 		List<Messaging.MassEmailMessage> emailsToSend = new List<Messaging.MassEmailMessage>();
 
 		//Return if no unperformed participant actions 
 		if(partActionsMap == null || partActionsMap.isEmpty()) {
 			return performedPartActions;
-		}
+		} 
 		
 		//Processing the data to perform 
 		for(Id objId : partActionsMap.keySet()) {
-			for(Action_on_Participants__c partAct : partActionsMap.get(objId)) {
+			for(Sequence_Action__c partAct : partActionsMap.get(objId)) {
 				Boolean performed = false;
 				if(partAct.CadenceAction_Id__r.Action_Id__r.Activation_Type__c.equals(CadenceConstants.PARTICIPANT_ACTIVATION_AUTOMATIC)) {
 	   				//Processing task type of participant action
 	   				if(partAct.CadenceAction_Id__r.Action_Id__r.Type__c.equals(CadenceConstants.ACTION_TYPE_TASK)) {
 	   					Task tsk = performTaskAction(objId, partAct.CadenceAction_Id__r.Action_Id__r.Task_Description__c);
-                        tsk.Cadence_Action__c = partAct.Id;
+                        tsk.Sequence_Action__c = partAct.Id;
 	   					tasksToCreate.add(tsk);
 	   					performed = true;
 	   				}
@@ -377,10 +392,11 @@ global class CadenceService {
 	   				if(partAct.CadenceAction_Id__r.Action_Id__r.Type__c.equals(CadenceConstants.ACTION_TYPE_EMAIL)) {
 	   					if(objMap.containsKey(objId) && objMap.get(objId).get('Email')!=null) {
 	   						emailsToSend.add(createEmailMessage(objId, partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c));
+                            tasksToCreate.add(getEmailTask(partAct.Id, partAct.Name, objId, partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c));
    		   					performed = true;
-	   					}
+	   					} 
 	   				}
-				} else {
+				} else { 
 					//Setting show on target list to true if it's a manual task
 					if(partAct.CadenceAction_Id__r.Action_Id__r.Activation_Type__c.equals(CadenceConstants.PARTICIPANT_ACTIVATION_MANUAL)) {
    						partAct.Show_on_Target_List__c = true;
@@ -393,7 +409,7 @@ global class CadenceService {
 					if(performedPartActions.containsKey(objId)) {
 	   					performedPartActions.get(objId).add(partAct);
 	   				} else {
-	   					performedPartActions.put(objId, new List<Action_on_Participants__c>{partAct});
+	   					performedPartActions.put(objId, new List<Sequence_Action__c>{partAct});
 	   				}
 				}
 			}
@@ -418,7 +434,7 @@ global class CadenceService {
     }
     
     
-    public static List<SObject> updateSObjectFields(List<SObject> objList, Map<Id, List<Action_on_Participants__c>> partActionsMap, String objName, Boolean isAfter) {
+    public static List<SObject> updateSObjectFields(List<SObject> objList, Map<Id, List<Sequence_Action__c>> partActionsMap, String objName, Boolean isAfter) {
 
         //Returning if list is empty		
 		if(partActionsMap == null || partActionsMap.isEmpty()) {
@@ -440,7 +456,7 @@ global class CadenceService {
 		
 		Map<Id, SObject> sObjsToUpdate = new Map<Id, SObject>();
 		Map<Id, SObject> objMap = new Map<Id, SObject>(objList);
-		List<Action_on_Participants__c> partActList = new List<Action_on_Participants__c>();
+		List<Sequence_Action__c> partActList = new List<Sequence_Action__c>();
 
 		//Getting fields map 
 		Map<String, List<String>> objfieldDataTypeMap = CadenceUtil.getObjectFieldsType(objName);
@@ -452,7 +468,7 @@ global class CadenceService {
 		} 		
 		
 		//Updating the obj fields 
-		for(Action_on_Participants__c partAct : partActList) {
+		for(Sequence_Action__c partAct : partActList) {
 			String fieldsToUpdate = partAct.CadenceAction_Id__r.Fields_To_Update_Action__c;
 			if(fieldsToUpdate != null && !fieldsToUpdate.equals('')) {
 				Map<String, Object> fieldMap = (Map<String, Object>)(JSON.deserializeUntyped(fieldsToUpdate));
@@ -479,20 +495,20 @@ global class CadenceService {
     public static void processParticipantsWithCadences(List<SObject> objList, String objName, Boolean isTrigger) {
     	
     	Map<Id, Cadence__c> cadMap = CadenceSelector.getActiveCadencesByRecordType(objName);
-		Map<Id, List<Action_on_Participants__c>> partActToPerform = new Map<Id, List<Action_on_Participants__c>>();
+		Map<Id, List<Sequence_Action__c>> partActToPerform = new Map<Id, List<Sequence_Action__c>>();
 
 		//Getting objList to process
 		Map<Id, SObject> objMap = new Map<Id, SObject>(CadenceService.getSObjectsToProcess(objList, cadMap, objName));
 		System.debug('Got the objMap'+ objMap);
         
 		//Getting non performed participant actions 
-		Map<Id, List<Action_on_Participants__c>> partActionsMap = CadenceService.getRemainingParticipantActions(objMap.keySet(), objName);
+		Map<Id, List<Sequence_Action__c>> partActionsMap = CadenceService.getRemainingParticipantActions(objMap.keySet(), objName);
 		System.debug('###$$ Getting following unperformed part actions = '+ partActionsMap);
         
 		//Getting participant action to perform 
 		for(SObject sObj : objMap.values()) {
 			if((Boolean)sObj.get(nameSpace+'isActivated__c')) {
-				List<Action_on_Participants__c> partActList = RuleCriterionMatcher.getMatchingParticipantActions(cadMap.get((Id)sObj.get(nameSpace+'Cadence_Id__c')), sObj, partActionsMap.get((Id)sObj.get('Id')), objName);
+				List<Sequence_Action__c> partActList = RuleCriterionMatcher.getMatchingParticipantActions(cadMap.get((Id)sObj.get(nameSpace+'Cadence_Id__c')), sObj, partActionsMap.get((Id)sObj.get('Id')), objName);
 				if(!partActList.isEmpty()) {
 					partActToPerform.put((Id)sObj.get('Id'), partActList);		
 				}
@@ -500,8 +516,8 @@ global class CadenceService {
 		} 
 		System.debug('###$$ Participant actionto perform = '+ partActToPerform);
         	
-		//perform participant actions 
-		Map<Id, List<Action_on_Participants__c>> performedPartAct = CadenceService.performParticipantActions(objMap.values(), partActToPerform);
+		//perform participant actions  
+		Map<Id, List<Sequence_Action__c>> performedPartAct = CadenceService.performParticipantActions(objMap.values(), partActToPerform);
 		
 		//perform participant field update
 		CadenceService.updateSObjectFields(objMap.values(), performedPartAct, objName, false);

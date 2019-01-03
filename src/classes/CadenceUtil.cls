@@ -191,4 +191,7 @@ stack.push(s);
             System.abortjob(CT.Id);        
         }
     }
+    public  static Integer getAllRunningBatch(){
+        return [SELECT COUNT() FROM AsyncApexJob WHERE JobType='BatchApex' AND ApexClass.Name = 'PerformCadenceActionBatch'  AND Status IN ('Processing','Preparing','Queued')] ;
+    }
 }

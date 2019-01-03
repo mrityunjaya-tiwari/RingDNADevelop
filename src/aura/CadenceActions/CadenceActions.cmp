@@ -34,8 +34,8 @@
     <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>
     <div class = "slds-m-left_large">
         <div class = "slds-form-element slds-size_1-of-1  slds-m-bottom_large slds-m-top_medium " aura:id = "createTaskdiv">
-            <p class="slds-page-header__row slds-truncate rdna-sub-header-bold slds-align_absolute-center" >Cadence Actions</p>
-            <p class= "slds-align_absolute-center rdna-sub-header" style="padding-top:15px;">Add a series of cadence actions based on the existing library</p>
+            <p class="slds-page-header__row slds-truncate rdna-sub-header-bold slds-align_absolute-center" >Sequence Actions</p>
+            <p class= "slds-align_absolute-center rdna-sub-header" style="padding-top:15px;">Add a series of sequence actions based on the existing library</p>
             <!-- table header -->   
             <div class="slds-scrollable_x">
                 <table class="slds-table slds-p-right_large slds-m-top--large slds-no-row-hover" background-color="default">
@@ -98,7 +98,7 @@
                             <lightning:menuItem value="{!actionType}" label="{!actionType}" />
                         </aura:iteration>
                     </lightning:buttonMenu>
-                <span class="slds-m-left_medium rdna-field-values rdna-bgcolour-blue">Add Cadence Actions</span>
+                <span class="slds-m-left_medium rdna-field-values rdna-bgcolour-blue">Add Sequence Actions</span>
             </div>
         </aura:if>
     </div>

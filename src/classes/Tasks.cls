@@ -17,8 +17,8 @@ public with sharing class Tasks extends SObjectDomain {
     public override void onBeforeInsert() {
     	
         System.debug('On before insert');
-        Map<Id, List<Action_on_Participants__c>> objToPartActMap = new Map<Id, List<Action_on_Participants__c>>();
-    	List<Action_on_Participants__c> actionToUpdate = new List<Action_on_Participants__c>();
+        Map<Id, List<Sequence_Action__c>> objToPartActMap = new Map<Id, List<Sequence_Action__c>>();
+    	List<Sequence_Action__c> actionToUpdate = new List<Sequence_Action__c>();
     	Map<Id, List<CadenceAction__c>> objToCadActListMap = new Map<Id, List<CadenceAction__c>>();
     	
 		objToPartActMap = getAllParticipantActionsForTaskOwner((List<Task>)records);
@@ -30,7 +30,7 @@ public with sharing class Tasks extends SObjectDomain {
 		for(Task t : (List<Task>)records) {
 			
             System.debug('Task processed = '+ t);
-            if(t.WhoId == null || t.Subject == null) {
+            if(t.WhoId == null || t.Subject == null || t.Sequence_Action__c != null) {
      			continue;
      		}
 
@@ -38,7 +38,7 @@ public with sharing class Tasks extends SObjectDomain {
 			String taskSubject = t.Subject;
 			if(objToPartActMap.containsKey(t.WhoId)) {
 				CadenceAction__c cadAct = new CadenceAction__c();
-				for(Action_on_Participants__c action : objToPartActMap.get(t.WhoId)) {
+				for(Sequence_Action__c action : objToPartActMap.get(t.WhoId)) {
                     if(action == null || action.isActionPerformed__c == true || action.Show_on_Target_List__c == false) {
 						continue;
 					}
@@ -47,7 +47,7 @@ public with sharing class Tasks extends SObjectDomain {
 					if(taskType!=null && (actionType.equals(CadenceConstants.ACTION_TYPE_CALL) || actionType.equals(CadenceConstants.ACTION_TYPE_CALL_VOICEMAIL)) 
                        && taskType.equals(CadenceConstants.ACTION_TYPE_CALL)) {
 						action.isActionPerformed__c = true;
-                        t.Cadence_Action__c = action.Id;   
+                        t.Sequence_Action__c = action.Id;   
 						actionToUpdate.add(action);
 						break;
 					}
@@ -56,14 +56,14 @@ public with sharing class Tasks extends SObjectDomain {
                         if(taskType == null) {
                             if(taskSubject.containsIgnoreCase('Email')) {
                             	action.isActionPerformed__c = true;	
-                		        t.Cadence_Action__c = action.Id;   
+                		        t.Sequence_Action__c = action.Id;   
 								actionToUpdate.add(action);
 								break;    
                             }
                         } else {
                             if(taskType.equals(CadenceConstants.ACTION_TYPE_EMAIL)) {
                                 action.isActionPerformed__c = true;	
-		                        t.Cadence_Action__c = action.Id;   
+		                        t.Sequence_Action__c = action.Id;   
 								actionToUpdate.add(action);
 								break; 
                             }
@@ -72,7 +72,7 @@ public with sharing class Tasks extends SObjectDomain {
                     
 					if(actionType.equals(CadenceConstants.ACTION_TYPE_SMS) && taskSubject.containsIgnoreCase('Outbound Message')) {
 						action.isActionPerformed__c = true;	
-                        t.Cadence_Action__c = action.Id;   
+                        t.Sequence_Action__c = action.Id;   
 						actionToUpdate.add(action);
 						break;
 					}
@@ -91,8 +91,8 @@ public with sharing class Tasks extends SObjectDomain {
 		
         System.debug('On before update');
 
-	   	Map<Id, List<Action_on_Participants__c>> objToPartActMap = new Map<Id, List<Action_on_Participants__c>>();
-    	List<Action_on_Participants__c> actionToUpdate = new List<Action_on_Participants__c>();
+	   	Map<Id, List<Sequence_Action__c>> objToPartActMap = new Map<Id, List<Sequence_Action__c>>();
+    	List<Sequence_Action__c> actionToUpdate = new List<Sequence_Action__c>();
     	Map<Id, List<CadenceAction__c>> objToCadActListMap = new Map<Id, List<CadenceAction__c>>();
     	List<Task> tasksToProcess = new List<Task>();
   	
@@ -112,7 +112,7 @@ public with sharing class Tasks extends SObjectDomain {
 		for(Task t : tasksToProcess) {
 			System.debug('task is defined = '+ t);
 
-            if(t.WhoId == null || t.Subject == null) {
+            if(t.WhoId == null || t.Subject == null || t.Sequence_Action__c != null) {
      			continue;
      		}
 			String taskType = t.TaskSubtype;
@@ -120,7 +120,7 @@ public with sharing class Tasks extends SObjectDomain {
 			
 			if(objToPartActMap.containsKey(t.WhoId)) {
 				CadenceAction__c cadAct = new CadenceAction__c();
-				for(Action_on_Participants__c action : objToPartActMap.get(t.WhoId)) {
+				for(Sequence_Action__c action : objToPartActMap.get(t.WhoId)) {
 					
                     if(action == null || action.isActionPerformed__c == true || action.Show_on_Target_List__c == false) {
 						continue;
@@ -130,7 +130,7 @@ public with sharing class Tasks extends SObjectDomain {
 					if(taskType!=null && (actionType.equals(CadenceConstants.ACTION_TYPE_CALL) || actionType.equals(CadenceConstants.ACTION_TYPE_CALL_VOICEMAIL)) 
                        && taskType.equals(CadenceConstants.ACTION_TYPE_CALL)) {
 						action.isActionPerformed__c = true;
-                        t.Cadence_Action__c = action.Id;   
+                        t.Sequence_Action__c = action.Id;   
 						actionToUpdate.add(action);
 						break;
 					}
@@ -139,14 +139,14 @@ public with sharing class Tasks extends SObjectDomain {
                         if(taskType == null) {
                             if(taskSubject.containsIgnoreCase('Email')) {
                             	action.isActionPerformed__c = true;	
-                		        t.Cadence_Action__c = action.Id;   
+                		        t.Sequence_Action__c = action.Id;   
 								actionToUpdate.add(action);
 								break;    
                             }
                         } else {
                             if(taskType.equals(CadenceConstants.ACTION_TYPE_EMAIL)) {
                                 action.isActionPerformed__c = true;	
-		                        t.Cadence_Action__c = action.Id;   
+		                        t.Sequence_Action__c = action.Id;   
 								actionToUpdate.add(action);
 								break; 
                             }
@@ -155,7 +155,7 @@ public with sharing class Tasks extends SObjectDomain {
                     
 					if(actionType.equals(CadenceConstants.ACTION_TYPE_SMS) && taskSubject.containsIgnoreCase('Outbound Message')) {
 						action.isActionPerformed__c = true;	
-                        t.Cadence_Action__c = action.Id;   
+                        t.Sequence_Action__c = action.Id;   
 						actionToUpdate.add(action);
 						break;
 					}
@@ -170,12 +170,7 @@ public with sharing class Tasks extends SObjectDomain {
 										
 	}
 		
-			
-	
-	
-
-    
-    public static void updateObjectFields(List<Action_on_Participants__c> actPartList) {
+    public static void updateObjectFields(List<Sequence_Action__c> actPartList) {
 
 		//Returning if list is empty		
 		if(actPartList == null || actPartList.isEmpty()) {
@@ -187,7 +182,7 @@ public with sharing class Tasks extends SObjectDomain {
 		Map<String, List<String>> leadfieldDataTypeMap = CadenceUtil.getObjectFieldsType(CadenceConstants.LEAD_OBJECT_NAME);
 		Map<String, List<String>> contactfieldDataTypeMap = CadenceUtil.getObjectFieldsType(CadenceConstants.CONTACT_OBJECT_NAME);
 	
-		for(Action_on_Participants__c partAct : actPartList) {
+		for(Sequence_Action__c partAct : actPartList) {
 			SObject sObj;
 			if(partAct.Lead_Id__c == null) { 
 				sObj = new Contact();
@@ -222,11 +217,11 @@ public with sharing class Tasks extends SObjectDomain {
     }
     
     
-    public static Map<Id, List<Action_on_Participants__c>> getAllParticipantActionsForTaskOwner(List<Task> tasks) {
+    public static Map<Id, List<Sequence_Action__c>> getAllParticipantActionsForTaskOwner(List<Task> tasks) {
 
 		Map<Id, List<Task>> contToTasksMap = new Map<Id, List<Task>>();
     	Map<Id, List<Task>> leadToTasksMap = new Map<Id, List<Task>>();
-    	Map<Id, List<Action_on_Participants__c>> objToPartActMap = new Map<Id, List<Action_on_Participants__c>>();
+    	Map<Id, List<Sequence_Action__c>> objToPartActMap = new Map<Id, List<Sequence_Action__c>>();
 		
     	//Separating tasks for lead and contact
      	for(Task t : tasks) {

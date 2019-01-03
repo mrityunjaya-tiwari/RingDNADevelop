@@ -6,7 +6,7 @@ public class CadenceSTest {
     public static Action__c actionobj;
     public static Action__c action1;
     public static String cadJsonobj;
-    public static Action_on_Participants__c actionOnParticipants; 
+    public static Sequence_Action__c actionOnParticipants; 
     public static CadenceAction__c cadenceActionobj;
     public static CadenceAction__c cadenceAction1;
     public static final String CUSTOM_LOGIC = '1 OR (2 AND 3)';
@@ -245,6 +245,8 @@ public class CadenceSTest {
         CadenceService.deleteSobjectsByIds('contact', new List<Id>{c3.Id});
         Test.stopTest();
     }
+    
+    
  
  
 }

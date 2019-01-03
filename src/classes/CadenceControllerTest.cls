@@ -24,7 +24,17 @@ private class CadenceControllerTest {
     }
    @isTest
     public static void activateCadenceTest(){
+        /*Cadence__c cadLeadAND = TestDataFactory.createCadence(CadenceConstants.LEAD_OBJECT_NAME);
+        String entryJson = TestDataFactory.createCadJsonWithNameCriterions('Test', 'Test', CadenceConstants.CONDITION_AND, '');
+        String exitJson = TestDataFactory.createCadJsonWithNameCriterions('Test1', 'Test1', CadenceConstants.CONDITION_AND, '');
+    	cadLeadAND.Entrance_Criteria__c = entryJson;
+        cadLeadAND.Exit_Criteria__c = exitJson;
+        insert cadLeadAND;*/
       Cadence__c cadenceobj = TestDataFactory.createCadence('Lead');
+        String entryJson = TestDataFactory.createCadJsonWithNameCriterions('Test', 'Test', CadenceConstants.CONDITION_AND, '');
+        String exitJson = TestDataFactory.createCadJsonWithNameCriterions('Test1', 'Test1', CadenceConstants.CONDITION_AND, '');
+    	cadenceobj.Entrance_Criteria__c = entryJson;
+        cadenceobj.Exit_Criteria__c = exitJson;
     	insert cadenceobj;  
         cadenceobj.Status__c=true;
         upsert cadenceobj;
@@ -36,7 +46,7 @@ private class CadenceControllerTest {
         System.assertEquals(True, cadenceobj.Status__c, 'Cadence Activated');
     } 
     @isTest
-    public static void deactivateCadenceTest(){
+    public static void deactivateCadenceTest(){        
         Cadence__c cadenceobj2 = TestDataFactory.createCadence('Lead');
     	insert cadenceobj2;  
         cadenceobj2.Status__c=false;

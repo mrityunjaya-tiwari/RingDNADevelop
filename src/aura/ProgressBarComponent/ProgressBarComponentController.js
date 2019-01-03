@@ -6,10 +6,10 @@
         var currentStepClass = 'slds-size_1-of-4';
         component.set('v.currentStepClass', currentStepClass);
         var listOfLabels = component.get('v.listOfLabels');
-        listOfLabels.push('Cadence Details');
-        listOfLabels.push('Cadence Entrance Criteria');
-        listOfLabels.push('Cadence Exit Criteria');
-        listOfLabels.push('Cadence Actions');
+        listOfLabels.push('Sequence Details');
+        listOfLabels.push('Sequence Entrance Criteria');
+        listOfLabels.push('Sequence Exit Criteria');
+        listOfLabels.push('Sequence Actions');
         component.set('v.listOfLabels', listOfLabels);
         
     },

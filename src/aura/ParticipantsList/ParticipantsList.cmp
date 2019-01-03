@@ -26,7 +26,7 @@
         <!-- GRID COL -->
         <div class="slds-col slds-has-flexi-truncate">
             <p class="slds-page-header__row slds-truncate rdna-field-values-bold  slds-m-top_medium rdna-link-height" >Participants</p>
-            <p class=" rdna-field-values rdna-link-height">Enter the basic cadence detail of your new cadence list</p>
+            <p class=" rdna-field-values rdna-link-height">Enter the basic sequence detail of your new sequence list</p>
         </div>
     </div>
     

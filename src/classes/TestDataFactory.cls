@@ -20,6 +20,7 @@ public class TestDataFactory {
         l.LastName = 'Test Lead';
         l.Company = 'Test Company';
         l.Cadence_Id__c = cadenceId;
+        l.Priority__C = 12;
         return l;
     }
     
@@ -27,6 +28,7 @@ public class TestDataFactory {
         Lead l = new Lead();
         l.LastName = 'Test Lead';
         l.Company = 'Test Company';
+        l.Priority__C = 12;
         return l;
     }
     

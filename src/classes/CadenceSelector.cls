@@ -16,8 +16,8 @@ public with sharing class CadenceSelector {
     
     
     
-    public static List<Action_on_Participants__c> getParticipantActions() {
-        return [Select Id, Name, CadenceAction_ID__c, Contact_Id__c, Lead_Id__c, isActionPerformed__c From Action_on_Participants__c];
+    public static List<Sequence_Action__c> getParticipantActions() {
+        return [Select Id, Name, CadenceAction_ID__c, Contact_Id__c, Lead_Id__c, isActionPerformed__c From Sequence_Action__c];
     }
     
     public static Cadence__c getCadenceById(Id cadId) { 
@@ -45,9 +45,9 @@ public with sharing class CadenceSelector {
      * @param caIds - CadenceActionsIds list.
      * @return - List<SObject> - list of SObject
      */
-    public static List<Action_on_Participants__c> getParticipantActionsByCadenceActionsIds(List<Id> caIdList){
+    public static List<Sequence_Action__c> getParticipantActionsByCadenceActionsIds(List<Id> caIdList){
         List<Id> caIds = caIdList;
-        String query = getQueryForObject(nameSpace+'Action_on_Participants__c');
+        String query = getQueryForObject(nameSpace+'Sequence_Action__c');
         query += ' WHERE '+nameSpace+'CadenceAction_ID__c=:caIds';
         return Database.query(query); 
     }
@@ -109,8 +109,8 @@ public with sharing class CadenceSelector {
         }
 
         String query = getQueryForObject(objType);
-        String subQuery = getQueryForObject(nameSpace+'Action_on_Participants__c');
-        subQuery = '( ' + subQuery.replace(nameSpace+'Action_on_Participants__c', nameSpace+'Action_on_Participants__r') + ' WHERE '+nameSpace+'isActionPerformed__c = false AND '+nameSpace+'Show_on_Target_List__c = true' +' ) ';
+        String subQuery = getQueryForObject(nameSpace+'Sequence_Action__c');
+        subQuery = '( ' + subQuery.replace(nameSpace+'Sequence_Action__c', nameSpace+'Sequence_Actions__r') + ' WHERE '+nameSpace+'isActionPerformed__c = false AND '+nameSpace+'Show_on_Target_List__c = true AND' + nameSpace+'isDeferred__c = false' +' ) ';
         String queryWithSubQuery = query.replace('Select', subQuery);
         if (objType == CadenceConstants.CONTACT_OBJECT_NAME){
             queryWithSubQuery = 'Select Account.Name, Account.Id,'+nameSpace+'Cadence_ID__r.name, ' + queryWithSubQuery ;
@@ -129,8 +129,8 @@ public with sharing class CadenceSelector {
     public static List<SObject> getParticipantsWithCadenceActionsOfUser(String objType){
         String userId = UserInfo.getUserID();
         String query = getQueryForObject(objType);
-        String subQuery = getQueryForObject(nameSpace+'Action_on_Participants__c');
-        subQuery = '( ' + subQuery.replace(nameSpace+'Action_on_Participants__c', nameSpace+'Action_on_Participants__r') + ' WHERE '+nameSpace+'isActionPerformed__c = false AND '+nameSpace+'Show_on_Target_List__c = true' +' ) ';
+        String subQuery = getQueryForObject(nameSpace+'Sequence_Action__c');
+        subQuery = '( ' + subQuery.replace(nameSpace+'Sequence_Action__c', nameSpace+'Sequence_Actions__r') + ' WHERE '+nameSpace+'isActionPerformed__c = false AND '+nameSpace+'Show_on_Target_List__c = true AND ' + nameSpace+'isDeferred__c = false' +' ) ';
         String queryWithSubQuery = query.replace('Select', subQuery);
         if (objType == CadenceConstants.CONTACT_OBJECT_NAME){
             queryWithSubQuery = 'Select Account.Name, Account.Id,'+nameSpace+'Cadence_ID__r.name, ' + queryWithSubQuery ;

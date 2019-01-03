@@ -74,18 +74,36 @@ public class TargetListController {
     
     @AuraEnabled
     public static void deletePA(List<Id> ids){
-        Delete [Select Id from Action_on_Participants__c where Id IN :ids];
-        
+        system.debug('ids ' + ids);
+        List<Sequence_Action__c> saListToUpdate = new List<Sequence_Action__c>();
+        List<Sequence_Action__c> saList = [Select Id, Name, RDNACadence__Contact_Id__c, RDNACadence__Lead_Id__c, RDNACadence__isDeferred__c from Sequence_Action__c where Id IN :ids];
+        system.debug('saList ' + saList.size());
+        for (Sequence_Action__c saObj : saList){
+            saObj.RDNACadence__isDeferred__c = true;
+            saListToUpdate.add(saObj);
+        }
+        Update saListToUpdate;
+        system.debug('saListToUpdate ' + saListToUpdate.size());
+        createTask(saListToUpdate);
     }
     
-    public static void createTask(List<Id> ids){
-        TargetListController.TargetListWrapper twrap;
-        Action_on_Participants__c ap=[Select Id, Name from Action_on_Participants__c where Id IN :ids];
-        Task t= new Task();
-        t.Description= ap.Name;
-        t.Status='Deferred';
-        t.WhoId= twrap.participantId;
-        insert t;
+    public static void createTask(List<Sequence_Action__c> saList){
+        List<Task> tList = New List<Task>();
+        for (Sequence_Action__c saObj :saList){
+            Task t= new Task();
+            t.Subject = saObj.Name;
+            t.RDNACadence__Sequence_Action__c = saObj.Id;
+            t.Status='Deferred';
+            if (saObj.RDNACadence__Contact_Id__c != null){
+                t.WhoId= saObj.RDNACadence__Contact_Id__c;
+            }else {
+                t.WhoId= saObj.RDNACadence__Lead_Id__c;
+            }
+            tList.add(t);
+        }
+        system.debug('saList ' + tList.size());
+        system.debug('saList ' + tList );
+        insert tList;
     }
     
     /**
@@ -107,7 +125,7 @@ public class TargetListController {
         List<Id> paIdsList = New List<Id>();
         // Created list of cadenceAction ids
         for (SObject sObj : soList){
-            for (Action_on_Participants__c paObj :  getAPOfSObject(sObj, objectType)){
+            for (Sequence_Action__c paObj :  getAPOfSObject(sObj, objectType)){
                 if (paObj.CadenceAction_ID__c != null){
                     paIdsList.Add(paObj.CadenceAction_ID__c);
                     
@@ -119,7 +137,7 @@ public class TargetListController {
         Map<Id, CadenceAction__c> caMap = New Map<Id, CadenceAction__c>(caList);
         // Itrate SObject list to create list of Wrapper 
         for (SObject sObj : soList){
-            for (Action_on_Participants__c paObj :  getAPOfSObject(sObj, objectType)){
+            for (Sequence_Action__c paObj :  getAPOfSObject(sObj, objectType)){
                 TargetListWrapper tlObj = New TargetListWrapper();
                 String caId= (String)paObj.get(nameSpace+'CadenceAction_ID__c');
                 CadenceAction__c caObj = caMap.get(caId);
@@ -170,16 +188,16 @@ public class TargetListController {
 * @description - to get list of Action on Participants from SObject(lead/Contact)
 * @param objType - sObject name string
 * @param sObj - object to get apList
-* @return - List of Action_on_Participants__c
+* @return - List of Sequence_Action__c
 */
-    public static  List<Action_on_Participants__c> getAPOfSObject(SObject sObj, String objType){
-        List<Action_on_Participants__c> apList;
+    public static  List<Sequence_Action__c> getAPOfSObject(SObject sObj, String objType){
+        List<Sequence_Action__c> apList;
         if (objType == CadenceConstants.LEAD_OBJECT_NAME){
             Lead lObj = (Lead)sObj;
-            apList =  lObj.Action_on_Participants__r;
+            apList =  lObj.Sequence_Actions__r;
         } else {
             Contact cObj = (Contact)sObj;
-            apList =  cObj.Action_on_Participants__r;
+            apList =  cObj.Sequence_Actions__r;
         }
         return apList;
     }

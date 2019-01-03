@@ -3,7 +3,7 @@ public class ActionDetailViewCtrl {
     public class ActionDetailWrapper {
         @AuraEnabled public Action__c action;
         @AuraEnabled public List<ParticipantWrapper> participantList;
-        @AuraEnabled public List<CadenceWrapper> cadWrapper; 
+        @AuraEnabled public List<SequenceWrapper> cadWrapper; 
     }
     
     @AuraEnabled
@@ -17,7 +17,7 @@ public class ActionDetailViewCtrl {
         ActionDetailWrapper actDetailWrap = new ActionDetailWrapper();
         actDetailWrap.action = action;
         
-        //Getting cadences data 
+        //Getting Sequences data 
         List<CadenceAction__c> cadenceActions = [Select Id, Cadence_Id__c from CadenceAction__c where Action_ID__c = :action.Id];
         Set<Id> cadenceIds = new Set<Id>();
         for(CadenceAction__c cadAction : cadenceActions) {
@@ -28,9 +28,9 @@ public class ActionDetailViewCtrl {
         Map<Id, Integer> cadenceWiseParticipants = CadenceActionListController.getCadenceWiseParticipants();
         
         List<Cadence__c> cadenceList = [Select Id, Name, Status__c, Record_Type__c, Participent_Activation__c From Cadence__c where Id IN : cadenceIds];
-        List<CadenceWrapper> cadWrapList = new List<CadenceWrapper>();
+        List<SequenceWrapper> cadWrapList = new List<SequenceWrapper>();
         for(Cadence__c cad : cadenceList) {
-        	CadenceWrapper cadWrap = new CadenceWrapper();
+        	SequenceWrapper cadWrap = new SequenceWrapper();
             cadWrap.id = cad.Id;
             cadWrap.name = cad.Name;
             if(cad.Status__c) {
@@ -43,20 +43,29 @@ public class ActionDetailViewCtrl {
             cadWrap.participants = cadenceWiseParticipants.get(cad.Id);
             cadWrapList.add(cadWrap);
         }
-        actDetailWrap.cadWrapper = new List<CadenceWrapper>();
+        actDetailWrap.cadWrapper = new List<SequenceWrapper>();
         actDetailWrap.cadWrapper.addAll(cadWrapList);
         
         //Getting participants
         List<ParticipantWrapper> partWrapper = new List<ParticipantWrapper>();
-        List<Lead> leadParticipants = [Select Id, Name, Company, Email, Phone, isActivated__c from Lead where Cadence_ID__c IN :cadenceIds];
-        List<Contact> contactParticipants = [Select Id, Name, Email, Phone, isActivated__c from Contact where Cadence_ID__c IN :cadenceIds];
+        List<Lead> leadParticipants = [Select Id, Name, Priority__c, Company, Email, Phone, isActivated__c from Lead where Cadence_ID__c IN :cadenceIds];
+        List<Contact> contactParticipants = [Select Id, Name, Priority__c, Email, Phone, isActivated__c from Contact where Cadence_ID__c IN :cadenceIds];
+        
         for(Lead l : leadParticipants) {
-            ParticipantWrapper partWrap = new ParticipantWrapper(l.Id ,l.Name, 0, l.Company, 'Lead', l.Email, l.Phone, '', l.isActivated__c);
+            Integer priority = 0;
+            if(l.Priority__c != null) {
+                priority = (Integer)l.Priority__c;
+            } 
+            ParticipantWrapper partWrap = new ParticipantWrapper(l.Id ,l.Name, priority, l.Company, 'Lead', l.Email, l.Phone, '', l.isActivated__c);
             partWrapper.add(partWrap);
         }        
 
         for(Contact cont : contactParticipants) {
-            ParticipantWrapper partWrap = new ParticipantWrapper(cont.Id, cont.Name, 0, '', 'Contact', cont.Email, cont.Phone, '', cont.isActivated__c);
+            Integer priority = 0;
+            if(cont.Priority__c != null) {
+                priority = (Integer)cont.Priority__c;
+            }
+            ParticipantWrapper partWrap = new ParticipantWrapper(cont.Id, cont.Name, priority, '', 'Contact', cont.Email, cont.Phone, '', cont.isActivated__c);
             partWrapper.add(partWrap);
         }        
         actDetailWrap.participantList = partWrapper;
@@ -73,16 +82,24 @@ public class ActionDetailViewCtrl {
         }
         
         List<ParticipantWrapper> partWrapper = new List<ParticipantWrapper>();
-        List<Lead> leadParticipants = [Select Id, Name, Company, Email, Phone, isActivated__c from Lead where Cadence_ID__c = :cadId];
-        List<Contact> contactParticipants = [Select Id, Name, Email, Phone, isActivated__c from Contact where Cadence_ID__c = :cadId];
+        List<Lead> leadParticipants = [Select Id, Name, Company, Email, Phone, isActivated__c, Priority__c from Lead where Cadence_ID__c = :cadId];
+        List<Contact> contactParticipants = [Select Id, Name, Email, Phone, isActivated__c, Priority__c from Contact where Cadence_ID__c = :cadId];
         
         for(Lead l : leadParticipants) {
-            ParticipantWrapper partWrap = new ParticipantWrapper(l.Id ,l.Name, 0, l.Company, 'Lead', l.Email, l.Phone, '', l.isActivated__c);
+            Integer priority = 0;
+            if(l.Priority__c != null) {
+                priority = (Integer)l.Priority__c;
+            }
+            ParticipantWrapper partWrap = new ParticipantWrapper(l.Id ,l.Name, priority, l.Company, 'Lead', l.Email, l.Phone, '', l.isActivated__c);
             partWrapper.add(partWrap);
         }        
 
         for(Contact cont : contactParticipants) {
-            ParticipantWrapper partWrap = new ParticipantWrapper(cont.Id, cont.Name, 0, '', 'Contact', cont.Email, cont.Phone, '', cont.isActivated__c);
+            Integer priority = 0;
+            if(cont.Priority__c != null) {
+                priority = (Integer)cont.Priority__c;
+            }
+            ParticipantWrapper partWrap = new ParticipantWrapper(cont.Id, cont.Name, priority, '', 'Contact', cont.Email, cont.Phone, '', cont.isActivated__c);
             partWrapper.add(partWrap);
         }        
         
@@ -99,7 +116,7 @@ public class ActionDetailViewCtrl {
 				Contact cont = new Contact(Id = partWrap.id);	
 				cont.isActivated__c = partWrap.status.equalsIgnoreCase('Disabled');
 				participants.add(cont);
-			} else {
+			} else { 
 				Lead l = new Lead(Id = partWrap.id);
 				l.isActivated__c = partWrap.status.equalsIgnoreCase('Disabled');
 				participants.add(l); 
@@ -108,7 +125,7 @@ public class ActionDetailViewCtrl {
  		update participants;
     }
     
-    public class CadenceWrapper {
+    public class SequenceWrapper {
     	@AuraEnabled public Id id;
         @AuraEnabled public String name;
         @AuraEnabled public String activation;

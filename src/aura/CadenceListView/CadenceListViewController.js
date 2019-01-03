@@ -3,7 +3,7 @@
         var rowActions = helper.getRowActions.bind(this, cmp);
 
         cmp.set('v.columns', [
-            {label: 'Cadence Name', fieldName: 'linkName', type: 'url', sortable:'true',
+            {label: 'Sequence Name', fieldName: 'linkName', type: 'url', sortable:'true',
              typeAttributes: {label: { fieldName: 'name' }, target: '_self', sortable: true}},
             { label: 'Status', fieldName: 'status', type: 'text', sortable: true },
             { label: 'Type', fieldName: 'objType', type: 'text', sortable: true},

@@ -26,19 +26,19 @@
     <fieldset class="slds-theme_shade slds-form-element slds-form_compound" style="background-color: #fafafa">
         <form class="slds-theme_shade slds slds-form slds-m-left_large slds-p-right_large slds-m-top_medium" style="background-color: #fafafa">
             <aura:if isTrue="{!not(v.isDisabled)}" >
-                <p class="slds-page-header__row slds-truncate slds-align_absolute-center rdna-sub-header-bold" >Cadence Details</p>
-                <p class="slds-align_absolute-center rdna-sub-header" style="padding-top:15px;">Enter the basic cadence details for your new cadence list.</p>
+                <p class="slds-page-header__row slds-truncate slds-align_absolute-center rdna-sub-header-bold" >Sequence Details</p>
+                <p class="slds-align_absolute-center rdna-sub-header" style="padding-top:15px;">Enter the basic sequence details for your new sequence list.</p>
                 <aura:set attribute="else">
-                    <p class="slds-page-header__row slds-truncate rdna-field-values-bold  slds-m-top_medium rdna-link-height" >Cadence Details</p>
-                    <p class=" rdna-field-values rdna-link-height">Enter the basic cadence details for your new cadence list.</p>
+                    <p class="slds-page-header__row slds-truncate rdna-field-values-bold  slds-m-top_medium rdna-link-height" >Sequence Details</p>
+                    <p class=" rdna-field-values rdna-link-height">Enter the basic sequence details for your new sequence list.</p>
                 </aura:set>
             </aura:if>
             <div class="slds-form-element__row" style="padding-top:40px">
                 <div class="slds-form-element__control slds-size_1-of-4 rdna-field-lable">
-                    <lightning:input aura:id="formValidationId" label="Cadence Name" class= "rdna-field-values"
+                    <lightning:input aura:id="formValidationId" label="Sequence Name" class= "rdna-field-values"
                                      name="actionname"
                                      value="{!v.newCadence.Name}"
-                                     placeholder = "Enter Cadence Name"
+                                     placeholder = "Enter Sequence Name"
                                      messageWhenBadInput = "Please Enter Name"
                                      disabled = "{!v.isDisabled}"
                                      required="true"/> 

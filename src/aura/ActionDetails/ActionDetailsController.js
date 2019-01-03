@@ -12,7 +12,10 @@
                 component.set('v.wrapperTaskFields', listEmailTemplate.wrapperTaskFields);
                 component.set('v.listToShowInTemplateType', listEmailTemplate.listEmailTemplate);
                 if(id != null) {
-                    helper.getData(component, event, helper, id);
+                    if(id != '') {
+                        component.set('v.disableActionType' , true);
+    	                helper.getData(component, event, helper, id);
+		            }
                 }
             }
         });
@@ -29,6 +32,9 @@
             inputCmp.showHelpMessageIfInvalid();
             return validSoFar && inputCmp.get('v.validity').valid;
         }, true);
+         if(isValidActioin && newAct.RDNACadence__Type__c == 'Task'){
+            isValidActioin = helper.validateFieldsToUpdateComponent(component, event, helper);
+        }
         if(isValidActioin){
             helper.createAction(component, event,helper);
         }

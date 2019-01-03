@@ -28,12 +28,12 @@
     },
     
     sortData: function (cmp, fieldName, sortDirection, helper) {
-        if (cmp.get('v.selectedNoOfRecords')){
+        /*if (cmp.get('v.selectedNoOfRecords')){
             var data = cmp.get("v.data");
         }else {
             var data = cmp.get("v.rawData");
-        }
-        
+        }*/
+        var data = cmp.get("v.rawData");
         var reverse = sortDirection !== 'asc';
         if (fieldName == 'linkName') {
             fieldName = 'name';

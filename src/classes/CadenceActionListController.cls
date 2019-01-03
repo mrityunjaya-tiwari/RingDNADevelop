@@ -170,7 +170,7 @@ public class CadenceActionListController {
     }
     
     public static void deleteActionOnpartcipants(List<Id> cadIds){      
-        List<Action_on_Participants__c> actionOnParticipants = [select Id from Action_on_Participants__c where CadenceAction_ID__r.Cadence_Id__c  IN :cadIds and isActionPerformed__c=false];  
+        List<Sequence_Action__c> actionOnParticipants = [select Id from Sequence_Action__c where CadenceAction_ID__r.Cadence_Id__c  IN :cadIds and isActionPerformed__c=false];  
         if(!actionOnParticipants.isEmpty()) {
             delete actionOnParticipants;
         }

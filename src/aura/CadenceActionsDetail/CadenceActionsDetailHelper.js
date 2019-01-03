@@ -179,7 +179,7 @@
                 'sobjectType': 'wrapperLeadFields',
                 'dataType': obj.fieldDataType,
                 'key': obj.fieldLabel,
-                'value': obj.fieldName,
+                'value': obj.fieldLabel,
                 'listPicklistValues' :obj.listPicklistValues
             });
         }

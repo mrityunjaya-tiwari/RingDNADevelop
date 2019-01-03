@@ -74,7 +74,7 @@
         );
     },
     handlePagination: function(component, event, helper) {
-        helper.clearFilter(component);
+       // helper.clearFilter(component);
         window.setTimeout(
             $A.getCallback(function() {
                 helper.setPhoneLink(component, event, helper);

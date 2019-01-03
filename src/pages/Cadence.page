@@ -1,4 +1,4 @@
-<apex:page standardcontroller="Cadence__c" sidebar="false"  tabStyle="Cadence__c">
+<apex:page standardcontroller="Cadence__c" sidebar="false"  tabStyle="Cadence_Classic__tab">
     <script src="/lightning/lightning.out.js"/>
     <apex:slds />
     <div id="myDivId4" />

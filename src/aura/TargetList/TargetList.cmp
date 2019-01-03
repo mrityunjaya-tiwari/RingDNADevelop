@@ -12,6 +12,7 @@
     <!-- DATATABLE ATTRIBUTES -->
     <aura:attribute name="columns" type="List"/>
     <aura:attribute name="rawData" type="List"/>
+    <aura:attribute name="rawDataForFilter" type="List"/>
     <aura:attribute name="selectedRows" type="List"/> 
     <aura:attribute name="hideCheckboxes" type="boolean"/>
     <aura:attribute name="recordsPerPage" type="Integer" default="25"/>
@@ -48,8 +49,8 @@
                 <img class = "rdna-logo" src="{!$Resource.cadence_icons + '/rdna-logo/rdna-logo@2x.png'}"/>
             </div>
             <div class="slds-col slds-has-flexi-truncate slds-m-left_small">
-                <p class="slds-line-height_reset topHeaderSmall">Target List</p>
-                <h1 class="slds-page-header__title slds-m-right_small slds-align-middle slds-truncate headerLarge"  title="All Cadence">ringDNA Target List</h1>
+                <p class="slds-line-height_reset topHeaderSmall slds-p-left_xx-small">Today</p>
+                <h1 class="slds-page-header__title slds-m-right_small slds-align-middle slds-truncate headerLarge"  title="All Cadence">ringDNA Today</h1>
             </div>
             
             <aura:if isTrue="{!v.selectedRows.length > 0}">
@@ -86,7 +87,7 @@
             
             <div class= "slds-col slds-size_1-of-8 topHeaderSmall slds-m-right_medium">
                 <lightning:select variant = "label-hidden" name="select1" label='' value="{!v.ctFilter}" onchange="{!c.filterCadenceType}">
-                    <option value="">Cadence</option>
+                    <option value="">Sequence</option>
                     <aura:iteration var="cad" items="{!v.cList}">
                         <option value="{!cad}">{! cad }</option>
                     </aura:iteration>
@@ -115,7 +116,11 @@
         <div >
             <div class="slds-m-top_medium">
                 <c:Datatable columns = "{!v.columns}" rawData = "{!v.rawData}" aura:id = "datatable" hideCheckboxColumn = "{!v.hideCheckboxes}" 
-                             sortBy = "{!v.sortBy}" rowsToLoad = "{!v.recordsPerPage}" isListView="{!v.listViewCondition}" data="{!v.data}" selectedNoOfRecords="true"/> 
+                                       sortBy = "{!v.sortBy}" rowsToLoad = "{!v.recordsPerPage}" 
+                                       isListView="{!v.listViewCondition}" 
+                                       rawDataForFilter = "{!v.rawDataForFilter}"
+                                       data="{!v.data}" 
+                                       selectedNoOfRecords="true"/> 
             </div>
         </div> 
     </div>
@@ -127,10 +132,10 @@
             <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
                 <div class="slds-modal__container">
                     <header class="slds-modal__header">
-                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Remove Cadence Action</h2>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Remove Action</h2>
                     </header>
                     <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
-                        <p>Are you sure you want to remove this cadence action? The action will be completed and removed from the target list.</p>
+                        <p>Are you sure you want to remove this action? The action will be completed and removed from the target list.</p>
                     </div>
                     <footer class="slds-modal__footer">
                         <lightning:button label="Delete" variant="brand" onclick="{!c.deletePartActions}"/>   

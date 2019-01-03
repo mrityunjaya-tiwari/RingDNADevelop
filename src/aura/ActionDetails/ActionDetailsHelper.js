@@ -27,7 +27,7 @@
             }
         });
         
-        helper.validateActionForm(component, event);
+        //helper.validateActionForm(component, event);
         if (component.get('v.isValid') == true){
             $A.enqueueAction(action)
         }
@@ -155,15 +155,17 @@
         var myUserContext = component.get("v.themeName"); 
         console.log('In Action details helper myUserContext',myUserContext);
         if(myUserContext == 'Theme3' || myUserContext == 'Theme4t' || myUserContext == 'Theme4d') {
-            window.location = '/apex/CadenceActionList';
+            window.history.go(-1);
+            /*window.location = '/apex/CadenceActionList';*/
         } else if(myUserContext == undefined) {
-            var evt = $A.get("e.force:navigateToComponent");
+            window.history.go(-1);
+           /* var evt = $A.get("e.force:navigateToComponent");
             evt.setParams({
                 componentDef : "c:CadenceActionList" ,
                 componentAttributes : {
                 }
             });
-            evt.fire()  
+            evt.fire()  */
         }
     },
     
@@ -197,5 +199,24 @@
             newAct.RDNACadence__Template_Name__c = "";
         }
         return newAct;
-    }
+    },
+    // Check Validation for sub component - ActionDetailsDynamicRow
+    validateFieldsToUpdateComponent:function(component, event, helper){
+        var dynamicROw = [];
+        dynamicROw = component.find('dynamicROw');
+        var  isValid = true;
+        if (dynamicROw.length >= 1){
+            for (var index in dynamicROw){
+                var obj = dynamicROw[index];
+                var isValidRow = obj.validateDynamicRowForm();
+                if (!isValidRow){
+                    isValid = isValidRow;
+                }
+            }
+        }else{
+            isValid = dynamicROw.validateDynamicRowForm();
+        }
+        return isValid;
+        
+    },
 })

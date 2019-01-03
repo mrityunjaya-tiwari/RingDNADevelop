@@ -8,7 +8,7 @@
         console.log('in Action detail Ids@@@',component.get("v.recordId"));
         //var productlist = JSON.stringify(event.getParam("viewRecordId"));
         component.set('v.cadColumns', [
-            {label: 'Cadence Name', fieldName: 'linkName', type: 'url', sortable:'true',
+            {label: 'Sequence Name', fieldName: 'linkName', type: 'url', sortable:'true',
              typeAttributes: {label: { fieldName: 'name' }, target: '_self', sortable: true}},
             { label: 'Status',  fieldName: 'status', type: 'text', sortable: true },
             { label: 'Type', fieldName: 'recordType', type: 'text', sortable: true},
@@ -28,11 +28,13 @@
         
         helper.getData(component, event, helper);
     },
-    
+
     editAction : function(component, event, helper) {
         console.log('In edit function');
     	var id = component.get('v.recordId');
         helper.editRecord(component, event, id);
 	}
+    
+    
     
 })

@@ -28,8 +28,8 @@
             </div>
             <div class="slds-col slds-has-flexi-truncate slds-m-left_small">
                 <!-- HEADING AREA -->
-                <p class="slds-line-height_reset rdna-header-small">Cadence Actions</p>
-                <h1 class="slds-page-header__title slds-m-right_small slds-align-middle slds-truncate rdna-header-large"  title="New Cadence Actions">{!v.record.Name}</h1>
+                <p class="slds-line-height_reset rdna-header-small slds-p-left_xx-small">Actions</p>
+                <h1 class="slds-page-header__title slds-m-right_small slds-align-middle slds-truncate rdna-header-large">{!v.record.Name}</h1>
                 <!-- / HEADING AREA -->
             </div>
             <!-- <lightning:button aura:id="newAction" label="Share" onclick="{!c.shareAction}"/> -->
@@ -43,7 +43,7 @@
 	        <div class="slds-m-left_xx-large slds-p-top_large">
 
 				<p class="slds-page-header__row slds-truncate slds-align_absolute-center rdna-sub-header-bold" >Action Details</p>
-                <p class="slds-align_absolute-center rdna-sub-header slds-m-bottom_x-large">Following are the details of your cadence action.</p>
+                <p class="slds-align_absolute-center rdna-sub-header slds-m-bottom_x-large">Following are the details of your action.</p>
 	            <div class="slds-grid slds-gutters slds-m-top_medium slds-grid_align-spread">
 	                <div class="slds-col slds-size_3-of-12">
 	                    <p class="slds-line-height_reset slds-m-bottom_xx-small field-label">Action Name</p>
@@ -64,8 +64,8 @@
 	            </div>
 	 
 				<!-- Cadences datatable -->         
-                <p class="slds-page-header__row slds-truncate rdna-field-values-bold  slds-m-top_x-large rdna-link-height" >Cadence Lists</p>
-                <p class=" rdna-field-values rdna-link-height slds-m-top_x-small">List of all related cadence lists associated with this cadence action.</p>
+                <p class="slds-page-header__row slds-truncate rdna-field-values-bold  slds-m-top_x-large rdna-link-height" >Sequence Lists</p>
+                <p class=" rdna-field-values rdna-link-height slds-m-top_x-small">List of all related sequence lists associated with this action.</p>
 
 	            <div class="slds-m-top_medium slds-p-right_medium">
 	    			<c:Datatable columns = "{!v.cadColumns}" rawData = "{!v.cadRawData}" rowsToLoad = "{!v.cadRowsToLoad}" hideCheckboxColumn = "true" aura:id = "datatable1"/>    
@@ -73,7 +73,7 @@
 				
 				<!-- Participant datatable -->         
                 <p class="slds-page-header__row slds-truncate rdna-field-values-bold  slds-m-top_x-large rdna-link-height" >Participants</p>
-                <p class=" rdna-field-values rdna-link-height slds-m-top_x-small">List of all related participants associated with this cadence action.</p>
+                <p class=" rdna-field-values rdna-link-height slds-m-top_x-small">List of all related participants associated with this action.</p>
 
 	            <div class="slds-m-top_medium slds-p-bottom_medium slds-p-right_medium">
 	    			<c:Datatable columns = "{!v.partColumns}" rawData = "{!v.partRawData}" rowsToLoad = "{!v.partRowsToLoad}" hideCheckboxColumn = "true" aura:id = "datatable2"/>    

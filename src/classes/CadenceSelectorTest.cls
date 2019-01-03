@@ -3,7 +3,7 @@ public class CadenceSelectorTest {
     public static Action__c action1;
     public static Cadence__c cadence1;
     public static CadenceAction__c cadenceAction1;
-    public static Action_on_Participants__c actionOnParticipants;   
+    public static Sequence_Action__c actionOnParticipants;   
     Public static Final String ACTION_TYPE_Email = 'Email';
     
 	@isTest
@@ -36,7 +36,7 @@ public class CadenceSelectorTest {
         cadenceAction1.Trigger_Type__c= 'Immediate';       
         insert cadenceAction1;
         
-        actionOnParticipants = new Action_on_Participants__c();
+        actionOnParticipants = new Sequence_Action__c();
         actionOnParticipants.Name= 'demoname';
         actionOnParticipants.Lead_Id__c= l1.Id;
         actionOnParticipants.CadenceAction_ID__c=cadenceAction1.Id;
@@ -57,5 +57,28 @@ public class CadenceSelectorTest {
         Test.stopTest();
         
         
+    }
+    @isTest
+    static void getAllPublicGroupTest(){
+        Test.startTest();     
+        
+        //Create Parent Group
+        Group grp = new Group();
+        grp.name = 'Test Group1';
+        grp.Type = 'Regular'; 
+        Insert grp; 
+        
+        //Create Group Member
+        GroupMember grpMem1 = new GroupMember();
+        grpMem1.UserOrGroupId = UserInfo.getUserId();
+        grpMem1.GroupId = grp.Id;
+        Insert grpMem1;
+        
+                
+        List<Group> pGroup = CadenceSelector.getAllPublicGroup();
+        String objType = 'Contact';
+        Id pgId = pGroup[0].Id;
+        List<SObject> lstSObj = CadenceSelector.getParticipantsWithCadenceActionsOfPublicGroup(objType, pgId);
+        Test.stopTest();
     }
 }
