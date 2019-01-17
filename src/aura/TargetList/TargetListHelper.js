@@ -165,7 +165,7 @@
                         var innerHtml =  '<img class = "Oval" src=' + url + ' />';
                         innerHtml = '<a href="tel:'+ rawData[index].phone + '" class="ringdna-phone" data-phone="'+ rawData[index].phone + '">' + innerHtml + '</a>';
                         var div = '<div>' + rawData[index].nextAction + '</div>';
-                        var ActionLink = '<a href="/' + rawData[index].nextAction +'" title="/'+ rawData[index].nextAction +'" target="_self" tabindex="-1">'+ rawData[index].linkActionName + '</a>';
+                        var ActionLink = '<a href="/' + rawData[index].nextAction +''+ rawData[index].nextAction +'" target="_self" tabindex="-1">'+ rawData[index].linkActionName + '</a>';
                         rdpElement.innerHTML = '<div class="slds-truncate">' + innerHtml + ' ' + ActionLink + '</div>';
                     }
                     if(rawData[index].actionClass == 'ringdna-email-td'){
@@ -180,7 +180,7 @@
                         } else {
                             innerHtml = '<a href="https://' + hostName + '/_ui/core/email/author/EmailAuthor?p2_lkid='+ rawData[index].participantId + '&rtype=00Q&template_id=' + rawData[index].emailTempId + '"'+ ' target="_blank" ' + '>' + innerHtml + '</a>';	
                         }
-                        var ActionLink = '<a href="/' + rawData[index].nextAction + '" title="/'+ rawData[index].nextAction +'" target="_self" tabindex="-1">'+ rawData[index].linkActionName + '</a>';
+                        var ActionLink = '<a href="/' + rawData[index].nextAction + ''+ rawData[index].nextAction +'" target="_self" tabindex="-1">'+ rawData[index].linkActionName + '</a>';
                         rdpElement.innerHTML = '<div class="slds-truncate">' + innerHtml + ' ' + ActionLink + '</div>';
                     }
                     if(rawData[index].actionClass == 'ringdna-sms-td'){
@@ -190,7 +190,7 @@
                         }
                         var innerHtml =  '<img class = "Oval" src=' + url + ' />';
                         innerHtml = '<a href="tel:'+ rawData[index].phone + '" class="ringdna-sms" data-phone="'+ rawData[index].phone + '">' + innerHtml + '</a>';
-                        var ActionLink = '<a href="/' + rawData[index].nextAction +'" title="/'+ rawData[index].nextAction +'" target="_self" tabindex="-1">'+ rawData[index].linkActionName + '</a>';
+                        var ActionLink = '<a href="/' + rawData[index].nextAction +''+ rawData[index].nextAction +'" target="_self" tabindex="-1">'+ rawData[index].linkActionName + '</a>';
                         rdpElement.innerHTML =  '<div class="slds-truncate">' + innerHtml + ' ' + ActionLink + '</div>';
                     } 
                 }
@@ -235,7 +235,7 @@
                             var companyName = rawData[index].company;
                             rdpElement.innerHTML =   '<div class=" slds-truncate">' + companyName +  '</div>';
                     }else if(rawData[index].company) { 
-                        var cLink = '<a href="/' + rawData[index].companyId + '" title="/' + rawData[index].companyId + '" target="_self" tabindex="-1">'+ rawData[index].company + '</a>';
+                        var cLink = '<a href="/' + rawData[index].companyId + '' + rawData[index].companyId + '" target="_self" tabindex="-1">'+ rawData[index].company + '</a>';
                         rdpElement.innerHTML = '<div class=" slds-truncate">' + cLink +  '</div>';
                     }else {
                         rdpElement.innerHTML = '';

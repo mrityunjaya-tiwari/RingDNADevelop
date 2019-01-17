@@ -110,7 +110,7 @@ public with sharing class CadenceSelector {
 
         String query = getQueryForObject(objType);
         String subQuery = getQueryForObject(nameSpace+'Sequence_Action__c');
-        subQuery = '( ' + subQuery.replace(nameSpace+'Sequence_Action__c', nameSpace+'Sequence_Actions__r') + ' WHERE '+nameSpace+'isActionPerformed__c = false AND '+nameSpace+'Show_on_Target_List__c = true AND' + nameSpace+'isDeferred__c = false' +' ) ';
+        subQuery = '( ' + subQuery.replace(nameSpace+'Sequence_Action__c', nameSpace+'Sequence_Actions__r') + ' WHERE '+nameSpace+'isActionPerformed__c = false AND '+nameSpace+'Show_on_Target_List__c = true AND ' + nameSpace+'isDeferred__c = false' +' ) ';
         String queryWithSubQuery = query.replace('Select', subQuery);
         if (objType == CadenceConstants.CONTACT_OBJECT_NAME){
             queryWithSubQuery = 'Select Account.Name, Account.Id,'+nameSpace+'Cadence_ID__r.name, ' + queryWithSubQuery ;
@@ -138,6 +138,7 @@ public with sharing class CadenceSelector {
             queryWithSubQuery = 'Select '+nameSpace+'Cadence_ID__r.name, ' + queryWithSubQuery ;
         }
         queryWithSubQuery += ' WHERE '+nameSpace+'isActivated__c = true AND '+nameSpace+'Cadence_Id__c != null AND OwnerId=:userId';
+        system.debug('queryWithSubQuery ' + queryWithSubQuery);
         return Database.query(queryWithSubQuery); 
     }
     

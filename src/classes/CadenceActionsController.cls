@@ -1,7 +1,7 @@
 public class CadenceActionsController {
     @AuraEnabled
     public static CadenceActionWrapper getActionList(){
-        List<action__C> actionList = [Select id, Name, type__C from Action__C];
+        List<action__C> actionList = [Select id, Name, type__C, Activation_Type__c from Action__C];
         CadenceActionWrapper wrapperObj = new CadenceActionWrapper();
         wrapperObj.actionList = actionList;
         wrapperObj.actionTypeList = getActionTypeList(actionList);
@@ -16,6 +16,7 @@ public class CadenceActionsController {
         for (Action__C actObj : actionList){
             if(!actionTypeList.contains(actObj.type__c)){
                 actionTypeList.add(actObj.type__c);
+                
             }
         }
         return actionTypeList;

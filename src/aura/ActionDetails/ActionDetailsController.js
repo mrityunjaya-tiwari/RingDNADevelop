@@ -1,5 +1,6 @@
 ({
     doInit: function(component, event, helper) {
+        component.set('v.spinner', true);
         var listEmailTemplate;
         var id = component.get('v.recordId');
         var action = component.get("c.initCadenceActionData");
@@ -9,14 +10,20 @@
             if (state === "SUCCESS") {
                 listEmailTemplate= response.getReturnValue();
                 component.set('v.listEmailTemplate', listEmailTemplate.listEmailTemplate);
+                component.set('v.listSmsTemplate', listEmailTemplate.listSmsTemplate);
+                component.set('v.listCallTemplate', listEmailTemplate.listCallTemplate);
+                component.set('v.listVMTemplate', listEmailTemplate.listVMTemplate);
                 component.set('v.wrapperTaskFields', listEmailTemplate.wrapperTaskFields);
-                component.set('v.listToShowInTemplateType', listEmailTemplate.listEmailTemplate);
+                component.set('v.listToShowInTemplateType', listEmailTemplate.listSmsTemplate);
                 if(id != null) {
                     if(id != '') {
                         component.set('v.disableActionType' , true);
     	                helper.getData(component, event, helper, id);
 		            }
                 }
+                component.set('v.spinner', false);
+            }else {
+                component.set('v.spinner', False);
             }
         });
         $A.enqueueAction(action)

@@ -40,6 +40,10 @@
     		if(fieldName == 'linkName') {
     			cmp.set('v.sortBy', 'Name');
     		}
+            if(fieldName == 'linkcompany') {
+    			cmp.set('v.sortBy', 'company');
+    		}
+            
     	}
     	var sortDirection = event.getParam('sortDirection');
         cmp.set("v.sortedBy", fieldName);

@@ -9,7 +9,7 @@
     },
     // Added new row for set fields to update
     createRowToFieldsUpdate: function(component, event, helper){
-        var rowList = component.get("v.rowToCreateFieldsToUpdate");
+       var rowList = component.get("v.rowToCreateFieldsToUpdate");
         if(rowList.length == 0) {
 	        rowList.push({
 	            'sobjectType': 'wrapperTaskField',
@@ -24,6 +24,22 @@
 	        });
         }
         component.set("v.rowToCreateFieldsToUpdate", rowList);
+    },
+    // Set action object according to cadenceAction object 
+    setActionObject : function(component, event, helper){
+        var cadenceActionObj = component.get("v.cadenceAction");
+        var actionList = component.get("v.allActionsList");
+        console.log('actionList', actionList);
+        for(var index in actionList){
+            var actionObj = actionList[index];
+            var actionId = actionObj.Id;
+            
+            if (cadenceActionObj.RDNACadence__Action_Id__c == actionId){
+                component.set("v.actionObject", actionObj);
+                cadenceActionObj.Name = actionObj.Name;
+            }
+            
+        }
     },
     // used to remove rows from fields to update
     handleCadDynamicRowEvent: function(component, event, helper){
@@ -89,8 +105,9 @@
     setDataForEdit:function(component, event, helper){
         var cadenceActionObj = component.get("v.cadenceAction");
         if (cadenceActionObj.RDNACadence__Fields_To_Update_Action__c && cadenceActionObj.RDNACadence__Fields_To_Update_Action__c != ''){
-            component.set("v.fieldOptionsValue", "true"); 
-            component.set("v.setFieldsToUpdate", "true"); 
+            component.set('v.fieldOptionsValue', true); 
+            component.set('v.setFieldsToUpdate', true); 
+            //alert(component.get('v.setFieldsToUpdate'));
             var obj = JSON.parse(cadenceActionObj.RDNACadence__Fields_To_Update_Action__c);
             var listOfKey = Object.keys(obj);
             var rowList = [];
@@ -117,9 +134,11 @@
         var actionTypeListForCadenceAction = component.get("v.actionTypeListForCadenceAction");
         var index = component.get("v.currentIndex");
         component.set("v.actionType", actionTypeListForCadenceAction[index]);
+        //alert(component.get("v.setFieldsToUpdate"));
         helper.createActionTypeList(component, event, actionTypeListForCadenceAction[index]);
         helper.setActionObject(component, event, helper);
         helper.disablUnitInput(component, event, helper);
+        //alert(component.get("v.setFieldsToUpdate"));
     },
     // Create a list of action for selected action type
     createActionTypeList: function(component, event, actionType){
@@ -133,19 +152,7 @@
         component.set('v.actionList',actionListOfType);
         component.set('v.cadenceAction',component.get('v.cadenceAction'));
     },
-    // Set action object according to cadenceAction object 
-    setActionObject : function(component, event, helper){
-        var cadenceActionObj = component.get("v.cadenceAction");
-        var actionList = component.get("v.allActionsList");
-        for(var index in actionList){
-            var actionObj = actionList[index];
-            var actionId = actionObj.Id;
-            if (cadenceActionObj.RDNACadence__Action_Id__c == actionId){
-                component.set("v.actionObject", actionObj);
-                cadenceActionObj.Name = actionObj.Name;
-            }
-        }
-    },
+    
     // used to disable input for immediate cadence actions.
     disablUnitInput:function(component, event, helper){
         var cadObj = component.get("v.cadenceAction");

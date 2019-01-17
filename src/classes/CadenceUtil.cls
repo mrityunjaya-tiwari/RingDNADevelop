@@ -121,11 +121,11 @@ stack.push(s);
         if(fieldType.equalsIgnoreCase('currency') || fieldType.equalsIgnoreCase('double') || fieldType.equalsIgnoreCase('percent') || fieldType.equalsIgnoreCase('decimal')) {
             obj.put(fieldName, Decimal.valueOf(String.valueOf(value))); 
         } else if(fieldType.equalsIgnoreCase('boolean')) {
-            obj.put(fieldName, (boolean)value);
+            obj.put(fieldName, Boolean.valueOf(value));
         } else if(fieldType.equalsIgnoreCase('date')) {
             obj.put(fieldName, (date)value);
         } else if(fieldType.equalsIgnoreCase('datetime')) {
-            obj.put(fieldName, (datetime)value);
+            obj.put(fieldName, (datetime)value); 
         } else if(fieldType.equalsIgnoreCase('integer')) {
             obj.put(fieldName, (Integer.valueOf(value)));
         } else if(fieldType.equalsIgnoreCase('reference')){

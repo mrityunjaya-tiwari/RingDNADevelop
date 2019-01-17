@@ -30,7 +30,7 @@ public with sharing class CadenceController {
     	Status__c, Total_Participants__c,
     	(
     		Select id, name , Cadence_Id__c, Action_Id__c, Fields_To_Update_Action__c, Hour__c, Day__c, Trigger_Type__c, Action_Criterion__c from 
-			CadenceActions__r
+			CadenceActions__r order by Day__c, Hour__c
 		)
     	from Cadence__c where Id=: cadenceId];
     	return cadence[0];								

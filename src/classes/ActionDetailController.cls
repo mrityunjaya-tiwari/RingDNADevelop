@@ -2,21 +2,35 @@ public with sharing class ActionDetailController {
 
 	public static String nameSpace = CadenceConstants.NAMESPACE;
     public static String TASK_OBJECT_STRING = 'Task';
-
+ 
     @AuraEnabled
     public static ActionDetailController.InitActionData initCadenceActionData() {
+        system.debug('In initCadenceActionData');
         ActionDetailController.InitActionData initActionObj = new ActionDetailController.InitActionData();
         initActionObj.listEmailTemplate = CadenceService.getEmailTemplates();
+        if(!test.isRunningTest()){
+            initActionObj.listSmsTemplate = CadenceService.getSMSTemplates();
+            initActionObj.listCallTemplate = CadenceService.getCallTemplates();
+            initActionObj.listVMTemplate = CadenceService.getVMTemplates();
+        }
+
         initActionObj.wrapperTaskFields = CadenceService.getFields(TASK_OBJECT_STRING);
-        return initActionObj;
+        system.debug('success wrapperTaskFields ');
+        return initActionObj; 
     }
 
     public class InitActionData {
         @AuraEnabled public List<EmailTemplate> listEmailTemplate;
+        @AuraEnabled public List<WrapperTemplateObj> listSmsTemplate;
+        @AuraEnabled public List<WrapperTemplateObj> listCallTemplate;
+        @AuraEnabled public List<WrapperTemplateObj> listVMTemplate;
         @AuraEnabled public List<wrapperTaskField> wrapperTaskFields;
         public InitActionData(){
             listEmailTemplate = new List<EmailTemplate>();
             wrapperTaskFields = new List<wrapperTaskField>();
+            listSmsTemplate = new List<WrapperTemplateObj>();
+            listCallTemplate = new List<WrapperTemplateObj>();
+            listVMTemplate = new List<WrapperTemplateObj>();
         }
     }
 
@@ -29,6 +43,12 @@ public with sharing class ActionDetailController {
         upsert act;
         return act;
     }
+
+    public class WrapperTemplateObj{
+        @AuraEnabled public String Id;
+        @AuraEnabled public String Name;
+    }
+
     public class wrapperTaskField {
         @AuraEnabled public String key;
         @AuraEnabled public String value;

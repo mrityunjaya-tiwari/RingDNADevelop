@@ -1,0 +1,6 @@
+<aura:component implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,force:hasRecordId,lightning:actionOverride,force:appHostable" access="global">
+    
+    <div class="slds-align_absolute-center" style="height: 300px;background-color: #fafafa">
+        <p class="rdna-style">Record no longer exists.</p></div>
+    
+</aura:component>

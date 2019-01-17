@@ -4,7 +4,7 @@
 
         cmp.set('v.columns', [
             {label: 'Action', fieldName: 'linkName', type: 'url', sortable:'true',
-             typeAttributes: {label: { fieldName: 'name' }, target: '_self', sortable: true}},
+             typeAttributes: {label: { fieldName: 'name'}, tooltip: {fieldName: 'name'}, target: '_self', sortable: true}},
             { label: 'Type', fieldName: 'type', type: 'text', sortable: true },
             { label: 'Number of Sequences', fieldName: 'cadences', type: 'number', sortable: true},
             { label: 'Number of Participants', fieldName: 'participants', type: 'number', sortable: true},

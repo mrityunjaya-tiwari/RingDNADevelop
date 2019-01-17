@@ -7,13 +7,14 @@
         }
         // To add a row by default
         helper.createRowToFieldsUpdate(component, event, helper);
+        
         // Set contact felds data
         helper.setContactFieldsList(component, event, helper);
         // Set lead felds data
         helper.setLeadFieldsList(component, event, helper);
         // Used for edit cadence actions
         helper.setDataForEdit(component, event, helper);
-        
+    
         component.set("v.setFieldsToUpdate", true); 
         component.set('v.fieldOptionsValue', true);
     },

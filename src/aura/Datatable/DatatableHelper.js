@@ -38,6 +38,9 @@
         if (fieldName == 'linkName') {
             fieldName = 'name';
         }
+        if (fieldName == 'linkcompany') {
+            fieldName = 'company';
+        }
         data.sort(this.sortBy(fieldName, reverse))
         cmp.set("v.rawData", data);
         helper.setData(cmp);

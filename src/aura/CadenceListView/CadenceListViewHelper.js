@@ -46,15 +46,15 @@
     
     getRowActions: function (cmp, row, doneCallback) {
         var actions = [{
-            'label': 'Edit Cadence',
+            'label': 'Edit Sequence',
             'name': 'edit'
         }];
         actions.push({
-            'label': 'Delete Cadence',
+            'label': 'Delete Sequence',
             'name': 'delete'
         });
         actions.push({
-                'label': 'View Cadence',
+                'label': 'View Sequence',
                 'name': 'view'
         });
  

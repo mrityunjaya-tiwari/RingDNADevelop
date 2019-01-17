@@ -12,7 +12,7 @@
     <!-- wrapperContactFields List-->
     <aura:attribute name="wrapperContactFields" type = "List" />  
     <!-- Action Object-->
-    <aura:attribute name="actionObject" type = "RDNACadence__Action__C" default="{ 'sobjectType': 'RDNACadence__Action__C'}"/> 
+    <aura:attribute name="actionObject" type = "RDNACadence__Action__C" default="{ 'sobjectType': 'RDNACadence__Action__C', 'RDNACadence__Activation_Type__c':''}"/> 
     <!--Contact Objects -->
     <aura:attribute name="ContactObj" type="Contact" default="{ 'sobjectType': 'Contact'}"/>
     <!--Lead Objects -->
@@ -23,6 +23,7 @@
     <aura:attribute name="currentIndex" type="string"/>
     <!--Show fields to updates on objects -->
     <aura:attribute name="setFieldsToUpdate" type="Boolean" default="false"/>
+    <aura:attribute name="setRadioButton" type="Boolean" default="false"/>
     <!--Show criteria fields of action -->
     <aura:attribute name="setCriteriaFields" type="Boolean" default="false"/>
     <!--Event attribute -->
@@ -74,7 +75,7 @@
                 <aura:if isTrue="{!v.actionType == 'Task'}">
                     
                 </aura:if>
-                {!' ' + v.actionType}
+                {!' ' + v.actionType} 
             </div>  
         </td>
         <td class="rdna-table-rows rdna-field-values">  
@@ -173,10 +174,13 @@
                             </div>
                             <span class="slds-p-top_medium slds-page-header__row rdna-field-values-bold rdna-set-line-height slds-truncate">Field Updates</span>
                             <span class="rdna-field-values rdna-set-line-height" style=" padding-bottom:25px;">Field updates required following action completion</span>
+                           
+                            
+                          
                                 <div class = "slds-form-element slds-size_1-of-1 slds-p-bottom_large" >
-
+                                    
                                     <aura:iteration items="{!v.rowToCreateFieldsToUpdate}" var="wrapperObj" indexVar="index">
-                                    	
+                                        
                                         <div class = "slds-form-element__row slds-size_1-of-1">
                                             <aura:if isTrue="{!'Lead' ==  v.newCadence.RDNACadence__Record_Type__c}">
                                                 <c:ActionDetailsDynamicRow aura:id="dynamicROw" taskObj="{!wrapperObj}" wrapperTaskFields="{!v.wrapperLeadFields}" currentIndex = "{!index}" isrequired="true" isDisabled="{!v.isDisabled}"/>
@@ -194,6 +198,9 @@
                                         </div>
                                     </aura:if>
                                 </div>
+                        
+                            
+                            
                             <span class="slds-p-top_medium slds-page-header__row rdna-field-values-bold rdna-set-line-height slds-truncate">Criteria</span>
                             <span class="rdna-field-values rdna-set-line-height slds-truncate">Criteria for Executing Actions</span>
                             <div class="slds-form-element__control slds-m-top_medium">

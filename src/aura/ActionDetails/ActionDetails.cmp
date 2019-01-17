@@ -15,7 +15,11 @@
     <!--Email template list -->
     <aura:attribute name="listEmailTemplate" type="List"/>
     <!--SMS template list -->
-    <aura:attribute name="listSMSTemplate" type="List"/>
+    <aura:attribute name="listSmsTemplate" type="List"/>
+    <!--Call template list -->
+    <aura:attribute name="listCallTemplate" type="List"/>
+    <!--VM template list -->
+    <aura:attribute name="listVMTemplate" type="List"/>
     <!--List to show in template action template -->
     <aura:attribute name="listToShowInTemplateType" type="List"/>
     <!--Wrapper class having Task fields detail -->
@@ -32,7 +36,9 @@
     <aura:attribute name="recordName" type="String" default='New Action'/>
     <aura:attribute name="defaultValue" type="Boolean" default='false'/>
     <aura:attribute name="themeName" type="String"/>
-    
+    <!--create a component attributs -->
+    <aura:attribute name="spinner" type="boolean" default="false"/>
+    <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>
     <!-- PAGE HEADER -->
     <div class="slds-page-header" style="background-color: #fafafa">
         <div class="slds-grid">
@@ -64,17 +70,18 @@
                     
                     <div class="slds-form-element__row slds-p-top_small">
                         <div class="slds-form-element__control slds-size_1-of-4">
-                            <lightning:select aura:id="formValidationId" name="selectActionType" 
+                            <lightning:select class="select-auto-width" 
+                                              aura:id="formValidationId" name="selectActionType" 
                                               label="Type" required="true" value="{!v.newAction.RDNACadence__Type__c}" 
                                               messageWhenValueMissing="Please Select Action Type."
                                               onchange="{!c.updateActionType}"
                                               disabled = "{!v.isDisabled || v.disableActionType}">
-                                <option value="">Select Action Type</option>
-                                <option value="Email">Email</option>
-                                <option value="SMS">SMS</option>
-                                <option value="Call">Call</option>
-                                <option value="Call+Voicemail">Call+Voicemail</option>
-                                <option value="Task">Task</option>
+                                <option value="" class="option-style" >Select Action Type</option>
+                                <option value="Email" class="option-style">Email</option>
+                                <option value="SMS" class="option-style">SMS</option>
+                                <option value="Call" class="option-style">Call</option>
+                                <option value="Call+Voicemail" class="option-style">Call+Voicemail</option>
+                                <option value="Task" class="option-style">Task</option>
                             </lightning:select>
                         </div>
                         <div class="slds-form-element__control slds-size_1-of-4 slds-m-left_medium">
@@ -92,8 +99,8 @@
                                                   label="Activation Type" required="true" value="{!v.newAction.RDNACadence__Activation_Type__c}" 
                                                   messageWhenValueMissing="Please Select Activation Type.">                                         
                                     <option value="">Select Activation Type</option>
-                                    <option value="Automatic">Automatic</option>
-                                    <option value="Manual">Manual</option>
+                                    <option value="Automatic" class="option-style">Automatic</option>
+                                    <option value="Manual" class="option-style">Manual</option>
                                 </lightning:select>
                             </div>                       
                             
@@ -104,7 +111,7 @@
                                                           label="Activation Type" required="true"
                                                           value="{!v.newAction.RDNACadence__Activation_Type__c}">
                                             <option value="">Select Activation Type</option>
-                                            <option value="Automatic">Automatic</option>
+                                            <option value="Automatic" class="option-style">Automatic</option>
                                         </lightning:select>
                                     </div>
                                     
@@ -114,7 +121,7 @@
                                                               label="Activation Type"  required="true"
                                                               value="{!v.newAction.RDNACadence__Activation_Type__c}" >
                                                 <option value="">Select Activation Type</option>
-                                                <option value="Manual">Manual</option>
+                                                <option value="Manual" class="option-style">Manual</option>
                                             </lightning:select>
                                         </div>
                                     </aura:set>    
@@ -131,9 +138,9 @@
                                               label="Type" required="{!v.isActionTypeRequired}" value="{!v.newAction.RDNACadence__Template_Id__c}" 
                                               messageWhenValueMissing="Please Select Template Type."
                                               disabled = "{!v.isDisabled}">
-                                <option value="">Select Template</option>
+                                <option value="" class="option-style">Select Template</option>
                                 <aura:iteration items="{!v.listToShowInTemplateType}" var="templateObj" indexVar="selectedIndex">
-                                    <option value="{!selectedIndex}">{!templateObj.Name}</option>
+                                    <option value="{!selectedIndex}" class="option-style">{!templateObj.Name}</option>
                                 </aura:iteration>
                             </lightning:select>
                         </div>

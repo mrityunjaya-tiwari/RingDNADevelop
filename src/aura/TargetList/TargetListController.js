@@ -5,7 +5,7 @@
         var rowActions = helper.getRowActions.bind(this, component);
         component.set('v.columns', [
             { label: 'Name', fieldName: 'linkName', type: 'url', sortable:'true', 
-             typeAttributes: {label: { fieldName: 'name' }, target: '_self', sortable: true}},
+             typeAttributes: {label: { fieldName: 'name' }, tooltip: {fieldName: 'name'}, target: '_self', sortable: true}},
             { label: 'Priority', fieldName: 'priority', type: 'number', sortable: true },
             { label: 'Company', fieldName: 'companyLink', type: 'url', sortable:'true', 
              typeAttributes: {label: { fieldName: 'company' }, target: '_self', sortable: true}, cellAttributes: 
