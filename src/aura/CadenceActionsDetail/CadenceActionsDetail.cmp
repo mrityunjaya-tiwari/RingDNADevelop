@@ -73,7 +73,7 @@
                     <img class = "actions-icon" src="{!$Resource.cadence_icons + '/email/email-icon@3x.png'}"/> 
                 </aura:if>
                 <aura:if isTrue="{!v.actionType == 'Task'}">
-                    
+                    <img class = "actions-icon" src="{!$Resource.cadence_icons + '/task-icon/task-icon@3x.png'}"/> 
                 </aura:if>
                 {!' ' + v.actionType} 
             </div>  

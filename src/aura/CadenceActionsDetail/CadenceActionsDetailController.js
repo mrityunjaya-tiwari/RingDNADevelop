@@ -1,6 +1,6 @@
 ({
     doInit: function(component, event, helper) {
-        console.log('Cadence Action Detail Doinit');
+        
         var cadenceAction = component.get("v.cadenceAction");
         if(!(cadenceAction.Id)){
             helper.sectionToggle(component, event,'detailDiv');

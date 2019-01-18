@@ -22,8 +22,7 @@
                 var actionObj = response.getReturnValue();
                 helper.viewDetails(component, event, actionObj.Id);	
             }else{
-                console.log("Action Not Created");
-                console.log(response.getError());
+                
             }
         });
         
@@ -176,13 +175,13 @@
     
     onCancel: function(component, event){
         var myUserContext = component.get("v.themeName"); 
-        console.log('In Action details helper myUserContext',myUserContext);
+        
         if(myUserContext == 'Theme3' || myUserContext == 'Theme4t' || myUserContext == 'Theme4d') {
             window.history.go(-1);
             /*window.location = '/apex/CadenceActionList';*/
         } else if(myUserContext == undefined) {
             window.history.go(-1);
-           /* var evt = $A.get("e.force:navigateToComponent");
+            /* var evt = $A.get("e.force:navigateToComponent");
             evt.setParams({
                 componentDef : "c:CadenceActionList" ,
                 componentAttributes : {
@@ -193,8 +192,7 @@
     },
     
     viewDetails : function(cmp, event, id) {
-        console.log('In view detail');
-        console.log(id);
+        
         var myUserContext = cmp.get("v.themeName");
         if(myUserContext == 'Theme3' || myUserContext == 'Theme4t' || myUserContext == 'Theme4d') {
             window.location = '/apex/ActionDetailView?id='+id;

@@ -158,7 +158,6 @@ public class TargetListControllerTest {
         TargetListController.getTargetListforSObject('Contact', '');
         TargetListController.getTargetListforSObject('Lead', '');
         List<TargetListController.TargetListWrapper> contactTargetList = TargetListController.getTargetListforSObject('Contact', '');
-        System.debug(contactTargetList);        
         List<TargetListController.TargetListWrapper> leadTargetList = TargetListController.getTargetListforSObject('Lead', '');
         
         //TargetListController.createTask(paList);
@@ -219,7 +218,6 @@ public class TargetListControllerTest {
         TargetListController.getTargetListforSObject('Lead', '');
         
         List<TargetListController.TargetListWrapper> contactTargetListCall= TargetListController.getTargetListforSObject('Contact', '');
-        System.debug(contactTargetListCall);        
         List<TargetListController.TargetListWrapper> leadTargetListCall = TargetListController.getTargetListforSObject('Lead', '');
         Test.stopTest();
         System.assertEquals(4,contactTargetListCall.size());
@@ -278,7 +276,6 @@ public class TargetListControllerTest {
         CadenceController.updateParticipants(cadenceContact.Id);
         TargetListController.getTargetListforSObject('Contact', '');
         List<TargetListController.TargetListWrapper> contactTargetListTask = TargetListController.getTargetListforSObject('Contact', ''); 
-        System.debug(contactTargetListTask);
         Test.stopTest();
         System.assertEquals(4,contactTargetListTask.size() );
         System.assertEquals(actionobjTask.Type__c, contactTargetListTask.get(3).actionType);  
@@ -319,7 +316,6 @@ public class TargetListControllerTest {
         t.Status='Deferred';
         t.WhoId= con.Id;
         insert t;
-        System.debug(t);
         Test.startTest();       
         TargetListController.deletePA(new List<Id>{paobj.Id});
         Test.stopTest();
@@ -364,13 +360,11 @@ public class TargetListControllerTest {
     	lead.LeadSource = 'Web';
     	lead.Title = 'Test';        
     	insert lead;      
-        system.debug('lead inserted' + lead);       
         Test.startTest();   
         CadenceController.updateParticipants(cadenceobj.Id);
         CadenceService.setParticipantsActivation(cadenceobj.Id,true);
         Test.stopTest();
         lead = [Select Id, EntranceCriteria_Matched_Date__c, Cadence_Id__c from Lead where Id = :lead.Id];
-        system.debug('lead' + lead);
         TargetListController.getDaysToPerformAction(lead, cadenceActionobj);
        
     }

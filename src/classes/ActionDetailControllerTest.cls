@@ -89,10 +89,8 @@ public class ActionDetailControllerTest {
     
     public static boolean numberValidate(Integer int1, Integer int2) {
         if (int1 >=  int2){
-            system.debug('true');
             return true;
         } else {
-            system.debug('false');
             return false;
         }
     }

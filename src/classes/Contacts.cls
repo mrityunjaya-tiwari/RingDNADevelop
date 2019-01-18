@@ -20,7 +20,6 @@ public class Contacts  extends SObjectDomain {
     }
     
     public override void onBeforeInsert() {
-        System.debug('Before insert called');
     	Map<Id, Cadence__c> cadMap = CadenceSelector.getActiveCadencesByRecordType(CadenceConstants.CONTACT_OBJECT_NAME);
         for(Contact contObj: (List<Contact>)contsWithoutCadence) {
             Cadence__c cad = RuleCriterionMatcher.assignCadenceToNotAssignedParticipant(cadMap, contObj, CadenceConstants.CONTACT_OBJECT_NAME);
@@ -28,9 +27,6 @@ public class Contacts  extends SObjectDomain {
     }
     
     public override void onAfterInsert() {
-        
-        System.debug('Contact after insert called');
-
     	Map<Id, Cadence__c> cadMap = CadenceSelector.getActiveCadencesByRecordType(CadenceConstants.CONTACT_OBJECT_NAME);
     	Map<Id, List<CadenceAction__c>> contIdToAllCadActListMap = new Map<Id, List<CadenceAction__c>>();
 		Map<Id, List<Sequence_Action__c>> partActToPerform = new Map<Id, List<Sequence_Action__c>>();
@@ -70,7 +66,6 @@ public class Contacts  extends SObjectDomain {
     
     public override void onbeforeUpdate(Map<Id,SObject> existingRecords){
     	
-    	System.debug('Before update called');
 		if(!flag) {
 			return;
 		}

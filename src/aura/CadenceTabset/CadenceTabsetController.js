@@ -1,6 +1,5 @@
 ({
 	init : function(component, event, helper) {
-        console.log('####in init of tabset');
 	},
 
     editCadence:function(component, event, helper){

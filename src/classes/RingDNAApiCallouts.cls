@@ -16,9 +16,7 @@ public class RingDNAApiCallouts {
         Map<String, Object> accountDetails = getAccountDetails();
         if(accountDetails != null && !accountDetails.isEmpty()) {
         	sessionId = String.valueOf(accountDetails.get('sessionId'));
-            system.debug('sessionId ' + sessionId);
     	    accountId = String.valueOf(accountDetails.get('accountId'));
-            system.debug('accountId ' + accountId);
 	        userId = String.valueOf(accountDetails.get('userId'));
         }	
     } 
@@ -34,11 +32,10 @@ public class RingDNAApiCallouts {
         if(httpResponse == null) {
             return null;
         }
-        else
-        System.debug('httpResponse.getBody'+httpResponse.getBody());  
-        Map<String, Object> jsonMap = (Map<String, Object>)JSON.deserializeUntyped(httpResponse.getBody());
-        System.debug('jsonMap'+jsonMap);
-        return jsonMap;
+        else{
+            Map<String, Object> jsonMap = (Map<String, Object>)JSON.deserializeUntyped(httpResponse.getBody());
+            return jsonMap;
+        }
     }
     
     public Map<String, String> getCallNoteTemplates() {
@@ -57,7 +54,6 @@ public class RingDNAApiCallouts {
             	callTemplatesData.put(String.valueOf(objMap.get('id')), String.valueOf(objMap.get('name'))); 	   
             }
         }
-        System.debug('Call note templates data = '+ callTemplatesData);
         return callTemplatesData;
     }
     
@@ -69,9 +65,7 @@ public class RingDNAApiCallouts {
             return New Map<String, String>();
         }
 		HTTPResponse httpResponse = getResponse(HTTP_METHOD, endpoint, sessionId);
-        //system.debug(httpResponse.getBody());
         
-        system.debug('httpResponse ' + httpResponse.getBody());   
         List<Object> jsonList = (List<Object>)JSON.deserializeUntyped(httpResponse.getBody());
 		Map<String, String> smsTemplatesData = new Map<String, String>();	
         for (Object obj : jsonList) {
@@ -80,7 +74,6 @@ public class RingDNAApiCallouts {
             	smsTemplatesData.put(String.valueOf(objMap.get('id')), String.valueOf(objMap.get('name'))); 	   
             } 
         }
-        System.debug('SMS Templates data = '+ smsTemplatesData);
         return smsTemplatesData;
     } 
     
@@ -92,15 +85,12 @@ public class RingDNAApiCallouts {
             return New Map<String, String>();
         } 
 		HTTPResponse httpResponse = getResponse(HTTP_METHOD, endpoint, sessionId);
-        
-        system.debug(httpResponse.getBody());
         List<Object> jsonList = (List<Object>)JSON.deserializeUntyped(httpResponse.getBody());
 		Map<String, String> voicemailDropsData = new Map<String, String>();	
         for (Object obj : jsonList) {
             Map<String, Object> objMap = (Map<String, Object>)obj;
             voicemailDropsData.put(String.valueOf(objMap.get('id')), String.valueOf(objMap.get('label'))); 	   
         }
-        System.debug('Voicemail drop data = ' + voicemailDropsData);
         return voicemailDropsData;
     }
     
@@ -115,7 +105,6 @@ public class RingDNAApiCallouts {
             }
             return http.send(httpRequest);
         }  catch(Exception e) {
-            System.debug('Exception in fetching data from api -'+ e.getMessage());
             return null;
         }
     }

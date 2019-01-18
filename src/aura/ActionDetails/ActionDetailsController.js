@@ -48,7 +48,6 @@
     },
     
     createAction : function(component, event,helper) {
-        console.log('Test createAction Js');
         helper.createAction(component, event,helper);
     },
     updateActionType: function (component, event, helper) {

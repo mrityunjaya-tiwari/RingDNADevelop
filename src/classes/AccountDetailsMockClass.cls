@@ -3,7 +3,6 @@ global class AccountDetailsMockClass implements HttpCalloutMock{
 	// Implement this interface method
     global HTTPResponse respond(HTTPRequest request) {
         // Create a fake response
-        system.debug('request'+request);
         HttpResponse response = new HttpResponse();
         response.setHeader('Content-Type', 'application/json');
         string str ='{"accountId": 10000630,"sessionId": "2e3dbbe5_8217_48f9_86de_7287a37bd6c2","userId": 3274}' ;

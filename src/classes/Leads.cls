@@ -20,7 +20,6 @@ public class Leads  extends SObjectDomain {
     }
     
     public override void onBeforeInsert() {
-    	System.debug('Before insert called');
     	Map<Id, Cadence__c> cadMap = CadenceSelector.getActiveCadencesByRecordType(CadenceConstants.LEAD_OBJECT_NAME);
         for(Lead leadObj: (List<Lead>) leadsWithoutCadence) {
             Cadence__c cad = RuleCriterionMatcher.assignCadenceToNotAssignedParticipant(cadMap, leadObj, CadenceConstants.LEAD_OBJECT_NAME);
@@ -28,8 +27,6 @@ public class Leads  extends SObjectDomain {
     }
     
     public override void onAfterInsert() {
-
-        System.debug('Lead after insert called');
 
     	Map<Id, Cadence__c> cadMap = CadenceSelector.getActiveCadencesByRecordType(CadenceConstants.LEAD_OBJECT_NAME);
     	Map<Id, List<CadenceAction__c>> leadIdToAllCadActListMap = new Map<Id, List<CadenceAction__c>>();
@@ -70,10 +67,7 @@ public class Leads  extends SObjectDomain {
     
     
     public override void onBeforeUpdate(Map<Id,SObject> existingRecords){
-
-        System.debug('Before update called'+ flag);
 		if(flag==1) {
-            System.debug('Before update called but not proceeded');
 			return;
 		}
 		CadenceService.processParticipantsWithCadences(records, CadenceConstants.LEAD_OBJECT_NAME, true);

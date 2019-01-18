@@ -17,7 +17,6 @@ public class RingDNAApiCallouts_test {
        accountId = acc.id;
        sessionId = userinfo.getSessionId();
        userId = userinfo.getUserId();
-       System.debug('userId'+userId);
        RingDNAEnvironment__c RingDNAEnviron2 = new RingDNAEnvironment__c(value__c='local');
        insert RingDNAEnviron2;
        System.assertNotEquals(null, RingDNAEnviron2);

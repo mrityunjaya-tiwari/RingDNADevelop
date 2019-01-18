@@ -1,8 +1,5 @@
 ({
     doInit : function(component, event, helper) {
-        console.log('Progress Init');
-        console.log('contactFieldList' + component.get("v.contactFieldList"));
-        console.log('contactFieldList' + component.get("v.leadFieldList"));
         var childCmp = component.find("PBComp");
         childCmp.setErrorMethod(false);
     },
@@ -10,17 +7,14 @@
     moveNext : function(component,event,helper){
         helper.validateForm(component,event,helper);
         var childCmp = component.find("PBComp");
-        console.log('childCmp',childCmp);
         childCmp.setErrorMethod(component.get('v.hasError'));
     },
     
     save : function(component,event,helper){
-        console.log('IN progress save');
         var isValid = true;
         isValid = helper.validateForm(component,event,helper);
         isValid = helper.createCadenceAction(component,event,helper);
         if (isValid){
-            console.log('IN progress save');
             helper.saveCadence(component,event,helper);
         } else{
             var childCmp = component.find("PBComp");
@@ -113,7 +107,6 @@
     
     goToListView : function(component, event, helper) {
         var myUserContext = component.get("v.themeName");
-        console.log('myUserContext',myUserContext);
         if(myUserContext == 'Theme3' || myUserContext == 'Theme4t' || myUserContext == 'Theme4d') {
             window.location = '/apex/CadenceListView';
         } 

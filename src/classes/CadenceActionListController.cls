@@ -90,14 +90,12 @@ public class CadenceActionListController {
             cadWrapList.add(cadWrap);
         }
         
-        System.debug('Wrapper list is = '+ cadWrapList);
         return cadWrapList;
         
     }
     
     @AuraEnabled
     public static void deleteCadences(List<Id> cadIds) {
-        system.debug('cad ids are = '+ cadIds);
         if(!cadIds.isEmpty()) {
             List<Cadence__c> cadencesToDelete = new List<Cadence__c>();
             for(Id cadId: cadIds) {
@@ -136,7 +134,6 @@ public class CadenceActionListController {
                 }
             }
         }
-        System.debug('cadecen wise results'+ cadWiseParticipants);
         return cadWiseParticipants;
     }
     

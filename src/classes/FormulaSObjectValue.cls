@@ -23,7 +23,6 @@ public with sharing class FormulaSObjectValue {
             Object value = current.get(fieldName);
             return value;
         } catch (System.SObjectException exc) {
-            System.debug('### exception'+ exc);
             return null;
         }
     }

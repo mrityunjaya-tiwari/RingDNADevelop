@@ -138,7 +138,6 @@ public with sharing class CadenceSelector {
             queryWithSubQuery = 'Select '+nameSpace+'Cadence_ID__r.name, ' + queryWithSubQuery ;
         }
         queryWithSubQuery += ' WHERE '+nameSpace+'isActivated__c = true AND '+nameSpace+'Cadence_Id__c != null AND OwnerId=:userId';
-        system.debug('queryWithSubQuery ' + queryWithSubQuery);
         return Database.query(queryWithSubQuery); 
     }
     
@@ -176,7 +175,6 @@ public with sharing class CadenceSelector {
             String fieldName = fieldDescribe.getName();
             allowedFields.add(fieldName);
         }
-        system.debug(new List<String>(allowedFields));
         query += String.join(new List<String>(allowedFields), ',');
         query += ' FROM '+ objType + '';
         return query;

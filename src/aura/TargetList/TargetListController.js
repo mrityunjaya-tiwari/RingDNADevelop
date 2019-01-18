@@ -1,7 +1,5 @@
 ({
     init : function(component, event, helper) {
-        console.log('In target list init method');
-        
         var rowActions = helper.getRowActions.bind(this, component);
         component.set('v.columns', [
             { label: 'Name', fieldName: 'linkName', type: 'url', sortable:'true', 
@@ -27,17 +25,13 @@
     },
     
     handleDatatableEvent : function(component, event, helper) {
-        console.log('handling the event');
         var rowsSelected = event.getParam("rowsSeleted");
-        console.log(rowsSelected);
         var row = event.getParam("row");
         var actionName = event.getParam("actionName");
         if(rowsSelected != undefined) {
             component.set('v.selectedRows', rowsSelected);
         }
         if(actionName != undefined) {
-            console.log('See the action = '+ actionName);
-            console.log(row);
             helper.performActions(component, event, helper, actionName, row);
         }
     },
@@ -51,14 +45,10 @@
     
     deletePartActions : function(component, event, helper) {
         var records = component.get("v.rowsToDelete");
-        console.log('checking records');
-        console.log(records);
         var ids = [];
         for(var i=0; i<records.length; i++) {
             ids.push(records[i].participantActionsId);
         }
-        console.log('checking again');
-        console.log(ids);
         helper.deleteParticipantActions(component, event, helper, ids);
         component.set('v.showModal', false);
     },
@@ -108,13 +98,5 @@
     filterActionType: function(component, event, helper){
         helper.applyMultipleFilters(component, event, helper);
     },
-    /* onSelectChange : function(component, event, helper){
-        var selectComponent = component.find('recordSize');
-        component.set('v.recordsPerPage', selectComponent.get('v.value'));
-        helper.getData(component, event, helper);
-       
-    }
-    
-    */
     
 })

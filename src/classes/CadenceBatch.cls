@@ -6,7 +6,6 @@ public with sharing class CadenceBatch implements Database.Batchable<sObject>, D
 	
 	public CadenceBatch(Id cadID) {
 		cadence = CadenceSelector.getCadenceById(cadId); 
-		system.debug('Showing data' + cadence);
 		this.objName = cadence.Record_Type__c;
 	}
 
@@ -40,7 +39,6 @@ public with sharing class CadenceBatch implements Database.Batchable<sObject>, D
    		}
 		query += String.join(new List<String>(allowedFields), ',');
    		query += ' FROM '+ objName +' WHERE '+nameSpace+'Cadence_Id__c = null';
-    	System.debug('@@@ Query '+ query);
    
    		return query;
    } 

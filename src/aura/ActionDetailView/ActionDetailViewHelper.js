@@ -3,7 +3,7 @@
         
         component.set('v.spinner', true);
         var id = component.get('v.recordId');
-        console.log( 'in getData Helper ',id);
+        
         if(id == null || id === undefined) {
             //alert("Data no longer exist");
             helper.openRecordList();
@@ -35,10 +35,10 @@
                 }); 	
                 component.set('v.partRawData', partRecords);
                 component.set('v.spinner', false);
-                console.log('v.spinner',component.get('v.spinner'));
+                
                 component.set('v.setCompanyRow', true);
             } /*else if(state === "ERROR"){
-                console.log('no data');
+            
                 var myUserContext = component.get("v.themeName");
                 if(myUserContext == 'Theme3') {
             window.location = '/apex/ErrorPage'
@@ -51,17 +51,16 @@
                 });
                 evt.fire();
             }}*/
-                else {
-                    component.set('v.spinner', false);
-                }
+            else {
+                component.set('v.spinner', false);
+            }
         });
         $A.enqueueAction(action);
     },
     
     editRecord : function(component, event, id) {
         var myUserContext = component.get("v.themeName");
-        console.log('In edit function helper id',id); 
-        console.log('In edit function helper myUserContext',myUserContext); 
+        
         if(myUserContext == 'Theme3') {
             window.location = '/apex/EditActionDetails?id='+id;
         } 
@@ -77,7 +76,7 @@
         }
     },
     openRecordList : function(component, event) {
-        console.log( 'in openRecordList Helper ');
+        
         var evt = $A.get("e.force:navigateToComponent");
         evt.setParams({
             componentDef  : "c:CadenceActionList" ,

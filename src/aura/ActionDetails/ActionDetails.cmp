@@ -8,6 +8,8 @@
     <aura:attribute name = "disableActionType" type = "Boolean" default = "false"/>
     
     <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <!--ActivationType list -->
+    <aura:attribute name="activationTypelist" type="List"/>
     <!--Action Objects -->
     <aura:attribute name="newAction" type="Action__c" default="{ 'sobjectType': 'Action__c', 'Name': '','RDNACadence__Type__c':''}"/>
     <!--Task Objects -->

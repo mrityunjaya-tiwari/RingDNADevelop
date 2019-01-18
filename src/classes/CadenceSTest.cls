@@ -56,9 +56,6 @@ public class CadenceSTest {
  		List<Criterion> fieldsWithLabels;
     	Test.startTest();
 		fieldsWithLabels = CadenceService.getFieldsWithLabels('Account');
-       
-
-         System.debug(fieldsWithLabels);
     	Test.stopTest();
     	
     	System.assertEquals(true, fieldsWithLabels!=null);

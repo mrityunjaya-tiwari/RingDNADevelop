@@ -9,10 +9,7 @@ public class ActionDetailViewCtrl {
     @AuraEnabled
     public static ActionDetailWrapper getActionData(Id actionId) {
         
-        System.debug('IN controller id = '+ actionId);
         Action__c action = [Select Id, Name, Type__c, Template_Id__c, Template_Name__c, Activation_Type__c From Action__c where Id = :actionId]; 
-        
-        
         
         ActionDetailWrapper actDetailWrap = new ActionDetailWrapper();
         actDetailWrap.action = action;
@@ -71,7 +68,6 @@ public class ActionDetailViewCtrl {
         }        
         actDetailWrap.participantList = partWrapper;
         
-        System.debug('Action detail wrap = '+ actDetailWrap);
         return actDetailWrap;
     }
      
@@ -112,7 +108,6 @@ public class ActionDetailViewCtrl {
     
     @AuraEnabled
     public static void togglePartActivation(String selectedRows) {
-    	System.debug('In toggle = '+ selectedRows);
 		List<ParticipantWrapper> wrapList = (List<ParticipantWrapper>)JSON.deserialize(selectedRows, List<ParticipantWrapper>.class);
 		List<sObject> participants = new List<sObject>();
 		for(ParticipantWrapper partWrap : wrapList) {

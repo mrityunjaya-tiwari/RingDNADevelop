@@ -5,7 +5,6 @@ public with sharing class ActionDetailController {
  
     @AuraEnabled
     public static ActionDetailController.InitActionData initCadenceActionData() {
-        system.debug('In initCadenceActionData');
         ActionDetailController.InitActionData initActionObj = new ActionDetailController.InitActionData();
         initActionObj.listEmailTemplate = CadenceService.getEmailTemplates();
         if(!test.isRunningTest()){
@@ -15,7 +14,6 @@ public with sharing class ActionDetailController {
         }
 
         initActionObj.wrapperTaskFields = CadenceService.getFields(TASK_OBJECT_STRING);
-        system.debug('success wrapperTaskFields ');
         return initActionObj; 
     }
 
@@ -57,7 +55,6 @@ public with sharing class ActionDetailController {
     }
 
     public static void updateFieldValue(SObject obj, String fieldName, String value, String fieldType) {
-		system.debug(fieldType);
         if(fieldType.equalsIgnoreCase('currency') || fieldType.equalsIgnoreCase('double') || fieldType.equalsIgnoreCase('percent') || fieldType.equalsIgnoreCase('decimal')) {
             obj.put(fieldName, Decimal.valueOf(value)); 
         } else if(fieldType.equalsIgnoreCase('boolean')) {

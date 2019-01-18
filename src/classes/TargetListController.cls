@@ -8,9 +8,7 @@ public class TargetListController {
         List<TargetListWrapper> tlList = New List<TargetListWrapper>();
         tlList.AddAll(TargetListController.getTargetListforSObject(CadenceConstants.LEAD_OBJECT_NAME, pgId));
         tlList.AddAll(TargetListController.getTargetListforSObject(CadenceConstants.CONTACT_OBJECT_NAME, pgId));
-        system.debug('tlList ' + tlList.size());
         TargetListInit tlObj = New TargetListInit();
-        //tlObj.pgList = CadenceSelector.getAllPublicGroup();
         tlObj.tlWList = tlList;                      
         return tlList;
         
@@ -20,11 +18,8 @@ public class TargetListController {
     public static TargetListInit getTargetListInitData(String pgId){
         
         List<TargetListWrapper> tlList = New List<TargetListWrapper>();
-        // if (pgId == UserInfo.getUserID()){
         tlList.AddAll(TargetListController.getTargetListforSObject(CadenceConstants.LEAD_OBJECT_NAME, pgId));
         tlList.AddAll(TargetListController.getTargetListforSObject(CadenceConstants.CONTACT_OBJECT_NAME, pgId));
-        
-        //system.debug('tlList ' + tlList.size());
         TargetListInit tlObj = New TargetListInit();
         List<Group> gList =  CadenceSelector.getAllPublicGroup(); 
         List<GrouplistWrapper> pgList = new List<GrouplistWrapper>();
@@ -74,16 +69,13 @@ public class TargetListController {
     
     @AuraEnabled
     public static void deletePA(List<Id> ids){
-        system.debug('ids ' + ids);
         List<Sequence_Action__c> saListToUpdate = new List<Sequence_Action__c>();
         List<Sequence_Action__c> saList = [Select Id, Name, RDNACadence__Contact_Id__c, RDNACadence__Lead_Id__c, RDNACadence__isDeferred__c from Sequence_Action__c where Id IN :ids];
-        system.debug('saList ' + saList.size());
         for (Sequence_Action__c saObj : saList){
             saObj.RDNACadence__isDeferred__c = true;
             saListToUpdate.add(saObj);
         }
         Update saListToUpdate;
-        system.debug('saListToUpdate ' + saListToUpdate.size());
         createTask(saListToUpdate);
     }
     
@@ -101,18 +93,15 @@ public class TargetListController {
             }
             tList.add(t);
         }
-        system.debug('saList ' + tList.size());
-        system.debug('saList ' + tList );
         insert tList;
     }
     
     /**
-* @description - created target list for SObject(lead/Contact)
-* @param objType - sObject name string
-* @return - List of TargetList(Wrapper class) 
-*/
+     * @description - created target list for SObject(lead/Contact)
+     * @param objType - sObject name string
+     * @return - List of TargetList(Wrapper class) 
+     */
     public static List<TargetListWrapper> getTargetListforSObject(String objectType, String pgId){
-        system.debug('pgId ' + pgId);
         List<TargetListWrapper> tlList = New List<TargetListWrapper>();
         // SObject list with related participentActions
         List<SObject> soList;
@@ -185,11 +174,11 @@ public class TargetListController {
     
     
     /**
-* @description - to get list of Action on Participants from SObject(lead/Contact)
-* @param objType - sObject name string
-* @param sObj - object to get apList
-* @return - List of Sequence_Action__c
-*/
+     * @description - to get list of Action on Participants from SObject(lead/Contact)
+     * @param objType - sObject name string
+     * @param sObj - object to get apList
+     * @return - List of Sequence_Action__c
+     */
     public static  List<Sequence_Action__c> getAPOfSObject(SObject sObj, String objType){
         List<Sequence_Action__c> apList;
         if (objType == CadenceConstants.LEAD_OBJECT_NAME){
@@ -229,11 +218,11 @@ public class TargetListController {
     }
     
     /**
-* @description - Method is used to find days to perform cadence Action
-* @param sObj - sObject (Lead/Contact)
-* @param caObj - CadenceAction object
-* @return - Integer - days to perform
-*/
+     * @description - Method is used to find days to perform cadence Action
+     * @param sObj - sObject (Lead/Contact)
+     * @param caObj - CadenceAction object
+     * @return - Integer - days to perform
+     */
     public static Integer getDaysToPerformAction(SObject sObj, CadenceAction__c caObj){
         DateTime dt = (DateTime)sObj.get(nameSpace+'EntranceCriteria_Matched_Date__c');
         Map<String, String> dtMap = CadenceUtil.getTimeDiff(system.now(), dt);

@@ -1,6 +1,5 @@
 ({
     setData : function(cmp, helper) {
-
     	if(cmp.get('v.rawData') == null) {
     		return;
     	} 
@@ -11,7 +10,6 @@
         	recordsPerPage = cmp.get('v.rowsToLoad');
 		
         cmp.set('v.totalNumberOfRows', totalNumberOfRecords);   
-        console.log(totalNumberOfRecords);
         if(totalNumberOfRecords == 0) {
             return;
         }

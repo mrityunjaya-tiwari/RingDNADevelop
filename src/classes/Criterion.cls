@@ -8,17 +8,13 @@ public with sharing class Criterion {
 	@AuraEnabled public List<String> listPicklistValues;
 
 	public Boolean matches(FormulaSObjectValue valueObj) { 
-		System.debug('### datatype: ');
-		System.debug(this.fieldDataType);
 		ICriterionEvaluator criterionEvaluator = CriterionEvaluatorFactory.createNew(this.fieldDataType.toUpperCase());
 		return this.invokeCriterionEvaluator(criterionEvaluator, valueObj);
 	}
 	 
 	private Boolean invokeCriterionEvaluator(ICriterionEvaluator criterionEvaluator, FormulaSObjectValue valueObj) {
-		System.debug('$%$ invokeCriterionEvaluator ' + criterionEvaluator + ' ' + valueObj);
 		Boolean ret = false;
 		Object fieldValue = valueObj.get(this.fieldName);
-		System.debug('$%$ ' + fieldValue + ' ' + this.value + ' ' + this.operation);
 		if (fieldValue == null || this.value == null) {
 			return false;
 		}
@@ -41,7 +37,6 @@ public with sharing class Criterion {
 		} else if ('not_contains'.equalsIgnoreCase(this.operation)) {
 			ret = criterionEvaluator.notContains(fieldValue, this.value);
 		}
-		System.debug('$%$ ret: ' + ret);
 		return ret;
 	}
 

@@ -9,19 +9,19 @@
     },
     // Added new row for set fields to update
     createRowToFieldsUpdate: function(component, event, helper){
-       var rowList = component.get("v.rowToCreateFieldsToUpdate");
+        var rowList = component.get("v.rowToCreateFieldsToUpdate");
         if(rowList.length == 0) {
-	        rowList.push({
-	            'sobjectType': 'wrapperTaskField',
-	            'key': 'Priority',
-	            'value': ''
-	        });
+            rowList.push({
+                'sobjectType': 'wrapperTaskField',
+                'key': 'Priority',
+                'value': ''
+            });
         } else {
-	        rowList.push({
-	            'sobjectType': 'wrapperTaskField',
-	            'key': '',
-	            'value': ''
-	        });
+            rowList.push({
+                'sobjectType': 'wrapperTaskField',
+                'key': '',
+                'value': ''
+            });
         }
         component.set("v.rowToCreateFieldsToUpdate", rowList);
     },
@@ -29,7 +29,7 @@
     setActionObject : function(component, event, helper){
         var cadenceActionObj = component.get("v.cadenceAction");
         var actionList = component.get("v.allActionsList");
-        console.log('actionList', actionList);
+        
         for(var index in actionList){
             var actionObj = actionList[index];
             var actionId = actionObj.Id;
@@ -123,7 +123,7 @@
                 }
             }
             component.set("v.rowToCreateFieldsToUpdate", rowList);
-            console.log('cadenceActionObj.RDNACadence__Fields_To_Update_Action__c  ',obj.sobjectType);
+            
         }
         if (cadenceActionObj.RDNACadence__Action_Criterion__c){
             component.set("v.criteriaOptionsValue", "true");
@@ -191,8 +191,7 @@
             });
         }
         component.set('v.wrapperLeadFields', wrapperLeadFields);
-        console.log('leadFieldList ' , leadFieldList);
-        console.log('wrapperLeadFields ' , wrapperLeadFields);
+        
     },
     // Set Contact felds data
     setContactFieldsList:function(component, event, helper){

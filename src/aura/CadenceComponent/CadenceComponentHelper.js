@@ -25,7 +25,6 @@
                     var result = wrapperResult.cObj;
                     component.set("v.cadence", result);
                     
-                    console.log('progress Init ',result.RDNACadence__CadenceActions__r);
                     if(result.RDNACadence__CadenceActions__r){
                         component.set("v.cadenceActionList", result.RDNACadence__CadenceActions__r);
                     }
@@ -37,13 +36,9 @@
                     
                     component.set("v.entranceCriteriaSet",entryCriterion);
                     component.set("v.exitCriteriaSet",exitCriterion);
-                    //component.set("v.openViewMode","true");
-                    console.log('entrancecriteriaset',component.get("v.entranceCriteriaSet"));
-                    console.log('ecitcriteriaset',component.get("v.exitCriteriaSet"));
                     component.set("v.SpinnerForSync",false);
                 }else{
                     component.set("v.SpinnerForSync",false);
-                    console.log('failed with status:',response);
                 }
             });
             $A.enqueueAction(cadence);
@@ -65,7 +60,6 @@
                     component.set("v.leadFieldList", sortedLdList);
                     component.set("v.SpinnerForSync",false);
                 }else{
-                    console.log('failed with status:',response);
                     component.set("v.SpinnerForSync",false);
                 }
             });

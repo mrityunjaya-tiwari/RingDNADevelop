@@ -102,7 +102,6 @@ stack.push(s);
             String nameLable = fieldAPIName.getDescribe().getLabel();
             apiList.add(fieldAPIName.getDescribe().getName());
             apiList.add(dataType);
-            system.debug('nameLable ' + nameLable + ' dataType ' + dataType );
             objectFieldDataTypeMap.put(nameLable, apiList);
         }
         return objectFieldDataTypeMap;
@@ -116,7 +115,6 @@ stack.push(s);
      * @param fieldType - type of field in sf
      */
     public static void updateFieldValue(SObject obj, String fieldName, Object value, String fieldType) {
-        system.debug('SObject ' + obj + ' '  + fieldName + ' ' +  value + ' '  + fieldType);
         
         if(fieldType.equalsIgnoreCase('currency') || fieldType.equalsIgnoreCase('double') || fieldType.equalsIgnoreCase('percent') || fieldType.equalsIgnoreCase('decimal')) {
             obj.put(fieldName, Decimal.valueOf(String.valueOf(value))); 

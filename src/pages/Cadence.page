@@ -7,17 +7,14 @@
     <div id="myDivId4" />
     <script>
     	var myUserContext = "{!$User.UITheme}";
-        console.log('In Action DetailView Page myUserContext'+myUserContext);
     	var iseditVar = '{!$CurrentPage.parameters.isedit}' != undefined ? '{!$CurrentPage.parameters.isedit}':false;
-        console.log('In iseditVar'+iseditVar);
-     	console.log('In iseditVar'+iseditVar);
         $Lightning.use("RDNACadence:CadenceActionListApp", function() {
             $Lightning.createComponent(
                 "RDNACadence:CadenceComponent",
                 {recordId: '{!$CurrentPage.parameters.id}',themeName: myUserContext,isEdit : iseditVar},
                 "myDivId4",
                 function(cmp) {
-                    console.log('Cadence component created');
+                    
                 }
             ); 
         }); 

@@ -1,7 +1,5 @@
 ({
 	doInit : function(component, event, helper) {
-
-        console.log('In controller');
         var noOFColumns = 6;
         var  width = screen.width/noOFColumns;
         width = width -31.2;
@@ -28,12 +26,10 @@
 	},
 	
 	toggleActivation : function(component, event, helper) {
-		console.log('In activation');
 		helper.toggleParticipantsActivation(component, event, helper);
 	},
 	
 	refreshData : function(component, event, helper) {
-		console.log('Showing data of participant');
 		helper.getData(component, event, helper);
 	},
 

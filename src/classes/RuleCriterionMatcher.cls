@@ -6,13 +6,11 @@ public with sharing class RuleCriterionMatcher {
     
     public static void assignCadenceToParticipants(Cadence__c cad) {
     	
-    	System.debug('In assign cad to part = '+ cad.CadenceActions__r);
     	String objName = cad.Record_Type__c;
     	
 		//Getting leadList to process
 		List<SObject> sObjectList = CadenceService.getSObjectsToProcess(participantsList, new Map<Id, Cadence__c>{cad.Id => cad}, objName);
 		
-		System.debug('Update following sObjects = '+ sObjectList);
 		update sObjectList;
     	
     }
@@ -29,12 +27,10 @@ public with sharing class RuleCriterionMatcher {
 		for(Id cadId : cadCriterion.keySet()) {
 			Boolean isExitCriterionMatches = RuleCriterionMatcherHelper.cadenceCriterionMatches(partObj, cadExitCriterion.get(cadId));
 			if(isExitCriterionMatches) {
-				System.debug('Matching exit');
 				continue;
 			}
 			Boolean isCriterionMatches = RuleCriterionMatcherHelper.cadenceCriterionMatches(partObj, cadCriterion.get(cadId));
     		if(isCriterionMatches) {
-    			System.debug('Matching entry');	
     			matchingCadences.add(cadenceMap.get(cadId));
     		} 
 		}
@@ -88,8 +84,6 @@ public with sharing class RuleCriterionMatcher {
 	
 	public static List<CadenceAction__c> getMatchingActions(Cadence__c cad, SObject obj, String objName, List<Sequence_Action__c> partActions) {
 		
-		System.debug('partActions = '+ partActions);
-		
 		List<CadenceAction__c> allCadActions = cad.CadenceActions__r;
 		List<CadenceAction__c> actionsToPerform = new List<CadenceAction__c>();
 		Map<Id, CadenceAction__c> cadActionsMap = new Map<Id, CadenceAction__c>();
@@ -100,16 +94,13 @@ public with sharing class RuleCriterionMatcher {
 			for(Sequence_Action__c partAct : partActions) {
 				partActionsMap.put(partAct.CadenceAction_Id__c, partAct);
 			}
-			System.debug('partactionMap = '+ partActionsMap);
 			for(CadenceAction__c cadAct : allCadActions) {
 				if(partActionsMap.containsKey(cadAct.Id)) {
 					cadActionsMap.put(cadAct.Id, cadAct);
 				}
 			}
-			System.debug('partactionMap = '+ cadActionsMap);
 		} else {
 			cadActionsMap = new Map<Id, CadenceAction__c>(allCadActions);
-			System.debug('cadActionsMap = '+ allCadActions);		 	
 		}
 		
 		//Getting the time difference from matched cadence date to today 

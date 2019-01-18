@@ -16,8 +16,6 @@ public with sharing class Tasks extends SObjectDomain {
      
     public override void onBeforeInsert() {
     	
-        
-        System.debug('On before insert'+ (List<Task>)records);
         Map<Id, List<Sequence_Action__c>> objToPartActMap = new Map<Id, List<Sequence_Action__c>>();
     	List<Sequence_Action__c> actionToUpdate = new List<Sequence_Action__c>();
     	Map<Id, List<CadenceAction__c>> objToCadActListMap = new Map<Id, List<CadenceAction__c>>();
@@ -30,7 +28,6 @@ public with sharing class Tasks extends SObjectDomain {
 		//Updating performed actions
 		for(Task t : (List<Task>)records) {
 			
-            System.debug('Task processed = '+ t);
             if(t.WhoId == null || t.Subject == null || t.Sequence_Action__c != null) {
      			continue;
      		}
@@ -63,7 +60,6 @@ public with sharing class Tasks extends SObjectDomain {
                             }
                         } else {
                             if(taskType.equals(CadenceConstants.ACTION_TYPE_EMAIL)) {
-                                System.debug('How this is not done');
                                 action.isActionPerformed__c = true;	
 		                        t.Sequence_Action__c = action.Id;   
 								actionToUpdate.add(action);
@@ -90,8 +86,6 @@ public with sharing class Tasks extends SObjectDomain {
     }
 
 	public override void onBeforeUpdate(Map<Id,SObject> existingRecords) {
-		
-        System.debug('On before update of task');
 
 	   	Map<Id, List<Sequence_Action__c>> objToPartActMap = new Map<Id, List<Sequence_Action__c>>();
     	List<Sequence_Action__c> actionToUpdate = new List<Sequence_Action__c>();
@@ -99,7 +93,6 @@ public with sharing class Tasks extends SObjectDomain {
     	List<Task> tasksToProcess = new List<Task>();
   	
 		for(Task t : (List<Task>)records) {
-			System.debug('In update of task '+ t);
 			if(existingRecords.get(t.Id).get('WhoId') == null && t.WhoId != null) {
 				tasksToProcess.add(t);
 			}
@@ -112,7 +105,6 @@ public with sharing class Tasks extends SObjectDomain {
 
 		//Updating performed actions
 		for(Task t : tasksToProcess) {
-			System.debug('task is defined = '+ t);
 
             if(t.WhoId == null || t.Subject == null || t.Sequence_Action__c != null) {
      			continue;
@@ -141,7 +133,6 @@ public with sharing class Tasks extends SObjectDomain {
                         if(taskType == null) {
                             if(taskSubject.containsIgnoreCase('Email')) {
                             	action.isActionPerformed__c = true;	
-                                System.debug('In logs for email typ e in task');
                 		        t.Sequence_Action__c = action.Id;   
 								actionToUpdate.add(action);
 								break;    

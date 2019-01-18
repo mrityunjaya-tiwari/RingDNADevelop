@@ -17,8 +17,7 @@
                 {recordId: '{!$CurrentPage.parameters.id}',themeName: myUserContext},
                 "myDivId5",
                 function(cmp) {
-                    console.log('component created');
-                    console.log(cmp);
+                   
                 }); 
         });
         </script>

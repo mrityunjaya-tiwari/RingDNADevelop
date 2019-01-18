@@ -89,24 +89,14 @@ global class CadenceService {
                        c.fieldName = fieldAPIName.getDescribe().getName();
                        c.fieldLabel = fieldAPIName.getDescribe().getLabel();
                        
-                       //list<String> labels= new list<String>{c.fieldLabel};
-                       //labels.sort();
-                       //System.debug(labels);
-                       
                        c.fieldDataType = getDataType(objectStr, c.fieldName);
                        if (c.fieldDataType == 'Picklist' || c.fieldDataType == 'MultiPickList'){
                            c.listPicklistValues = getPicklistValues(objectStr, c.fieldName);
                        }
-                       //fieldsWithLabels.add(labels);
                        fieldsWithLabels.add(c);
-                       
-                       
                    }
                } 
-            
         }
-        //Collections.sort(fieldsWithLabels);
-        //fieldsWithLabels.sort();
         
         return fieldsWithLabels;
     }
@@ -156,7 +146,6 @@ global class CadenceService {
             return;
         }
         for(SObject obj : objList) {
-            System.debug('In for' + objList);
             if(active) {
                 obj.put(nameSpace+'isActivated__c', true);
             } else {
@@ -191,7 +180,6 @@ global class CadenceService {
                 partActionsToCreate.add(partAct);
             }	
         }
-        System.debug('participants to create action'+ partActionsToCreate);
         insert partActionsToCreate;	
         return partActionsToCreate;			
     }
@@ -241,13 +229,11 @@ global class CadenceService {
     
     public static Task getEmailTask(Id sequenceActionId, String actionName, Id sObjectId, Id templateId) {
         Task t = new Task();
-        System.debug('Action name = ' + actionName);
         t.Subject = 'Emails: '+ actionName;
         t.Description = templateId;
         t.WhoId = sObjectId;
         t.TaskSubtype = 'Email'; 
         t.Sequence_Action__c = sequenceActionId; 
-        System.debug('task showwing = '+ t);
         return t;
     }
     
@@ -355,7 +341,6 @@ global class CadenceService {
             sObjectsToProcess = new List<Lead>();
         } else {
             sObjectsToProcess = new List<Contact>();
-            System.debug('In contact one');
         }   	 
         Map<Id, Id> oldPartActionToDelete = new Map<Id, Id>();
         Map<Id, List<CadenceAction__c>> objIdToAllCadActListMap = new Map<Id, List<CadenceAction__c>>();
@@ -365,7 +350,6 @@ global class CadenceService {
             if(obj.get(nameSpace+'Cadence_Id__c') == null) {
                 Cadence__c cad = RuleCriterionMatcher.assignCadenceToNotAssignedParticipant(cadMap, obj, objName);
                 if(cad != null) {
-                    System.debug('matches entry criterion');
                     sObjectsToProcess.add(obj);
                     objIdToAllCadActListMap.put((Id)obj.get('Id'), cad.CadenceActions__r);
                 }				
@@ -397,7 +381,6 @@ global class CadenceService {
     
     public static Map<Id, List<Sequence_Action__c>> performParticipantActions(List<SObject> objList, Map<Id, List<Sequence_Action__c>> partActionsMap) {
         
-        System.debug('calling this methods');
         Map<Id, List<Sequence_Action__c>> performedPartActions = new Map<Id, List<Sequence_Action__c>>();
         Map<Id, SObject> objMap = new Map<Id, SObject>(objList); 
         List<Sequence_Action__c> partActToUpdate = new List<Sequence_Action__c>();
@@ -450,14 +433,12 @@ global class CadenceService {
         
         if(!emailsToSend.isEmpty()) {
             Messaging.SendEmailResult[] results = Messaging.sendEmail(emailsToSend, false);
-            system.debug('Results = '+ results);
         }
         
         if(!tasksToCreate.isEmpty()) {
-        	System.debug('Tasks to ceatedddf'+ tasksToCreate);
             if(System.isBatch()) {
                 Database.SaveResult[] results = Database.insert(tasksToCreate, false);
-        		System.debug('email results = '+ results);
+
             } else {
 	            String tasksJson = JSON.serialize(tasksToCreate); 
     	        createTasks(tasksJson);
@@ -477,7 +458,6 @@ global class CadenceService {
         List<Task> tasks = (List<Task>)JSON.deserialize(tasksJson, List<Task>.class);
         //insert tasks; 
         Database.SaveResult[] results = Database.insert(tasks, false);
-        System.debug('email results = '+ results);
     }
     
     public static List<SObject> updateSObjectFields(List<SObject> objList, Map<Id, List<Sequence_Action__c>> partActionsMap, String objName, Boolean isAfter) {
@@ -545,11 +525,9 @@ global class CadenceService {
         
         //Getting objList to process
         Map<Id, SObject> objMap = new Map<Id, SObject>(CadenceService.getSObjectsToProcess(objList, cadMap, objName));
-        System.debug('Got the objMap'+ objMap);
         
         //Getting non performed participant actions 
         Map<Id, List<Sequence_Action__c>> partActionsMap = CadenceService.getRemainingParticipantActions(objMap.keySet(), objName);
-        System.debug('###$$ Getting following unperformed part actions = '+ partActionsMap);
         
         //Getting participant action to perform 
         for(SObject sObj : objMap.values()) {
@@ -560,7 +538,6 @@ global class CadenceService {
                 }
             } 		
         } 
-        System.debug('###$$ Participant actionto perform = '+ partActToPerform);
         
         //perform participant actions  
         Map<Id, List<Sequence_Action__c>> performedPartAct = CadenceService.performParticipantActions(objMap.values(), partActToPerform);
@@ -569,7 +546,6 @@ global class CadenceService {
         CadenceService.updateSObjectFields(objMap.values(), performedPartAct, objName, false);
         
         if(!isTrigger) {
-            System.debug('Going in update one'); 
             update objList;
         }
     }

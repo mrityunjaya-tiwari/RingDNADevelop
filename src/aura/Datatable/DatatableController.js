@@ -1,6 +1,5 @@
 ({
 	doInit : function(component, event, helper) {
-        console.log('in datatable init');
 		helper.setData(component, event, helper);
 	}, 
     dataUpdated:function(component){

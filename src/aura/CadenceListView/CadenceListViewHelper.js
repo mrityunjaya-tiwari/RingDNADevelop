@@ -14,7 +14,7 @@
                 helper.setData(cmp);
                 cmp.set('v.spinner', false);
             } else {
-                console.log('In error');
+               
                 cmp.set('v.spinner', false);
             }
         });
@@ -22,18 +22,15 @@
     },
     
     setData : function(cmp) {
-        console.log('in set data function');
-        console.log(cmp.get('v.rawData'));
     	var allData = cmp.get('v.rawData'),
         	totalNumberOfRecords = allData.length,
         	currentPage = cmp.get('v.currentPage'),
         	recordsPerPage = cmp.get('v.rowsToLoad');
-		console.log('I am in set data');
+		
         
         cmp.set('v.totalNumberOfRows', totalNumberOfRecords);        
         if(recordsPerPage > totalNumberOfRecords) {
             cmp.set('v.data', allData.slice(0,recordsPerPage));
-            console.log('v.data');
             cmp.set('v.currentPage', 1);
         } else if(currentPage*recordsPerPage >= totalNumberOfRecords) {
             cmp.set('v.data', allData.slice((currentPage-1)*recordsPerPage,totalNumberOfRecords));
@@ -70,9 +67,6 @@
            var row = rows[i]; 
  	       ids.push(row['cadId']);    
         }
-        console.log('in delete cadence ')
-		console.log(ids);
-        
         var action = cmp.get('c.deleteCadences');
         action.setParams({ cadIds : ids });
         
@@ -85,11 +79,8 @@
  			        allRows.splice(rowIndex, 1);
                 }
                 cmp.set('v.rawData', allRows);
-                console.log(allRows);
-                helper.setData(cmp);
-                console.log('Delete Successful');	                
+                helper.setData(cmp);	                
             } else {
-                console.log('Delete Failed due to following error -');
                 console.log(response.errors);
             }
         });
