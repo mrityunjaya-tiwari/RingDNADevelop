@@ -20,6 +20,9 @@
 											
 		dataTypeOperatorsMap['BOOLEAN']= [{'label':'Does not equal','value':'not_equals'},
                                           {'label':'Equals','value':'equals'}];
+        
+        dataTypeOperatorsMap['EMAIL']= [{'label':'Does not equal','value':'not_equals'},
+                                          {'label':'Equals','value':'equals'}];
 											
 											
 		dataTypeOperatorsMap['NUMBER']=  [{'label':'Does not equal','value':'not_equals'},

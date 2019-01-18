@@ -22,8 +22,7 @@
                 var actionObj = response.getReturnValue();
                 helper.viewDetails(component, event, actionObj.Id);	
             }else{
-                console.log("Action Not Created");
-                console.log(response.getError());
+                
             }
         });
         
@@ -82,6 +81,12 @@
         if (newAct.RDNACadence__Type__c == 'Email'){
             component.set('v.listToShowInTemplateType', component.get("v.listEmailTemplate"));
             component.set("v.isActionTypeRequired", true);
+        }else if (newAct.RDNACadence__Type__c == 'SMS'){
+            component.set('v.listToShowInTemplateType', component.get("v.listSmsTemplate"));
+        }else if (newAct.RDNACadence__Type__c == 'Call'){
+            component.set('v.listToShowInTemplateType', component.get("v.listCallTemplate"));
+        }else if (newAct.RDNACadence__Type__c == 'Call+Voicemail'){
+            component.set('v.listToShowInTemplateType', component.get("v.listVMTemplate"));
         }else if (newAct.RDNACadence__Type__c == 'Task'){
             var container = component.find("InputSelectTemplate");
             $A.util.addClass(container, 'slds-hide');
@@ -110,6 +115,7 @@
     },
     
     getData : function(component, event, helper, id) {
+        component.set('v.spinner', true);
         var action = component.get('c.getActionData');
         action.setParams({
             actionId : id
@@ -120,10 +126,17 @@
                 var obj = response.getReturnValue();
                 var object = obj.action;
                 object.sobjectType = 'Action__c';
-                if (object.RDNACadence__Type__c == 'Email'){
-                    var listOfEmailTemplate = component.get("v.listEmailTemplate");
-                    for(var index in listOfEmailTemplate){
-                        if(listOfEmailTemplate[index].Name == object.RDNACadence__Template_Name__c){
+                if (object.RDNACadence__Type__c != 'Task' ){
+                    var listOfTemplate = component.get("v.listEmailTemplate");
+                    if (object.RDNACadence__Type__c == 'SMS'){
+                        listOfTemplate = component.get("v.listSmsTemplate");;
+                    }else if(object.RDNACadence__Type__c == 'Call'){
+                        listOfTemplate = component.get("v.listCallTemplate");;
+                    }else if(object.RDNACadence__Type__c == 'Call+Voicemail'){
+                        listOfTemplate = component.get("v.listVMTemplate");;
+                    }
+                    for(var index in listOfTemplate){
+                        if(listOfTemplate[index].Name == object.RDNACadence__Template_Name__c){
                             object.RDNACadence__Template_Id__c = index;
                         }
                     }
@@ -140,6 +153,15 @@
                     }
                     component.set('v.listTask', taskList);    
                 }
+                window.setTimeout(
+                    $A.getCallback(function() {
+                        component.set('v.newAction', component.get('v.newAction'));
+                        component.set('v.spinner', false);
+                    }), 500
+                );
+                
+            }else{
+                component.set('v.spinner', false);
             }
         });
         $A.enqueueAction(action);
@@ -153,13 +175,13 @@
     
     onCancel: function(component, event){
         var myUserContext = component.get("v.themeName"); 
-        console.log('In Action details helper myUserContext',myUserContext);
+        
         if(myUserContext == 'Theme3' || myUserContext == 'Theme4t' || myUserContext == 'Theme4d') {
             window.history.go(-1);
             /*window.location = '/apex/CadenceActionList';*/
         } else if(myUserContext == undefined) {
             window.history.go(-1);
-           /* var evt = $A.get("e.force:navigateToComponent");
+            /* var evt = $A.get("e.force:navigateToComponent");
             evt.setParams({
                 componentDef : "c:CadenceActionList" ,
                 componentAttributes : {
@@ -170,8 +192,7 @@
     },
     
     viewDetails : function(cmp, event, id) {
-        console.log('In view detail');
-        console.log(id);
+        
         var myUserContext = cmp.get("v.themeName");
         if(myUserContext == 'Theme3' || myUserContext == 'Theme4t' || myUserContext == 'Theme4d') {
             window.location = '/apex/ActionDetailView?id='+id;
@@ -189,7 +210,7 @@
     },
     selectTemplateName: function(component, event, helper){
         var newAct = component.get("v.newAction");
-        if (newAct.RDNACadence__Type__c == 'Email'){
+        if (newAct.RDNACadence__Type__c != 'Task'){
             var index = newAct.RDNACadence__Template_Id__c;
             var obj= component.get("v.listToShowInTemplateType")[index];
             newAct.RDNACadence__Template_Id__c = obj.Id;

@@ -53,7 +53,6 @@ public class CadenceServiceTest {
         cadLeadCUSTOM.Entrance_Criteria__c = cadJsonCUSTOM;
         
         //insert cadLeadAND;
-        system.debug('cadLeadOR ' + cadLeadOR);
         cadLeadOR.Participent_Activation__c = 'Automatic';
        
         insert cadLeadOR;

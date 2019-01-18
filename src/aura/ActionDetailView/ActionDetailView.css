@@ -86,7 +86,18 @@
     font-family: 'Logical';
     src: url(/resource/RDNACadence__LogicalFontRegular) format('woff');
 }
+/*----- useful table css---------------------------------*/
+.THIS .Oval {
+    width : 30px;
+    height :30px;
+    margin-left: 6px;
+}
 
+.THIS .OvalPLIs {
+    width : 20px;
+    height :20px;
+    margin-left: 6px;
+}
 /* Sub Header*/
 .THIS .rdna-sub-header-bold{
     font-family: Logical;

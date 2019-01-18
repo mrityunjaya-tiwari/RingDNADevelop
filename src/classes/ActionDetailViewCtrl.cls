@@ -9,10 +9,7 @@ public class ActionDetailViewCtrl {
     @AuraEnabled
     public static ActionDetailWrapper getActionData(Id actionId) {
         
-        System.debug('IN controller id = '+ actionId);
         Action__c action = [Select Id, Name, Type__c, Template_Id__c, Template_Name__c, Activation_Type__c From Action__c where Id = :actionId]; 
-        
-        
         
         ActionDetailWrapper actDetailWrap = new ActionDetailWrapper();
         actDetailWrap.action = action;
@@ -49,14 +46,14 @@ public class ActionDetailViewCtrl {
         //Getting participants
         List<ParticipantWrapper> partWrapper = new List<ParticipantWrapper>();
         List<Lead> leadParticipants = [Select Id, Name, Priority__c, Company, Email, Phone, isActivated__c from Lead where Cadence_ID__c IN :cadenceIds];
-        List<Contact> contactParticipants = [Select Id, Name, Priority__c, Email, Phone, isActivated__c from Contact where Cadence_ID__c IN :cadenceIds];
+        List<Contact> contactParticipants = [Select Id, Name, Priority__c, Account.name, Account.Id, Email, Phone, isActivated__c from Contact where Cadence_ID__c IN :cadenceIds];
         
         for(Lead l : leadParticipants) {
             Integer priority = 0;
             if(l.Priority__c != null) {
                 priority = (Integer)l.Priority__c;
             } 
-            ParticipantWrapper partWrap = new ParticipantWrapper(l.Id ,l.Name, priority, l.Company, 'Lead', l.Email, l.Phone, '', l.isActivated__c);
+            ParticipantWrapper partWrap = new ParticipantWrapper(l.Id ,l.Name, priority, l.Company, '' ,'Lead', l.Email, l.Phone, '', l.isActivated__c);
             partWrapper.add(partWrap);
         }        
 
@@ -64,13 +61,13 @@ public class ActionDetailViewCtrl {
             Integer priority = 0;
             if(cont.Priority__c != null) {
                 priority = (Integer)cont.Priority__c;
+                
             }
-            ParticipantWrapper partWrap = new ParticipantWrapper(cont.Id, cont.Name, priority, '', 'Contact', cont.Email, cont.Phone, '', cont.isActivated__c);
+            ParticipantWrapper partWrap = new ParticipantWrapper(cont.Id, cont.Name, priority, cont.Account.name, cont.Account.Id, 'Contact', cont.Email, cont.Phone, '', cont.isActivated__c);
             partWrapper.add(partWrap);
         }        
         actDetailWrap.participantList = partWrapper;
         
-        System.debug('Action detail wrap = '+ actDetailWrap);
         return actDetailWrap;
     }
      
@@ -83,23 +80,26 @@ public class ActionDetailViewCtrl {
         
         List<ParticipantWrapper> partWrapper = new List<ParticipantWrapper>();
         List<Lead> leadParticipants = [Select Id, Name, Company, Email, Phone, isActivated__c, Priority__c from Lead where Cadence_ID__c = :cadId];
-        List<Contact> contactParticipants = [Select Id, Name, Email, Phone, isActivated__c, Priority__c from Contact where Cadence_ID__c = :cadId];
+        List<Contact> contactParticipants = [Select Id, Name, Account.name, Account.Id, Email, Phone, isActivated__c, Priority__c from Contact where Cadence_ID__c = :cadId];
         
         for(Lead l : leadParticipants) {
             Integer priority = 0;
             if(l.Priority__c != null) {
                 priority = (Integer)l.Priority__c;
             }
-            ParticipantWrapper partWrap = new ParticipantWrapper(l.Id ,l.Name, priority, l.Company, 'Lead', l.Email, l.Phone, '', l.isActivated__c);
+            ParticipantWrapper partWrap = new ParticipantWrapper(l.Id ,l.Name, priority, l.Company, '', 'Lead', l.Email, l.Phone, '', l.isActivated__c);
             partWrapper.add(partWrap);
         }        
 
         for(Contact cont : contactParticipants) {
             Integer priority = 0;
             if(cont.Priority__c != null) {
-                priority = (Integer)cont.Priority__c;
+                priority = (Integer)cont.Priority__c;    
             }
-            ParticipantWrapper partWrap = new ParticipantWrapper(cont.Id, cont.Name, priority, '', 'Contact', cont.Email, cont.Phone, '', cont.isActivated__c);
+            
+            ParticipantWrapper partWrap = new ParticipantWrapper(cont.Id, cont.Name, priority, cont.Account.name, cont.Account.Id, 'Contact', cont.Email, cont.Phone, '', cont.isActivated__c);
+           // partWrap.company = cont.Account.Name;
+           // partWrap.companyId = cont.Account.Id;
             partWrapper.add(partWrap);
         }        
         
@@ -108,7 +108,6 @@ public class ActionDetailViewCtrl {
     
     @AuraEnabled
     public static void togglePartActivation(String selectedRows) {
-    	System.debug('In toggle = '+ selectedRows);
 		List<ParticipantWrapper> wrapList = (List<ParticipantWrapper>)JSON.deserialize(selectedRows, List<ParticipantWrapper>.class);
 		List<sObject> participants = new List<sObject>();
 		for(ParticipantWrapper partWrap : wrapList) {
@@ -139,17 +138,19 @@ public class ActionDetailViewCtrl {
         @AuraEnabled public String name;
         @AuraEnabled public Integer priority;
         @AuraEnabled public String company;
+        @AuraEnabled public String companyId;
         @AuraEnabled public String objType;
         @AuraEnabled public String email;
         @AuraEnabled public String phone;
         @AuraEnabled public String nextAction;
         @AuraEnabled public String status;
         
-        public ParticipantWrapper(Id actionId, String name, Integer priority, String company, String objType, String email, String phone, String nextAction, Boolean status) {
+        public ParticipantWrapper(Id actionId, String name, Integer priority, String company, String companyId, String objType, String email, String phone, String nextAction, Boolean status) {
 			this.id = actionId;
         	this.name = name;     
             this.priority = priority;
             this.company = company;
+            this.companyId = companyId;
             this.objType = objType;
             if(status) {
 	            this.status	= 'Active';

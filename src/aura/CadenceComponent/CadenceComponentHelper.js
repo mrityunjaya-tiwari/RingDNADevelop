@@ -25,7 +25,6 @@
                     var result = wrapperResult.cObj;
                     component.set("v.cadence", result);
                     
-                    console.log('progress Init ',result.RDNACadence__CadenceActions__r);
                     if(result.RDNACadence__CadenceActions__r){
                         component.set("v.cadenceActionList", result.RDNACadence__CadenceActions__r);
                     }
@@ -37,13 +36,9 @@
                     
                     component.set("v.entranceCriteriaSet",entryCriterion);
                     component.set("v.exitCriteriaSet",exitCriterion);
-                    //component.set("v.openViewMode","true");
-                    console.log('entrancecriteriaset',component.get("v.entranceCriteriaSet"));
-                    console.log('ecitcriteriaset',component.get("v.exitCriteriaSet"));
                     component.set("v.SpinnerForSync",false);
                 }else{
                     component.set("v.SpinnerForSync",false);
-                    console.log('failed with status:',response);
                 }
             });
             $A.enqueueAction(cadence);
@@ -65,7 +60,6 @@
                     component.set("v.leadFieldList", sortedLdList);
                     component.set("v.SpinnerForSync",false);
                 }else{
-                    console.log('failed with status:',response);
                     component.set("v.SpinnerForSync",false);
                 }
             });
@@ -73,7 +67,8 @@
         }
     },
     setPhoneRow : function(component, event, helper){
-        var phRow = document.getElementsByClassName('ringdna-phone-row');  
+        helper.setCompanyRow(component, event, helper);
+        var phRow = document.getElementsByClassName('ringdna-phone-td');  
         var rawData = component.get('v.pData');
         for (var index = 0; index < phRow.length ; index++){
             try {
@@ -90,6 +85,27 @@
                         
                         rdpElement.innerHTML =   '<div class="slds-grid slds-truncate">' + phoneLink  + smsLink + phoneLinkIcon  + '</div>';
                     }else{
+                        rdpElement.innerHTML = '';
+                    }
+                }
+            }catch(err){
+            }
+        }
+    },
+    setCompanyRow : function(component, event, helper){
+        var phRow = document.getElementsByClassName('ringdna-company-td');  
+        var rawData = component.get('v.pData');
+        for (var index = 0; index < phRow.length ; index++){
+            try {
+                var rdpElement = phRow[index];
+                if (rdpElement){
+                    if (rawData[index].objType == 'Lead' && rawData[index].company){
+                            var companyName = rawData[index].company;
+                            rdpElement.innerHTML =   '<div class=" slds-truncate">' + companyName +  '</div>';
+                    }else if(rawData[index].company) { 
+                        var cLink = '<a href="/' + rawData[index].companyId + '" title="' + rawData[index].company + '" target="_self" tabindex="-1">'+ rawData[index].company + '</a>';
+                        rdpElement.innerHTML = '<div class=" slds-truncate">' + cLink +  '</div>';
+                    }else {
                         rdpElement.innerHTML = '';
                     }
                 }

@@ -1,6 +1,5 @@
 ({
 	doInit : function(component, event, helper) {
-        console.log('in datatable init');
 		helper.setData(component, event, helper);
 	}, 
     dataUpdated:function(component){
@@ -40,6 +39,10 @@
     		if(fieldName == 'linkName') {
     			cmp.set('v.sortBy', 'Name');
     		}
+            if(fieldName == 'linkcompany') {
+    			cmp.set('v.sortBy', 'company');
+    		}
+            
     	}
     	var sortDirection = event.getParam('sortDirection');
         cmp.set("v.sortedBy", fieldName);

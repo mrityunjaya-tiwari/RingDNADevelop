@@ -11,8 +11,7 @@
             	{themeName: myUserContext},
             	"myDivId",
             	function(cmp) {
-                console.log('component created');
-                console.log(cmp);
+               
             });
     	}); 
     </script>

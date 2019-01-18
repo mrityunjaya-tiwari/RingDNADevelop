@@ -154,7 +154,6 @@ public class ContactsCriterionMatcherTest {
      
     	Test.startTest();
     	CadenceController.updateParticipants(cadContactAND.Id);
-        System.debug('Cadence contact and = '+ cadContactAND.Id);
     	Test.stopTest();
     	
     	c4 = [Select Id, Cadence_Id__c from Contact where Id = :c4.Id];
@@ -172,7 +171,6 @@ public class ContactsCriterionMatcherTest {
         insert c5;    
         Test.startTest();
         cadContactCUSTOM.Entrance_Criteria_PE__c = RuleCriterionMatcher.getPostFixExpression(CUSTOM_LOGIC2);
-    	System.debug('showing postfix expression '+ cadContactCUSTOM.Entrance_Criteria_PE__c);
     	update cadContactCUSTOM;
     	Test.stopTest();
  	
@@ -197,7 +195,6 @@ public class ContactsCriterionMatcherTest {
         insert c6;
         Test.startTest();
         cadContactCUSTOM.Entrance_Criteria_PE__c = RuleCriterionMatcher.getPostFixExpression(CUSTOM_LOGIC2);
-    	System.debug('showing postfix expression '+ cadContactCUSTOM.Entrance_Criteria_PE__c);
     	update cadContactCUSTOM;
     	Test.stopTest();
     	

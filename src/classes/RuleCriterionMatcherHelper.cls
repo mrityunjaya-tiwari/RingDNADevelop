@@ -10,8 +10,6 @@ public with sharing class RuleCriterionMatcherHelper {
 				csObj = CriterionSet.parse(cad.Entrance_Criteria__c);
 				csObj.postFixExpression = cad.Entrance_Criteria_PE__c;
 			} else {
-				System.debug('Exit Criterion for cad= '+ cad);
-				System.debug('Exit Criterion = '+ cad.Exit_Criteria__c);
 				csObj = CriterionSet.parse(cad.Exit_Criteria__c);
 				csObj.postFixExpression = cad.Exit_Criteria_PE__c;
 			}  
@@ -26,7 +24,6 @@ public with sharing class RuleCriterionMatcherHelper {
 			if(cadAction == null) {
 				continue;
 			}
-			System.debug('Cadence action = '+ cadAction);
 			if(cadAction.Action_Criterion__c != null && !cadAction.Action_Criterion__c.equals('')) {
 				CriterionSet csObj = CriterionSet.parse(cadAction.Action_Criterion__c);
 				csObj.postFixExpression = cadAction.Action_Criteria_PE__c;
@@ -45,7 +42,6 @@ public with sharing class RuleCriterionMatcherHelper {
 		if(cs==null) {
 			return false; 
 		}
-		System.debug('cs is = '+ cs);
 		if(!cs.executionCriterion.contains(CadenceConstants.EXECUTION_CRITERION_NO_CRITERION)){
 			cadCriteriaMatched = matchEntryCriteria(cs,fsv);
 		}else{
@@ -75,7 +71,6 @@ public with sharing class RuleCriterionMatcherHelper {
 
 	
 	public static Boolean matchCustomLogic(Map<Integer, Criterion> criteriaMap, String postFixExp, FormulaSObjectValue fsv){
-		System.debug('post fix expression is ='+ postFixExp);
 		List<String> postFixExpression = (List<String>)System.JSON.deserialize(postFixExp, List<String>.class);
 		return evalutePostfixExpression(criteriaMap, postFixExpression, fsv); 
 	}
@@ -96,7 +91,6 @@ public with sharing class RuleCriterionMatcherHelper {
     				Boolean tempResult = calculateExpression(op1, op2, criteriaMap, fsv, s);
     				stack.push(tempResult);
     			} else {
-    				System.debug('Invalid Expression.');
                     return false;
     			}
     		}
@@ -104,7 +98,6 @@ public with sharing class RuleCriterionMatcherHelper {
     	if(stack.size()==1 && (stack.peek() instanceOf Boolean)) {
     		result = Boolean.valueOf(stack.pop());
     	} else {
-    		System.debug('Invalid Expression.');
             return false;
     	}
     	

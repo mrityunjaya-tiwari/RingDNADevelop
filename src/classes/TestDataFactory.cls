@@ -80,7 +80,6 @@ public class TestDataFactory {
 		cs.criterions = criterionMap;
 		
 		String criterionJSON = JSON.serialize(cs);
-		system.debug('serialize json = '+ criterionJSON);
 		return criterionJSON;
 		
 	}

@@ -14,7 +14,6 @@
         
     },
     setPbCss:function(component, event, helper){
-        console.log('In setPbCss');
         var secId =  component.get('v.currentStep');
         var params = event.getParam('arguments');
         if (params) {

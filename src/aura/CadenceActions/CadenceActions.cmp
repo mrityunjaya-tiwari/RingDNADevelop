@@ -93,7 +93,7 @@
         <aura:if isTrue="{!not(v.isDisabled)}">
             <div class="slds-form-element slds-size_1-of-1 slds-align-content-center slds-p-top_large slds-m-bottom_large "> 
                 <!-- <img class = "actions-icon" src="{!$Resource.cadence_icons + '/add/default/add-icon@3x.png'}"/> -->
-                    <lightning:buttonMenu menuAlignment="bottom-center" aura:id="menu"  iconName="utility:add" class="slds-icon slds-icon_x-small slds-m-right_small" onselect="{! c.AddNewCadenceActions }" alternativeText="Show menu" disabled = "{!v.isDisabled}">
+                    <lightning:buttonMenu menuAlignment="bottom-center" aura:id="menu"  iconName="utility:add" class="slds-icon slds-icon_x-small slds-m-right_small rdna-icon-classic" onselect="{! c.AddNewCadenceActions }" alternativeText="Show menu" disabled = "{!v.isDisabled}">
                         <aura:iteration items="{!v.actionTypeList}" var= "actionType">
                             <lightning:menuItem value="{!actionType}" label="{!actionType}" />
                         </aura:iteration>

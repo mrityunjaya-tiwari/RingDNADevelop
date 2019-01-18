@@ -4,14 +4,13 @@
     <div id="myDivId2" />
     <script>
         var myUserContext = "{!$User.UITheme}";
-        console.log('In Action DetailView Page myUserContext'+myUserContext);
         $Lightning.use("RDNACadence:CadenceActionListApp", function() {
             $Lightning.createComponent(
                 "RDNACadence:ActionDetailView",
                 {recordId: '{!$CurrentPage.parameters.id}',themeName: myUserContext},
                 "myDivId2",
                 function(cmp) {
-                    console.log('component created');
+                    
             }); 
         }); 
     </script>

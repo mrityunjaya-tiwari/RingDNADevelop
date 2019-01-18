@@ -58,9 +58,6 @@ public with sharing class RuleCriterionMatcherTest {
         insert cadLeadAND;
         insert cadLeadOR;
         insert cadLeadCUSTOM;
-        System.debug('cad lead and = '+ cadLeadAND);
-        System.debug('cad or and = '+ cadLeadOR);
-        System.debug('cad custom and = '+ cadLeadCUSTOM);
         
         action1= TestDataFactory.createAction(ACTION_TYPE_Email);
         action2= TestDataFactory.createAction(ACTION_TYPE_Email);
@@ -153,7 +150,6 @@ public with sharing class RuleCriterionMatcherTest {
         
         Test.startTest();
         CadenceController.updateParticipants(cadLeadAND.Id);
-        System.debug('Cadence lead and = '+ cadLeadAND.Id);
         Test.stopTest();
         
         l3 = [Select Id, Cadence_Id__c from Lead where Id = :l3.Id];

@@ -13,7 +13,6 @@ public class PerformCadenceActionBatch implements Database.Batchable<sObject>, D
     }
     
     public void execute(Database.BatchableContext bc, List<sObject> objList) {
-   		System.debug('@@@Oblist is = '+ objList);	
         CadenceService.processParticipantsWithCadences(objList, objType, false);
     }
     

@@ -1,8 +1,7 @@
 <aura:component controller="CadenceActionListController" implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction,force:appHostable" access="global"> 
     <!-- attributes -->
     <aura:attribute name="moretabs" type="Aura.Component[]"/>
-
-    <aura:attribute name="data" type="Object" default="" access="global"/>
+	<aura:attribute name="data" type="Object" default="" access="global"/>
     <aura:attribute name="columns" type="List" default=""/>
     <aura:attribute name="dataTableSchema" type="Object" default=""/>
 	<aura:attribute name="keyField" type="String" default="id"/>
@@ -25,6 +24,7 @@
     <aura:attribute name="sortedBy" type="String" default="Name"/>
     <aura:attribute name="sortedDirection" type="String" default="asc"/>
     <aura:attribute name="themeName" type="String" access="global"/>
+    <aura:attribute name="title" type="String"/>
     
     <!--handlers-->
     <aura:handler name="init" value="{! this }" action="{! c.init }"/>
@@ -67,6 +67,7 @@
 	    <div class="slds-m-top_small slds-m-left_x-small slds-m-right_x-small" style="height : 500px">
 		    <lightning:datatable
 			                         data="{! v.data }"
+                                     title="{! v.title }"
 			                         class= "cols-table"
 			                         columns="{! v.columns }"
 			                         keyField="actionId"

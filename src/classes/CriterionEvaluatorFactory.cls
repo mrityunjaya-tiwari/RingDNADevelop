@@ -36,7 +36,6 @@ public with sharing class CriterionEvaluatorFactory {
     }
     public static ICriterionEvaluator createNew(String fieldType) {
         ICriterionEvaluator evaluator = evaluatorInstanceMap.get(fieldType);
-        System.debug('Evaluator: ' + evaluator);
         return evaluator;
     }
 }

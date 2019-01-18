@@ -1,19 +1,20 @@
 ({
 	doInit : function(component, event, helper) {
-
-        console.log('In controller');
         var noOFColumns = 6;
         var  width = screen.width/noOFColumns;
         width = width -31.2;
         component.set('v.columns', [ 
             { label: 'Name', initialWidth: width,fieldName: 'linkName', type: 'url', sortable:'true', 
-            	typeAttributes: {label: { fieldName: 'name' }, target: '_self', sortable: true}},
+            	typeAttributes: {label: { fieldName: 'name' }, tooltip: {fieldName: 'name'}, target: '_self', sortable: true}},
             { label: 'Priority', initialWidth: width, fieldName: 'priority', type: 'number', sortable: true },
-            { label: 'Company',  initialWidth:width, fieldName: 'company', type: 'text', sortable: true},
+            {label: 'Company', fieldName: 'linkcompany', type: 'url', sortable:'true',
+             typeAttributes: {label: { fieldName: 'company' }, target: '_self', sortable: true}, cellAttributes: 
+             {class: 'ringdna-company-td'}
+            },
             { label: 'Status', initialWidth: width,  fieldName: 'status', type: 'text', sortable: true},
             { label: 'Email', initialWidth:width, fieldName: 'email', type: 'email', sortable: true},
             { label: 'Phone', initialWidth: width, fieldName: 'phone', type: 'phone', sortable: true, cellAttributes:
-                { class: 'ringdna-phone-row'}}
+                { class: 'ringdna-phone-td'}}
         ]);
 
         helper.getData(component, event, helper); 
@@ -25,12 +26,10 @@
 	},
 	
 	toggleActivation : function(component, event, helper) {
-		console.log('In activation');
 		helper.toggleParticipantsActivation(component, event, helper);
 	},
 	
 	refreshData : function(component, event, helper) {
-		console.log('Showing data of participant');
 		helper.getData(component, event, helper);
 	},
 

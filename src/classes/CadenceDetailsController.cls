@@ -7,7 +7,6 @@ public class CadenceDetailsController {
         UiInputList uilObj = new UiInputList();
         uilObj.mpList = CadenceService.getPicklistValues(nameSpace+'Cadence__c', nameSpace+'matching_priority__c');
         uilObj.atList = CadenceService.getPicklistValues(nameSpace+'Cadence__c', nameSpace+'Participent_Activation__c');
-        system.debug('uilObj ' + uilObj);
         return uilObj;
     }
     public class UiInputList{

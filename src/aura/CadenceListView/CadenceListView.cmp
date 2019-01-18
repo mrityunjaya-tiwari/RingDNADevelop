@@ -3,7 +3,7 @@
     <!-- attributes -->
     <aura:attribute name="data" type="List"/>
     <aura:attribute name="columns" type="List"/>
-	<aura:attribute name="keyField" type="String" default="id"/>
+    <aura:attribute name="keyField" type="String" default="id"/>
     <aura:attribute name="rawData" type="Object" access="PRIVATE" />
     <aura:attribute name="rowLoaded" type="Integer" default="0"/>				<!--Number of Rows been loaded-->
     <aura:attribute name="rowsToLoad" type="Integer" default="10"/> 			<!--Rows per page-->
@@ -11,18 +11,18 @@
     <aura:attribute name="totalNumberOfRows" type="Integer" default="0"/>		<!--Total Number of Rows-->
     <aura:attribute name="currentPage" type="Integer" default="1"/>
     <aura:attribute name="newActionEnable" type="Boolean" default="true"/>
-	<aura:attribute name="rowsSelected" type="List" default=""/>
-	<aura:attribute name="showModal" type="Boolean" default="false"/>
+    <aura:attribute name="rowsSelected" type="List" default=""/>
+    <aura:attribute name="showModal" type="Boolean" default="false"/>
     <aura:attribute name="deleteActionRows" type="List" />
     
     <aura:attribute name="sortedBy" type="String" default="Name"/>
     <aura:attribute name="sortBy" type="String" default="Created Date"/>
     <aura:attribute name="sortedDirection" type="String" default="asc"/>
-     
+    
     <!--handlers-->
     <aura:handler name="init" value="{! this }" action="{! c.init }"/>
     <aura:handler name="cadencePagination" event="c:CadPagination" action="{!c.handleComponentEvent}"/>
-
+    
     <!--create a component attributs -->
     <aura:attribute name="spinner" type="boolean" default="false"/>
     <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>
@@ -40,45 +40,45 @@
                 <p class="slds-line-height_reset rdna-header-small slds-p-left_xx-small">Sequences</p>
                 <h1 class="slds-page-header__title slds-m-right_small slds-align-middle slds-truncate rdna-header-large"  title="All Sequence">All Sequences</h1>
             </div>
-              
+            
         </div>
         <div class="slds-grid">
-        <div class="slds-m-top_medium slds-col">
-            <span class="rdna-header-small" >{!v.totalNumberOfRows} Items • Sorted by {!v.sortBy} </span>
-        </div> 
+            <div class="slds-m-top_medium slds-col">
+                <span class="rdna-header-small" >{!v.totalNumberOfRows} Items • Sorted by {!v.sortBy} </span>
+            </div> 
             <aura:if isTrue="{!v.newActionEnable}">
                 <div>
-                	<lightning:button class="slds-p-left_large slds-m-top_large slds-m-right_medium slds-p-right_large rdna-button rdna-button-text" aura:id="newCadence" label="New Sequence" onclick="{!c.newCadence}"/>
-				</div>
+                    <lightning:button class="slds-p-left_large slds-m-top_large slds-m-right_medium slds-p-right_large rdna-button rdna-button-text" aura:id="newCadence" label="New Sequence" onclick="{!c.newCadence}"/>
+                </div>
                 <aura:set attribute="else">
                     <div>
-                    	<lightning:button class="slds-p-left_large slds-m-top_large slds-m-right_medium slds-p-right_large rdna-button rdna-button-text" aura:id="deleteActions" label="Delete Sequence" onclick="{!c.deleteCadActions}"/>
-                	</div>
+                        <lightning:button class="slds-p-left_large slds-m-top_large slds-m-right_medium slds-p-right_large rdna-button rdna-button-text" aura:id="deleteActions" label="Delete Sequence" onclick="{!c.deleteCadActions}"/>
+                    </div>
                 </aura:set>	
             </aura:if>  
-</div>
-		<!-- the container element determine the height of the datatable -->
-		<div class="slds-m-top_medium slds-m-left_x-small slds-m-right_x-small" style="height : 500px">    
-		    <lightning:datatable
-		                         data="{! v.data }"
-		                         class= "cols-table"
-		                         columns="{! v.columns }"
-		                         keyField="cadId"
-		                         onrowaction="{!c.handleRowAction }"
-		                         onrowselection="{!c.showDeleteAction}"             
-		                         loadMoreOffset="{!v.loadMoreOffset}" 
-		                         onsort="{!c.updateColumnSorting}"
-		                         sortedBy="{!v.sortedBy}"  
-		                         sortedDirection="{!v.sortedDirection}"/>
-		</div>
-	 
-	    <div class="slds-m-bottom_medium">
-		    <c:Pagination total="{!v.totalNumberOfRows}" pageOffset="{!v.rowsToLoad}"/>	
-	    </div>
-		
-		
+        </div>
+        <!-- the container element determine the height of the datatable -->
+        <div class="slds-m-top_medium slds-m-left_x-small slds-m-right_x-small" style="height : 500px">    
+            <lightning:datatable
+                                 data="{! v.data }"
+                                 class= "cols-table"
+                                 columns="{! v.columns }"
+                                 keyField="cadId"
+                                 onrowaction="{!c.handleRowAction }"
+                                 onrowselection="{!c.showDeleteAction}"             
+                                 loadMoreOffset="{!v.loadMoreOffset}" 
+                                 onsort="{!c.updateColumnSorting}"
+                                 sortedBy="{!v.sortedBy}"  
+                                 sortedDirection="{!v.sortedDirection}"/>
+        </div>
+        
+        <div class="slds-m-bottom_medium">
+            <c:Pagination total="{!v.totalNumberOfRows}" pageOffset="{!v.rowsToLoad}"/>	
+        </div>
+        
+        
     </div>
-	<!-- / PAGE HEADER -->   
+    <!-- / PAGE HEADER -->   
     
     <!--Delete action Dialogue box start -->         
     <aura:if isTrue="{!v.showModal}">

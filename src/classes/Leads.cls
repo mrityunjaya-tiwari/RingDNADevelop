@@ -3,7 +3,7 @@ public class Leads  extends SObjectDomain {
     List<Lead> leadsWithCadence;
     List<Lead> leadsWithoutCadence;
     List<Lead> records;
-    public static boolean flag = true;
+    public static Integer flag = 0;
     
     public Leads(List<Lead> sObjectList) { 
         super(sObjectList);
@@ -20,7 +20,6 @@ public class Leads  extends SObjectDomain {
     }
     
     public override void onBeforeInsert() {
-    	System.debug('Before insert called');
     	Map<Id, Cadence__c> cadMap = CadenceSelector.getActiveCadencesByRecordType(CadenceConstants.LEAD_OBJECT_NAME);
         for(Lead leadObj: (List<Lead>) leadsWithoutCadence) {
             Cadence__c cad = RuleCriterionMatcher.assignCadenceToNotAssignedParticipant(cadMap, leadObj, CadenceConstants.LEAD_OBJECT_NAME);
@@ -28,8 +27,6 @@ public class Leads  extends SObjectDomain {
     }
     
     public override void onAfterInsert() {
-
-        System.debug('Lead after insert called');
 
     	Map<Id, Cadence__c> cadMap = CadenceSelector.getActiveCadencesByRecordType(CadenceConstants.LEAD_OBJECT_NAME);
     	Map<Id, List<CadenceAction__c>> leadIdToAllCadActListMap = new Map<Id, List<CadenceAction__c>>();
@@ -59,9 +56,9 @@ public class Leads  extends SObjectDomain {
 		Map<Id, List<Sequence_Action__c>> performedPartAct = CadenceService.performParticipantActions(leadMap.values(), partActToPerform);
 		
 		//perform participant field update
-		flag = false;
 		List<Lead> leadsToUpdate = (List<Lead>)CadenceService.updateSObjectFields(leadMap.values(), performedPartAct, CadenceConstants.LEAD_OBJECT_NAME, true);
-		
+		flag = 1;
+        
 		if(leadsToUpdate != null && !leadsToUpdate.isEmpty()) {
         	update leadsToUpdate; 
         }
@@ -70,9 +67,7 @@ public class Leads  extends SObjectDomain {
     
     
     public override void onBeforeUpdate(Map<Id,SObject> existingRecords){
-
-        System.debug('Before update called');
-		if(!flag) {
+		if(flag==1) {
 			return;
 		}
 		CadenceService.processParticipantsWithCadences(records, CadenceConstants.LEAD_OBJECT_NAME, true);

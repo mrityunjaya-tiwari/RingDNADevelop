@@ -9,7 +9,6 @@
         	if (isValid){
                 component.set("v.currentStep", "2");
             } 
-            console.log("In step one validation isValid",isValid);
         }else if(getCurrentStep == 2){
         	var criterionValid = helper.validateCriterion(component, event, helper, 'entryCriterionComponent');
         	component.set('v.hasError', !(criterionValid));
@@ -46,7 +45,6 @@
     },
     
     saveCadence:function(component, event, helper){
-        console.log('##########################save function called##################');
         var action = component.get("c.saveCadence");
         var cadObj = component.get("v.newCadence");
         var lstCadAction = component.get("v.cadenceActionList");
@@ -63,7 +61,6 @@
         action.setCallback(this, function(response) {
             var state = response.getState();
             if (state === "SUCCESS") {
-               	console.log('**************saved***********************');
             	var recordId = response.getReturnValue();	
 	        	var eventObj = component.getEvent("CadenceComponentSaveEvt");
 		        eventObj.setParams({
@@ -72,14 +69,12 @@
 		        }).fire();
 		        component.set("v.currentStep", "1");
             }else{
-            	console.log('**************Error to save***********************');
             }
         });
         $A.enqueueAction(action)
     },
     
     validateCriterion : function(component, event, helper, cmpId) {
-        console.log('cmp Id',cmpId);
     	var entryCriterion = component.find(cmpId);
     	var isValid = entryCriterion.validateCriterion();
     	return isValid;

@@ -66,7 +66,7 @@
                 </span>
             </div>
             
-            <div class= "slds-col slds-size_1-of-6 topHeaderSmall slds-m-top_small slds-p-left_x-small">
+            <div class= "slds-col slds-size_1-of-6 topHeaderSmall slds-m-top_small slds-p-left_x-small rdna-classic-search">
                 <lightning:input type="search" 
                                  variant = "label-hidden"  
                                  label="Search" 
@@ -114,7 +114,7 @@
         
         <!-- RECORD TABLE -->
         <div >
-            <div class="slds-m-top_medium">
+            <div class="slds-m-top_medium rdna-classic-datatableStyling">
                 <c:Datatable columns = "{!v.columns}" rawData = "{!v.rawData}" aura:id = "datatable" hideCheckboxColumn = "{!v.hideCheckboxes}" 
                                        sortBy = "{!v.sortBy}" rowsToLoad = "{!v.recordsPerPage}" 
                                        isListView="{!v.listViewCondition}" 

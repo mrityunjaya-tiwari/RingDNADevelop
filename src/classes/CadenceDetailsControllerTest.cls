@@ -6,7 +6,5 @@ public class CadenceDetailsControllerTest {
         Test.startTest();
         CadenceDetailsController.createListForUIInput();
         Test.stopTest();       
-       
-        
     }
 }

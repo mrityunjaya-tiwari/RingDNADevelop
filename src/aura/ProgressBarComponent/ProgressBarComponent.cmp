@@ -22,7 +22,7 @@
                 <aura:if isTrue="{! indx == v.pbSteps}">
                     <aura:if isTrue="{!v.hasError}">
                         <div id="{!indx}" class="slds-progress-bar rdna-progress-bar__value_error" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" role="progressbar"/>
-                        <div id="{!'label' + indx}"  class="slds-align--absolute-center rdna-progress-bar__value_error_color">{!label}</div>
+                        <div id="{!'label' + indx}"  class="slds-align--absolute-center setRdnaText rdna-progress-bar__value_error_color">{!label}</div>
                         <aura:set attribute="else">
                             <div id="{!indx}" class="slds-progress-bar rdna-progress-bar__value_in-active" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" role="progressbar"/>
                             <div id="{!'label' + indx}"  class="slds-align--absolute-center setRdnaText rdna-progress-bar__value_active_color">{!label}</div>

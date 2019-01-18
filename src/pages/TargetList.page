@@ -1,8 +1,14 @@
 <apex:page sidebar="false">
+   <style type="text/css">
+        .rdna-classic-search { margin-top: 7px !important; }
+        .rdna-pageSelect { height: 27px !important; width: 62px !important;  border-radius: 6px !important; border-color: #cccccc !important;} 
+        .rdna-classic-datatableStyling {padding-right: 6px !important;}
+    </style>
     <script src="/lightning/lightning.out.js"/>
     <apex:slds />
     <apex:includeLightning />
     <div id="myDivId5" />
+        <div class="slds-scope"/>
     <script>
         var myUserContext = "{!$User.UITheme}";
         $Lightning.use("RDNACadence:CadenceActionListApp", function() {
@@ -11,8 +17,7 @@
                 {recordId: '{!$CurrentPage.parameters.id}',themeName: myUserContext},
                 "myDivId5",
                 function(cmp) {
-                    console.log('component created');
-                    console.log(cmp);
+                   
                 }); 
         });
         </script>

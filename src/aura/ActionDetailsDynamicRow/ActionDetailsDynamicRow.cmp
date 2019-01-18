@@ -110,13 +110,25 @@
                             </aura:if>                             
                             
                             <aura:set attribute="else">
-                                <lightning:input aura:id="formValidationId" 
+                                <aura:if isTrue="{!v.dataType == 'Email'}">
+                                    <lightning:input aura:id="formValidationId" 
+                                                 name="Email"
+                                                 type ="email"
+                                                 required="true"
+                                                 value="{!v.taskObj.value}"
+                                                 placeholder = "Enter Email Address"
+                                                 messageWhenBadInput = "Please Enter Valid Email Address"                                                 
+                                                 disabled = "{!v.isDisabled}"/> 
+                                    <aura:set attribute="else">
+                                        <lightning:input aura:id="formValidationId" 
                                                  name="inputString" 
                                                  required="true"
                                                  value="{!v.taskObj.value}"
                                                  placeholder = "Please Enter Details"
                                                  messageWhenBadInput = "Please Enter Detail"                                                 
                                                  disabled = "{!v.isDisabled}"/> 
+                                    </aura:set>
+                                </aura:if>
                             </aura:set>
                         </aura:if>
                     </aura:set>
