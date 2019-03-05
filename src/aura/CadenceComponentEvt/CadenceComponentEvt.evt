@@ -1,4 +1,0 @@
-<aura:event type="APPLICATION" description="Event template" >
-    <aura:attribute name="isEdit" type="Boolean" />
-    <aura:attribute name="recordId" type="String"/>
-</aura:event>

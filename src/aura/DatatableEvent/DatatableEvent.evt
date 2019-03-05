@@ -1,5 +1,0 @@
-<aura:event type="COMPONENT" description="Event template">
-    <aura:attribute name="rowsSeleted" type="List" />
-    <aura:attribute name="row" type="object" />
-    <aura:attribute name="actionName" type="String" />
-</aura:event>
