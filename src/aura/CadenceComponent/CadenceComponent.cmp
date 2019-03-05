@@ -1,0 +1,77 @@
+<aura:component controller="RDNACadence2.CadenceController" implements="force:appHostable,lightning:actionOverride,force:hasRecordId,flexipage:availableForRecordHome,flexipage:availableForAllPageTypes" access="global">
+    <aura:attribute name="cadence" type="RDNACadence2__Cadence__c"  default="{ 'sobjectType': 'RDNACadence2__Cadence__c',
+                                                               'Name': '','RDNACadence2__Record_Type__c':'', 'RDNACadence2__Participent_Activation__c':''}"/>
+    <!-- Cadence Id -->
+    <aura:attribute name="recordId" type="String" />
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}"/> 
+    <aura:attribute name="entranceCriteriaSet" type="Object"/>
+    <aura:attribute name="exitCriteriaSet" type="Object"/>
+    <aura:attribute name="contactFieldList" type="List"/> 
+    <aura:attribute name="leadFieldList" type="List"/>
+    <aura:attribute name="contactFieldListCA" type="List"/> 
+    <aura:attribute name="leadFieldListCA" type="List"/>
+    <aura:attribute name="accountFieldList" type="List"/>
+    <aura:attribute name="dbFieldList" type="List"/>
+    <aura:attribute name="cadenceActionList" type="List"/> 
+    <aura:attribute name="openViewMode" type="Boolean" default="false"/>
+    
+    
+    <!--Create or show cadence details -->
+    <aura:attribute name= "isEdit" type="Boolean" default= "false"/>
+    <aura:attribute name= "newSequence" type="Boolean" default= "false"/>
+    <aura:attribute name="currentStep" type="string" default="1"/>
+    <!--Event handler-->    
+    <aura:handler name="CadenceComponentEvt" event="RDNACadence2:CadenceComponentEvt" 
+                  action="{!c.handleCadenceComponentEvt}"/>
+    
+    <aura:handler name="CadenceComponentSaveEvt" event="RDNACadence2:CadenceComponentEvt" 
+                  action="{!c.CadenceComponentSaveEvt}"/>
+    <!--create a component attributs -->
+    <aura:attribute name="SpinnerForSync" type="boolean" default="false"/>
+    <RDNACadence2:SpinnerComponent spinnerSync = "{!v.SpinnerForSync}"/>
+    <aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
+    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>
+    
+    <aura:attribute name="pData" type="List"/>
+    <aura:handler name="change" value="{!v.pData}" action="{!c.setPhoneLink}"/>
+    <aura:attribute name="themeName" type="String"/>
+    <!-- use to find that sequence type is avilable in form -->
+    <aura:attribute name="settedSequenceType" type="Boolean" default= "false"/>
+    <aura:handler name="change" value="{!v.settedSequenceType}" action="{!c.settedSequenceType}"/>
+    
+    
+    <aura:if isTrue="{!v.isEdit}"><!-- open in new/edit mode -->
+        <aura:if isTrue="{!not(empty(v.cadence) || empty(v.dbFieldList) ||
+                         empty(v.accountFieldList) || empty(v.entranceCriteriaSet) ||
+                         empty(v.exitCriteriaSet)	
+                         )}"><!-- open in edit mode -->
+            <c:CadenceProgressIndicator newCadence = "{!v.cadence}" 
+                                        cadenceName="{!v.cadence.Name}" entranceCriteriaSet="{!v.entranceCriteriaSet}"
+                                        exitCriteriaSet="{!v.exitCriteriaSet}" currentStep="{!v.currentStep}"
+                                        cadenceActionList="{!v.cadenceActionList}" accountFieldList="{!v.accountFieldList}"
+                                        dbFieldList="{!v.dbFieldList}" themeName="{!v.themeName}"
+                                        isEdit = "{!v.isEdit}" />
+            <aura:set attribute="else"><!-- open in new mode -->
+                <c:CadenceProgressIndicator newCadence = "{!v.cadence}" 
+                                                      newSequence = "{!v.newSequence}"
+                                                      settedSequenceType="{!v.settedSequenceType}"
+                                                      dbFieldList="{!v.dbFieldList}"
+                                                      accountFieldList="{!v.accountFieldList}" 
+                                                      themeName="{!v.themeName}" 
+                                                      />
+            </aura:set> 
+        </aura:if>
+        <aura:set attribute="else"><!-- open in view mode -->
+            
+            <aura:if isTrue="{!not(empty(v.entranceCriteriaSet) || empty(v.exitCriteriaSet) 
+                             || empty(v.cadence) )}">
+                <c:CadenceTabset aura:id ='tabset' newCadence = "{!v.cadence}"  
+                                 contactFieldList="{!v.contactFieldListCA}" leadFieldList="{!v.leadFieldListCA}"
+                                 entranceCriteriaSet="{!v.entranceCriteriaSet}" exitCriteriaSet="{!v.exitCriteriaSet}" 
+                                 cadenceActionList="{!v.cadenceActionList}" accountFieldList="{!v.accountFieldList}" 
+                                 pData="{!v.pData}" dbFieldList="{!v.dbFieldList}" currentStep="{!v.currentStep}"/>
+            </aura:if>
+            
+        </aura:set>
+    </aura:if> 
+</aura:component>

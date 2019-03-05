@@ -1,0 +1,50 @@
+<aura:component >
+    <!--Event attribute -->
+    <aura:registerEvent name="cadDynamicRowEvent" type="RDNACadence2:CadDynamicRowEvent"/>
+    <aura:method name="validateForm" action="{!c.validateForm}"/>
+
+    <!--Action Objects -->
+    <aura:attribute name="newCadence" type="Cadence__c" default="{ 'sobjectType': 'Cadence__c', 'Name': '','Record_Type__c':'', 'Participent_Activation__c':''}"/>
+    <!-- set this parameter to make participent table visible-->
+    <aura:attribute name= "isShowParticipantsTable" type = "boolean" default = "false"/>
+    <fieldset class="slds-form-element slds-form_compound">
+        <form class="slds slds-form slds-m-left_large">
+            <span class="slds-p-top_medium slds-page-header__row slds-text-title_bold slds-truncate">Details</span>
+            <span>Enter the basic cadence detail of your new cadence list</span>
+            
+            <div class="slds-form-element__row slds-p-top_small">
+                <div class="slds-form-element__control slds-size_1-of-3">
+                    <lightning:input aura:id="formValidationId" label="Cadence Name"
+                                     name="actionname"
+                                     value="{!v.newCadence.Name}"
+                                     placeholder = "Enter Action Name"
+                                     messageWhenBadInput = "Please Enter Name"
+                                     required="true"/> 
+                </div>
+                <div class="slds-form-element__control slds-size_1-of-3">
+                    <lightning:select aura:id="formValidationId" name="selectActionType" 
+                                      label="Type" required="true" value="{!v.newCadence.Record_Type__c}" 
+                                      messageWhenValueMissing="Please Select Action Type."
+                                      onchange="">
+                        <option value="">Record Type</option>
+                        <option value="Email">Contact</option>
+                        <option value="SMS">Lead</option>
+                    </lightning:select>
+                </div>
+                <div class="slds-form-element__control slds-size_1-of-3">
+                    <lightning:select aura:id="formValidationId" name="selectActionType" 
+                                      label="Activation Type" required="true" value="{!v.newCadence.Participent_Activation__c}" 
+                                      messageWhenValueMissing="Please Select Activation Type.">
+                        <option value="">Select Activation Type</option>
+                        <option value="Automatic">Automatic</option>
+                        <option value="Manual">Manual</option>
+                    </lightning:select>
+                </div>
+            </div>
+            <aura:if isTrue="{!v.isShowParticipantsTable}">
+                <span class="slds-p-top_medium slds-page-header__row slds-text-title_bold slds-truncate">Participants</span>
+                <span>Enter the basic cadence detail of your new cadence list</span>
+            </aura:if>
+        </form>
+    </fieldset>
+</aura:component>

@@ -1,0 +1,36 @@
+<aura:component controller = 'ActionDetailViewCtrl' implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction,force:appHostable" access="global">
+    
+    <!-- Handlers -->
+    <aura:handler name="init" value="{! this }" action="{! c.doInit }"/>
+    <aura:handler name="datatableEvt" event="RDNACadence2:DatatableEvent" action="{!c.handleDatatableEvent}"/>
+    
+    <!-- attributes -->
+    <aura:attribute name="recordId" type="Id"/> 
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="rawData" type="List"/>
+    <aura:attribute name="selectedRows" type="List"/> 
+    <aura:attribute name="toggleRows" type="List" />
+    <aura:attribute name="refreshParticipant" type="Boolean" default="false" />
+    <aura:attribute name="hideCheckboxes" type="boolean" />
+    <aura:attribute name="rowsToLoad" type="Integer" default="5"/>
+    <aura:handler name="change" value="{!v.toggleRows}" action="{!c.toggleActivation}" />
+    <aura:handler name="change" value="{!v.recordId}" action="{!c.doInit}" /> 
+    <aura:handler name="change" value="{!v.refreshParticipant}" action="{!c.refreshData}" /> 
+    
+    
+    <aura:attribute name="setPhoneLink" type="boolean" default = "false"/>
+     <aura:attribute name="pData" type="List"/>
+    
+    <div class="slds-grid slds-m-top_medium slds-m-bottom_small">
+        
+        <!-- GRID COL -->
+        <div class="slds-col slds-has-flexi-truncate">
+            <p class="slds-page-header__row slds-truncate rdna-field-values-bold  slds-m-top_medium rdna-link-height" >Participants</p>
+            <p class=" rdna-field-values rdna-link-height">Enter the basic sequence detail of your new sequence list</p>
+        </div>
+    </div>
+    
+    <div class="slds-m-top_medium">
+        <RDNACadence2:Datatable columns = "{!v.columns}" rawData = "{!v.rawData}" data="{!v.pData}"  rowsToLoad="{!v.rowsToLoad}"  aura:id = "datatable1" hideCheckboxColumn = "{!v.hideCheckboxes}"/>    
+    </div>
+</aura:component>

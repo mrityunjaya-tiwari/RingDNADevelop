@@ -1,0 +1,82 @@
+.THIS .rdna-set-line-height{
+    line-height: 1.57 !important;
+}
+.THIS .rdna-set-link-height{
+    line-height: 1.43 !important;
+    color: #0066ff !important;
+}
+/* (Default class is updated) */
+.THIS .rdna-button{
+    background: #ffffff !important;
+}
+.THIS .close-buttom .rdna-button{
+    background: #0070d2 !important;
+}
+.THIS .close-buttom .rdna-button-text{
+    color: #ffffff !important;
+}
+/*delete button color (Default class is updated) */
+.THIS .slds-icon-text-default {
+    fill: #0070d2;
+}
+/*Set label css- for radio group (Default class is updated) */
+.THIS .slds-radio .slds-radio__label .slds-form-element__label{
+    font-family: Logical;
+    font-size: 14px !important;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    color: #000000;
+}
+.THIS .rdna-table-rows  {
+    background: #ffffff !important;
+    height: 50px;
+}
+
+.THIS .actions-icon{
+    width : 28px;
+    height :29px;
+}
+.THIS .relative-class {
+    position: relative;
+}
+
+.THIS .Ovalhead {
+    width : 25px;
+    height :28px;
+    margin-left: 0px;
+    padding-top: 3px;
+}
+.THIS .Oval {
+    margin-top : 22px;
+    margin-left: 16px;
+    margin-bottom:0px;
+   	padding-top: 7px;
+    width : 20px;
+    height :27px;   
+}
+.THIS div table tbody tr td div fieldset.slds-form_compound .slds-form-element{
+    background-color: #fafafa !important;
+}
+.THIS .rdna-background{
+    background-color: #fafafa !important;
+}
+
+.THIS .rdna-div{
+    background: #ffffff !important;  
+}
+.THIS span.slds-radio_faux:after{
+    background-color: #0066ff !important;
+}
+.THIS .rdna-bgcolor{
+    background: #fafafa !important;
+}
+.THIS .rdna-bgcolorWhihte{
+    background: white !important;
+}
+.THIS .RDNACadenceCadenceComponent div{
+    background-color: none !important;
+    
+}

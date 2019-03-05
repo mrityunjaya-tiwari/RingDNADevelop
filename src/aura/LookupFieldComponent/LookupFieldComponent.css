@@ -1,0 +1,51 @@
+.THIS {
+}
+
+.THIS label {
+    display: none !important;
+}
+.THIS .marginTop {
+    margin-top: 25px !important;
+}
+.THIS .customRequired{
+    font-weight: 400; } 
+.THIS .customRequired:before{    
+    content: "*";
+    padding-top: 6px;
+    margin: 0 0.300rem 0 0.125rem;
+    color: rgb(194, 57, 52);
+    float: left; } 
+.THIS .customRequiredMessage{
+    font-weight: 400; } 
+.THIS .customRequiredMessage:before{    
+    content: "*";
+    padding-top: 6px;
+    margin: 0 0.300rem 0 0.125rem;
+    color: rgb(194, 57, 52);
+    float: left; } 
+.THIS .customRequiredMessage:after{    
+    content: "Complete this field.";
+    margin: 0 0.125rem 0 0.125rem;
+    color: rgb(194, 57, 52);
+    float: left; } 
+
+.THIS .cb .slds-button {
+    display: none;
+}
+.THIS .cb .slds-input {
+    cursor: not-allowed;
+    border-color: rgb(201, 199, 197);
+}
+.THIS .cb .slds-input:active {
+    box-shadow: none;
+    cursor: not-allowed;
+    outline: none;
+    border-color: rgb(201, 199, 197);
+}
+
+.THIS .cb .slds-input:focus {
+    box-shadow: none;
+    cursor: not-allowed;
+    outline: none;
+    border-color: rgb(201, 199, 197);
+}

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Sequence</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Sequences</value>
+    </caseValues>
+    <fields>
+        <label><!-- Entrance Criteria PE --></label>
+        <name>Entrance_Criteria_PE__c</name>
+    </fields>
+    <fields>
+        <label><!-- Entrance Criteria --></label>
+        <name>Entrance_Criteria__c</name>
+    </fields>
+    <fields>
+        <label><!-- Exit Criteria PE --></label>
+        <name>Exit_Criteria_PE__c</name>
+    </fields>
+    <fields>
+        <label><!-- Exit Criteria --></label>
+        <name>Exit_Criteria__c</name>
+    </fields>
+    <fields>
+        <label><!-- Participent Activation --></label>
+        <name>Participent_Activation__c</name>
+        <picklistValues>
+            <masterLabel>Automatic</masterLabel>
+            <translation><!-- Automatic --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Manual</masterLabel>
+            <translation><!-- Manual --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- Record Type --></label>
+        <name>Record_Type__c</name>
+        <picklistValues>
+            <masterLabel>Contact</masterLabel>
+            <translation><!-- Contact --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Lead</masterLabel>
+            <translation><!-- Lead --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Opportunity</masterLabel>
+            <translation><!-- Opportunity --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- Status --></label>
+        <name>Status__c</name>
+    </fields>
+    <fields>
+        <label><!-- Total Participants --></label>
+        <name>Total_Participants__c</name>
+    </fields>
+    <fields>
+        <label><!-- matching priority --></label>
+        <name>matching_priority__c</name>
+        <picklistValues>
+            <masterLabel>P1</masterLabel>
+            <translation><!-- P1 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>P2</masterLabel>
+            <translation><!-- P2 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>P3</masterLabel>
+            <translation><!-- P3 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>P4</masterLabel>
+            <translation><!-- P4 --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>P5</masterLabel>
+            <translation><!-- P5 --></translation>
+        </picklistValues>
+    </fields>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

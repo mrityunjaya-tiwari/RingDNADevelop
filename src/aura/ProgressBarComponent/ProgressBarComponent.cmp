@@ -1,0 +1,45 @@
+<aura:component>
+    <aura:handler name="init" value="{!this}" action="{!c.init}"  />
+    
+    <aura:attribute name="currentStep" type="string" default="0"/>
+    
+    <aura:method name="setErrorMethod" action="{!c.setPbCss}">
+        <aura:attribute type="Boolean" name="hasError"/>
+    </aura:method>
+    <!-- <aura:handler name="change" value="{!v.hasError}" action="{!c.setError}"/> -->
+    <aura:attribute name="currentStepChanged" type="string" default="0"/>
+    
+    <aura:attribute name="currentStepClass" type="string" default="slds-size_1-of-4"/>
+    <aura:attribute name="listOfLabels" type="List" />
+    <aura:attribute name="pbSteps" type="Integer" default="0"/>
+    <aura:attribute name="hasError" type="Boolean" default="false"/>
+    
+    
+    <div class="slds-grid slds-size_1-of-1 slds-p-left_medium slds-p-right_medium"  >
+        <aura:iteration items="{!v.listOfLabels}" var="label" indexVar="indx">
+            <div class="{!v.currentStepClass}" onclick="{!c.setCurrentStepIndex}" data-value="{!indx}">
+                
+                <aura:if isTrue="{! indx == v.pbSteps}">
+                    <aura:if isTrue="{!v.hasError}">
+                        <div id="{!indx}" class="slds-progress-bar rdna-progress-bar__value_error" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" role="progressbar"/>
+                        <div id="{!'label' + indx}"  class="slds-align--absolute-center setRdnaText rdna-progress-bar__value_error_color">{!label}</div>
+                        <aura:set attribute="else">
+                            <div id="{!indx}" class="slds-progress-bar rdna-progress-bar__value_in-active" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" role="progressbar"/>
+                            <div id="{!'label' + indx}"  class="slds-align--absolute-center setRdnaText rdna-progress-bar__value_active_color">{!label}</div>
+                        </aura:set>
+                    </aura:if>
+                    <aura:set attribute="else">
+                        <aura:if isTrue="{!greaterthan(v.pbSteps, indx)}">
+                            <div id="{!indx}" class="slds-progress-bar rdna-progress-bar__value_success" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" role="progressbar"/>
+                            <div id="{!'label' + indx}"  class="slds-align--absolute-center setRdnaText rdna-progress-bar__value_success_color">{!label}</div>
+                            <aura:set attribute="else">
+                                <div id="{!indx}" class="slds-progress-bar rdna-progress-bar__value_in-progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" role="progressbar"/>
+                                <div id="{!'label' + indx}"  class="slds-align--absolute-center setRdnaText rdna-progress-bar__value_progress_color">{!label}</div>
+                            </aura:set>
+                        </aura:if>
+                    </aura:set>
+                </aura:if>
+            </div>
+        </aura:iteration>
+    </div>
+</aura:component>

@@ -1,0 +1,54 @@
+.THIS {
+}
+.THIS .slds-grid_align-end {
+    justify-content: flex-start !important;
+}
+
+.THIS .slds-scrollable_y {
+    overflow-y:visible !important; 
+    overflow-x:visible !important;
+}
+
+.THIS .slds-button_icon-bare{
+    display: none;
+}
+.THIS .rdna-text-style{
+    width: 402px;
+    height: 32px;
+    font-family: Logical;
+    font-size: 18px;
+    font-weight: bold;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.78;
+    letter-spacing: normal;
+    text-align: center;
+    color: #000000;
+}
+.THIS .rdna-style{
+    width: 772px;
+    height: 52px;
+    font-family: Logical;
+    font-size: 18px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.44;
+    letter-spacing: normal;
+    text-align: center;
+    color: #000000;
+    font-weight: bold;
+}
+.THIS .rdna-text{
+    width: 772px;
+    height: 52px;
+    font-family: Logical;
+    font-size: 18px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.44;
+    letter-spacing: normal;
+    text-align: center;
+    color: #000000;
+}

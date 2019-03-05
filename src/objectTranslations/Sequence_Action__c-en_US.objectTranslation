@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Sequence Action</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Sequence Actions</value>
+    </caseValues>
+    <fields>
+        <label><!-- Actual Execution Date --></label>
+        <name>Actual_Execution_Date__c</name>
+    </fields>
+    <fields>
+        <label><!-- Action ID --></label>
+        <name>CadenceAction_ID__c</name>
+        <relationshipLabel><!-- Sequence Actions --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Action Activation --></label>
+        <name>Cadence_Action_Activation__c</name>
+    </fields>
+    <fields>
+        <label><!-- Action Name --></label>
+        <name>Cadence_Action_Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- Action Template --></label>
+        <name>Cadence_Action_Template__c</name>
+    </fields>
+    <fields>
+        <label><!-- Action Type --></label>
+        <name>Cadence_Action_Type__c</name>
+    </fields>
+    <fields>
+        <label><!-- Sequence Name --></label>
+        <name>Cadence_Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- Sequence_Priority --></label>
+        <name>Cadence_Priority__c</name>
+    </fields>
+    <fields>
+        <label><!-- Sequence Type --></label>
+        <name>Cadence_Type__c</name>
+    </fields>
+    <fields>
+        <label><!-- Contact Id --></label>
+        <name>Contact_Id__c</name>
+        <relationshipLabel><!-- Sequence Actions --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Expected Execution Date --></label>
+        <name>Expected_Execution_Date__c</name>
+    </fields>
+    <fields>
+        <label><!-- Lead Id --></label>
+        <name>Lead_Id__c</name>
+        <relationshipLabel><!-- Sequence Actions --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Participant Email --></label>
+        <name>Participant_Email__c</name>
+    </fields>
+    <fields>
+        <label><!-- Participant ID --></label>
+        <name>Participant_ID__c</name>
+    </fields>
+    <fields>
+        <label><!-- Participant Name --></label>
+        <name>Participant_Name__c</name>
+    </fields>
+    <fields>
+        <label><!-- Participant Priority --></label>
+        <name>Participant_Priority__c</name>
+    </fields>
+    <fields>
+        <label><!-- Participant Type --></label>
+        <name>Participant_Type__c</name>
+    </fields>
+    <fields>
+        <label><!-- Show on Today --></label>
+        <name>Show_on_Target_List__c</name>
+    </fields>
+    <fields>
+        <label><!-- Update Expected Execution Date --></label>
+        <name>Update_Expected_Execution_Date__c</name>
+    </fields>
+    <fields>
+        <label><!-- isActionPerformed --></label>
+        <name>isActionPerformed__c</name>
+    </fields>
+    <fields>
+        <label><!-- isDeferred --></label>
+        <name>isDeferred__c</name>
+    </fields>
+    <layouts>
+        <layout>Sequence Action Layout</layout>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+    </layouts>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

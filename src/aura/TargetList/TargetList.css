@@ -1,0 +1,245 @@
+/*Header css */
+.THIS .topHeaderSmall {
+    font-family: Logical;
+    font-size: 12px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    color: #000000;
+}
+
+.THIS .headerLarge { 
+    font-family: Logical;
+    font-size: 38px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    color: #000000;
+}
+
+.THIS .rdna-logo{
+    padding-top: 8px;
+    width: 32px;
+    height: 40px;
+}
+.THIS .rdna-text-align{
+    margin-left: 120px;
+}
+.THIS .rdna-remove-button-text{
+    font-family: Logical;
+    font-size: 14px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    text-align: center;
+    color: #0066ff;
+}
+.THIS .rdna-remove-button{
+    width: 75px;
+    height: 30px;
+    border-radius: 6px;
+    background: #fafafa !important;
+    border-color: #0066ff !important;
+}
+.THIS .rdna-button{ 
+}
+.THIS .rdna-button-text{
+    font-family: lato;
+    font-size: 14px !important;
+    text-align: center;
+    color: #0066ff;
+}
+/*-----table css---------------------------------*/
+.THIS .cols-table table thead tr th {
+    font-family: Logical !important;
+    font-size: 11px !important;
+    font-weight: normal !important;
+    font-style: normal !important;
+    font-stretch: normal !important;
+    line-height: 1.82 !important;
+    letter-spacing: normal !important;
+    color: #000000 !important;
+}
+.THIS .cols-table table tbody tr td {
+    border: none !important;
+    font-family: Logical !important;
+    font-size: 14px !important;
+    line-height: 1.43 !important;
+}
+
+.THIS .cols-table table tbody tr th {
+    border: none  !important;  
+    font-family: Logical !important;
+    font-size: 14px !important;
+    color: #0066ff !important;
+    line-height: 1.43 !important;
+}
+
+/*Updated all input dropdown(Default class is updated)*/
+.THIS .slds-select {
+    font-family: Logical !important;
+    font-size: 14px !important;
+    font-weight: normal !important;
+    font-style: normal !important;
+    font-stretch: normal !important;
+    line-height: normal !important;
+    letter-spacing: normal !important;
+    color: #000000 !important;
+    border-radius: 6px;
+    background-color: #fafafa !important;
+}
+.THIS .slds-input {
+    font-family: Logical !important;
+    font-size: 14px !important;
+    font-weight: normal !important;
+    font-style: normal !important;
+    font-stretch: normal !important;
+    line-height: normal !important;
+    letter-spacing: normal !important;
+    color: #000000 !important;
+    border-radius: 6px;
+    background-color: #fafafa !important;
+}
+.THIS .rdna-field-values {
+    background-color: #fafafa !important;
+    font-family: Logical !important;
+    font-size: 14px !important;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    color: #000000;
+}
+/*----- useful table css---------------------------------*/
+.THIS div table tbody tr td div div.slds-col{
+    width: 26px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.THIS .Oval {
+    width : 25px;
+    height :26px;
+    margin-left: 6px;
+}
+
+.THIS .OvalPLIs {
+    width : 20px;
+    height :20px;
+    margin-left: 6px;
+}
+
+.THIS.row{
+    padding-bottom: 50px;
+}
+
+.THIS test{
+    font-family: Logical;
+    font-size: 15px;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1;
+    letter-spacing: normal;  
+    color: #000000;
+    
+}
+
+.THIS .slds-table_bordered1 {
+    border-style: none !important;
+    
+}
+
+.THIS .slds-is-sortable .slds-th__action{
+    /* background-color:yellow !important;*/
+}
+.THIS .slds-is-sortable .slds-th__action:hover{
+    /* background-color:yellow !important; */
+}
+
+.THIS .slds-is-resizable .slds-th__action:focus {
+    /* background-color:yellow !important; */
+}
+
+.THIS .cols-table table thead th div { 
+    /*background-color:yellow !important;*/
+}
+
+
+.THIS .cols-table table tbody tr td span span {
+    /*Css for trow span
+    background-color:blue !important;
+    */
+}
+/*------------------------------------------*/
+.THIS .slds-input-has-icon_left-right {
+    margin-right: 10px !important;
+}
+
+@font-face {
+    font-family: 'Logical';
+    src: url(/resource/RDNACadence2__LogicalFontRegular) format('woff');
+}
+
+.THIS .cols-table table thead tr th span {
+    background-color: #eaeaea !important; 
+    text-transform: capitalize;
+    font-family: Logical;
+    font-size: 11px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.82;
+    letter-spacing: normal;
+    color: #000000;
+}
+.THIS .cols-table table thead tr th div {
+    background-color: #eaeaea !important;   
+}
+.THIS .cols-table table thead tr th span a {
+    background-color: #eaeaea !important; 
+}
+.THIS .cols-table table tbody tr td {
+    border: none !important;
+    height: 47px;
+    font-family: Logical !important;
+    font-size: 14px !important;
+    line-height: 1.43 !important;
+}
+/* Rounded header-corner*/
+.THIS .slds-table_header-fixed_container{
+    border-top-right-radius: 6px;
+    border-top-left-radius: 6px;
+}
+.THIS .cols-table table tbody tr th div a{
+    font-family: Logical;
+    font-size: 14px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.43;
+    letter-spacing: normal;
+    color: #0066ff;
+}
+.THIS .cols-table table tbody tr td div a{
+    font-family: Logical;
+    font-size: 14px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.43;
+    letter-spacing: normal;
+    color: #0066ff;
+}
+/* dropdown styling */
+.THIS .slds-button_icon-border{
+    color: #000000;
+    border-color: #ffffff !important;
+    border-radius: none;
+}
