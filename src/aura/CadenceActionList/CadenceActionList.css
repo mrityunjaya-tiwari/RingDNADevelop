@@ -1,0 +1,178 @@
+.THIS .slds-scrollable_y {
+    overflow-y:visible !important;
+    overflow-x:visible !important;
+}
+
+.THIS .slds-grid_align-end {
+    justify-content: flex-start !important;
+}
+
+.THIS .slds-page-header {
+    background-color: #fafafa !important;	
+    background: #fafafa !important;
+}
+
+.THIS .rdna-logo{
+    padding-top : 8px;
+    width : 32px;
+    height :40px;
+}
+
+
+/*Header css */
+.THIS .rdna-header-small {
+    font-family: Logical;
+    font-size: 14px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    color: #000000;
+}
+.THIS .rdna-header-large { 
+    font-family: Logical;
+    font-size: 38px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    color: #000000;
+}
+
+/*Header css */
+
+/*-----table css---------------------------------*/
+.THIS .cols-table table thead tr th {
+    font-family: Logical !important;
+    font-size: 11px !important;
+    font-weight: normal !important;
+    font-style: normal !important;
+    font-stretch: normal !important;
+    line-height: 1.82 !important;
+    letter-spacing: normal !important;
+    color: #000000 !important;
+    background-color: #eaeaea;
+}
+.THIS .cols-table table tbody tr td {
+    border: none !important;
+    height: 47px;
+    font-family: Logical !important;
+    font-size: 14px !important;
+    line-height: 1.43 !important;
+}
+
+.THIS .cols-table table tbody tr th {
+    border: none  !important;    
+    font-family: Logical !important;
+    font-size: 14px !important;
+    color: #0066ff !important;
+    line-height: 1.43 !important;
+    
+}
+.THIS div table tbody tr th div a{
+    border: none  !important;    
+    font-family: Logical !important;
+    font-size: 14px !important;
+    color: #0066ff !important;
+    line-height: 1.43 !important;
+    
+}
+
+.THIS .rdna-table-row{
+    font-family: Logical;
+    font-size: 14px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.43;
+    letter-spacing: normal;
+    color: #0066ff;
+}
+.THIS .cols-table table thead tr th span {
+   background-color: #eaeaea !important;
+   
+}
+.THIS .cols-table table thead tr th div {
+   background-color: #eaeaea !important; 
+   
+   
+}
+.THIS .cols-table table thead tr th span a {
+   background-color: #eaeaea !important; 
+}
+
+.THIS .rdna-bottom-padding{
+    padding-bottom: 15px;
+}
+/*-----table css---------------------------------*/
+
+/*Button*/
+.THIS .rdna-button{
+    border: 1.4px solid #0066ff !important;
+    border-color: #0066ff  !important;
+    border-radius: 6px !important;
+    background-color: #fafafa !important;
+    
+}
+.THIS .rdna-button-text{
+    font-family: Logical;
+    font-size: 14px !important;
+    text-align: center;
+    color: #0066ff;
+}
+
+.THIS .cols-table table thead th span{ 
+    font-size: 11px;
+    text-transform: capitalize;
+}
+
+.THIS .cols-table .slds-button_icon-bare{ 
+    display: none;
+    
+}
+.THIS .slds-button_icon-border{
+    color: #000000;
+    border-color: #ffffff !important;
+    border-radius: none;
+}
+
+/*
+@font-face {
+    font-family: 'Logical';
+    src: url(/resource/RDNACadence2__LogicalFontRegular) format('woff');
+}
+*/
+@font-face {
+    font-family: 'Logical';
+    src: url(/resource/RDNACadence2__LogicalFontRegular) format('woff');
+}
+
+/*
+.THIS .cols-table div:hover {
+    background-color: #eaeaea !important;
+}
+*/
+
+.THIS .cols-table table tbody tr td span.slds-checkbox_faux{
+   
+}
+.THIS .cols-table table tbody tr td span.slds-checkbox [type=checkbox]:checked + label::after {
+    background-image:url("/resource/cadence_icons/selection-box/selected/select-check@3x.png");    
+    content: '';
+    height: .25rem;
+    width: .5rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate3d(-50%, -50%, 0) rotate(-45deg);
+    border-bottom: 2px solid rgba(27, 82, 151, 1.0);
+    border-left: 2px solid rgba(27, 82, 151, 1.0);
+}
+
+/* Rounded header-corner*/
+.THIS .slds-table_header-fixed_container{
+    border-top-right-radius: 6px;
+    border-top-left-radius: 6px;
+}

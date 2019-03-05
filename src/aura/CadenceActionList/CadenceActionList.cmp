@@ -1,0 +1,136 @@
+<aura:component controller="RDNACadence2.CadenceActionListController" implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction,force:appHostable" access="global"> 
+    <!-- attributes -->
+    <aura:attribute name="moretabs" type="Aura.Component[]"/>
+	<aura:attribute name="data" type="Object" default="" access="global"/>
+    <aura:attribute name="columns" type="List" default=""/>
+    <aura:attribute name="dataTableSchema" type="Object" default=""/>
+	<aura:attribute name="keyField" type="String" default="id"/>
+    <aura:attribute name="initialRows" type="Integer" default="5"/>
+	<aura:attribute name="selectedRowsCount" type="Integer" default="0"/>
+    <aura:attribute name="enableInfiniteLoading" type="Boolean" default="true"/>
+    <aura:attribute name="rawData" type="Object" access="PUBLIC" default=""/>
+    <aura:attribute name="newActionEnable" type="Boolean" default="true"/>
+    <aura:attribute name="activeFilter" type="string" default="all" access="PUBLIC" />
+    <aura:attribute name="rowLoaded" type="Integer" default="0"/>				<!--Number of Rows been loaded-->
+    <aura:attribute name="rowsToLoad" type="Integer" default="10"/> 			<!--Rows per page-->
+    <aura:attribute name="loadMoreOffset" type="Integer" default="10"/>			
+    <aura:attribute name="totalNumberOfRows" type="Integer" default="0"/>		<!--Total Number of Rows-->
+    <aura:attribute name="currentPage" type="Integer" default="1"/>
+    <aura:attribute name="loadMoreStatus" type="String" default=""/>	
+	<aura:attribute name="rowsSelected" type="List" default=""/>
+	<aura:attribute name="showModal" type="Boolean" default="false"/>
+    <aura:attribute name="showModalMessage" type="Boolean" default="false"/>
+    <aura:attribute name="deleteActionRows" type="List" />
+    <aura:attribute name="sortBy" type="String" default="Created Date"/>
+    <aura:attribute name="sortedBy" type="String" default="Name"/>
+    <aura:attribute name="sortedDirection" type="String" default="asc"/>
+    <aura:attribute name="themeName" type="String" access="global"/>
+    <aura:attribute name="title" type="String"/>
+    <aura:attribute name="deleteActionMessage" type="String"/>
+    
+    <!--handlers-->
+    <aura:handler name="init" value="{! this }" action="{! c.init }"/>
+    <aura:handler name="cadencePagination" event="RDNACadence2:CadPagination" action="{!c.handleComponentEvent}"/>
+    <!--create a component attributs -->
+    <aura:attribute name="spinner" type="boolean" default="false"/>
+    <RDNACadence2:SpinnerComponent spinnerSync = "{!v.spinner}"/>
+   
+   	<!-- PAGE HEADER -->
+    <div class="slds-page-header" style="background-color: #fafafa">
+        
+        <div class="slds-grid">
+            <div>
+                <img class = "rdna-logo" src="{!$Resource.cadence_icons + '/rdna-logo/rdna-logo@2x.png'}"/>
+            </div>
+            <div class="slds-col slds-has-flexi-truncate slds-m-left_small">
+                <!-- HEADING AREA -->
+                <p class="slds-line-height_reset rdna-header-small slds-p-left_xx-small">Actions</p>
+                <h1 class="slds-page-header__title slds-m-right_small slds-align-middle slds-truncate rdna-header-large"  title="All Actions">All Actions</h1>
+                <!-- / HEADING AREA -->
+            </div>
+            
+        </div>
+        <div class="slds-grid">
+            <div class="slds-m-top_medium slds-col">
+                <span class="rdna-header-small">{!v.totalNumberOfRows} Items • Sorted by {!v.sortBy} </span>
+            </div>
+            <aura:if isTrue="{!v.newActionEnable}">
+                <div class="slds-m-top_medium slds-align--absolute-center slds-float--right slds-m-right_small">
+                    <lightning:button class="rdna-button rdna-button-text slds-text-align_center" aura:id="newAction" label="New Action" onclick="{!c.newAction}"/>
+                </div>    
+                <aura:set attribute="else">
+                    <div class="slds-m-top_medium slds-align--absolute-center slds-m-right_small">
+                        <lightning:button class="rdna-button rdna-button-text slds-text-align_center" aura:id="deleteActions" label="Delete Action" onclick="{!c.deleteCadActions}"/>
+                    </div>
+                </aura:set>
+            </aura:if>   
+        </div>
+	    <!-- the container element determine the height of the datatable -->
+	    <div class="slds-m-top_small slds-m-left_x-small slds-m-right_x-small" style="height : 500px">
+		    <lightning:datatable
+			                         data="{! v.data }"
+                                     title="{! v.title }"
+			                         class= "cols-table"
+			                         columns="{! v.columns }"
+			                         keyField="actionId"
+			                         onrowaction="{!c.handleRowAction }"
+			                         onrowselection="{!c.showDeleteAction}"             
+			                         enableInfiniteLoading="{! v.enableInfiniteLoading }"
+			                         loadMoreOffset="{!v.loadMoreOffset}" 
+			                         onsort="{!c.updateColumnSorting}"
+			                         sortedBy="{!v.sortedBy}"  
+			                         sortedDirection="{!v.sortedDirection}"/>
+		</div>
+	    <div class="rdna-bottom-padding">
+		     <RDNACadence2:Pagination total="{!v.totalNumberOfRows}" pageOffset="{!v.rowsToLoad}"/>
+	    </div>
+    </div>
+	<!-- / PAGE HEADER -->   
+    
+   
+    
+    <!--Delete action Dialogue box start -->         
+    <aura:if isTrue="{!v.showModal}">
+        <div class="demo-only" >
+            
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Delete Action</h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <p>Are you sure you want to delete this Action? Once this action has been performed it can not be undone.</p>
+                    </div>
+                    <footer class="slds-modal__footer">
+                        <lightning:button label="Delete" variant="brand" onclick="{!c.deleteCadenceActions}"/>   
+                        <lightning:button label="Cancel" onclick="{!c.cancelActionDeletion}"/>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </div>
+    </aura:if>    
+    <!-- Delete action Dialogue box completed -->	
+    
+    <!--Delete action Dialogue box after delete start -->         
+    <aura:if isTrue="{!v.showModalMessage}">
+        <div class="demo-only" >
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Delete Actions Information!</h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <p>{!v.deleteActionMessage}</p>
+                    </div>
+                    <footer class="slds-modal__footer">
+                        <lightning:button variant="brand" label="OK" onclick="{!c.okMessage}"/>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </div>
+    </aura:if>    
+    <!-- Delete action Dialogue box after delete completed -->	
+    
+</aura:component>

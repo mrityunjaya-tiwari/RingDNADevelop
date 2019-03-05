@@ -1,0 +1,176 @@
+<aura:component  controller="LookupFieldController">
+    <!-- Aura Attribute for store single Contact[standard Object] Instance
+         And Store Index of Particular Instance --> 
+    <aura:attribute name = "userWrapperList" type = "List" />
+    <aura:attribute name="objectInstance" type="Object" default="{
+                                                                 'fieldDataType': '',
+                                                                 'fieldName': '',
+                                                                 'fieldLabel': '',
+                                                                 'operation': '',
+                                                                 'value': '',
+                                                                 'id': 1
+                                                                 }"/>
+    <aura:attribute name="rowIndex" type="Integer" />
+    <aura:attribute name="fieldList" type="List" />
+    <aura:attribute name="listPicklistValues" type="List"/>
+    <aura:attribute name="fieldDataType" type="String" description="" />
+    <aura:attribute name="isOperatorNeeded" type="Boolean" />
+    <aura:attribute name="operatorList" type="List" />
+    <aura:attribute name="isViewMode" type="Boolean"/>
+    <aura:attribute name="recordType" type="String" default="" />
+    <aura:attribute name="parentFieldList" type="List" />
+    <aura:attribute name="childFieldList" type="List" />
+    <aura:attribute name="childRecordType" type="String" default="" />
+    
+    <!--Event attribute -->
+    <aura:registerEvent name="DynamicFieldRowEvent" type="RDNACadence2:DynamicFieldRowEvent"/>
+    
+    <!-- <aura:handler name="change" value="{!v.fieldList}" action="{!c.setPicklistValues}"/> --> 
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
+    
+    <aura:method name="validateForm" action="{!c.validateForm}"/>
+    
+    <!-- Table Row -->  
+    <tr>
+        
+        <td class="rdna-field-values" style="padding-top:25px;"> 
+            {!v.rowIndex + 1}
+        </td>
+        <td class="rdna-field-label slds-size_1-of-3">                   
+            <lightning:select aura:id="criterion" class="rdna-field-values" disabled="{!v.isViewMode}" name="fieldName" value="{!v.objectInstance.fieldName}" required="true" onchange="{!c.setPicklistValues}">
+                <option value="">Select Field</option>
+                <optgroup label="{!v.recordType + ' fields'}">
+                    <aura:iteration items="{!v.parentFieldList}" var="field">
+                        <option value="{!field.fieldName}">{!field.fieldLabel}</option>
+                    </aura:iteration> 
+                </optgroup>
+                <optgroup label="{!v.childRecordType + ' fields'}">
+                    <aura:iteration items="{!v.childFieldList}" var="field">
+                        <option value="{!field.fieldName}">{!field.fieldLabel}</option>
+                    </aura:iteration> 
+                </optgroup>
+            </lightning:select>
+        </td>
+        <td class="rdna-field-label slds-size_1-of-3"><!-- create a map of operators -->
+            <lightning:select aura:id="criterion" class="rdna-field-values" disabled="{!v.isViewMode}" name="operator" value="{!v.objectInstance.operation}" required="true">
+                <option value="">Select Operator</option>
+                <aura:iteration items="{!v.operatorList}" var="operator">
+                    <option value="{!operator.value}">{!operator.label}</option>
+                </aura:iteration>
+            </lightning:select>
+        </td>
+        <td class="rdna-field-label slds-size_1-of-3">
+            <aura:if isTrue="{!v.fieldDataType == 'Picklist'}">
+                <lightning:select aura:id="criterion" disabled="{!v.isViewMode}" name="selectPicklistType" 
+                                  label="Values" class="rdna-field-values"  variant = "label-hidden"  required="true" value="{!v.objectInstance.value}" 
+                                  messageWhenValueMissing="Please Select Field Value">
+                    <option value="">Select Field value</option>
+                    <aura:iteration items="{!v.listPicklistValues}" var="pickListValue">
+                        <option value="{!pickListValue}">{!pickListValue}</option>
+                    </aura:iteration>
+                </lightning:select>
+                <aura:set attribute="else">
+                    <aura:if isTrue="{!v.fieldDataType == 'Boolean'}">
+                        <lightning:select aura:id="criterion" disabled="{!v.isViewMode}" name="selectBooleanType" 
+                                          label="Values" class="rdna-field-values"  variant = "label-hidden"  required="true" value="{!v.objectInstance.value}" 
+                                          messageWhenValueMissing="Please Select Field Value">
+                            <option value="">Select Field value</option>
+                            <option value="true">True</option>
+                            <option value="false">False</option>
+                        </lightning:select>
+                        <!--Edit-->
+                        <aura:set attribute="else">
+                            <aura:if isTrue="{!v.fieldDataType == 'Number'}"> 
+                                <lightning:input aura:id="criterion" class="rdna-field-values"  disabled="{!v.isViewMode}" type="number"  label=" "
+                                                 name="numbers"
+                                                 placeholder="Enter Numbers"
+                                                 required="true"
+                                                 min="0"
+                                                 value="{!v.objectInstance.value}"
+                                                 messageWhenRangeUnderflow="Enter Valid Number"/> 
+                                <aura:set attribute="else">
+                                    <aura:if isTrue="{!v.fieldDataType == 'Email'}">
+                                        <lightning:input aura:id="criterion" class="rdna-field-values"  disabled="{!v.isViewMode}" label=" "
+                                                         name="inputString" 
+                                                         value="{!v.objectInstance.value}"
+                                                         placeholder = "Enter Email Address" type="email"
+                                                         messageWhenBadInput = "Please Enter Valid Email Address"
+                                                         required="true"/> 
+                                        <aura:set attribute="else">
+                                            <aura:if isTrue="{!v.fieldDataType == 'Reference'}">
+                                                <div class="">
+                                                    <aura:if isTrue="{!not(empty(v.userWrapperList))}">
+                                                        <RDNACadence2:LookupFieldComponent aura:id="LookupFieldComponent" recordType="{#v.recordType}" isDisabled="{!v.isViewMode}" 
+                                                                                          userWrapperList="{!v.userWrapperList}"
+                                                                                          parentId="{!v.objectInstance.value}" fieldName="{#v.objectInstance.fieldName}" />
+                                                    </aura:if>
+                                                </div>
+                                                <aura:set attribute="else">
+                                                    <aura:if isTrue="{!v.fieldDataType == 'Phone'}">
+                                                        <lightning:input aura:id="criterion" class="rdna-field-values"  disabled="{!v.isViewMode}" label=" "
+                                                                         name="inputString"  type="tel"
+                                                                         value="{!v.objectInstance.value}"
+                                                                         placeholder = "Enter Phone no."
+                                                                         messageWhenBadInput = "Please Enter Phone no."
+                                                                         required="true"/>
+                                                        <aura:set attribute="else">
+                                                            <aura:if isTrue="{!v.fieldDataType == 'Date'}">
+                                                                <lightning:input aura:id="criterion" class="rdna-field-values"  disabled="{!v.isViewMode}" label=" "
+                                                                                 name="inputString"  type="date"
+                                                                                 value="{!v.objectInstance.value}"
+                                                                                 placeholder = "Select Date."
+                                                                                 messageWhenBadInput = "Please Select Date"
+                                                                                 required="true"/>
+                                                                <aura:set attribute="else">
+                                                                    <aura:if isTrue="{!v.fieldDataType == 'DateTime'}">
+                                                                        <lightning:input aura:id="criterion" class="rdna-field-values dateTimeElement"  disabled="{!v.isViewMode}" label=" "
+                                                                                         name="inputString"  type="datetime"
+                                                                                         value="{!v.objectInstance.value}"
+                                                                                         placeholder = "Select Date Time"
+                                                                                         messageWhenBadInput = "Please Select Date Time"
+                                                                                         required="true"/>
+                                                                        <aura:set attribute="else">
+                                                                            <lightning:input aura:id="criterion" class="rdna-field-values"  disabled="{!v.isViewMode}" label=" "
+                                                                                             name="inputString" 
+                                                                                             value="{!v.objectInstance.value}"
+                                                                                             placeholder = "Enter Details"
+                                                                                             messageWhenBadInput = "Please Enter Detail"
+                                                                                             required="true"/>
+                                                                        </aura:set>
+                                                                    </aura:if>
+                                                                </aura:set>
+                                                            </aura:if>
+                                                            
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </aura:set>
+                                            </aura:if>
+                                            
+                                        </aura:set>
+                                    </aura:if>
+                                    
+                                </aura:set>
+                            </aura:if>
+                        </aura:set>
+                        <!--Edit-->
+                    </aura:if>
+                </aura:set>
+            </aura:if>
+            
+        </td>
+        <td class="rdna-bgcolor">
+            <div class="slds-form-element slds-p-bottom-small ">
+                <aura:if isTrue="{!not(v.isViewMode)}">
+                    <aura:if isTrue="{!v.rowIndex > 0}">
+                        <a onclick="{!c.removeRow}">
+                            <div style="padding-top:25px;">
+                                <img class = "OvalCriteria" src="{!$Resource.cadence_icons + '/delete/delete@3x.png'}"/>
+                            </div>
+                        </a>
+                    </aura:if> 
+                </aura:if>
+            </div> 
+        </td>  
+    </tr>
+    
+</aura:component>

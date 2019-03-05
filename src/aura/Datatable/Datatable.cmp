@@ -1,0 +1,124 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+    
+    <!-- handlers -->
+    <aura:handler name="init" value="{! this }" action="{! c.doInit }"/>
+    <aura:registerEvent name="datatableEvt" type="RDNACadence2:DatatableEvent"/>
+    <aura:handler name="change" value="{! v.rawData }" action="{!c.doInit}"/>
+    <aura:handler name="cadencePagination" event="RDNACadence2:CadPagination" action="{!c.handleComponentEvent}"/>
+    
+    <!-- datatable attributes -->
+    <aura:attribute name="title" type="String"/>
+    <aura:attribute name="data" type="List"/>
+    <aura:attribute name="rawData" type="List"/>
+    <aura:attribute name="rawDataForFilter" type="List"/>
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="sortedBy" type="String"/>
+    <aura:attribute name="sortBy" type="String"/>
+    <aura:attribute name="sortedDirection" type="String"/>
+    <aura:attribute name="rowsToLoad" type="Integer" default="5"/>
+    <aura:attribute name="selectedRows" type="List"/>
+    <aura:attribute name="hideCheckboxColumn" type="boolean" default="false"/>
+    <aura:attribute name="isListView" type="Boolean" default="false"/>
+    <aura:attribute name="selectedNoOfRecords" type="Boolean" default="false"/> 
+    
+    <!-- pagination attributes -->
+    <aura:attribute name="totalNumberOfRows" type="Integer" default="0"/>
+    <aura:attribute name="currentPage" type="Integer" default="1"/>
+    
+    <aura:method name="clearRowSelection" action="{!c.deselectRows}"/> 
+    <aura:handler name="change" value="{!v.data}" action="{!c.dataUpdated}"/> 
+    <aura:if isTrue = "{! v.selectedNoOfRecords }">
+        <aura:if isTrue = "{!empty(v.rawDataForFilter)}">
+            <div class="slds-align_absolute-center" style="height: 300px;background-color:white">
+                <p class="rdna-style">There are currently no entries in your Today's List.
+                    <p class="rdna-text">Leads and contacts will automatically be added to your today view based on sequence actions.</p>
+                </p></div>
+            <aura:set attribute="else">
+                <aura:if isTrue = "{!empty(v.rawData)}">
+                    <div class="slds-align_absolute-center " style="height: 300px;background-color:white">
+                        <p class="rdna-text-style">Sorry, We couldn't find any results with that name.</p>
+                    </div>
+                    <aura:set attribute="else">
+                        <aura:if isTrue = "{!v.isListView}">
+                            <div  style="height:400px" >
+                                <lightning:datatable
+                                                     class= "cols-table"
+                                                     title="{! v.title }"
+                                                     data="{! v.data }"
+                                                     columns="{! v.columns }"
+                                                     keyField="id"
+                                                     onrowaction="{!c.handleRowAction }" 
+                                                     onrowselection="{!c.handleRowSelection}"
+                                                     onsort="{!c.updateColumnSorting}"
+                                                     sortedBy="{!v.sortedBy}"  
+                                                     selectedRows="{!v.selectedRows}"
+                                                     hideCheckboxColumn = "True"
+                                                     sortedDirection="{!v.sortedDirection}"/>
+                            </div>
+                            <aura:set attribute="else">
+                                <lightning:datatable
+                                                     class= "cols-table "                                                     
+                                                     title="{! v.title }"
+                                                     data="{! v.data }"
+                                                     columns="{! v.columns }"
+                                                     keyField="id"
+                                                     onrowaction="{!c.handleRowAction }" 
+                                                     onrowselection="{!c.handleRowSelection}"
+                                                     onsort="{!c.updateColumnSorting}"
+                                                     sortedBy="{!v.sortedBy}"  
+                                                     selectedRows="{!v.selectedRows}"
+                                                     hideCheckboxColumn = "True"
+                                                     sortedDirection="{!v.sortedDirection}"/>
+                            </aura:set>
+                        </aura:if>
+                    </aura:set>
+                </aura:if>
+            </aura:set>
+        </aura:if>
+        <aura:set attribute="else">
+            <aura:if isTrue = "{!v.isListView}">
+                <div  style="height:400px" >
+                    <lightning:datatable class= "cols-table"
+                                         title="{! v.title }"
+                                         data="{! v.data }"
+                                         columns="{! v.columns }"
+                                         keyField="id"
+                                         onrowaction="{!c.handleRowAction }" 
+                                         onrowselection="{!c.handleRowSelection}"
+                                         onsort="{!c.updateColumnSorting}"
+                                         sortedBy="{!v.sortedBy}"  
+                                         selectedRows="{!v.selectedRows}"
+                                         hideCheckboxColumn = "True"
+                                         sortedDirection="{!v.sortedDirection}"/>
+                </div>  
+                <aura:set attribute="else">
+                    <lightning:datatable
+                                         class= "cols-table "
+                                         title="{! v.title }"
+                                         data="{! v.data }"
+                                         columns="{! v.columns }"
+                                         keyField="id"
+                                         onrowaction="{!c.handleRowAction }" 
+                                         onrowselection="{!c.handleRowSelection}"
+                                         onsort="{!c.updateColumnSorting}"
+                                         sortedBy="{!v.sortedBy}"  
+                                         selectedRows="{!v.selectedRows}"
+                                         hideCheckboxColumn = "True"
+                                         sortedDirection="{!v.sortedDirection}"/>
+                </aura:set>
+            </aura:if>
+        </aura:set>
+    </aura:if>
+    
+    <aura:if isTrue = "{!empty(v.rawData)}">
+        <div>
+            <RDNACadence2:Pagination total="{!v.totalNumberOfRows}" pageOffset="{!v.rowsToLoad}"/>	
+        </div>
+        
+        <aura:set attribute="else">
+            <div>
+                <RDNACadence2:Pagination total="{!v.totalNumberOfRows}" pageOffset="{!v.rowsToLoad}" selectedNoOfRecords="{!v.selectedNoOfRecords}"/>	
+            </div>
+        </aura:set>
+    </aura:if>
+</aura:component>

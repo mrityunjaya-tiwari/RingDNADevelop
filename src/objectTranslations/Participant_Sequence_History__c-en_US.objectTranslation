@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Participant Sequence History</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Participant Sequence History</value>
+    </caseValues>
+    <fields>
+        <label><!-- Contact Id --></label>
+        <name>Contact_Id__c</name>
+        <relationshipLabel><!-- Participant Sequence History --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Lead Id --></label>
+        <name>Lead_Id__c</name>
+        <relationshipLabel><!-- Participant Sequence History --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Sequence Id --></label>
+        <name>Sequence_Id__c</name>
+        <relationshipLabel><!-- Participant Sequence History --></relationshipLabel>
+    </fields>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

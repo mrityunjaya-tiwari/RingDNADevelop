@@ -1,0 +1,203 @@
+.THIS .rdna-logo{
+    padding-top : 8px;
+    width : 32px;
+    height :40px;
+}
+
+/*Header css */
+.THIS .rdna-header-small {
+  font-family: Logical;
+  font-size: 14px;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  color: #000000;
+}
+.THIS .rdna-header-large { 
+  font-family: Logical;
+  font-size: 38px;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  color: #000000;
+}
+/*Header css */
+
+/*-----table css---------------------------------*/
+.THIS .cols-table table thead tr th {
+    font-family: Logical !important;
+    font-size: 11px !important;
+    font-weight: normal !important;
+    font-style: normal !important;
+    font-stretch: normal !important;
+    line-height: 1.82 !important;
+    letter-spacing: normal !important;
+    color: #000000 !important;
+}
+
+/*-----table css---------------------------------*/
+.THIS .cols-table table tbody tr td {
+    border: none !important;
+    height: 47px;
+    font-family: Logical !important;
+    font-size: 14px !important;
+    line-height: 1.43 !important;
+    box-shadow: 0 2px 9px 0 rgba(0, 0, 0, 0.03);
+    background-color: #ffffff;
+}
+
+.THIS .cols-table table tbody tr th {
+    border: none  !important;    
+    font-family: Logical !important;
+    font-size: 14px !important;
+    color: #0066ff !important;
+    line-height: 1.43 !important;
+}
+/*-----table css---------------------------------*/
+
+/*Button*/
+.THIS .rdna-button{
+    border: 1.4px solid #0066ff !important;
+    border-color: #0066ff  !important;
+    border-radius: 6px 6px 6px 6px  !important;
+    background: #fafafa !important;
+}
+.THIS .rdna-button-text{
+    font-family: Logical;
+    font-size: 14px !important;
+    text-align: center;
+    color: #0066ff;
+}
+
+.THIS .cols-table table thead th span{ 
+    font-size: 11px;
+    text-transform: capitalize;
+}
+
+.THIS .cols-table .slds-button_icon-bare{ 
+    display: none;
+}
+
+@font-face {
+    font-family: 'Logical';
+    src: url(/resource/RDNACadence2__LogicalFontRegular) format('woff');
+}
+/*----- useful table css---------------------------------*/
+.THIS .Oval {
+    width : 30px;
+    height :30px;
+    margin-left: 6px;
+}
+
+.THIS .OvalPLIs {
+    width : 20px;
+    height :20px;
+    margin-left: 6px;
+}
+/* Sub Header*/
+.THIS .rdna-sub-header-bold{
+    font-family: Logical;
+    font-weight: bold;
+    font-size: 24px;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.33;
+    letter-spacing: normal;
+    text-align: center;
+    color: #000000;
+}
+.THIS .rdna-sub-header{
+    font-family: Logical;
+    font-size: 24px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.33;
+    letter-spacing: normal;
+    text-align: center;
+    color: #000000;
+}
+
+
+.THIS .rdna-field-values {
+    background-color: #fafafa !important; 
+    font-family: Logical !important;
+    font-size: 14px !important;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    color: #000000;
+}
+
+.THIS .rdna-field-values-bold {
+    background-color: #fafafa !important;
+    font-family: Logical !important;
+    font-size: 14px !important;
+    font-weight: bold !important;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    color: #000000;
+}
+
+.THIS .field-label {
+  font-family: Logical;
+  font-size: 11px;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 1.82;
+  letter-spacing: normal;
+  color: #000000;
+}
+
+.THIS .field-value {
+  font-family: Logical;
+  font-size: 14px;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  color: #000000;
+}
+/* Cadences datatable header */
+.THIS .cols-table table thead tr th span {
+   background-color: #eaeaea !important;
+   
+}
+.THIS .cols-table table thead tr th div {
+   background-color: #eaeaea !important; 
+   
+   
+}
+.THIS .cols-table table thead tr th span a {
+   background-color: #eaeaea !important;  
+    padding-right: 100px;
+}
+/* Rounded header-corner*/
+.THIS .slds-table_header-fixed_container{
+    border-top-right-radius: 6px;
+    border-top-left-radius: 6px;
+    background-color: #eaeaea !important;
+}
+.THIS .cols-table table tbody tr th div a {
+   color: #0066ff !important;
+}
+.THIS .cols-table table tbody tr td div a {
+   color: #0066ff !important;
+}
+.THIS .cols-table div:hover {
+    background-color: #ffffff !important;
+}
+
+.THIS .rdna-bgcolor{
+    color: #0066ff !important;
+}

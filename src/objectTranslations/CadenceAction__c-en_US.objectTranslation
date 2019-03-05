@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>SequenceAction</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>SequenceActions</value>
+    </caseValues>
+    <fields>
+        <label><!-- Action Criteria PE --></label>
+        <name>Action_Criteria_PE__c</name>
+    </fields>
+    <fields>
+        <label><!-- Action Criterion --></label>
+        <name>Action_Criterion__c</name>
+    </fields>
+    <fields>
+        <label><!-- Action Id --></label>
+        <name>Action_Id__c</name>
+        <relationshipLabel><!-- SequenceActions --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Sequence Id --></label>
+        <name>Cadence_Id__c</name>
+        <relationshipLabel><!-- SequenceActions --></relationshipLabel>
+    </fields>
+    <fields>
+        <label><!-- Day --></label>
+        <name>Day__c</name>
+    </fields>
+    <fields>
+        <label><!-- Fields To Update Action --></label>
+        <name>Fields_To_Update_Action__c</name>
+    </fields>
+    <fields>
+        <label><!-- Hour --></label>
+        <name>Hour__c</name>
+    </fields>
+    <fields>
+        <label><!-- Index --></label>
+        <name>Index__c</name>
+    </fields>
+    <fields>
+        <label><!-- Priority --></label>
+        <name>Priority__c</name>
+        <picklistValues>
+            <masterLabel>High</masterLabel>
+            <translation><!-- High --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Low</masterLabel>
+            <translation><!-- Low --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Medium</masterLabel>
+            <translation><!-- Medium --></translation>
+        </picklistValues>
+    </fields>
+    <fields>
+        <label><!-- Priority_number --></label>
+        <name>Priority_number__c</name>
+    </fields>
+    <fields>
+        <label><!-- Trigger Type --></label>
+        <name>Trigger_Type__c</name>
+        <picklistValues>
+            <masterLabel>Immediate</masterLabel>
+            <translation><!-- Immediate --></translation>
+        </picklistValues>
+        <picklistValues>
+            <masterLabel>Time Based</masterLabel>
+            <translation><!-- Time Based --></translation>
+        </picklistValues>
+    </fields>
+    <startsWith>Consonant</startsWith>
+</CustomObjectTranslation>

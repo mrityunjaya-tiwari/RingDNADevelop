@@ -1,0 +1,4 @@
+<aura:event type="APPLICATION" description="Event dynamic row">
+    <aura:attribute name="ronIndex" type="Integer" />
+    <aura:attribute name="isValid" type="Boolean" />
+</aura:event>
