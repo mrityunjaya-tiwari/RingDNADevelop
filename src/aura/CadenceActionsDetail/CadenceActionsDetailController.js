@@ -6,7 +6,6 @@
             
         }
         // To add a row by default
-        
         helper.createRowToFieldsUpdate(component, event, helper);
         // Set contact felds data
         helper.setContactFieldsList(component, event, helper);
@@ -62,7 +61,7 @@
             }
         }else{
             var cadenceAction= component.get("v.cadenceAction");
-            cadenceAction.RDNACadence2__Fields_To_Update_Action__c = '';
+            cadenceAction.RDNACadence__Fields_To_Update_Action__c = '';
             component.set("v.cadenceAction", cadenceAction);
         }
         var setCriteriaFields = component.get("v.setCriteriaFields");
@@ -75,7 +74,7 @@
             }
         }else{
             var cadenceAction= component.get("v.cadenceAction");
-            cadenceAction.RDNACadence2__Action_Criterion__c = '';
+            cadenceAction.RDNACadence__Action_Criterion__c = '';
             component.set("v.cadenceAction", cadenceAction);
         }
         return isValid;
@@ -95,21 +94,21 @@
     
     updatePriorityNumber:function(component, event, helper){        
         var cadenceAction= component.get("v.cadenceAction");             
-        if(cadenceAction.RDNACadence2__Priority__c == 'High' ){          
-            component.set("v.cadenceAction.RDNACadence2__Priority_number__c", 1);          
+        if(cadenceAction.RDNACadence__Priority__c == 'High' ){          
+            component.set("v.cadenceAction.RDNACadence__Priority_number__c", 1);          
         }
-        else if(cadenceAction.RDNACadence2__Priority__c == 'Medium'){
-            component.set("v.cadenceAction.RDNACadence2__Priority_number__c", 2);            
+        else if(cadenceAction.RDNACadence__Priority__c == 'Medium'){
+            component.set("v.cadenceAction.RDNACadence__Priority_number__c", 2);            
         }
         else{
-            component.set("v.cadenceAction.RDNACadence2__Priority_number__c", 3);            
+            component.set("v.cadenceAction.RDNACadence__Priority_number__c", 3);            
         }
         component.set("v.cadenceAction",cadenceAction);       
     },
     listUpdated : function(component, event, helper){
         var cadenceActionObj = component.get("v.cadenceAction");
         var currentIndex = component.get('v.currentIndex');
-        cadenceActionObj.RDNACadence2__Index__c = currentIndex;
+        cadenceActionObj.RDNACadence__Index__c = currentIndex;
     },
     
     deleteActions: function(component, event, helper) {

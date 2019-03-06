@@ -8,19 +8,21 @@
         	component.set('v.hasError', !(isValid));
         	if (isValid){
                 component.set("v.currentStep", "2");
+                component.set("v.currentStepChanged", "2");
             } 
         }else if(getCurrentStep == 2){
             var criterionValid = helper.validateCriterion(component, event, helper, 'entryCriterionComponent');
         	component.set('v.hasError', !(criterionValid));
         	if (criterionValid){
-                console.log('currentStep:---3');
                 component.set("v.currentStep", "3");
+                component.set("v.currentStepChanged", "3");
             }
         }else if(getCurrentStep == 3){
             var criterionValid = helper.validateCriterion(component, event, helper, 'exitCriterionComponent');
             component.set('v.hasError', !(criterionValid));
             if (criterionValid){
                 component.set("v.currentStep", "4");
+                component.set("v.currentStepChanged", "4");
             }
         }
         return isValid;
@@ -28,20 +30,27 @@
     },
     
     createCadenceAction :function(component, event, helper){
+        
         var isValid = true;
-        var createCadenceActionComponent = component.find('createCadenceActionComponent');
-        isValid = createCadenceActionComponent.createCadenceAction();
-        if (createCadenceActionComponent.length){
-            for (var index in createCadenceActionComponent){
-                var obj = createCadenceActionComponent[index];
-                var isValidRow = obj.createCadenceAction();
-                if (!isValidRow){
-                    isValid = isValidRow;
-                }
-            }
-        }else{
+        try {
+            var createCadenceActionComponent = component.find('createCadenceActionComponent');
             isValid = createCadenceActionComponent.createCadenceAction();
+            if (createCadenceActionComponent.length){
+                for (var index in createCadenceActionComponent){
+                    var obj = createCadenceActionComponent[index];
+                    var isValidRow = obj.createCadenceAction();
+                    if (!isValidRow){
+                        isValid = isValidRow;
+                    }
+                }
+            }else{
+                isValid = createCadenceActionComponent.createCadenceAction();
+            }
         }
+        catch(err) {
+            isValid = false;
+        }
+        
         return isValid;
     },
     
@@ -52,8 +61,8 @@
         var lstCadAction = component.get("v.cadenceActionList");
         var entranceCriteriaSet = JSON.stringify(component.get("v.entranceCriteriaSet"));
         var exitCriteriaSet = JSON.stringify(component.get("v.exitCriteriaSet"));
-        cadObj.RDNACadence2__Entrance_Criteria__c = entranceCriteriaSet;
-        cadObj.RDNACadence2__Exit_Criteria__c = exitCriteriaSet;
+        cadObj.RDNACadence__Entrance_Criteria__c = entranceCriteriaSet;
+        cadObj.RDNACadence__Exit_Criteria__c = exitCriteriaSet;
         var caIdsList = component.get("v.caIdsList");
         action.setParams({
             cadenceObj :  cadObj,
@@ -73,7 +82,7 @@
                 else if(myUserContext == undefined){
                     var evt = $A.get("e.force:navigateToComponent");
                     evt.setParams({
-                        componentDef : "c:CadenceComponent",
+                        componentDef : "RDNACadence:CadenceComponent",
                         componentAttributes : {
                             "recordId" : recordId,
                             "isEdit" : false
@@ -89,9 +98,15 @@
     },
     
     validateCriterion : function(component, event, helper, cmpId) {
-    	var entryCriterion = component.find(cmpId);
-    	var isValid = entryCriterion.validateCriterion();
-    	return isValid;
+        var isValid;
+        try{
+            var entryCriterion = component.find(cmpId);
+        	isValid = entryCriterion.validateCriterion();
+        }
+        catch(err){
+            isValid = false;
+        }
+        return isValid;
     },
 
     validatePrevForms : function(component, event, helper, step) {
