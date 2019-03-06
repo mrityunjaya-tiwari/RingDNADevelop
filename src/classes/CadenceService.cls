@@ -124,6 +124,7 @@ global  without sharing class CadenceService {
                       
                        if (c.fieldDataType == 'Picklist' || c.fieldDataType == 'MultiPickList'){
                            c.listPicklistValues = getPicklistValues(objectStr, c.fieldName);
+                           c.picklistApiNameAndValues = Criterion.getPicklistApiNameAndValues(objectStr, c.fieldName);
                        }
                        if (!((c.fieldDataType == 'Reference' && objectStr == 'DandBCompany'))){
                            if (c.fieldDataType != 'Reference' || (c.fieldDataType == 'Reference' && validForCriteria(objectStr, c.fieldName))){
