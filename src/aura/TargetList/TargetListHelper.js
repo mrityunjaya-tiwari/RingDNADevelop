@@ -253,7 +253,7 @@
                             var companyName = rawData[index].company;
                             rdpElement.innerHTML =   '<div class=" slds-truncate">' + companyName +  '</div>';
                     }else if(rawData[index].company) { 
-                        var cLink = '<a href="/' + rawData[index].companyId + '' + rawData[index].companyId + '" target="_self" tabindex="-1">'+ rawData[index].company + '</a>';
+                        var cLink = '<a href="/' + rawData[index].companyId + '" title="' + rawData[index].company + '" target="_self" tabindex="-1">'+ rawData[index].company + '</a>';
                         rdpElement.innerHTML = '<div class=" slds-truncate">' + cLink +  '</div>';
                     }else {
                         rdpElement.innerHTML = '';
