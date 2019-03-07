@@ -234,7 +234,7 @@ public with sharing class CadenceSelector {
 				 AND Status = 'Completed' AND Id in:ids];
     }*/
     
-    public static List<SObject> getParticipantsOfCadenceNew(Id cadenceId, String objType){
+    /* public static List<SObject> getParticipantsOfCadenceNew(Id cadenceId, String objType){
         String cId = cadenceId;
         String query = getQueryForObjectNew(objType);
         query += ' WHERE '+nameSpace+'Cadence_Id__c=:cId';
@@ -269,7 +269,7 @@ public with sharing class CadenceSelector {
         query += String.join(new List<String>(allowedFields), ',');
         query += ' FROM '+ objType + '';
         return query;
-    } 
+    } */
     
     
 }
