@@ -247,6 +247,7 @@ public class CadenceProgressIndicatorController {
             insert saToInsert;
         }
     }
+    /*
     @AuraEnabled
     public static String saveCadenceNew(Cadence__c cadenceObj, List<CadenceAction__c> listCadenceAction, List<String> caIdsList){
     	try{
@@ -341,6 +342,6 @@ public class CadenceProgressIndicatorController {
         if (saToInsert.size() > 0){
             insert saToInsert;
         }
-    }
+    }*/
 
 }

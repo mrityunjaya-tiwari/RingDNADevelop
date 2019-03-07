@@ -276,7 +276,7 @@ public with sharing class CadenceController {
     }
     
   
-   
+   /*
     public class cadenceDataWrapperNew{
         @AuraEnabled public Cadence__c cObj;
         @AuraEnabled public List<CriterionWrapper> fieldList = New List<CriterionWrapper>{New CriterionWrapper()};
@@ -306,8 +306,8 @@ public with sharing class CadenceController {
         List<String> objectList = getObjectListByType(objectStr);
         List<CriterionWrapper> criterions = CadenceService.getFieldsWithLabelsNew(objectList);
         return criterions;
-    }
-    
+    }*/
+    /*
 	@AuraEnabled
     public static void activateCadenceNew(Id cadId) {
         Cadence__c cad = new Cadence__c(Id=cadId, Status__c=true);
@@ -365,7 +365,7 @@ public with sharing class CadenceController {
             if(listOfOppContactIds != null && listOfOppContactIds.size() > 0){
                 objName =CadenceConstants.CONTACT_OBJECT_NAME;
                 query = 'Select Cadence_ID__c,isActivated__c,EntranceCriteria_Matched_Date__c from '+ objName +' Where (Cadence_ID__c = null) AND Id In :listOfOppContactIds';
-                //query +=':setOfContactIds';
+               
                 return  query;
             }
               
@@ -581,5 +581,6 @@ public with sharing class CadenceController {
         List<CriterionWrapper> criterions = CadenceService.getFieldsWithLabelsForUpdateNew(objectList);
         return criterions;
     }
+*/
     
 }

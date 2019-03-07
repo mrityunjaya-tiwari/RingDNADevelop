@@ -978,7 +978,7 @@ global  without sharing class CadenceService {
         List<Task> taskList = CadenceSelector.getActionOnParticipantId(ids);   
         CadenceService.UpdateIsPerformed(taskList);
    }
-   public static List<CriterionWrapper> getFieldsWithLabelsNew(List<String> objectlist){
+   /* public static List<CriterionWrapper> getFieldsWithLabelsNew(List<String> objectlist){
         String objectStr ; 
         List<Criterion> fieldsWithLabels = new List<Criterion>();
 		List<CriterionWrapper> fieldList = new List<CriterionWrapper>();      
@@ -1176,5 +1176,5 @@ global  without sharing class CadenceService {
         }
         return fieldList;
      
-    }
+    } */
 }
