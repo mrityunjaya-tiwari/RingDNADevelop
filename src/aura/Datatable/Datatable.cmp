@@ -110,7 +110,7 @@
         </aura:set>
     </aura:if>
     
-    <aura:if isTrue = "{!v.totalNumberOfRows > 0}">
+    <!-- <aura:if isTrue = "{!v.totalNumberOfRows > 0}"> -->
     <aura:if isTrue = "{!empty(v.rawData)}">
         <div>
             <RDNACadence:Pagination total="{!v.totalNumberOfRows}" pageOffset="{!v.rowsToLoad}"/>	
@@ -121,5 +121,5 @@
                 <RDNACadence:Pagination total="{!v.totalNumberOfRows}" pageOffset="{!v.rowsToLoad}" selectedNoOfRecords="{!v.selectedNoOfRecords}"/>	
             </div>
         </aura:set>
-    </aura:if></aura:if>
+    </aura:if><!--</aura:if>-->
 </aura:component>

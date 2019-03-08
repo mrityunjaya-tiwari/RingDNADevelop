@@ -37,6 +37,17 @@ public with sharing class CadenceBatch implements Database.Batchable<sObject>, D
             String fieldName = fieldDescribe.getName();
             allowedFields.add(fieldName);
    		}
+        
+        if(allowedFields.size() > 0){
+            String apiNameWithNamespace;
+            for(String fld : allowedFields){
+                apiNameWithNamespace = nameSpace + fld;
+                if(allowedFields.contains(apiNameWithNamespace)){
+                    allowedFields.remove(fld); 
+                }
+            }
+        }
+        
 		query += String.join(new List<String>(allowedFields), ',');
    		query += ' FROM '+ objName +' WHERE '+nameSpace+'Cadence_Id__c = null';
    

@@ -1,5 +1,6 @@
 public with sharing class CadenceUtil {
     
+    public static String nameSpace = CadenceConstants.NAMESPACE;
     public static List<String> getFormattedExpressoion(String input){
          
         input = input.deleteWhitespace();
@@ -157,6 +158,17 @@ public with sharing class CadenceUtil {
             String fieldName = fieldDescribe.getName();
             allowedFields.add(fieldName);
         }
+        
+        if(allowedFields.size() > 0){
+            String apiNameWithNamespace;
+            for(String fld : allowedFields){
+                apiNameWithNamespace = nameSpace + fld;
+                if(allowedFields.contains(apiNameWithNamespace)){
+                    allowedFields.remove(fld); 
+                }
+            }
+        }
+        
         query += String.join(new List<String>(allowedFields), ',');
         query += ' FROM '+ objType + ' WHERE id  in  :sObjectIdList';
         return query;
@@ -218,6 +230,17 @@ public with sharing class CadenceUtil {
             String fieldName = fieldDescribe.getName();
             allowedFields.add(fieldName);
         }
+        
+        if(allowedFields.size() > 0){
+            String apiNameWithNamespace;
+            for(String fld : allowedFields){
+                apiNameWithNamespace = nameSpace + fld;
+                if(allowedFields.contains(apiNameWithNamespace)){
+                    allowedFields.remove(fld); 
+                }
+            }
+        }
+        
         query += String.join(new List<String>(allowedFields), ',');
         query += ' FROM '+ objType + ' ';
         return query;
