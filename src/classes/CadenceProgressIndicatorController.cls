@@ -101,6 +101,7 @@ public class CadenceProgressIndicatorController {
         }
     }
     /*********************Updated logic for delete AOP*******************/
+    /* Method is use to delete cadence action*/
     public static void deleteCadenceAction(Cadence__c cadence, List<Id> caIdList){
         List<CadenceAction__c> ListOfCadenceActionToDelete = [Select id from CadenceAction__c where Id in :caIdList];
         system.debug('ListOfCadenceActionToDelete ' + ListOfCadenceActionToDelete.size());
@@ -134,13 +135,11 @@ public class CadenceProgressIndicatorController {
         participantIdsList = participantMap.keySet();
         
         Map<Id, List<Sequence_Action__c>>  participantSequenceActionMap = CadenceService.getRemainingParticipantAction(participantIdsList, cadence.Record_Type__c);
-        
-        
-        for (Id sobjID : participantIdsList ){
+        if (participantSequenceActionMap.size() > 0){
+            for (Id sobjID : participantIdsList ){
             List<Sequence_Action__c> saList = participantSequenceActionMap.get(sobjID);
             Integer day = 0, hour = 0;
             DateTime entranceDate;  
-            system.debug('saList ' + saList.size());
             for (Sequence_Action__c sa : saList){
                 if (deletedAOPIds.contains(sa.Id)){ 
                     aopToDeleteRelatedToCadence.add(sa);
@@ -185,6 +184,8 @@ public class CadenceProgressIndicatorController {
             }
             
         }
+        }
+        
     }
     /*********************Updated logic for add  AOP*******************/
     public static void addActionOnParticipant(Cadence__c cadence, Map<Id, CadenceAction__c> caToInsertMap){

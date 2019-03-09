@@ -629,11 +629,11 @@ global  without sharing class CadenceService {
                     partAct.Show_on_Target_List__c = true;
                     partAct.isActionPerformed__c = false;
                     partActToUpdate.add(partAct);
-                    if(performedPartActions.containsKey(objId)) {
+                    /*if(performedPartActions.containsKey(objId)) {
                         performedPartActions.get(objId).add(partAct);
                     } else {
                         performedPartActions.put(objId, new List<Sequence_Action__c>{partAct});
-                    }
+                    }*/
                 }
                 
            } 
