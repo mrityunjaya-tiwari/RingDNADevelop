@@ -25,6 +25,8 @@
     <!-- Disabled proerty-->
     <aura:attribute name = "isDisabled" type = "Boolean" default = "false"/>
     <aura:attribute name="recordType" type="String" default="Contact" />
+     <aura:attribute name="UpdateFieldList" type="List"/>
+    
     <div class="slds-form-element__control slds-size_1-of-3">
         <aura:if isTrue="{!v.currentIndex == 0}">
             <label class="slds-form-element__label" for="input-01">{!v.fieldHeader}</label>
@@ -35,10 +37,11 @@
                           messageWhenValueMissing="Please Select Type."
                           onchange="{!c.updateTaskField}" disabled = "{!v.isDisabled}">
             <option value="">Select Field</option> 
-            
-            <aura:iteration items="{!v.wrapperTaskFields}" var="templateObj">               
-                <option value="{!templateObj.key}">{!templateObj.value}</option>
-            </aura:iteration>
+            <aura:iteration items="{!v.UpdateFieldList}" var="fields">
+                        <aura:iteration items="{!fields.fieldsDetail}" var="field">
+                       		 <option value="{!field.fieldName}">{!field.fieldLabel}</option>
+                    	</aura:iteration> 
+            </aura:iteration> 
         </lightning:select>
         
     </div>

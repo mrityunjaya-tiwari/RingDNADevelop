@@ -1,29 +1,8 @@
 ({
     doInit: function(component, event, helper){
-        /*component.set('v.spinner',true);
-        var action = component.get("c.getActionList");
-        action.setCallback(this, function(response) {
-            var state = response.getState();
-            if (state === "SUCCESS") {
-                var actionWrapper = response.getReturnValue();
-                component.set('v.actionList', actionWrapper.actionList);
-                component.set('v.actionTypeList', actionWrapper.actionTypeList);                
-                component.set('v.contactFieldList', actionWrapper.contactCriListSA);
-                component.set('v.leadFieldList', actionWrapper.leadCriListSA);
-                helper.setDataToEdit(component, event, helper);
-                //component.set('v.spinner',false);
-            } else{
-                //component.set('v.spinner',false);
-            }
-            
-             component.set('v.ISLoad', true);
-            component.set('v.spinner',false);
-        });
-        //Sprint198-What is the use of this: newCadence
-        //var newCadence = component.get("v.newCadence");
-        $A.enqueueAction(action)*/
-        helper.doInitNew(component, event, helper);
+        helper.getCadenceActionsData(component, event, helper);
     },
+    
     // Use to set action type according to button input and add new cadenceAction for cadence
     AddNewCadenceActions: function (component, event, helper) {
         component.set('v.isValidationError', false);

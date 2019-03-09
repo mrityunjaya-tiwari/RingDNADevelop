@@ -55,24 +55,14 @@
                             </tr>
                         </thead>
                         <tbody> 
-                            
-                            <aura:if isTrue="{!not(empty(v.accountFieldList) || empty(v.dbFieldList)) || v.isViewMode}">
-                                <aura:if isTrue="{!'Contact'==v.cadence.RDNACadence__Record_Type__c}">
-                                    <aura:if isTrue="{!not(empty(v.criteriaList))}">
+                            <aura:if isTrue="{!not(empty(v.AllFieldList)) || v.isViewMode}">
+                                    <aura:if isTrue="{!not( empty(v.criteriaList))}">
                                         <aura:iteration items="{!v.criteriaList}" var="criteria" indexVar="index">
-                                            <RDNACadence:DynamicFieldRow aura:id="dynamicRow" isViewMode="{!v.isViewMode}" objectInstance="{!criteria}" 
-                                                                         fieldList="{!v.accountFieldList}" rowIndex = "{!index}" listPicklistValues="" fieldDataType = "" recordType="{!v.cadence.RDNACadence__Record_Type__c}"/>
+                                            <c:DynamicFieldRow aura:id="dynamicRow" isViewMode="{!v.isViewMode}" objectInstance="{!criteria}" 
+                                                                         fieldList="{!v.accountFieldList}" rowIndex = "{!index}" listPicklistValues="" fieldDataType = "" recordType="{!v.cadence.RDNACadence2__Record_Type__c}"
+                                                                         AllFieldList = "{!v.AllFieldList}"  />
                                         </aura:iteration>
                                     </aura:if>
-                                </aura:if>
-                                <aura:if isTrue="{!'Lead'==v.cadence.RDNACadence__Record_Type__c}">
-                                    <aura:if isTrue="{!not(empty(v.criteriaList))}">
-                                        <aura:iteration items="{!v.criteriaList}" var="criteria" indexVar="index">
-                                            <RDNACadence:DynamicFieldRow aura:id="dynamicRow" isViewMode="{!v.isViewMode}" objectInstance="{!criteria}" 
-                                                                         fieldList="{!v.dbFieldList}" rowIndex = "{!index}" listPicklistValues="" fieldDataType = "" recordType="{!v.cadence.RDNACadence__Record_Type__c}"/>
-                                        </aura:iteration>
-                                    </aura:if>
-                                </aura:if>
                             </aura:if>
                             <tr><td colspan="6" class="rdna-bgcolor">
                                 <div class = "slds-form-element__row slds-size_1-of-1 rdna-field-values">

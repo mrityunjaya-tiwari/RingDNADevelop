@@ -64,9 +64,9 @@
         }
     },
     
-    doInitNew :  function(component, event, helper){
+    getCadenceActionsData :  function(component, event, helper){
         component.set('v.spinner',true);
-        var action = component.get("c.getActionListNew");
+        var action = component.get("c.getActionList");
         var cadence = component.get("v.newCadence");
         action.setParams({type: cadence.RDNACadence2__Record_Type__c});
         action.setCallback(this, function(response) {
