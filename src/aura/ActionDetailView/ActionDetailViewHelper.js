@@ -57,11 +57,12 @@
     
     editRecord : function(component, event, id) {
         var myUserContext = component.get("v.themeName");
-        
-        if(myUserContext == 'Theme3') {
+        //if(myUserContext == 'Theme3') {
+        if(myUserContext == 'Theme3'  || myUserContext == 'Theme4t' || myUserContext == 'Theme4d') {
             window.location = '/apex/EditActionDetails?id='+id;
         } 
         else {
+            //var evt = $A.get("e.force:navigateToComponent");
             var evt = $A.get("e.force:navigateToComponent");
             evt.setParams({
                 componentDef  : "c:ActionDetails" ,

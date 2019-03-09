@@ -5,39 +5,19 @@ public with sharing class CadenceController {
     public static cadenceDataWrapper getCadenceData(Id cadenceId){
         cadenceDataWrapper adWObj = new cadenceDataWrapper();
         adWObj.cObj  = CadenceController.getCadenceDetail(cadenceId);
-        if (adWObj.cObj.Record_Type__c == CadenceConstants.CONTACT_OBJECT_NAME){
-            adWObj.conCriList = CadenceController.getFields(CadenceConstants.CONTACT_OBJECT_NAME); 
-            adWObj.accCriList = CadenceController.getFields(CadenceConstants.ACCOUNT_OBJECT_NAME);
-        }else{
-            adWObj.ldCriList = CadenceController.getFields(CadenceConstants.LEAD_OBJECT_NAME);
-            adWObj.dbCriList = CadenceController.getFields(CadenceConstants.DB_OBJECT_NAME);
-        }
-        //adWObj.conCriListSA = CadenceController.getFieldsForSA(CadenceConstants.CONTACT_OBJECT_NAME);
-        //adWObj.ldCriListSA = CadenceController.getFieldsForSA(CadenceConstants.LEAD_OBJECT_NAME
+        adWObj.fieldList = getFields(adWObj.cObj.Record_Type__c);
         return adWObj;
     }
     @AuraEnabled
     public static cadenceDataWrapper getObjCriList(String objectType){
         cadenceDataWrapper adWObj = new cadenceDataWrapper();
-        if (objectType == CadenceConstants.CONTACT_OBJECT_NAME){
-            adWObj.conCriList = CadenceController.getFields(CadenceConstants.CONTACT_OBJECT_NAME);
-            adWObj.accCriList = CadenceController.getFields(CadenceConstants.ACCOUNT_OBJECT_NAME);
-        }
-        else{
-            adWObj.ldCriList = CadenceController.getFields(CadenceConstants.LEAD_OBJECT_NAME);
-            adWObj.dbCriList = CadenceController.getFields(CadenceConstants.DB_OBJECT_NAME);                                
-        }
+        adWObj.fieldList = getFields(objectType);
         return adWObj;
     }
      
     public class cadenceDataWrapper{
         @AuraEnabled public Cadence__c cObj;
-        @AuraEnabled public List<Criterion>  conCriList = New List<Criterion>{New Criterion()};
-        //@AuraEnabled public List<Criterion>  conCriListSA;
-        @AuraEnabled public List<Criterion>  ldCriList = New List<Criterion>{New Criterion()};
-        //@AuraEnabled public List<Criterion>  ldCriListSA = New List<Criterion> ();
-        @AuraEnabled public List<Criterion>  accCriList = New List<Criterion>{New Criterion()};
-        @AuraEnabled public List<Criterion>  dbCriList = New List<Criterion>{New Criterion()};
+        @AuraEnabled public List<CriterionWrapper> fieldList = New List<CriterionWrapper>{New CriterionWrapper()};
     }
     
    
@@ -55,13 +35,22 @@ public with sharing class CadenceController {
     }
     
     @AuraEnabled
-    public static List<Criterion> getFields(String objectStr){
-        List<Criterion> criterions = CadenceService.getFieldsWithLabels(objectStr);
+    public static List<CriterionWrapper> getFields(String objectStr){
+        List<String> objectList = getObjectListByType(objectStr);
+        List<CriterionWrapper> criterions = CadenceService.getFieldsWithLabels(objectList);
         return criterions;
     }
     @AuraEnabled
-    public static List<Criterion> getFieldsForSA(String objectStr){
-        List<Criterion> criterions = CadenceService.getFieldsWithLabelsForUpdate(objectStr);
+    public static List<CriterionWrapper> getFieldsForSA(String objectStr){
+        List<String> objectList = new List<String>(); 
+        if(objectStr == CadenceConstants.OPPORTUNITY_OBJECT_NAME){
+           objectList =new List<String>{CadenceConstants.OPPORTUNITY_OBJECT_NAME};
+        } else if(objectStr == CadenceConstants.LEAD_OBJECT_NAME ){
+           objectList =new List<String>{CadenceConstants.LEAD_OBJECT_NAME};
+        } else if(objectStr == CadenceConstants.CONTACT_OBJECT_NAME ){
+           objectList =new List<String>{CadenceConstants.CONTACT_OBJECT_NAME };
+        }
+        List<CriterionWrapper> criterions = CadenceService.getFieldsWithLabelsForUpdate(objectList);
         return criterions;
     }
     
@@ -69,8 +58,13 @@ public with sharing class CadenceController {
     public static void activateCadence(Id cadId) {
         Cadence__c cad = new Cadence__c(Id=cadId, Status__c=true);
         upsert cad;
-        updateParticipants(cadId); 
-        CadenceService.setParticipantsActivation(cadId, true);
+        try{
+        	updateParticipants(cadId); 
+        	CadenceService.setParticipantsActivation(cadId, true);
+        }
+        catch(Exception e){
+            
+        }
     }
     
     @AuraEnabled
@@ -78,11 +72,17 @@ public with sharing class CadenceController {
         Cadence__c cadence = CadenceSelector.getCadenceById(cadId);
         Map<Id, List<CadenceAction__c>> objIdToAllCadActListMap = new Map<Id, List<CadenceAction__c>>();
         String objName = cadence.Record_Type__c;
-        String query2 = formQuery2(objName,cadence);
+        String query2;
+        
+        if(!objName.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_OBJECT_NAME))
+            query2 = formQuery2(objName,cadence);
+        else{
+             query2 = formQueryOpportunity(objName,cadence);
+        }
+
         List<SObject> sObjectListToUpdate = new List<SObject>();
-        System.debug('Query:'+query2 + ' order by lastmodifieddate limit 100');
+        
         for(Sobject obj : Database.query(query2 + ' order by lastmodifieddate limit 100')){
-            
             obj.put(nameSpace+'Cadence_Id__c', cadence.Id);
             if(cadence.Participent_Activation__c.equalsIgnoreCase(CadenceConstants.PARTICIPANT_ACTIVATION_AUTOMATIC)) {
                 obj.put(nameSpace+'isActivated__c', true);
@@ -93,11 +93,9 @@ public with sharing class CadenceController {
             }
             sObjectListToUpdate.add(obj);
         }
-        
         if(!objIdToAllCadActListMap.isEmpty()) {
-            CadenceService.createActionParticipants(objIdToAllCadActListMap, new Map<Id, SObject>(sObjectListToUpdate), objName);
+            List<Sequence_Action__c> testcreateActionParticipants =CadenceService.createActionParticipants(objIdToAllCadActListMap, new Map<Id, SObject>(sObjectListToUpdate), objName);
         }
-        
         if(sObjectListToUpdate !=  null && sObjectListToUpdate.size() > 0) {
             update sObjectListToUpdate; 
         }
@@ -275,20 +273,6 @@ public with sharing class CadenceController {
 		return dateString; 
     }
     
-  
-   /*
-    public class cadenceDataWrapperNew{
-        @AuraEnabled public Cadence__c cObj;
-        @AuraEnabled public List<CriterionWrapper> fieldList = New List<CriterionWrapper>{New CriterionWrapper()};
-    } 
-    
-    @AuraEnabled
-    public static cadenceDataWrapperNew getObjCriListNew(String objectType){
-        cadenceDataWrapperNew adWObj = new cadenceDataWrapperNew();
-        adWObj.fieldList = getFieldsNew(objectType);
-        return adWObj;
-    }
-    
     public static List<String> getObjectListByType(String type){
         List<String> objectList = new List<String>(); 
         if(type == CadenceConstants.OPPORTUNITY_OBJECT_NAME){
@@ -301,106 +285,67 @@ public with sharing class CadenceController {
         return objectList;
     }
     
-    @AuraEnabled
-    public static List<CriterionWrapper> getFieldsNew(String objectStr){
-        List<String> objectList = getObjectListByType(objectStr);
-        List<CriterionWrapper> criterions = CadenceService.getFieldsWithLabelsNew(objectList);
-        return criterions;
-    }*/
-    /*
-	@AuraEnabled
-    public static void activateCadenceNew(Id cadId) {
-        Cadence__c cad = new Cadence__c(Id=cadId, Status__c=true);
-        upsert cad;
-        updateParticipantsNew(cadId); 
-        CadenceService.setParticipantsActivation(cadId, true);
-    }
-    
-    @AuraEnabled
-    public static void updateParticipantsNew(Id cadId) {
-        Cadence__c cadence = CadenceSelector.getCadenceById(cadId);
-        Map<Id, List<CadenceAction__c>> objIdToAllCadActListMap = new Map<Id, List<CadenceAction__c>>();
-        String objName = cadence.Record_Type__c;
-        String query2;
-        System.debug('objName'+objName);
-        if(!objName.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_OBJECT_NAME))
-            query2 = formQuery2(objName,cadence);
-        else{
-             query2 = formQuery2New(objName,cadence);
-        }
-        List<SObject> sObjectListToUpdate = new List<SObject>();
-        System.debug('Query Data:'+Database.query(query2 + ' order by lastmodifieddate limit 100'));
-        for(Sobject obj : Database.query(query2 + ' order by lastmodifieddate limit 100')){
-            
-            obj.put(nameSpace+'Cadence_Id__c', cadence.Id);
-            if(cadence.Participent_Activation__c.equalsIgnoreCase(CadenceConstants.PARTICIPANT_ACTIVATION_AUTOMATIC)) {
-                obj.put(nameSpace+'isActivated__c', true);
-                obj.put(nameSpace+'EntranceCriteria_Matched_Date__c', System.now());
-                objIdToAllCadActListMap.put((Id)obj.get('Id'), cadence.CadenceActions__r);
-            } else {
-                obj.put(nameSpace+'isActivated__c', false);
-            }
-            sObjectListToUpdate.add(obj);
-        }
-        
-        if(!objIdToAllCadActListMap.isEmpty()) {
-            CadenceService.createActionParticipants(objIdToAllCadActListMap, new Map<Id, SObject>(sObjectListToUpdate), objName);
-        }
-        
-        if(sObjectListToUpdate !=  null && sObjectListToUpdate.size() > 0) {
-            update sObjectListToUpdate; 
-        }
-    }
-    public Static String formQuery2New(String objName,Cadence__c cadence){
+    public Static String formQueryOpportunity(String objName, Cadence__c cadence){
         String query;
         if(objName.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_OBJECT_NAME)){
-        	String opporQuery =formQuery3New(objName,cadence);
+            String opporQuery = getOpportunityQuery(objName,cadence);
+            
             listOfOppContactIds = new set<String>();
+            List<Opportunity> listOfopprtunityToUpdate = new List<Opportunity>();
             List<Opportunity> listOfopprtunity = Database.query(opporQuery);
+            
             for(OpportunityContactRole oppCont : [Select ContactId,OpportunityId From OpportunityContactRole Where OpportunityId In :(listOfopprtunity)]){
-                if(oppCont.ContactId != null)
-                listOfOppContactIds.add(String.valueOf(oppCont.ContactId));
+                if(oppCont.ContactId != null){
+                    listOfOppContactIds.add(String.valueOf(oppCont.ContactId));
+                    Opportunity opp= new Opportunity(id=oppCont.OpportunityId,Cadence_Id__c=cadence.Id);
+                    listOfopprtunityToUpdate.add(opp);
+                }
+                
             }
-            System.debug('listOfOppContactIds'+listOfOppContactIds);
+            
+            if(listOfopprtunityToUpdate != null && listOfopprtunityToUpdate.size() > 0){
+                update listOfopprtunityToUpdate;
+            }
+            
             if(listOfOppContactIds != null && listOfOppContactIds.size() > 0){
                 objName =CadenceConstants.CONTACT_OBJECT_NAME;
                 query = 'Select Cadence_ID__c,isActivated__c,EntranceCriteria_Matched_Date__c from '+ objName +' Where (Cadence_ID__c = null) AND Id In :listOfOppContactIds';
-               
                 return  query;
             }
-              
-        }
-       
+        }  
         else{
-        query = 'Select Cadence_ID__c,isActivated__c,EntranceCriteria_Matched_Date__c from '+ objName +' Where (Cadence_ID__c = null) AND ';
-        Set<String> allowedFields = new Set<String>();
-        Map<Id, CriterionSet> mapofCadenceWiseEntryCriterions =  new Map<Id, CriterionSet>();
-        Map<Id, CriterionSet> mapofCadenceWiseExitCriterions =  new Map<Id, CriterionSet>();
-        Map<Id, CriterionSet> mapofCadenceActionCriterions =  new Map<Id, CriterionSet>();
-        list<Cadence__c> listOfcadence =  new List<Cadence__c>();
-        if(cadence != null){
-            listOfcadence.add(cadence);
-            mapofCadenceWiseEntryCriterions = RuleCriterionMatcherHelper.getCadenceWiseCriterions(listOfcadence,CadenceConstants.CRITERION_TYPE_ENTRY);
-            mapofCadenceWiseExitCriterions = RuleCriterionMatcherHelper.getCadenceWiseCriterions(listOfcadence,CadenceConstants.CRITERION_TYPE_EXIT);
-                        
-            if(cadence.CadenceActions__r != null && cadence.CadenceActions__r.size() >0)
-                mapofCadenceActionCriterions = RuleCriterionMatcherHelper.getActionWiseCriterions(cadence.CadenceActions__r);	
-            
-            // Filter condition for entry criteria 
-            if(mapofCadenceWiseEntryCriterions.keyset().size() > 0)
-                query = query+ '(('+criteriaFilters(mapofCadenceWiseEntryCriterions,cadence)+')';
-            system.debug('query@@@@'+query);
-            // Filter condition for exit criteria  
-            if(mapofCadenceWiseExitCriterions.keyset().size() > 0)
-                query = query+ +' AND (NOT('+criteriaFilters(mapofCadenceWiseExitCriterions,cadence) +')))';
-            
+            query = 'Select Cadence_ID__c,isActivated__c,EntranceCriteria_Matched_Date__c from '+ objName +' Where (Cadence_ID__c = null) AND ';
+            Set<String> allowedFields = new Set<String>();
+            Map<Id, CriterionSet> mapofCadenceWiseEntryCriterions =  new Map<Id, CriterionSet>();
+            Map<Id, CriterionSet> mapofCadenceWiseExitCriterions =  new Map<Id, CriterionSet>();
+            Map<Id, CriterionSet> mapofCadenceActionCriterions =  new Map<Id, CriterionSet>();
+            list<Cadence__c> listOfcadence =  new List<Cadence__c>();
+            if(cadence != null){
+                listOfcadence.add(cadence);
+                mapofCadenceWiseEntryCriterions = RuleCriterionMatcherHelper.getCadenceWiseCriterions(listOfcadence,CadenceConstants.CRITERION_TYPE_ENTRY);
+                mapofCadenceWiseExitCriterions = RuleCriterionMatcherHelper.getCadenceWiseCriterions(listOfcadence,CadenceConstants.CRITERION_TYPE_EXIT);
+                
+                if(cadence.CadenceActions__r != null && cadence.CadenceActions__r.size() >0)
+                    mapofCadenceActionCriterions = RuleCriterionMatcherHelper.getActionWiseCriterions(cadence.CadenceActions__r);	
+                
+                // Filter condition for entry criteria 
+                if(mapofCadenceWiseEntryCriterions.keyset().size() > 0)
+                    query = query+ '(('+criteriaFilters(mapofCadenceWiseEntryCriterions,cadence)+')';
+                
+                // Filter condition for exit criteria  
+                if(mapofCadenceWiseExitCriterions.keyset().size() > 0)
+                    query = query+ +' AND (NOT('+criteriaFilters(mapofCadenceWiseExitCriterions,cadence) +')))';
+            }
         }
-        System.debug('Query = '+ query);
+        
+        if(query == null){
+            query = 'Select Cadence_ID__c,isActivated__c,EntranceCriteria_Matched_Date__c from '+ objName +' Where (Cadence_ID__c = null)';
         }
+        
         return query;
     }
     
-    public Static String formQuery3New(String objName,Cadence__c cadence){
+    public Static String getOpportunityQuery(String objName,Cadence__c cadence){
         String query = 'Select id from '+ objName +' Where ';
         Set<String> allowedFields = new Set<String>();
         Map<Id, CriterionSet> mapofCadenceWiseEntryCriterions =  new Map<Id, CriterionSet>();
@@ -418,169 +363,13 @@ public with sharing class CadenceController {
             // Filter condition for entry criteria 
             if(mapofCadenceWiseEntryCriterions.keyset().size() > 0)
                 query = query+ '(('+criteriaFilters(mapofCadenceWiseEntryCriterions,cadence)+')';
-            system.debug('query@@@@'+query);
+
             // Filter condition for exit criteria  
             if(mapofCadenceWiseExitCriterions.keyset().size() > 0)
                 query = query+ +' AND (NOT('+criteriaFilters(mapofCadenceWiseExitCriterions,cadence) +')))';
             
         }
-        System.debug('Query = '+ query);
+
         return query;
     }
-    
-    public static String criteriaFiltersNew( Map<Id, CriterionSet> mapofCadenceWiseEntryCriterions,Cadence__c cadence){
-        DateTimeCriterionEvaluator dt = new DateTimeCriterionEvaluator();
-        system.debug('mapofCadenceWiseEntryCriterions'+mapofCadenceWiseEntryCriterions);
-        string query ='';
-        if(mapofCadenceWiseEntryCriterions.keySet().size() > 0){
-            if(mapofCadenceWiseEntryCriterions.containskey(cadence.id) && mapofCadenceWiseEntryCriterions.get(cadence.id).criterions != null){
-                if(mapofCadenceWiseEntryCriterions.get(cadence.id).condition != null ){
-                    map<integer,Criterion> mapofCriterion = new map<integer,Criterion>();
-                    mapofCriterion = mapofCadenceWiseEntryCriterions.get(cadence.id).criterions;
-                    integer listcount=0;
-                    String conditionforAll='';
-                    if(mapofCadenceWiseEntryCriterions.get(cadence.id).condition.contains('conditions are met'))
-                        conditionforAll = mapofCadenceWiseEntryCriterions.get(cadence.id).condition.contains('AND') ? ' AND':(mapofCadenceWiseEntryCriterions.get(cadence.id).condition.contains('OR')?' OR':'');  
-                            else
-                            conditionforAll =mapofCadenceWiseEntryCriterions.get(cadence.id).condition;
-                    
-                    List<Integer> listOfMapKey =new List<Integer>();
-                    listOfMapKey.addAll(mapofCriterion.keyset());
-                    listOfMapKey.sort();
-                    for( Integer num : listOfMapKey){
-                        if(mapofCadenceWiseEntryCriterions.get(cadence.id).condition.containsIgnoreCase('Custom logic') && num ==1 && mapofCadenceWiseEntryCriterions.get(cadence.id).criterionPriorityFormula.startswith('('))
-                            query = query +'(';
-                        if(mapofCriterion.get(num).fieldDataType == 'phone') {
-                            query += '(';
-                        }
-                        query = query + mapofCriterion.get(num).fieldName;
-                        
-                        if(mapofCriterion.get(num).operation == 'contains'){
-                            if(mapofCriterion.get(num).fieldDataType =='picklist' )
-                                query =query+' LIKE  \'%' +mapofCriterion.get(num).value + '%\'';
-                            else if (mapofCriterion.get(num).fieldDataType =='multipicklist')
-                                query =query+' INCLUDES ( \''+mapofCriterion.get(num).value+ '\' )';
-                            else
-                                query =query+' LIKE  \'%' +mapofCriterion.get(num).value + '%\'';
-                        } 
-                        else if(mapofCriterion.get(num).operation =='not_equals'){
-                            if(mapofCriterion.get(num).fieldDataType =='Number')
-                                query =query+' !='+  decimal.valueOf(mapofCriterion.get(num).value);
-                            else if(mapofCriterion.get(num).fieldDataType =='Boolean')
-                                query =query+' !='+  mapofCriterion.get(num).value; 
-                            else if(mapofCriterion.get(num).fieldDataType =='phone') {
-                                String phoneNo = (String)mapofCriterion.get(num).value;
-                                query += ' !=\''+  phoneNo +'\''+ ' OR '+ mapofCriterion.get(num).fieldName;
-                                phoneNo = phoneNo.trim();
-                                query += ' !=\''+  '('+ phoneNo.substring(0, 3) + ')'+ ' '+ phoneNo.substring(3, 6) + '-' + phoneNo.substring(6) +'\''+ ')';
-                            } else if(mapofCriterion.get(num).fieldDataType =='Date') {
-                                query =query+' !='+  getDateFormat(Date.valueOf((String)mapofCriterion.get(num).value));
-                            } else if(mapofCriterion.get(num).fieldDataType =='DateTime') {
-                                query =query+' !='+  dt.getDateTime(mapofCriterion.get(num).value).formatGMT('yyyy-MM-dd\'T\'HH:mm:ss\'Z\'');
-                            } else 
-                                query =query+' !=\''+  mapofCriterion.get(num).value +'\''; 
-                        }
-                        else if(mapofCriterion.get(num).operation =='equals'){
-                            if(mapofCriterion.get(num).fieldDataType =='Number')
-                                query =query+' ='+  decimal.valueOf(mapofCriterion.get(num).value);
-                            else if(mapofCriterion.get(num).fieldDataType =='Boolean')
-                                query =query+' ='+  mapofCriterion.get(num).value; 
-                            else if(mapofCriterion.get(num).fieldDataType =='phone') {
-                                String phoneNo = (String)mapofCriterion.get(num).value;
-                                query += ' =\''+  phoneNo +'\''+ ' OR '+ mapofCriterion.get(num).fieldName;
-                                phoneNo = phoneNo.trim();
-                                query += ' =\''+  '('+ phoneNo.substring(0, 3) + ')'+ ' '+ phoneNo.substring(3, 6) + '-' + phoneNo.substring(6) +'\''+ ')';
-                            } else if(mapofCriterion.get(num).fieldDataType =='Date') {
-                                query =query+' ='+ getDateFormat(Date.valueOf((String)mapofCriterion.get(num).value));
-                            } else if(mapofCriterion.get(num).fieldDataType =='DateTime') { 
-                                query =query+' ='+  dt.getDateTime(mapofCriterion.get(num).value).formatGMT('yyyy-MM-dd\'T\'HH:mm:ss\'Z\'');
-                            } else
-                                query =query+' =\''+  mapofCriterion.get(num).value +'\'';  
-                        }
-                        else if(mapofCriterion.get(num).fieldDataType =='Number' || mapofCriterion.get(num).fieldDataType =='Date' || mapofCriterion.get(num).fieldDataType =='DateTime'){ 
-                            if(mapofCriterion.get(num).operation =='greater'){
-                                if(mapofCriterion.get(num).fieldDataType =='Number')
-                                	query =query+' >'+  decimal.valueOf(mapofCriterion.get(num).value);
-                                if(mapofCriterion.get(num).fieldDataType =='Date')
-                                	query =query+' >'+  getDateFormat(Date.valueOf((String)mapofCriterion.get(num).value));
-                                if(mapofCriterion.get(num).fieldDataType =='DateTime')
-                                	query =query+' >'+  dt.getDateTime(mapofCriterion.get(num).value).formatGMT('yyyy-MM-dd\'T\'HH:mm:ss\'Z\'');	    
-                            }
-                            else  if(mapofCriterion.get(num).operation =='greater_or_equals'){ 
-                                if(mapofCriterion.get(num).fieldDataType =='Number')
-	                                query =query+' >='+  decimal.valueOf(mapofCriterion.get(num).value);
-                                if(mapofCriterion.get(num).fieldDataType =='Date')
-                                	query =query+' >='+  getDateFormat(Date.valueOf((String)mapofCriterion.get(num).value));
-                                if(mapofCriterion.get(num).fieldDataType =='DateTime')
-                                	query =query+' >='+  dt.getDateTime(mapofCriterion.get(num).value).formatGMT('yyyy-MM-dd\'T\'HH:mm:ss\'Z\'');
-                            }
-                            else if(mapofCriterion.get(num).operation =='less_or_equals'){ 
-                                if(mapofCriterion.get(num).fieldDataType =='Number')
-    	                            query =query+' <='+  decimal.valueOf(mapofCriterion.get(num).value);
-                                if(mapofCriterion.get(num).fieldDataType =='Date')
-                                	query =query+' <='+  getDateFormat(Date.valueOf((String)mapofCriterion.get(num).value));
-                                if(mapofCriterion.get(num).fieldDataType =='DateTime')
-                                	query =query+' <='+  dt.getDateTime(mapofCriterion.get(num).value).formatGMT('yyyy-MM-dd\'T\'HH:mm:ss\'Z\'');
-                            }
-                            else  if(mapofCriterion.get(num).operation =='less_than'){ 
-                                if(mapofCriterion.get(num).fieldDataType =='Number')
-	                                query =query+' <'+  decimal.valueOf(mapofCriterion.get(num).value);
-                                if(mapofCriterion.get(num).fieldDataType =='Date')
-                                	query =query+' <'+ getDateFormat(Date.valueOf((String)mapofCriterion.get(num).value));
-                                if(mapofCriterion.get(num).fieldDataType =='DateTime')
-                                	query =query+' <'+  dt.getDateTime(mapofCriterion.get(num).value).formatGMT('yyyy-MM-dd\'T\'HH:mm:ss\'Z\'');
-                            }
-                        }
-                        else
-                            query =query+' LIKE  \'%' +mapofCriterion.get(num).value +'\''; 
-                        listcount++;
-                        if(listcount <= mapofCriterion.keyset().size()){
-                            if(!conditionforAll.containsIgnoreCase('Custom logic') && num != mapofCriterion.keyset().size()){
-                                query = query + conditionforAll +' ';
-                            }
-                            
-                            else{
-                                String conditionLogic = mapofCadenceWiseEntryCriterions.get(cadence.id).criterionPriorityFormula != null ? mapofCadenceWiseEntryCriterions.get(cadence.id).criterionPriorityFormula.trim():'';
-                                String temp ='';
-                                if(conditionLogic.containsIgnoreCase(String.valueof(num+1))){
-                                    temp = conditionLogic.substringBetween(String.valueof(num)+'',String.valueof(num+1)); 
-                                }
-                                
-                                else{
-                                    temp = conditionLogic.substringAfter(String.valueof(num));    
-                                }
-                                query = query + ' '+temp +' ';
-                            }
-                        } 
-                    }   
-                }
-            }        
-        }
-        System.debug('query@@@@'+query);
-        return query;
-    }
-    
-    @AuraEnabled
-    public static cadenceDataWrapperNew getCadenceDataNew(Id cadenceId){
-        cadenceDataWrapperNew adWObj = new cadenceDataWrapperNew();
-        adWObj.cObj  = CadenceController.getCadenceDetail(cadenceId);
-        adWObj.fieldList = getFieldsNew(adWObj.cObj.Record_Type__c);
-        return adWObj;
-    }
-    
-    @AuraEnabled
-    public static List<CriterionWrapper> getFieldsForSANew(String objectStr){
-        List<String> objectList = new List<String>(); 
-        if(objectStr == CadenceConstants.OPPORTUNITY_OBJECT_NAME){
-           objectList =new List<String>{CadenceConstants.OPPORTUNITY_OBJECT_NAME};
-        } else if(objectStr == CadenceConstants.LEAD_OBJECT_NAME ){
-           objectList =new List<String>{CadenceConstants.LEAD_OBJECT_NAME};
-        } else if(objectStr == CadenceConstants.CONTACT_OBJECT_NAME ){
-           objectList =new List<String>{CadenceConstants.CONTACT_OBJECT_NAME };
-        }
-        List<CriterionWrapper> criterions = CadenceService.getFieldsWithLabelsForUpdateNew(objectList);
-        return criterions;
-    }
-*/
-    
 }

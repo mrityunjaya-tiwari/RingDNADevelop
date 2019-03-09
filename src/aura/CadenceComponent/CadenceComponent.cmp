@@ -38,14 +38,13 @@
     <!-- use to find that sequence type is avilable in form -->
     <aura:attribute name="settedSequenceType" type="Boolean" default= "false"/>
     <aura:handler name="change" value="{!v.settedSequenceType}" action="{!c.settedSequenceType}"/>
+    <aura:attribute name="AllFieldList" type="List"/>
     
-    
-    <aura:if isTrue="{!v.isEdit}"><!-- open in new/edit mode -->
-        <aura:if isTrue="{!not(empty(v.cadence) || empty(v.dbFieldList) ||
-                         empty(v.accountFieldList) || empty(v.entranceCriteriaSet) ||
-                         empty(v.exitCriteriaSet)	
+    <aura:if isTrue="{!v.isEdit}"><!-- open in new/edit mode -->        
+         <aura:if isTrue="{!not(empty(v.entranceCriteriaSet) || empty(v.exitCriteriaSet)	
                          )}"><!-- open in edit mode -->
             <c:CadenceProgressIndicator newCadence = "{!v.cadence}" 
+                                        AllFieldList = "{!v.AllFieldList}"   
                                         cadenceName="{!v.cadence.Name}" entranceCriteriaSet="{!v.entranceCriteriaSet}"
                                         exitCriteriaSet="{!v.exitCriteriaSet}" currentStep="{!v.currentStep}"
                                         cadenceActionList="{!v.cadenceActionList}" accountFieldList="{!v.accountFieldList}"
@@ -53,6 +52,7 @@
                                         isEdit = "{!v.isEdit}" />
             <aura:set attribute="else"><!-- open in new mode -->
                 <c:CadenceProgressIndicator newCadence = "{!v.cadence}" 
+                                                      AllFieldList = "{!v.AllFieldList}"   
                                                       newSequence = "{!v.newSequence}"
                                                       settedSequenceType="{!v.settedSequenceType}"
                                                       dbFieldList="{!v.dbFieldList}"
@@ -66,6 +66,7 @@
             <aura:if isTrue="{!not(empty(v.entranceCriteriaSet) || empty(v.exitCriteriaSet) 
                              || empty(v.cadence) )}">
                 <c:CadenceTabset aura:id ='tabset' newCadence = "{!v.cadence}"  
+                                 AllFieldList = "{!v.AllFieldList}"  
                                  contactFieldList="{!v.contactFieldListCA}" leadFieldList="{!v.leadFieldListCA}"
                                  entranceCriteriaSet="{!v.entranceCriteriaSet}" exitCriteriaSet="{!v.exitCriteriaSet}" 
                                  cadenceActionList="{!v.cadenceActionList}" accountFieldList="{!v.accountFieldList}" 

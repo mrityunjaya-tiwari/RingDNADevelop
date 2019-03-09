@@ -12,7 +12,7 @@
     <aura:attribute name="cadenceActionList" type="List"/>
     <aura:attribute name="dbFieldList" type="List"/>
     <aura:attribute name="recordId" type="String" description="" />
-    <!--<aura:attribute name="AllFieldList" type="List"/> -->
+    <aura:attribute name="AllFieldList" type="List"/>
     
     <!--Create or show cadence details -->
     <aura:attribute name= "isEdit" type="Boolean" default= "false"/>
@@ -58,26 +58,25 @@
         <div class="slds-box_xx-small slds-m-top_medium"> 
             <div class="slds-form-element slds-form_compound ">
                 <div class="slds-form-element slds-form_compound slds-size_1-of-1">
-                    <RDNACadence2:ProgressBarComponent  aura:id="PBComp"  currentStep="{!v.currentStep}" 
+                    <c:ProgressBarComponent  aura:id="PBComp"  currentStep="{!v.currentStep}" 
                                                       currentStepChanged="{!v.currentStepChanged}"
                                                       hasError="{v.hasError}"/>
                 </div>
                 <div class="slds-form-element slds-form_compound slds-p-bottom_large  slds-p-left_xx-small" >
                     <div class="{!v.currentStep == '1' || v.currentStep == 1 ? 'slds-show' : 'slds-hide'}"   >
                         <div style="padding-left:1%; padding-top:5%;padding-right:4%;">
-                            <RDNACadence2:CadenceDetails newCadence = "{!v.newCadence}" 
+                            <c:CadenceDetails newCadence = "{!v.newCadence}" 
                                                         settedSequenceType="{!v.settedSequenceType}" 
                                                         aura:id="compB" />
                         </div>
                     </div>
-                    
-                   <!-- <div class="{!v.currentStep == '2' || v.currentStep == 2 ? 'slds-show' : 'slds-hide'}"  > 
+                   <div class="{!v.currentStep == '2' || v.currentStep == 2 ? 'slds-show' : 'slds-hide'}"  > 
                         <aura:if isTrue="{! (v.currentStep >= '2' || v.currentStep >= 2)}">
                            
                             <aura:if isTrue="{!not( empty(v.AllFieldList))}">
                                 <div style="padding-left:1%; padding-top:5%;padding-right:4%;">
-                                    <RDNACadence2:CriterionComponent aura:id="entryCriterionComponent" 
-                                                                   
+                                    <c:CriterionComponent aura:id="entryCriterionComponent" 
+                                                                    AllFieldList = "{!v.AllFieldList}" 
                                                                     isViewMode = "false" accountFieldList="{!v.accountFieldList}"
                                                                     criteriaType="Entrance Criteria" criteriaSet="{!v.entranceCriteriaSet}" 
                                                                     cadence="{!v.newCadence}" leadFieldList="{!v.leadFieldList}" dbFieldList="{!v.dbFieldList}" 
@@ -91,35 +90,8 @@
                            
                             <aura:if isTrue="{!not(empty(v.AllFieldList))}">
                                 <div style="padding-left:1%; padding-top:5%;padding-right:4%;">
-                                    <RDNACadence2:CriterionComponent aura:id="exitCriterionComponent"  
-                                                                    isViewMode = "false" accountFieldList="{!v.accountFieldList}"
-                                                                    criteriaType="Exit Criteria" criteriaSet="{!v.exitCriteriaSet}" 
-                                                                    cadence="{!v.newCadence}" leadFieldList="{!v.leadFieldList}"
-                                                                    dbFieldList="{!v.dbFieldList}"
-                                                                    contactFieldList="{!v.contactFieldList}"/>
-                                </div>
-                            </aura:if>
-                        </aura:if>
-                        
-                    </div>-->
-                    <div class="{!v.currentStep == '2' || v.currentStep == 2 ? 'slds-show' : 'slds-hide'}"  > 
-                        <aura:if isTrue="{! (v.currentStep >= '2' || v.currentStep >= 2)}">
-                            <aura:if isTrue="{!not( empty(v.accountFieldList) || empty(v.dbFieldList) || empty(v.entranceCriteriaSet) ) || not (v.isEdit)}">
-                                <div style="padding-left:1%; padding-top:5%;padding-right:4%;">
-                                    <RDNACadence2:CriterionComponent aura:id="entryCriterionComponent" 
-                                                                    isViewMode = "false" accountFieldList="{!v.accountFieldList}"
-                                                                    criteriaType="Entrance Criteria" criteriaSet="{!v.entranceCriteriaSet}" 
-                                                                    cadence="{!v.newCadence}" leadFieldList="{!v.leadFieldList}" dbFieldList="{!v.dbFieldList}" 
-                                                                    contactFieldList="{!v.contactFieldList}"/>
-                                </div>
-                            </aura:if>
-                        </aura:if>
-                    </div>
-                    <div class="{!v.currentStep == '3' || v.currentStep == 3 ? 'slds-show' : 'slds-hide'}"  >
-                        <aura:if isTrue="{! (v.currentStep >= '2' || v.currentStep >= 2)}">
-                            <aura:if isTrue="{!not(empty(v.accountFieldList))}">
-                                <div style="padding-left:1%; padding-top:5%;padding-right:4%;">
-                                    <RDNACadence2:CriterionComponent aura:id="exitCriterionComponent" 
+                                    <c:CriterionComponent aura:id="exitCriterionComponent" 
+                                                                    AllFieldList = "{!v.AllFieldList}" 
                                                                     isViewMode = "false" accountFieldList="{!v.accountFieldList}"
                                                                     criteriaType="Exit Criteria" criteriaSet="{!v.exitCriteriaSet}" 
                                                                     cadence="{!v.newCadence}" leadFieldList="{!v.leadFieldList}"

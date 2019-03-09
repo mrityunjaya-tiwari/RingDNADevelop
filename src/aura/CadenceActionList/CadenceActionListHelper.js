@@ -4,10 +4,9 @@
         var action = cmp.get('c.fetchCadenceActions'); 
         action.setCallback(this, function(response) {
             var state = response.getState();
-            if(state === "SUCCESS") {
+            if(state === "SUCCESS") { 
                 var records = response.getReturnValue();
                 var myUserContext = cmp.get("v.themeName");
-                
                 records.forEach(function(record){
                     if (myUserContext == 'Theme3') {
                         record.linkName = '/apex/ActionDetailView?id='+record.actionId;

@@ -1,7 +1,7 @@
 public with sharing class CriteriaController {
     @AuraEnabled
-    public static List<Criterion> getFields(String objectStr){
-    	List<Criterion> criterions = CadenceService.getFieldsWithLabels(objectStr);
+    public static List<CriterionWrapper> getFields(String objectStr){
+        List<CriterionWrapper> criterions = CadenceService.getFieldsWithLabels(new List<String>{objectStr});
         return criterions;
     }
     

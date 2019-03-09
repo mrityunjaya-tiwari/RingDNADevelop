@@ -39,7 +39,7 @@
     <aura:attribute name="spinner" type="boolean" default="false"/>
     <aura:attribute name= "createAction" type="boolean" default="false"/>
     <aura:attribute name="ISLoad" type="boolean" default="false"/>
-    <!--<aura:attribute name="UpdateFieldList" type="List"/>-->
+    <aura:attribute name="UpdateFieldList" type="List"/>
     
     <RDNACadence2:SpinnerComponent spinnerSync = "{!v.spinner}"/>
     <div class = "slds-m-left_large">
@@ -77,7 +77,8 @@
                         <aura:if isTrue="{! not(empty(v.actionList) || empty(v.actionTypeListForCadenceAction) )}">
                             <aura:if isTrue="{! v.ISLoad}">
                                 <aura:iteration items="{!v.cadenceActionList}" var="caObj" indexVar="index">
-                                    <RDNACadence2:CadenceActionsDetail aura:id="cadenceActionsDetailId" 
+                                    <c:CadenceActionsDetail aura:id="cadenceActionsDetailId" 
+                                                                      UpdateFieldList="{!v.UpdateFieldList}" 
                                                                       cadenceAction="{!caObj}" 
                                                                       newCadence="{!v.newCadence}" 
                                                                       allActionsList ="{!v.actionList}" 

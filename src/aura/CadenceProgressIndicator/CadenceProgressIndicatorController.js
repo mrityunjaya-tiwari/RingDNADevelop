@@ -14,20 +14,15 @@
         var isValid = true;
         isValid = helper.validateForm(component,event,helper);
         isValid = helper.createCadenceAction(component,event,helper);
-        console.log('isValid',isValid);
         if (isValid){
-            console.log(' if isValid 11111',isValid);
             helper.saveCadence(component,event,helper);
-            console.log(' if isValid 22222',isValid);
         } else{
-            console.log(' else isValid 11111',isValid);
             var childCmp = component.find("PBComp");
             childCmp.setErrorMethod(! isValid);
         }
     },
     setCurrentSteps: function(component,event,helper){
         var currentStep = component.get("v.currentStepChanged");
-        
         if (currentStep == 1){
             
             var isValid = helper.validatePrevForms(component,event,helper, 2);
