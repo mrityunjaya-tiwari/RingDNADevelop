@@ -1,6 +1,8 @@
-<aura:component controller="RDNACadence2.ActionDetailViewCtrl" implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,force:hasRecordId,lightning:actionOverride,force:appHostable" access="global"> 
+<aura:component controller="RDNACadence4.ActionDetailViewCtrl" implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,force:hasRecordId,lightning:actionOverride,force:appHostable" access="global"> 
 	
-    <aura:attribute name="record" type="Action__c" default="{'Name': '', 'RDNACadence2__Type__c':'', 'RDNACadence2__Template_Id__c':'' }"/>
+    
+    <!--Action Objects -->
+    <aura:attribute name="record" type="ActionWrapper" default="{ 'sobjectType': 'ActionWrapper'}"/>
     <aura:handler name="init" value="{!this }" action="{!c.init }" />
     <aura:attribute name="recordId" type="Id"/>
     
@@ -36,7 +38,7 @@
                 
                 <!-- HEADING AREA -->
                 <p class="slds-line-height_reset rdna-header-small slds-p-left_xx-small">Actions</p>
-                <h1 class="slds-page-header__title slds-m-right_small slds-align-middle slds-truncate rdna-header-large">{!v.record.Name}</h1>
+                <h1 class="slds-page-header__title slds-m-right_small slds-align-middle slds-truncate rdna-header-large">{!v.record.name}</h1>
                 <!-- / HEADING AREA -->
             </div>
             <!-- <lightning:button aura:id="newAction" label="Share" onclick="{!c.shareAction}"/> -->
@@ -54,24 +56,24 @@
 	            <div class="slds-grid slds-gutters slds-m-top_medium slds-grid_align-spread">
 	                <div class="slds-col slds-size_3-of-12">
 	                    <p class="slds-line-height_reset slds-m-bottom_xx-small field-label">Action Name</p>
-	                    <span class="field-value">{!v.record.Name}</span>
+	                    <span class="field-value">{!v.record.name}</span>
 	                </div>
 	                <div class="slds-col slds-size_3-of-12">
 	                    <p class="slds-line-height_reset slds-m-bottom_xx-small field-label">Type</p>
-	                    <span class="field-value">{!v.record.RDNACadence2__Type__c}</span>
+	                    <span class="field-value">{!v.record.type}</span>
 	                </div>
 	                <div class="slds-col slds-size_3-of-12">
 	                    <p class="slds-line-height_reset slds-m-bottom_xx-small field-label">Template</p>
-                        <aura:if isTrue = "{!v.record.RDNACadence2__Type__c == 'Email'}">
-                            <span class="field-value"> <a class="rdna-bgcolor" href="{!'/' + v.record.RDNACadence2__Template_Id__c}" target="_blank">{!v.record.RDNACadence2__Template_Name__c}</a></span>
+                        <aura:if isTrue = "{!v.record.type == 'Email'}">
+                            <span class="field-value"> <a class="rdna-bgcolor" href="{!'/' + v.record.templateId}" target="_blank">{!v.record.templateName}</a></span>
                             <aura:set attribute="else">
-                                <span class="field-value">{!v.record.RDNACadence2__Template_Name__c}</span>
+                                <span class="field-value">{!v.record.templateName}</span>
                             </aura:set>
                         </aura:if>
 	                </div>
    	                <div class="slds-col slds-size_3-of-12">
 	                    <p class="slds-line-height_reset slds-m-bottom_xx-small field-label">Activation Type</p>
-	                    <span class="field-value">{!v.record.RDNACadence2__Activation_Type__c}</span>
+	                    <span class="field-value">{!v.record.activationType}</span>
 	                </div>
 	            </div>
 	 
@@ -80,7 +82,7 @@
                 <p class=" rdna-field-values rdna-link-height slds-m-top_x-small">List of all related sequence lists associated with this action.</p>
 
 	            <div class="slds-m-top_medium slds-p-right_medium">
-	    			<RDNACadence2:Datatable columns = "{!v.cadColumns}" rawData = "{!v.cadRawData}" rowsToLoad = "{!v.cadRowsToLoad}" hideCheckboxColumn = "true" aura:id = "datatable1"/>    
+	    			<RDNACadence4:Datatable columns = "{!v.cadColumns}" rawData = "{!v.cadRawData}" rowsToLoad = "{!v.cadRowsToLoad}" hideCheckboxColumn = "true" aura:id = "datatable1"/>    
 				</div>
 				
 				<!-- Participant datatable -->         
