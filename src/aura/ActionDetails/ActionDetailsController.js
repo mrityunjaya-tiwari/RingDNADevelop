@@ -2,22 +2,22 @@
     doInit: function(component, event, helper) {
         component.set('v.disableActivationType', false);
         component.set('v.spinner', true);
-        var listEmailTemplate;
+        var actionWrapper;
         var id = component.get('v.recordId');
-        var action = component.get("c.initCadenceActionData");
+        var action = component.get("c.getActionWrapper");
         helper.createObjectData(component, event);
         action.setCallback(this, function(response) {
             var state = response.getState();
             if (state === "SUCCESS") {
                 component.set('v.spinner', false);
-                listEmailTemplate= response.getReturnValue();
-                //console.log('listEmailTemplate.listEmailTemplate:'+ JSON.stringify(listEmailTemplate.listEmailTemplate));
-                component.set('v.listEmailTemplate', listEmailTemplate.listEmailTemplate);
-                component.set('v.listSmsTemplate', listEmailTemplate.listSmsTemplate);
-                component.set('v.listCallTemplate', listEmailTemplate.listCallTemplate);
-                component.set('v.listVMTemplate', listEmailTemplate.listVMTemplate);
-                component.set('v.wrapperTaskFields', listEmailTemplate.wrapperTaskFields);
-                component.set('v.listToShowInTemplateType', listEmailTemplate.listSmsTemplate);
+                actionWrapper= response.getReturnValue();
+                component.set('v.newAction', actionWrapper.action);
+                component.set('v.listEmailTemplate', actionWrapper.listEmailTemplate);
+                component.set('v.listSmsTemplate', actionWrapper.listSmsTemplate);
+                component.set('v.listCallTemplate', actionWrapper.listCallTemplate);
+                component.set('v.listVMTemplate', actionWrapper.listVMTemplate);
+                component.set('v.wrapperTaskFields', actionWrapper.wrapperTaskFields); 
+                component.set('v.listToShowInTemplateType', actionWrapper.listSmsTemplate);
                 if(id != null) {
                     if(id != '') {
                         component.set('v.disableActionType' , true);
@@ -36,15 +36,15 @@
     clickCreate: function(component, event, helper) {
         
         var newAct = component.get("v.newAction");
-        var name = newAct.Name;
-        newAct.Name = name.trim();
+        var name = newAct.name;
+        newAct.name = name.trim();
         component.set("v.newAction", newAct);
         var isValidActioin = component.find('formValidationId').reduce(function (validSoFar, inputCmp) {
             inputCmp.showHelpMessageIfInvalid();
             return validSoFar && inputCmp.get('v.validity').valid;
             
         }, true);
-        if(isValidActioin && newAct.RDNACadence2__Type__c == 'Task'){
+        if(isValidActioin && newAct.type == 'Task'){
             isValidActioin = helper.validateFieldsToUpdateComponent(component, event, helper);
         }
         if(isValidActioin){
