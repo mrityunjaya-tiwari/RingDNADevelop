@@ -42,13 +42,13 @@
                     // Set cadence data
                     var result = wrapperResult.cObj;
                     component.set("v.cadence", result);                   
-                    if(result.RDNACadence2__CadenceActions__r){
-                        component.set("v.cadenceActionList", result.RDNACadence2__CadenceActions__r);                  
+                    if(result.RDNACadence__CadenceActions__r){
+                        component.set("v.cadenceActionList", result.RDNACadence__CadenceActions__r);                  
                     }
                     
                     //apply error message here.	
-                    var entryCriterion = JSON.parse(result.RDNACadence2__Entrance_Criteria__c);
-                    var exitCriterion = JSON.parse(result.RDNACadence2__Exit_Criteria__c);
+                    var entryCriterion = JSON.parse(result.RDNACadence__Entrance_Criteria__c);
+                    var exitCriterion = JSON.parse(result.RDNACadence__Exit_Criteria__c);
                     component.set("v.entranceCriteriaSet",entryCriterion);
                     component.set("v.exitCriteriaSet",exitCriterion);
                     helper.updateCriteriaList(component, event, helper);
@@ -60,7 +60,7 @@
                     } else{
                         var evt = $A.get("e.force:navigateToComponent");
                         evt.setParams({
-                            componentDef  : "c:ErrorPage" ,
+                            componentDef  : "RDNACadence:ErrorPage" ,
                             componentAttributes : {
                             }
                         });
@@ -72,7 +72,7 @@
             $A.enqueueAction(cadence);
         }else{
            
-            var cadence = { 'sobjectType': 'RDNACadence2__Cadence__c', 'Name': '','RDNACadence2__Record_Type__c':'', 'RDNACadence2__Participent_Activation__c':''};
+            var cadence = { 'sobjectType': 'RDNACadence__Cadence__c', 'Name': '','RDNACadence__Record_Type__c':'', 'RDNACadence__Participent_Activation__c':''};
             component.set("v.cadence", cadence);
             /*var cadence = component.get("c.getObjCriList");
             component.set("v.SpinnerForSync",false);
@@ -116,7 +116,7 @@
                     } else{
                         var evt = $A.get("e.force:navigateToComponent");
                         evt.setParams({
-                            componentDef  : "c:ErrorPage" ,
+                            componentDef  : "RDNACadence:ErrorPage" ,
                             componentAttributes : {
                             }
                         });
@@ -133,12 +133,12 @@
         var phRow = document.getElementsByClassName('ringdna-phone-td');  
         var rawData = component.get('v.pData');
         var cadencedata = component.get('v.cadence');
-        var cadencActions = cadencedata.RDNACadence2__CadenceActions__r;
+        var cadencActions = cadencedata.RDNACadence__CadenceActions__r;
         var templateId ;
         var actionType;
         if(cadencActions.length>0){
-            templateId = cadencActions[0].RDNACadence2__Action_Id__r.RDNACadence2__Template_Id__c;
-            actionType = cadencActions[0].RDNACadence2__Action_Id__r.RDNACadence2__Type__c;
+            templateId = cadencActions[0].RDNACadence__Action_Id__r.RDNACadence__Template_Id__c;
+            actionType = cadencActions[0].RDNACadence__Action_Id__r.RDNACadence__Type__c;
         }
        
         for (var index = 0; index < phRow.length ; index++){
@@ -192,7 +192,7 @@
         var cfList = [];
         var cList = component.get("v.contactFieldList");
         for(var x in cList){
-            cfList.push(cList[x]);
+            cfList.push(cList[x]); 
         }
         
         var afList = component.get("v.accountFieldList");
@@ -203,7 +203,8 @@
                 'fieldDataType':  obj.fieldDataType,
                 'fieldName' :  'Account.' + obj.fieldName,
                 'fieldLabel': 'Account.' +obj.fieldLabel,
-                'listPicklistValues' :obj.listPicklistValues
+                'listPicklistValues' :obj.listPicklistValues,
+                'picklistApiNameAndValues' :obj.picklistApiNameAndValues
             });
         }
         component.set("v.accountFieldList", cfList);
@@ -220,7 +221,8 @@
                 'fieldDataType':  dbObj.fieldDataType,
                 'fieldName' :  'DandBCompany.' + dbObj.fieldName,
                 'fieldLabel': 'DandBCompany.' + dbObj.fieldLabel,
-                'listPicklistValues' :dbObj.listPicklistValues
+                'listPicklistValues' :dbObj.listPicklistValues,
+                'picklistApiNameAndValues' :obj.picklistApiNameAndValues
             });
         }
         component.set("v.dbFieldList", lfList);
@@ -230,7 +232,7 @@
         var cadenceObj = component.get("v.cadence");
         var cadence = component.get("c.getObjCriList");
         component.set("v.SpinnerForSync",true);
-        cadence.setParams({objectType: cadenceObj.RDNACadence2__Record_Type__c});
+        cadence.setParams({objectType: cadenceObj.RDNACadence__Record_Type__c});
         cadence.setCallback(this, function(response){
             var state = response.getState();
             if(state === 'SUCCESS'){                
@@ -241,7 +243,6 @@
                 var conList = wrapperResult.conCriList;
                 var sortedConList = conList.sort((a, b) => a.fieldLabel.localeCompare(b.fieldLabel));
                 component.set('v.contactFieldList', sortedConList);
-              
                 
                 //Set lead List
                 var ldList = wrapperResult.ldCriList;
@@ -264,12 +265,12 @@
             component.set("v.settedSequenceType",false);
         });
         $A.enqueueAction(cadence);
-    },
-    getObjectFieldsListNew: function(component, event, helper){
+    }
+    /*getObjectFieldsListNew: function(component, event, helper){
         var cadenceObj = component.get("v.cadence");
         var cadence = component.get("c.getObjCriListNew");
         component.set("v.SpinnerForSync",true);
-        cadence.setParams({objectType: cadenceObj.RDNACadence2__Record_Type__c});
+        cadence.setParams({objectType: cadenceObj.RDNACadence__Record_Type__c});
         cadence.setCallback(this, function(response){
             var state = response.getState();
             if(state === 'SUCCESS'){                
@@ -312,13 +313,13 @@
                     // Set cadence data
                     var result = wrapperResult.cObj;
                     component.set("v.cadence", result);                   
-                    if(result.RDNACadence2__CadenceActions__r){
-                        component.set("v.cadenceActionList", result.RDNACadence2__CadenceActions__r);                  
+                    if(result.RDNACadence__CadenceActions__r){
+                        component.set("v.cadenceActionList", result.RDNACadence__CadenceActions__r);                  
                     }
                     
                     //apply error message here.	
-                    var entryCriterion = JSON.parse(result.RDNACadence2__Entrance_Criteria__c);
-                    var exitCriterion = JSON.parse(result.RDNACadence2__Exit_Criteria__c);
+                    var entryCriterion = JSON.parse(result.RDNACadence__Entrance_Criteria__c);
+                    var exitCriterion = JSON.parse(result.RDNACadence__Exit_Criteria__c);
                     component.set("v.entranceCriteriaSet",entryCriterion);
                     component.set("v.exitCriteriaSet",exitCriterion);
                     component.set("v.SpinnerForSync",false);
@@ -329,7 +330,7 @@
                     } else{
                         var evt = $A.get("e.force:navigateToComponent");
                         evt.setParams({
-                            componentDef  : "c:ErrorPage" ,
+                            componentDef  : "RDNACadence:ErrorPage" ,
                             componentAttributes : {
                             }
                         });
@@ -340,8 +341,8 @@
             });
             $A.enqueueAction(cadence);
         }else{
-            var cadence = { 'sobjectType': 'RDNACadence2__Cadence__c', 'Name': '','RDNACadence2__Record_Type__c':'', 'RDNACadence2__Participent_Activation__c':''};
+            var cadence = { 'sobjectType': 'RDNACadence__Cadence__c', 'Name': '','RDNACadence__Record_Type__c':'', 'RDNACadence__Participent_Activation__c':''};
             component.set("v.cadence", cadence);
         }
-    },
+    },*/
 })

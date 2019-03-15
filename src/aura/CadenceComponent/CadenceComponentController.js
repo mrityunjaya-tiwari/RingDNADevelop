@@ -1,7 +1,7 @@
 ({
     doInit : function(component, event, helper) {
-        //helper.getCadenceData(component, helper);
-        helper.getCadenceDataNew(component, helper);
+        helper.getCadenceData(component, helper);
+        //helper.getCadenceDataNew(component, helper);
     },
     
     handleCadenceComponentEvt: function(component, event, helper){
@@ -37,8 +37,8 @@
     settedSequenceType: function(component,event,helper){
         var settedSequenceType = component.get("v.settedSequenceType");
         if(settedSequenceType){
-         //helper.getObjectFieldsList(component, event, helper);
-         helper.getObjectFieldsListNew(component, event, helper);   
+         helper.getObjectFieldsList(component, event, helper);
+         //helper.getObjectFieldsListNew(component, event, helper);   
         }        
     },
    

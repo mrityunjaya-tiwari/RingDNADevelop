@@ -19,11 +19,12 @@
     <aura:attribute name="isViewMode" type="Boolean"/>
     <aura:attribute name="recordType" type="String" default="" />
     <aura:attribute name="parentFieldList" type="List" />
+     <aura:attribute name="picklistApiNameAndValues" type="List" />
     <aura:attribute name="childFieldList" type="List" />
     <aura:attribute name="childRecordType" type="String" default="" />
     
     <!--Event attribute -->
-    <aura:registerEvent name="DynamicFieldRowEvent" type="RDNACadence2:DynamicFieldRowEvent"/>
+    <aura:registerEvent name="DynamicFieldRowEvent" type="RDNACadence:DynamicFieldRowEvent"/>
     
     <!-- <aura:handler name="change" value="{!v.fieldList}" action="{!c.setPicklistValues}"/> --> 
     <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
@@ -64,9 +65,9 @@
                 <lightning:select aura:id="criterion" disabled="{!v.isViewMode}" name="selectPicklistType" 
                                   label="Values" class="rdna-field-values"  variant = "label-hidden"  required="true" value="{!v.objectInstance.value}" 
                                   messageWhenValueMissing="Please Select Field Value">
-                    <option value="">Select Field value</option>
-                    <aura:iteration items="{!v.listPicklistValues}" var="pickListValue">
-                        <option value="{!pickListValue}">{!pickListValue}</option>
+                    <option value="">Select Field value </option>
+                    <aura:iteration items="{!v.picklistApiNameAndValues}" var="pickListValue">
+                        <option value="{!pickListValue.picklistAPIName}">{!pickListValue.picklistLable}</option>
                     </aura:iteration>
                 </lightning:select>
                 <aura:set attribute="else">
@@ -100,7 +101,7 @@
                                             <aura:if isTrue="{!v.fieldDataType == 'Reference'}">
                                                 <div class="">
                                                     <aura:if isTrue="{!not(empty(v.userWrapperList))}">
-                                                        <RDNACadence2:LookupFieldComponent aura:id="LookupFieldComponent" recordType="{#v.recordType}" isDisabled="{!v.isViewMode}" 
+                                                        <RDNACadence:LookupFieldComponent aura:id="LookupFieldComponent" recordType="{#v.recordType}" isDisabled="{!v.isViewMode}" 
                                                                                           userWrapperList="{!v.userWrapperList}"
                                                                                           parentId="{!v.objectInstance.value}" fieldName="{#v.objectInstance.fieldName}" />
                                                     </aura:if>

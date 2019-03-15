@@ -81,6 +81,7 @@ global  without sharing class CadenceService {
     public static List<Criterion> getFieldsWithLabels(String objectStr){
         List<Criterion> fieldsWithLabels = new List<Criterion>();
         Schema.sObjectType sObjectName = Schema.getGlobalDescribe().get(objectStr);
+        system.debug('getFieldsWithLabels ***********' );
         //SObjectType r;
         /*try{
              r = ((SObject)(Type.forName('Schema.'+objectStr).newInstance())).getSObjectType(); 
@@ -124,6 +125,7 @@ global  without sharing class CadenceService {
                       
                        if (c.fieldDataType == 'Picklist' || c.fieldDataType == 'MultiPickList'){
                            c.listPicklistValues = getPicklistValues(objectStr, c.fieldName);
+                           c.picklistApiNameAndValues = Criterion.getPicklistApiNameAndValues(objectStr, c.fieldName);
                        }
                        if (!((c.fieldDataType == 'Reference' && objectStr == 'DandBCompany'))){
                            if (c.fieldDataType != 'Reference' || (c.fieldDataType == 'Reference' && validForCriteria(objectStr, c.fieldName))){
@@ -171,7 +173,7 @@ global  without sharing class CadenceService {
                            if (c.fieldDataType == 'Picklist' || c.fieldDataType == 'MultiPickList'){
                                c.listPicklistValues = getPicklistValues(objectStr, c.fieldName);
                            }
-                           if (!(c.fieldDataType == 'Reference' && (c.fieldName == nameSpace+'Cadence_ID__c' || c.fieldName == 'ReportsToId' || c.fieldName == 'OwnerId' ))){
+                           if (!(c.fieldDataType == 'Reference' && (c.fieldName == 'RDNACadence__Cadence_ID__c' || c.fieldName == 'ReportsToId' || c.fieldName == 'OwnerId' ))){
                                if (c.fieldDataType != 'Reference' || (c.fieldDataType == 'Reference' && validForCriteria(objectStr, c.fieldName))){
                                    fieldsWithLabels.add(c);
                                }
@@ -544,12 +546,12 @@ global  without sharing class CadenceService {
     
     public static Participant_Sequence_History__c createHistoryObject(Id sequenceId,Id objId,String objName){
         Participant_Sequence_History__c history = new Participant_Sequence_History__c();
-        history.Sequence_Id__c = sequenceId;
+        history.RDNACadence__Sequence_Id__c = sequenceId;
         if(objName.equals(CadenceConstants.LEAD_OBJECT_NAME)) {
-            history.Lead_Id__c = objId;
+            history.RDNACadence__Lead_Id__c = objId;
         }
         else{
-            history.Contact_Id__c = objId;
+            history.RDNACadence__Contact_Id__c = objId;
         }
         return history;
     }
@@ -627,11 +629,11 @@ global  without sharing class CadenceService {
                     partAct.Show_on_Target_List__c = true;
                     partAct.isActionPerformed__c = false;
                     partActToUpdate.add(partAct);
-                    if(performedPartActions.containsKey(objId)) {
+                    /*if(performedPartActions.containsKey(objId)) {
                         performedPartActions.get(objId).add(partAct);
                     } else {
                         performedPartActions.put(objId, new List<Sequence_Action__c>{partAct});
-                    }
+                    }*/
                 }
                 
            } 
@@ -814,7 +816,7 @@ global  without sharing class CadenceService {
         if (objectName == CadenceConstants.CONTACT_OBJECT_NAME){
             if (fieldName == 'MasterRecordId' || fieldName == 'AccountId' 
                 || fieldName == 'CreatedById' || fieldName == 'LastModifiedById' || fieldName == 'OwnerId'
-                || fieldName == 'ReportsToId' || fieldName == nameSpace+'Cadence_ID__c' ){
+                || fieldName == 'ReportsToId' || fieldName == 'RDNACadence__Cadence_ID__c' ){
                 return true;
             }else {
                 return false;
@@ -830,7 +832,7 @@ global  without sharing class CadenceService {
         }else if (objectName == CadenceConstants.LEAD_OBJECT_NAME){
             if (fieldName == 'MasterRecordId' 
                 || fieldName == 'CreatedById' || fieldName == 'LastModifiedById' || fieldName == 'OwnerId'
-                || fieldName == 'DandbCompanyId' || fieldName == nameSpace+'Cadence_ID__c' ){
+                || fieldName == 'DandbCompanyId' || fieldName == 'RDNACadence__Cadence_ID__c' ){
                 return true;
             }else {
                 return false;
@@ -976,7 +978,7 @@ global  without sharing class CadenceService {
         List<Task> taskList = CadenceSelector.getActionOnParticipantId(ids);   
         CadenceService.UpdateIsPerformed(taskList);
    }
-   public static List<CriterionWrapper> getFieldsWithLabelsNew(List<String> objectlist){
+   /* public static List<CriterionWrapper> getFieldsWithLabelsNew(List<String> objectlist){
         String objectStr ; 
         List<Criterion> fieldsWithLabels = new List<Criterion>();
 		List<CriterionWrapper> fieldList = new List<CriterionWrapper>();      
@@ -1151,7 +1153,7 @@ global  without sharing class CadenceService {
                                        if (c.fieldDataType == 'Picklist' || c.fieldDataType == 'MultiPickList'){
                                            c.listPicklistValues = getPicklistValues(objectStr, c.fieldName);
                                        }
-                                       if (!(c.fieldDataType == 'Reference' && (c.fieldName == nameSpace+'Cadence_ID__c' || c.fieldName == 'ReportsToId' || c.fieldName == 'OwnerId' ))){
+                                       if (!(c.fieldDataType == 'Reference' && (c.fieldName == 'RDNACadence__Cadence_ID__c' || c.fieldName == 'ReportsToId' || c.fieldName == 'OwnerId' ))){
                                            if (c.fieldDataType != 'Reference' || (c.fieldDataType == 'Reference' && validForCriteria(objectStr, c.fieldName))){
                                                if(index != 0){
                                                    c.fieldName =  objectStr + '.' + c.fieldName;
@@ -1174,5 +1176,5 @@ global  without sharing class CadenceService {
         }
         return fieldList;
      
-    }
+    } */
 }

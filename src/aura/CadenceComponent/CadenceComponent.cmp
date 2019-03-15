@@ -1,6 +1,6 @@
-<aura:component controller="RDNACadence2.CadenceController" implements="force:appHostable,lightning:actionOverride,force:hasRecordId,flexipage:availableForRecordHome,flexipage:availableForAllPageTypes" access="global">
-    <aura:attribute name="cadence" type="RDNACadence2__Cadence__c"  default="{ 'sobjectType': 'RDNACadence2__Cadence__c',
-                                                               'Name': '','RDNACadence2__Record_Type__c':'', 'RDNACadence2__Participent_Activation__c':''}"/>
+<aura:component controller="RDNACadence.CadenceController" implements="force:appHostable,lightning:actionOverride,force:hasRecordId,flexipage:availableForRecordHome,flexipage:availableForAllPageTypes" access="global">
+    <aura:attribute name="cadence" type="RDNACadence__Cadence__c"  default="{ 'sobjectType': 'RDNACadence__Cadence__c',
+                                                               'Name': '','RDNACadence__Record_Type__c':'', 'RDNACadence__Participent_Activation__c':''}"/>
     <!-- Cadence Id -->
     <aura:attribute name="recordId" type="String" />
     <aura:handler name="init" action="{!c.doInit}" value="{!this}"/> 
@@ -21,14 +21,14 @@
     <aura:attribute name= "newSequence" type="Boolean" default= "false"/>
     <aura:attribute name="currentStep" type="string" default="1"/>
     <!--Event handler-->    
-    <aura:handler name="CadenceComponentEvt" event="RDNACadence2:CadenceComponentEvt" 
+    <aura:handler name="CadenceComponentEvt" event="RDNACadence:CadenceComponentEvt" 
                   action="{!c.handleCadenceComponentEvt}"/>
     
-    <aura:handler name="CadenceComponentSaveEvt" event="RDNACadence2:CadenceComponentEvt" 
+    <aura:handler name="CadenceComponentSaveEvt" event="RDNACadence:CadenceComponentEvt" 
                   action="{!c.CadenceComponentSaveEvt}"/>
     <!--create a component attributs -->
     <aura:attribute name="SpinnerForSync" type="boolean" default="false"/>
-    <RDNACadence2:SpinnerComponent spinnerSync = "{!v.SpinnerForSync}"/>
+    <RDNACadence:SpinnerComponent spinnerSync = "{!v.SpinnerForSync}"/>
     <aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
     <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>
     

@@ -6,7 +6,13 @@ public with sharing class Criterion {
 	@AuraEnabled public String operation;
 	@AuraEnabled public String value;
 	@AuraEnabled public List<String> listPicklistValues;
+    @AuraEnabled public List<PicklistData> picklistApiNameAndValues;
 
+    
+    public class PicklistData{
+        @AuraEnabled public string picklistAPIName;
+        @AuraEnabled public string picklistLable;
+    } 
     
 	public Boolean matches(FormulaSObjectValue valueObj) { 
 		ICriterionEvaluator criterionEvaluator = CriterionEvaluatorFactory.createNew(this.fieldDataType.toUpperCase());
@@ -41,5 +47,21 @@ public with sharing class Criterion {
 		}
 		return ret;
 	}
+    
+    public static List<PicklistData> getPicklistApiNameAndValues(String objectStr, String field) {
+        List<PicklistData> picklistValues = new List<PicklistData>();
+        Schema.sObjectType sObjectName = Schema.getGlobalDescribe().get(objectStr);
+        Map<String, Schema.SObjectField> fieldsMap = sObjectName.getDescribe().fields.getMap();
+        Schema.sObjectField fieldAPIName = fieldsMap.get(field);
+        Schema.DescribeFieldResult fieldResult = fieldAPIName.getDescribe();
+        List<Schema.PicklistEntry> values = fieldResult.getPicklistValues();
+        for (Schema.PicklistEntry picklistVal : values) {
+            PicklistData pld = New PicklistData();
+            pld.picklistAPIName = picklistVal.getValue();
+            pld.picklistLable = picklistVal.getLabel();
+            picklistValues.add(pld); 
+        }     
+        return picklistValues;
+    }
 
 }
