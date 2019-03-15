@@ -12,7 +12,7 @@
 		action.setCallback(this, function(response){
 			var state = response.getState();
             if(state === 'SUCCESS'){
-                component.set('v.newCadence.RDNACadence2__Status__c', true);
+                component.set('v.newCadence.status', true);
 				helper.refreshParts(component, event, helper);
                 component.set('v.isActive', false);
 			}
@@ -29,7 +29,7 @@
 		action.setCallback(this, function(response){
 			var state = response.getState();
 			if(state === 'SUCCESS'){
-				component.set('v.newCadence.RDNACadence2__Status__c', false);
+				component.set('v.newCadence.status', false);
 			}
 		}); 
 		$A.enqueueAction(action);		

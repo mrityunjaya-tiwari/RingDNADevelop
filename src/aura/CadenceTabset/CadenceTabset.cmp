@@ -1,9 +1,9 @@
 <aura:component controller = "CadenceController" implements="flexipage:availableForRecordHome,force:hasRecordId,lightning:actionOverride" access="global"> 
     <aura:handler name="init" value="{! this }" action="{! c.init }"/>
     <!--Register event -->
-    <aura:registerEvent name="CadenceComponentEvt" type="RDNACadence2:CadenceComponentEvt"/>
+    <aura:registerEvent name="CadenceComponentEvt" type="RDNACadence4:CadenceComponentEvt"/>
     <!--Cadence Objects -->
-    <aura:attribute name="newCadence" type="RDNACadence2__Cadence__c" default="{ 'sobjectType': 'RDNACadence2__Cadence__c', 'Name': '','RDNACadence2__Record_Type__c':'', 'RDNACadence2__Participent_Activation__c':''}"/>
+    <aura:attribute name="newCadence" type="Sequence" default="{ 'sobjectType': 'Sequence'}"/>
     <!-- set this parameter to make participant table visible-->
     <aura:attribute name= "isShowParticipantsTable" type = "boolean" default = "false"/>
     <!-- Set this parameter to select tab to visible-->
@@ -37,12 +37,12 @@
             </div>
             <div class="slds-col slds-has-flexi-truncate slds-m-left_small">
                 <p class="slds-line-height_reset rdna-header-small">Sequences</p>
-                <h1 class="slds-page-header__title slds-m-right_small slds-align-middle slds-truncate rdna-header-large">{!v.newCadence.Name}</h1>
+                <h1 class="slds-page-header__title slds-m-right_small slds-align-middle slds-truncate rdna-header-large">{!v.newCadence.name}</h1>
             </div>
             <aura:if isTrue="{!v.isActive}">
                 <div  class="slds-col slds-line-height_reset" style="color:red;">Activating</div>
             </aura:if>
-            <aura:if isTrue="{!v.newCadence.RDNACadence2__Status__c}">
+            <aura:if isTrue="{!v.newCadence.status}">
                 <div >
                     <button class="slds-button slds-button_neutral slds-m-top_medium slds-m-right_medium rdna-button rdna-button-text" onclick="{!c.deactivateCad}" >Deactivate</button>
                 </div>

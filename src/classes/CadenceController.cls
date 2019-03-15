@@ -4,8 +4,32 @@ public with sharing class CadenceController {
     @AuraEnabled
     public static cadenceDataWrapper getCadenceData(Id cadenceId){
         cadenceDataWrapper adWObj = new cadenceDataWrapper();
-        adWObj.cObj  = CadenceController.getCadenceDetail(cadenceId);
+        Cadence__c cObj  = CadenceController.getCadenceDetail(cadenceId);
+        adWObj.cObj  = cObj;
+        Sequence sequence  = new Sequence(cObj.Id, cObj.Entrance_Criteria__c, '', cObj.Exit_Criteria__c, 
+                     '', cObj.matching_priority__c, cObj.Name, cObj.Participent_Activation__c,
+                     cObj.Record_Type__c, string.valueOf(cObj.Status__c), string.valueOf(cObj.Total_Participants__c));
+                     
         adWObj.fieldList = getFields(adWObj.cObj.Record_Type__c);
+        List<CadenceAction__c> listCadenceAction = cObj.CadenceActions__r;
+        List<SequenceAction> sequenceActionList = new List<SequenceAction>();
+        
+        for (CadenceAction__c cadenceAction : listCadenceAction){
+            SequenceAction sequenceAction = new SequenceAction (cadenceAction.Id, cadenceAction.Action_Criterion__c, 
+                                                                null, string.valueOf(cadenceAction.Action_Id__c), 
+                                                                string.valueOf(cadenceAction.Day__c), 
+                                                                cadenceAction.Fields_To_Update_Action__c, 
+                                                                string.valueOf(cadenceAction.Hour__c), null, 
+                                                                cadenceAction.Name, cadenceAction.Priority__c,
+                                                                null, string.valueOf(cadenceAction.Cadence_Id__c), 
+                                                                cadenceAction.Trigger_Type__c);
+            sequenceAction.actiontemplateId = cadenceAction.Action_Id__r.Template_Id__c;
+            sequenceAction.actiontype = cadenceAction.Action_Id__r.Type__c;
+            sequenceActionList.add(sequenceAction);
+        }
+        //sequence.cadenceActions = cObj.CadenceActions__r;
+        sequence.cadenceActions =sequenceActionList;
+        adWObj.sObj  = sequence;
         return adWObj;
     }
     @AuraEnabled
@@ -17,6 +41,7 @@ public with sharing class CadenceController {
      
     public class cadenceDataWrapper{
         @AuraEnabled public Cadence__c cObj;
+        @AuraEnabled public Sequence sObj;
         @AuraEnabled public List<CriterionWrapper> fieldList = New List<CriterionWrapper>{New CriterionWrapper()};
     }
     

@@ -9,7 +9,7 @@
         var selectedActionType = event.getParam("value");
         var rowList = component.get("v.cadenceActionList");
         rowList.push({
-            'sobjectType': 'RDNACadence2__CadenceAction__c'
+            'sobjectType': 'SequenceAction'
         });
         var actionTypeListForCadenceAction = component.get("v.actionTypeListForCadenceAction");
         actionTypeListForCadenceAction.push(selectedActionType);

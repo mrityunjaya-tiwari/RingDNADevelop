@@ -48,14 +48,13 @@
            
             for (var index in cadenceActionList){
                 var cadenceActionObj = cadenceActionList[index];
-                var actionId = cadenceActionObj.RDNACadence2__Action_Id__c;
+                var actionId = cadenceActionObj.actionId;
                 var actionList =  component.get('v.actionList');
                
                 for(var index in actionList){
-                    if(actionList[index].Id == actionId){
-                        component.set("v.actionType", actionList[index].RDNACadence2__Type__c);
-                       
-                        actionTypeListForCadenceAction.push(actionList[index].RDNACadence2__Type__c);
+                    if(actionList[index].id == actionId){
+                        component.set("v.actionType", actionList[index].type);
+                        actionTypeListForCadenceAction.push(actionList[index].type);
                     }
                 }
             }
@@ -68,12 +67,12 @@
         component.set('v.spinner',true);
         var action = component.get("c.getActionList");
         var cadence = component.get("v.newCadence");
-        action.setParams({type: cadence.RDNACadence2__Record_Type__c});
+        action.setParams({type: cadence.recordType});
         action.setCallback(this, function(response) {
             var state = response.getState();
             if (state === "SUCCESS") {
                 var actionWrapper = response.getReturnValue();
-                component.set('v.actionList', actionWrapper.actionList);
+                component.set('v.actionList', actionWrapper.actionClsList);
                 component.set('v.actionTypeList', actionWrapper.actionTypeList); 
                 //Data Sorting
                 for(var i=0;actionWrapper.fieldList.length > i;i++){

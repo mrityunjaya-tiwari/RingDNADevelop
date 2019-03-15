@@ -110,6 +110,15 @@ public with sharing class ActionDetailController {
         }
         return actionDataWrapper;
     }
+    @AuraEnabled
+    public static Action getActionById(Id actionId) {
+        Action__c action = [Select Id, Name, Activation_Type__c, Task_Description__c, Template_Id__c, 
+                            Template_Name__c, Type__c From Action__c where Id = :actionId];
+        Action actionCls = New Action(action.Id, action.Activation_Type__c, action.Name, action.Task_Description__c,
+                                      action.Template_Id__c, action.Template_Name__c, action.Type__c);
+        return actionCls;
+    }
+    
     public class ActionDataWrapper {
         @AuraEnabled public Action actionCls;
         @AuraEnabled public List<wrapperTaskField> taskList; 

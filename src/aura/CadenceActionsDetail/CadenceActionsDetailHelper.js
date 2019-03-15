@@ -22,18 +22,18 @@
         var cadenceActionObj = component.get("v.cadenceAction");
         var actionList = component.get("v.allActionsList");
         var currentIndex = component.get('v.currentIndex');
-        cadenceActionObj.RDNACadence2__Index__c = currentIndex;
+        cadenceActionObj.index = currentIndex;
         
         for(var index in actionList){
             var actionObj = actionList[index];
-            var actionId = actionObj.Id;
+            var actionId = actionObj.id;
             
             
-            if (cadenceActionObj.RDNACadence2__Action_Id__c == actionId){
+            if (cadenceActionObj.actionId == actionId){
                 component.set("v.actionObject", actionObj);
-                cadenceActionObj.Name = actionObj.Name;
+                cadenceActionObj.name = actionObj.name;
                 
-                if (actionObj.RDNACadence2__Activation_Type__c == 'Manual'){
+                if (actionObj.activationType == 'Manual'){
                     component.set('v.showPriority', 'True');
                     var cmpTarget = component.find('updatePriorityChanges');
                     $A.util.removeClass(cmpTarget, 'slds-size_1-of-3');
@@ -41,17 +41,17 @@
                      
                     var pList= component.get('v.pList');
                     var cAct = component.get('v.cadenceAction');
-                    if (cAct != undefined && (cAct.RDNACadence2__Priority__c === undefined ||cAct.RDNACadence2__Priority__c == '' )){                      
-                        cAct.RDNACadence2__Priority__c = pList[1];
-                        cAct.RDNACadence2__Priority_number__c = 2;
+                    if (cAct != undefined && (cAct.priority === undefined ||cAct.priority == '' )){                      
+                        cAct.priority = pList[1];
+                        cAct.priorityNumber = 2;
                     }
                     
                     component.set('v.cadenceAction', cAct);
                 }else{
                    
                     var cAct = component.get('v.cadenceAction');
-                    cAct.RDNACadence2__Priority__c = '';
-                    cAct.RDNACadence2__Priority_number__c = 0;
+                    cAct.priority = '';
+                    cAct.priorityNumber = 0;
                     component.set('v.cadenceAction', cAct);
                     component.set('v.showPriority', 'false');
                     var cmpTarget = component.find('updatePriorityChanges');
@@ -105,7 +105,7 @@
         var newCadence= component.get("v.newCadence");
         var cadenceAction= component.get("v.cadenceAction");
         var newObject;
-        if  (newCadence.RDNACadence2__Record_Type__c =='Contact'){
+        if  (newCadence.recordType =='Contact'){
             newObject = component.get("v.ContactObj");
         }else {
             newObject = component.get("v.LeadObj");
@@ -116,22 +116,23 @@
             var value = wrapperTOCreateObject.value;
             newObject[key] =  value;
         }
-        cadenceAction.RDNACadence2__Fields_To_Update_Action__c = JSON.stringify(newObject);
+        cadenceAction.fieldsToUpdateAction = JSON.stringify(newObject);
         component.set("v.cadenceAction", cadenceAction);
+        
     },
     // Method is used to set 'Action_Criterion__c'
     setActionCriteria:function(component, event, helper){
         var cadenceAction= component.get("v.cadenceAction");
-        cadenceAction.RDNACadence2__Action_Criterion__c = JSON.stringify(component.get("v.entranceCriteriaSet"));
+        cadenceAction.actionCriterion = JSON.stringify(component.get("v.entranceCriteriaSet"));
         component.set("v.cadenceAction", cadenceAction);
     },
     // Method is used to edit cadenceAction detail
     setDataForEdit:function(component, event, helper){
         var cadenceActionObj = component.get("v.cadenceAction");
-        if (cadenceActionObj.RDNACadence2__Fields_To_Update_Action__c && cadenceActionObj.RDNACadence2__Fields_To_Update_Action__c != ''){
+        if (cadenceActionObj.fieldsToUpdateAction && cadenceActionObj.fieldsToUpdateAction != ''){
             component.set("v.fieldOptionsValue", "true"); 
             component.set("v.setFieldsToUpdate", "true"); 
-            var obj = JSON.parse(cadenceActionObj.RDNACadence2__Fields_To_Update_Action__c);
+            var obj = JSON.parse(cadenceActionObj.fieldsToUpdateAction);
             var listOfKey = Object.keys(obj);
             var rowList = [];
             for (var index in listOfKey){
@@ -148,9 +149,9 @@
             component.set("v.rowToCreateFieldsToUpdate", rowList);
             
         }
-        if (cadenceActionObj.RDNACadence2__Action_Criterion__c){
+        if (cadenceActionObj.actionCriterion){
             component.set("v.criteriaOptionsValue", "true");
-            var actionCriteriaSet = JSON.parse(cadenceActionObj.RDNACadence2__Action_Criterion__c);
+            var actionCriteriaSet = JSON.parse(cadenceActionObj.actionCriterion);
             component.set("v.entranceCriteriaSet", actionCriteriaSet);
             component.set("v.setCriteriaFields", true);
         }
@@ -167,7 +168,7 @@
         var actionList =  component.get('v.allActionsList');
         var actionListOfType = [];
         for(var index in actionList){
-            if(actionList[index].RDNACadence2__Type__c == actionType){
+            if(actionList[index].type == actionType){
                 actionListOfType.push(actionList[index]);
             }
         }
@@ -178,23 +179,23 @@
     // used to disable input for immediate cadence actions.
     disablUnitInput:function(component, event, helper){
         var cadObj = component.get("v.cadenceAction");
-        if (cadObj.RDNACadence2__Trigger_Type__c == 'Immediate'){
+        if (cadObj.triggerType == 'Immediate'){
             component.set("v.disableInput",false);
-            cadObj.RDNACadence2__Day__c ='';
-            cadObj.RDNACadence2__Hour__c ='';
-        }else if (cadObj.RDNACadence2__Trigger_Type__c == 'Time Based'){
+            cadObj.day ='';
+            cadObj.RDNACadence4__Hour__c ='';
+        }else if (cadObj.triggerType == 'Time Based'){
             component.set("v.disableInput",true);
             
-            if (!cadObj.RDNACadence2__Day__c){
-                cadObj.RDNACadence2__Day__c = 0;
+            if (!cadObj.day){
+                cadObj.day = 0;
             }
-            if (!cadObj.RDNACadence2__Hour__c){
-                cadObj.RDNACadence2__Hour__c = 0;
+            if (!cadObj.hour){
+                cadObj.hour = 0;
             }
         } else {
             component.set("v.disableInput",false);
-            cadObj.RDNACadence2__Day__c ='';
-            cadObj.RDNACadence2__Hour__c ='';
+            cadObj.day ='';
+            cadObj.hour ='';
         }
         component.set("v.cadenceAction", cadObj);
     },
@@ -261,9 +262,9 @@
                         try {
                             var cAct = component.get('v.cadenceAction');
                             if(cAct != undefined || cAct != ''){
-                                if ( cAct.RDNACadence__Priority__c == undefined ||cAct.RDNACadence__Priority__c == '' ){
-                                    cAct.RDNACadence__Priority__c = pList[1]; 
-                                    cAct.RDNACadence__Priority_number__c = 2;
+                                if ( cAct.priority == undefined ||cAct.priority == '' ){
+                                    cAct.priority = pList[1]; 
+                                    cAct.priorityNumber = 2;
                                     
                                 }
                                 component.set('v.cadenceAction', cAct); 
