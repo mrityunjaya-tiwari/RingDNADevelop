@@ -7,6 +7,10 @@
         helper.createListForInput(component);
     },
     validateForm: function(component, event, helper) {
+		var cadenceObj = component.get("v.newCadence");
+        var name = cadenceObj.Name;
+        cadenceObj.Name = name.trim();
+        component.set("v.newCadence", cadenceObj);
         var isValid = component.find('formValidationId').reduce(function (validSoFar, inputCmp) {
             inputCmp.showHelpMessageIfInvalid();
             return validSoFar && inputCmp.get('v.validity').valid;
