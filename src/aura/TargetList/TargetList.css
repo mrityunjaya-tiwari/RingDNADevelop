@@ -184,7 +184,7 @@
 
 @font-face {
     font-family: 'Logical';
-    src: url(/resource/RDNACadence2__LogicalFontRegular) format('woff');
+    src: url(/resource/LogicalFontRegular) format('woff');
 }
 
 .THIS .cols-table table thead tr th span {

@@ -85,13 +85,8 @@ public with sharing class CadenceController {
     public static void activateCadence(Id cadId) {
         Cadence__c cad = new Cadence__c(Id=cadId, Status__c=true);
         upsert cad;
-        try{
-        	updateParticipants(cadId); 
-        	CadenceService.setParticipantsActivation(cadId, true);
-        }
-        catch(Exception e){
-            
-        }
+        updateParticipants(cadId); 
+        CadenceService.setParticipantsActivation(cadId, true);
     }
     
     @AuraEnabled

@@ -100,7 +100,7 @@
                                             <aura:if isTrue="{!v.fieldDataType == 'Reference'}">
                                                 <div class="">
                                                     <aura:if isTrue="{!not(empty(v.userWrapperList))}">
-                                                        <RDNACadence:LookupFieldComponent aura:id="LookupFieldComponent" recordType="{#v.recordType}" isDisabled="{!v.isViewMode}" 
+                                                        <c:LookupFieldComponent aura:id="LookupFieldComponent" recordType="{#v.recordType}" isDisabled="{!v.isViewMode}" 
                                                                                           userWrapperList="{!v.userWrapperList}"
                                                                                           parentId="{!v.objectInstance.value}" fieldName="{#v.objectInstance.fieldName}" />
                                                     </aura:if>

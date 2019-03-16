@@ -8,12 +8,14 @@
             var state = response.getState();
             if(state === "SUCCESS") {
                 var records = response.getReturnValue();
-                records.forEach(function(record){
-                    record.linkName = '/'+record.id;
-                    if (record.company){
-                        record.linkcompany = '/'+record.companyId;  
-                    }
-                });
+                if(records){
+                    records.forEach(function(record){
+                        record.linkName = '/'+record.id;
+                        if (record.company){
+                            record.linkcompany = '/'+record.companyId;  
+                        }
+                    });
+                }
                 component.set('v.rawData', records);
                 component.set('v.setPhoneLink', true);
             }

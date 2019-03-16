@@ -7,7 +7,7 @@
 		var cadence = component.get('v.newCadence');
         var action = component.get('c.activateCadence');
 		action.setParams({
-			"cadId" : cadence.Id
+			"cadId" : cadence.id
 		});
 		action.setCallback(this, function(response){
 			var state = response.getState();
@@ -24,7 +24,7 @@
 		var cadence = component.get('v.newCadence');
 		var action = component.get('c.deactivateCadence');
 		action.setParams({
-			"cadId" : cadence.Id
+			"cadId" : cadence.id
 		});
 		action.setCallback(this, function(response){
 			var state = response.getState();

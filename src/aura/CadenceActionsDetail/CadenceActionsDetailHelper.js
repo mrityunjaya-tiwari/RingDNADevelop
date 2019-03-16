@@ -273,10 +273,6 @@
                         catch(err) {
                             console.log('error to set priority');
                         } 
-                        /*if ( cAct.RDNACadence__Priority__c == undefined ||cAct.RDNACadence__Priority__c == '' ){
-                            cAct.RDNACadence__Priority__c = pList[1]; 
-                            cAct.RDNACadence__Priority_number__c = 2;
-                        }*/
                         
                         //component.set('v.cadenceAction', cAct);                       
                         component.set('v.spinner', false);

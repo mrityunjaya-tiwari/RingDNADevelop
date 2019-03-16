@@ -8,9 +8,9 @@
     <script>
     	var myUserContext = "{!$User.UITheme}";
     	var iseditVar = '{!$CurrentPage.parameters.isedit}' != undefined ? '{!$CurrentPage.parameters.isedit}':false;
-        $Lightning.use("RDNACadence2:CadenceActionListApp", function() {
+        $Lightning.use("c:CadenceActionListApp", function() {
             $Lightning.createComponent(
-                "RDNACadence2:CadenceComponent",
+                "c:CadenceComponent",
                 {recordId: '{!$CurrentPage.parameters.id}',themeName: myUserContext,isEdit : iseditVar},
                 "myDivId4",
                 function(cmp) {

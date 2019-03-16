@@ -12,7 +12,7 @@
    
   
     <!--Action Objects -->
-    <aura:attribute name="newAction" type="ActionWrapper" default="{ 'sobjectType': 'ActionWrapper'}"/>
+    <aura:attribute name="newAction" type="Action" default="{ 'sobjectType': 'ActionWrapper'}"/>
     <!--Task Objects -->
     <aura:attribute name="taskObj" type="Task" default="{ 'sobjectType': 'Task'}"/>
     <!--Email template list -->

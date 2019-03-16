@@ -58,7 +58,7 @@
                             <aura:if isTrue="{!not(empty(v.AllFieldList)) || v.isViewMode}">
                                     <aura:if isTrue="{!not( empty(v.criteriaList))}">
                                         <aura:iteration items="{!v.criteriaList}" var="criteria" indexVar="index">
-                                            <RDNACadence4:DynamicFieldRow aura:id="dynamicRow" isViewMode="{!v.isViewMode}" objectInstance="{!criteria}" 
+                                            <c:DynamicFieldRow aura:id="dynamicRow" isViewMode="{!v.isViewMode}" objectInstance="{!criteria}" 
                                                                          fieldList="{!v.accountFieldList}" rowIndex = "{!index}" listPicklistValues="" fieldDataType = "" recordType="{!v.cadence.recordType}"
                                                                          AllFieldList = "{!v.AllFieldList}"  />
                                         </aura:iteration>

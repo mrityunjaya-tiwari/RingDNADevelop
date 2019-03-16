@@ -1,6 +1,6 @@
-    <aura:attribute name="cadence" type="Sequence"  default="{ 'sobjectType': 'Sequence'}"/>
 <aura:component controller="CadenceController" implements="force:appHostable,lightning:actionOverride,force:hasRecordId,flexipage:availableForRecordHome,flexipage:availableForAllPageTypes" access="global">
-    <!-- Cadence Id -->
+    <aura:attribute name="cadence" type="Sequence"  default="{ 'sobjectType': 'Sequence'}"/>
+	<!-- Cadence Id -->
     <aura:attribute name="recordId" type="String" />
     <aura:handler name="init" action="{!c.doInit}" value="{!this}"/> 
     <aura:attribute name="entranceCriteriaSet" type="Object"/>

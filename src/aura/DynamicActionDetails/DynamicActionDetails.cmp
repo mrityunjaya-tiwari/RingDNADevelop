@@ -1,6 +1,6 @@
 <aura:component controller="ActionDetailController" implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction,force:appHostable" access="global">
     <!--aura init handler , call js "loadData" function on component load, and display data on form-->
-    <aura:handler name="cadDynamicRowEvent" event="RDNACadence2:CadDynamicRowEvent" action="{!c.handleCadDynamicRowEvent}"/>
+    <aura:handler name="cadDynamicRowEvent" event="c:CadDynamicRowEvent" action="{!c.handleCadDynamicRowEvent}"/>
     <aura:attribute name="actionList" type = "List" />
     <!-- Disabled property-->
     <aura:attribute name = "isDisabled" type = "Boolean" default = "false"/>

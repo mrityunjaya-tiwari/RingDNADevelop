@@ -163,7 +163,7 @@
         var cadenceObj = component.get("v.cadence");
         var cadence = component.get("c.getObjCriList");
         component.set("v.SpinnerForSync",true);
-        cadence.setParams({objectType: cadenceObj.RDNACadence2__Record_Type__c});
+        cadence.setParams({objectType: cadenceObj.recordType});
         cadence.setCallback(this, function(response){
             var state = response.getState();
             if(state === 'SUCCESS'){                

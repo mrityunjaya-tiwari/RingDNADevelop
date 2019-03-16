@@ -213,21 +213,9 @@
                             <aura:if isTrue="{!v.setFieldsToUpdate}">
 
                                 <div class = "slds-form-element slds-size_1-of-1 slds-p-bottom_large" >
-                                    <!--<aura:iteration items="{!v.rowToCreateFieldsToUpdate}" var="wrapperObj" indexVar="index">                                        
-                                        <div class = "slds-form-element__row slds-size_1-of-1">
-                                            <aura:if isTrue="{!'Lead' ==  v.newCadence.recordType}">
-                                                <RDNACadence4:ActionDetailsDynamicRow aura:id="dynamicROw" recordType="{!v.newCadence.recordType}"
-                                                                                     taskObj="{!wrapperObj}" wrapperTaskFields="{!v.wrapperLeadFields}" currentIndex = "{!index}" isrequired="true" isDisabled="{!v.isDisabled}"/>
-                                                <aura:set attribute="else">
-                                                    <RDNACadence4:ActionDetailsDynamicRow aura:id="dynamicROw" recordType="{!v.newCadence.recordType}"
-                                                                                         taskObj="{!wrapperObj}" wrapperTaskFields="{!v.wrapperContactFields}" currentIndex = "{!index}" isrequired="true" isDisabled="{!v.isDisabled}"/>
-                                                </aura:set>
-                                            </aura:if>
-                                        </div>
-                                    </aura:iteration>-->
                                     <aura:iteration items="{!v.rowToCreateFieldsToUpdate}" var="wrapperObj" indexVar="index">                                        
                                         <div class = "slds-form-element__row slds-size_1-of-1">
-                                            <RDNACadence4:ActionDetailsDynamicRow aura:id="dynamicROw" recordType="{!v.newCadence.recordType}"
+                                            <c:ActionDetailsDynamicRow aura:id="dynamicROw" recordType="{!v.newCadence.recordType}"
                                                                                   UpdateFieldList = "{!v.UpdateFieldList}"
                                                                                   taskObj="{!wrapperObj}" wrapperTaskFields="{!v.UpdateFieldList}" currentIndex = "{!index}" isrequired="true" isDisabled="{!v.isDisabled}"/>
                                         </div>

@@ -2,7 +2,7 @@
 	
     
     <!--Action Objects -->
-    <aura:attribute name="record" type="ActionWrapper" default="{ 'sobjectType': 'ActionWrapper'}"/>
+    <aura:attribute name="record" type="Action" default="{ 'sobjectType': 'ActionWrapper'}"/>
     <aura:handler name="init" value="{!this }" action="{!c.init }" />
     <aura:attribute name="recordId" type="Id"/>
     
@@ -60,20 +60,20 @@
 	                </div>
 	                <div class="slds-col slds-size_3-of-12">
 	                    <p class="slds-line-height_reset slds-m-bottom_xx-small field-label">Type</p>
-	                    <span class="field-value">{!v.record.RDNACadence2__Type__c}</span>
+	                    <span class="field-value">{!v.record.type}</span>
 	                </div>
 	                <div class="slds-col slds-size_3-of-12">
 	                    <p class="slds-line-height_reset slds-m-bottom_xx-small field-label">Template</p>
-                        <aura:if isTrue = "{!v.record.RDNACadence2__Type__c == 'Email'}">
-                            <span class="field-value"> <a class="rdna-bgcolor" href="{!'/' + v.record.RDNACadence2__Template_Id__c}" target="_blank">{!v.record.RDNACadence2__Template_Name__c}</a></span>
+                        <aura:if isTrue = "{!v.record.type == 'Email'}">
+                            <span class="field-value"> <a class="rdna-bgcolor" href="{!'/' + v.record.templateId}" target="_blank">{!v.record.templateName}</a></span>
                             <aura:set attribute="else">
-                                <span class="field-value">{!v.record.RDNACadence2__Template_Name__c}</span>
+                                <span class="field-value">{!v.record.templateName}</span>
                             </aura:set>
                         </aura:if>
 	                </div>
    	                <div class="slds-col slds-size_3-of-12">
 	                    <p class="slds-line-height_reset slds-m-bottom_xx-small field-label">Activation Type</p>
-	                    <span class="field-value">{!v.record.RDNACadence2__Activation_Type__c}</span>
+	                    <span class="field-value">{!v.record.activationType}</span>
 	                </div>
 	            </div>
 	 
