@@ -34,46 +34,6 @@
         }
     },
     
-    validateActionForm: function (component, event){
-        var newAct = component.get("v.newAction");
-        component.set('v.isValid', true);
-        component.set('v.isValidationError', false)
-        if (newAct.RDNACadence2__Type__c == ''){
-            component.set('v.isValid', false);
-            component.set('v.isValidationError', true);
-            component.set('v.ValidationError', 'Please Enter Type');
-        }else if (newAct.Name == ''){
-            component.set('v.isValid', 'false');
-            component.set('v.isValidationError', true);
-            component.set('v.ValidationError', 'Please Enter Name');
-        } else if (newAct.RDNACadence2__Activation_Type__c == ''){
-            component.set('v.isValid', 'false');
-            component.set('v.isValidationError', true);
-            component.set('v.ValidationError', 'Please Enter Activation Type');
-        } else if (newAct.RDNACadence2__Template_Id__c == ''){
-            if (newAct.RDNACadence2__Type__c == 'Email'){
-                component.set('v.isValid', 'false');
-                component.set('v.isValidationError', true);
-                component.set('v.ValidationError', 'Please Select Template');
-            } else if (newAct.RDNACadence2__Type__c == 'Task'){
-                var listTask = component.get('v.listTask');
-                for(var taskIndex in listTask){
-                    var taskObj = listTask[taskIndex];
-                    if(taskObj.key == '') {
-                        component.set('v.isValid', false);
-                        component.set('v.isValidationError', true);
-                        component.set('v.ValidationError', 'Please Select Task Field');
-                    } else if (taskObj.value == ''){
-                        component.set('v.isValid', false);
-                        component.set('v.isValidationError', true);
-                        component.set('v.ValidationError', 'Please Select Task Fields Value For ' + taskObj.key );
-                    }
-                }
-            }else {
-                component.set('v.isValid', true);
-            }
-        }
-    },
     updateActionType: function (component, event, helper) {
         var newAct = component.get("v.newAction");
         var container = component.find("InputSelectTemplate");
