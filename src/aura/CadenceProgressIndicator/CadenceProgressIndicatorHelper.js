@@ -61,18 +61,20 @@
         var lstCadAction = component.get("v.cadenceActionList");
         var entranceCriteriaSet = JSON.stringify(component.get("v.entranceCriteriaSet"));
         var exitCriteriaSet = JSON.stringify(component.get("v.exitCriteriaSet"));
-        cadObj.RDNACadence__Entrance_Criteria__c = entranceCriteriaSet;
-        cadObj.RDNACadence__Exit_Criteria__c = exitCriteriaSet;
+        cadObj.entranceCriteria = entranceCriteriaSet;
+        cadObj.exitCriteria = exitCriteriaSet;
         var caIdsList = component.get("v.caIdsList");
-        action.setParams({
-            cadenceObj :  cadObj,
-            listCadenceAction : lstCadAction,
+        var sequenceWrapper = JSON.stringify(cadObj); 
+        var listCadenceActionString = JSON.stringify(lstCadAction);
+        action.setParams({ 
+            cadenceObjString :  sequenceWrapper,
+           // listCadenceAction : lstCadAction,
+            listCadenceActionString : listCadenceActionString,
             caIdsList : caIdsList
         });
         action.setCallback(this, function(response) {
             var state = response.getState();
             if (state === "SUCCESS") {
-               console.log('in success');
                var recordId = response.getReturnValue();
                var myUserContext =component.get("v.themeName");
                 
@@ -82,7 +84,7 @@
                 else if(myUserContext == undefined){
                     var evt = $A.get("e.force:navigateToComponent");
                     evt.setParams({
-                        componentDef : "RDNACadence:CadenceComponent",
+                        componentDef : "RDNACadence4:CadenceComponent",
                         componentAttributes : {
                             "recordId" : recordId,
                             "isEdit" : false
@@ -91,7 +93,7 @@
                     evt.fire();
                 }
             
-            }else{       
+            }else{   
             }
         });
         $A.enqueueAction(action)

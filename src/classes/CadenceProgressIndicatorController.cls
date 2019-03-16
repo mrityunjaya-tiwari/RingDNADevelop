@@ -2,12 +2,22 @@ public class CadenceProgressIndicatorController {
     public static String nameSpace = CadenceConstants.NAMESPACE;
     
     @AuraEnabled
-    public static String saveCadence(Cadence__c cadenceObj, List<CadenceAction__c> listCadenceAction, List<String> caIdsList){
-    	try{
-        	populatePostFixExpressions(cadenceObj);          
+    public static String saveCadence(string cadenceObjString,  string listCadenceActionString, List<String> caIdsList){
+        Cadence__c cadenceObj ;
+        List<CadenceAction__c> listCadenceAction = New  List<CadenceAction__c>();
+        try{
+            Sequence sequence = (Sequence)System.JSON.deserialize(cadenceObjString, Sequence.class); 
+            List<SequenceAction> sequenceActionList = (List<SequenceAction>)System.JSON.deserialize(listCadenceActionString, List<SequenceAction>.class); 
+            for (SequenceAction sequenceAction : sequenceActionList){
+                listCadenceAction.add(getCadenceAction(sequenceAction));
+            }
+            cadenceObj = getCadence(sequence);
+            if (sequence.id != null && string.valueOf(sequence.id) != '' ){
+                cadenceObj.Id = Id.valueOf(sequence.id);
+            }
+        	populatePostFixExpressions(cadenceObj);   
         	upsert cadenceObj;
             deleteCadenceAction(cadenceObj, caIdsList);
-        
         	List<CadenceAction__c> caListToInsert = new List<CadenceAction__c>();
         	for (CadenceAction__c caObj : listCadenceAction){
             	if (caObj.Cadence_Id__c == null){
@@ -16,7 +26,6 @@ public class CadenceProgressIndicatorController {
            		populateCadActionPostFixExpression(caObj); 
             	caListToInsert.add(caObj);
         	}
-        	//upsert caListToInsert;
         	Database.UpsertResult[] results = Database.upsert(caListToInsert);
         	Map<Id, String> caIdsToCreatePa = new Map<Id, String>();
         	Map<Id, CadenceAction__c> caToInsertMap = new Map<Id, CadenceAction__c>();
@@ -31,17 +40,54 @@ public class CadenceProgressIndicatorController {
             addActionOnParticipant(cadenceObj, caToInsertMap);
         }
         catch(Exception e){
+            
         }
         return String.valueOf(cadenceObj.Id);
     }
     
+    public static CadenceAction__c getCadenceAction(SequenceAction sequenceAction){
+        CadenceAction__c cadenceAction = new CadenceAction__c();
+        cadenceAction.Name = sequenceAction.name;
+        if (sequenceAction.cadenceId != null && sequenceAction.cadenceId != ''){
+            cadenceAction.Cadence_Id__c = Id.valueOf(sequenceAction.cadenceId);
+        }
+        if (sequenceAction.id != null && string.valueOf(sequenceAction.id) != '' ){
+            cadenceAction.Id = ID.valueOf(sequenceAction.id);
+        }
+        //cadenceAction.Id = sequenceAction.id;
+        cadenceAction.Action_Criterion__c = sequenceAction.actionCriterion;
+        cadenceAction.Action_Id__c = Id.valueOf(sequenceAction.actionId);
+        if (sequenceAction.day != null && sequenceAction.day != '')
+        cadenceAction.Day__c = Integer.valueOf(sequenceAction.day);
+        cadenceAction.Fields_To_Update_Action__c = sequenceAction.fieldsToUpdateAction;
+        if (sequenceAction.hour != null && sequenceAction.hour != '')
+        cadenceAction.Hour__c = Integer.valueOf(sequenceAction.hour);
+        if (sequenceAction.index != null && sequenceAction.index != '')
+        cadenceAction.Index__c = Integer.valueOf(sequenceAction.index);
+        cadenceAction.Priority__c = sequenceAction.priority;
+        if (sequenceAction.priorityNumber != null && sequenceAction.priorityNumber != '')
+        cadenceAction.Priority_number__c = Integer.valueOf(sequenceAction.priorityNumber);
+        cadenceAction.Trigger_Type__c = sequenceAction.triggerType;
+        return cadenceAction;
+    }
+    public static Cadence__c getCadence(Sequence sequence){
+        Cadence__c cadence = new Cadence__c();
+        cadence.Name = sequence.name;
+        cadence.Entrance_Criteria__c = sequence.entranceCriteria;
+        cadence.Exit_Criteria__c = sequence.exitCriteria;
+        cadence.matching_priority__c = sequence.matchingPriority;
+        cadence.Participent_Activation__c = sequence.participentActivation;
+        cadence.Record_Type__c = sequence.recordType;
+        //cadence.Status__c = Boolean.valueOf(sequence.status);
+        //cadence.Total_Participants__c = Integer.valueOf(sequence.totalParticipants);
+        return cadence;
+    }
     public static void populatePostFixExpressions(Cadence__c cadenceObj) {
         String entryCriterion = cadenceObj.Entrance_Criteria__c;
         CriterionSet ecs = CriterionSet.parse(entryCriterion);
         if(ecs.criterionPriorityFormula != null && !ecs.criterionPriorityFormula.equals('')) {
             cadenceObj.Entrance_Criteria_PE__c = RuleCriterionMatcher.getPostFixExpression(ecs.criterionPriorityFormula);	
         }
-        
         String exitCriterion = cadenceObj.Exit_Criteria__c;
         ecs = CriterionSet.parse(exitCriterion);
         if(ecs.criterionPriorityFormula != null && !ecs.criterionPriorityFormula.equals('')) {
@@ -91,7 +137,6 @@ public class CadenceProgressIndicatorController {
     /*********************Updated logic for delete AOP*******************/
     public static void deleteCadenceAction(Cadence__c cadence, List<Id> caIdList){
         List<CadenceAction__c> ListOfCadenceActionToDelete = [Select id from CadenceAction__c where Id in :caIdList];
-        system.debug('ListOfCadenceActionToDelete ' + ListOfCadenceActionToDelete.size());
         if (ListOfCadenceActionToDelete.size() > 0){
             updateCadenceActionAndDelete(cadence, caIdList);
             delete ListOfCadenceActionToDelete;
@@ -128,47 +173,35 @@ public class CadenceProgressIndicatorController {
             List<Sequence_Action__c> saList = participantSequenceActionMap.get(sobjID);
             Integer day = 0, hour = 0;
             DateTime entranceDate;  
-            system.debug('saList ' + saList.size());
             for (Sequence_Action__c sa : saList){
                 if (deletedAOPIds.contains(sa.Id)){ 
                     aopToDeleteRelatedToCadence.add(sa);
                     if (entranceDate == null && sa.Expected_Execution_Date__c != null){
                         if (sa.Expected_Execution_Date__c <  system.now()){
                             entranceDate = system.now();
-                            system.debug('Deleted Before date');
                         }else{
-                            system.debug('Deleted After date');
                             day = sa.CadenceAction_Id__r.Day__c != null ? -(Integer)sa.CadenceAction_Id__r.Day__c : 0;
                             hour = sa.CadenceAction_Id__r.Hour__c != null ? -(Integer)sa.CadenceAction_Id__r.Hour__c : 0;
                             entranceDate = sa.Expected_Execution_Date__c;
-                            system.debug('day hour ' + day + ' ' + hour);
-                            system.debug('before entranceDate ' + entranceDate);
                             entranceDate = CadenceUtil.addTimeInDate(entranceDate, day, hour);
-                            system.debug('after entranceDate ' + entranceDate);
                             if (entranceDate < system.now()){
                                 entranceDate = system.now();
                             }
                         }
                     }
                 }else if (entranceDate != null){
-                    system.debug('Updating aop');
                     day = sa.CadenceAction_Id__r.Day__c != null ? (Integer)sa.CadenceAction_Id__r.Day__c : 0;
                     hour = sa.CadenceAction_Id__r.Hour__c != null ? (Integer)sa.CadenceAction_Id__r.Hour__c : 0;
                     entranceDate = CadenceUtil.addTimeInDate(entranceDate, day, hour);
-                    system.debug('sa FOR before UPDATE ' + sa.Expected_Execution_Date__c);
                     sa.Expected_Execution_Date__c = entranceDate;
-                    system.debug('sa FOR after UPDATE ' + sa.Expected_Execution_Date__c);
                     aopToUpdateList.add(sa);
                 }
             }
-            system.debug('aopToUpdateList size ' + aopToUpdateList.size());
             if (aopToUpdateList.size() > 0 ){
-                system.debug('aopToUpdateList size ' + aopToUpdateList.size());
                 update aopToUpdateList; 
             }
             
             if (aopToDeleteRelatedToCadence.size() > 0 ){
-                system.debug('aopToDeleteList size ' + aopToDeleteRelatedToCadence.size());
                 delete aopToDeleteRelatedToCadence;
             }
             

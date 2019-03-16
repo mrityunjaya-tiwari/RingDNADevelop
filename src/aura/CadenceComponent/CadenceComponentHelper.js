@@ -26,14 +26,14 @@
                     
                     // Set cadence data
                     var result = wrapperResult.cObj;
-                    component.set("v.cadence", result);                   
-                    if(result.RDNACadence2__CadenceActions__r){
-                        component.set("v.cadenceActionList", result.RDNACadence2__CadenceActions__r);                  
+                    component.set("v.cadence", wrapperResult.sObj); 
+                    if(wrapperResult.sObj.cadenceActions){
+                        component.set("v.cadenceActionList", wrapperResult.sObj.cadenceActions);                  
                     }
                     
                     //apply error message here.	
-                    var entryCriterion = JSON.parse(result.RDNACadence2__Entrance_Criteria__c);
-                    var exitCriterion = JSON.parse(result.RDNACadence2__Exit_Criteria__c);
+                    var entryCriterion = JSON.parse(wrapperResult.sObj.entranceCriteria);
+                    var exitCriterion = JSON.parse(wrapperResult.sObj.exitCriteria);
                     component.set("v.entranceCriteriaSet",entryCriterion);
                     component.set("v.exitCriteriaSet",exitCriterion);
                     component.set("v.SpinnerForSync",false);
@@ -55,7 +55,7 @@
             });
             $A.enqueueAction(cadence);
         }else{
-            var cadence = { 'sobjectType': 'RDNACadence2__Cadence__c', 'Name': '','RDNACadence2__Record_Type__c':'', 'RDNACadence2__Participent_Activation__c':''};
+            var cadence = { 'sobjectType': 'Sequence'};
             component.set("v.cadence", cadence);
         }
     },
@@ -64,14 +64,14 @@
         var phRow = document.getElementsByClassName('ringdna-phone-td');  
         var rawData = component.get('v.pData');
         var cadencedata = component.get('v.cadence');
-        var cadencActions = cadencedata.RDNACadence2__CadenceActions__r;
+        var cadencActions = cadencedata.cadenceActions;
         var templateId ;
         var actionType;
         if(cadencActions.length>0){
-            templateId = cadencActions[0].RDNACadence2__Action_Id__r.RDNACadence2__Template_Id__c;
-            actionType = cadencActions[0].RDNACadence2__Action_Id__r.RDNACadence2__Type__c;
+            templateId = cadencActions[0].actiontemplateId;
+            actionType = cadencActions[0].actiontype;
         }
-       
+        
         for (var index = 0; index < phRow.length ; index++){
             try {
                 var rdpElement = phRow[index];
@@ -163,7 +163,7 @@
         var cadenceObj = component.get("v.cadence");
         var cadence = component.get("c.getObjCriList");
         component.set("v.SpinnerForSync",true);
-        cadence.setParams({objectType: cadenceObj.RDNACadence2__Record_Type__c});
+        cadence.setParams({objectType: cadenceObj.recordType});
         cadence.setCallback(this, function(response){
             var state = response.getState();
             if(state === 'SUCCESS'){                
