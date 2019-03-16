@@ -24,7 +24,7 @@
     <aura:attribute name="childRecordType" type="String" default="" />
     
     <!--Event attribute -->
-    <aura:registerEvent name="DynamicFieldRowEvent" type="RDNACadence:DynamicFieldRowEvent"/>
+    <aura:registerEvent name="DynamicFieldRowEvent" type="c:DynamicFieldRowEvent"/>
     
     <!-- <aura:handler name="change" value="{!v.fieldList}" action="{!c.setPicklistValues}"/> --> 
     <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>

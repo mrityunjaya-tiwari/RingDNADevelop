@@ -1,6 +1,8 @@
 public with sharing class CadenceController {
     public static String nameSpace = CadenceConstants.NAMESPACE;
     public static Set<String>  listOfOppContactIds;
+    private static string contactRole ='';
+    
     @AuraEnabled
     public static cadenceDataWrapper getCadenceData(Id cadenceId){
         cadenceDataWrapper adWObj = new cadenceDataWrapper();
@@ -106,24 +108,27 @@ public with sharing class CadenceController {
         }
 
         List<SObject> sObjectListToUpdate = new List<SObject>();
-        
-        for(Sobject obj : Database.query(query2 + ' order by lastmodifieddate limit 100')){
-            obj.put(nameSpace+'Cadence_Id__c', cadence.Id);
-            if(cadence.Participent_Activation__c.equalsIgnoreCase(CadenceConstants.PARTICIPANT_ACTIVATION_AUTOMATIC)) {
-                obj.put(nameSpace+'isActivated__c', true);
-                obj.put(nameSpace+'EntranceCriteria_Matched_Date__c', System.now());
-                objIdToAllCadActListMap.put((Id)obj.get('Id'), cadence.CadenceActions__r);
-            } else {
-                obj.put(nameSpace+'isActivated__c', false);
+        if(query2 != null && query2 != ''){
+            for(Sobject obj : Database.query(query2 + ' order by lastmodifieddate limit 100')){
+                System.debug('formQueryOpportunity:obj:'+obj);
+                obj.put(nameSpace+'Cadence_Id__c', cadence.Id);
+                if(cadence.Participent_Activation__c.equalsIgnoreCase(CadenceConstants.PARTICIPANT_ACTIVATION_AUTOMATIC)) {
+                    obj.put(nameSpace+'isActivated__c', true);
+                    obj.put(nameSpace+'EntranceCriteria_Matched_Date__c', System.now());
+                    objIdToAllCadActListMap.put((Id)obj.get('Id'), cadence.CadenceActions__r);
+                } else {
+                    obj.put(nameSpace+'isActivated__c', false);
+                }
+                sObjectListToUpdate.add(obj);
             }
-            sObjectListToUpdate.add(obj);
+            if(!objIdToAllCadActListMap.isEmpty()) {
+                List<Sequence_Action__c> testcreateActionParticipants =CadenceService.createActionParticipants(objIdToAllCadActListMap, new Map<Id, SObject>(sObjectListToUpdate), objName);
+            }
+            if(sObjectListToUpdate !=  null && sObjectListToUpdate.size() > 0) {
+                update sObjectListToUpdate; 
+            }
         }
-        if(!objIdToAllCadActListMap.isEmpty()) {
-            List<Sequence_Action__c> testcreateActionParticipants =CadenceService.createActionParticipants(objIdToAllCadActListMap, new Map<Id, SObject>(sObjectListToUpdate), objName);
-        }
-        if(sObjectListToUpdate !=  null && sObjectListToUpdate.size() > 0) {
-            update sObjectListToUpdate; 
-        }
+        
     }
     
     @AuraEnabled
@@ -185,7 +190,15 @@ public with sharing class CadenceController {
                         if(mapofCriterion.get(num).fieldDataType == 'phone') {
                             query += '(';
                         }
-                        query = query + mapofCriterion.get(num).fieldName;
+                         if(mapofCriterion.get(num).fieldName.equalsIgnoreCase('OpportunityContactRole.Role') && cadence != null && cadence.Record_Type__c.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_OBJECT_NAME)){
+                             System.debug('test query'+query);
+                             if(query.endsWithIgnoreCase(' AND '))
+                                 query = query.removeEndIgnoreCase(' AND ');
+                                 else if(query.endsWithIgnoreCase(' OR '))
+                                 query = query.removeEndIgnoreCase(' OR ');
+                            contactRole = mapofCriterion.get(num).value;
+                        }else{
+                             query = query + mapofCriterion.get(num).fieldName;
                         
                         if(mapofCriterion.get(num).operation == 'contains'){
                             if(mapofCriterion.get(num).fieldDataType =='picklist' )
@@ -283,7 +296,8 @@ public with sharing class CadenceController {
                                 }
                                 query = query + ' '+temp +' ';
                             }
-                        } 
+                        }
+                    	}
                     }   
                 }
             }        
@@ -301,7 +315,7 @@ public with sharing class CadenceController {
     public static List<String> getObjectListByType(String type){
         List<String> objectList = new List<String>(); 
         if(type == CadenceConstants.OPPORTUNITY_OBJECT_NAME){
-           objectList =new List<String>{CadenceConstants.OPPORTUNITY_OBJECT_NAME,CadenceConstants.ACCOUNT_OBJECT_NAME,CadenceConstants.CONTRACT_OBJECT_NAME,CadenceConstants.PRICE_BOOK_OBJECT_NAME };
+           objectList =new List<String>{CadenceConstants.OPPORTUNITY_OBJECT_NAME,CadenceConstants.ACCOUNT_OBJECT_NAME,CadenceConstants.CONTRACT_OBJECT_NAME,CadenceConstants.PRICE_BOOK_OBJECT_NAME,CadenceConstants.CAMPAIGN_OBJECT_NAME,'OpportunityContactRole' };
         } else if(type == CadenceConstants.LEAD_OBJECT_NAME ){
            objectList =new List<String>{CadenceConstants.LEAD_OBJECT_NAME,CadenceConstants.DB_OBJECT_NAME };
         } else if(type == CadenceConstants.CONTACT_OBJECT_NAME ){
@@ -318,20 +332,31 @@ public with sharing class CadenceController {
             listOfOppContactIds = new set<String>();
             List<Opportunity> listOfopprtunityToUpdate = new List<Opportunity>();
             List<Opportunity> listOfopprtunity = Database.query(opporQuery);
-            
-            for(OpportunityContactRole oppCont : [Select ContactId,OpportunityId From OpportunityContactRole Where OpportunityId In :(listOfopprtunity)]){
+            System.debug('listOfopprtunity'+listOfopprtunity);
+            String oppContactRoleQuery;
+            if(contactRole!='')
+            	oppContactRoleQuery='Select ContactId,OpportunityId From OpportunityContactRole Where OpportunityId In :listOfopprtunity and Role =\''+String.escapeSingleQuotes(contactRole)+'\'';    
+            else{
+                 oppContactRoleQuery='Select ContactId,OpportunityId From OpportunityContactRole Where OpportunityId In :listOfopprtunity';   
+			}
+            System.debug('oppContactRoleQuery'+oppContactRoleQuery);
+            Set<String> setForDuplicateCheck =  new Set<String>();
+            for(OpportunityContactRole oppCont : Database.query(oppContactRoleQuery)){
                 if(oppCont.ContactId != null){
                     listOfOppContactIds.add(String.valueOf(oppCont.ContactId));
-                    Opportunity opp= new Opportunity(id=oppCont.OpportunityId,Cadence_Id__c=cadence.Id);
-                    listOfopprtunityToUpdate.add(opp);
+                    if(!setForDuplicateCheck.contains(oppCont.OpportunityId)){
+                        Opportunity opp= new Opportunity(id=oppCont.OpportunityId,Cadence_Id__c=cadence.Id);
+                    	listOfopprtunityToUpdate.add(opp);
+                    	setForDuplicateCheck.add(oppCont.OpportunityId);
+                    }
                 }
-                
             }
+            System.debug('listOfopprtunityToUpdate'+listOfopprtunityToUpdate);
             
             if(listOfopprtunityToUpdate != null && listOfopprtunityToUpdate.size() > 0){
                 update listOfopprtunityToUpdate;
             }
-            
+             System.debug('listOfOppContactIds'+listOfOppContactIds);
             if(listOfOppContactIds != null && listOfOppContactIds.size() > 0){
                 objName =CadenceConstants.CONTACT_OBJECT_NAME;
                 query = 'Select Cadence_ID__c,isActivated__c,EntranceCriteria_Matched_Date__c from '+ objName +' Where (Cadence_ID__c = null) AND Id In :listOfOppContactIds';
@@ -364,7 +389,8 @@ public with sharing class CadenceController {
         }
         
         if(query == null){
-            query = 'Select Cadence_ID__c,isActivated__c,EntranceCriteria_Matched_Date__c from '+ objName +' Where (Cadence_ID__c = null)';
+            //query = 'Select Cadence_ID__c,isActivated__c,EntranceCriteria_Matched_Date__c from '+ objName +' Where (Cadence_ID__c = null)';
+        	query='';
         }
         
         return query;

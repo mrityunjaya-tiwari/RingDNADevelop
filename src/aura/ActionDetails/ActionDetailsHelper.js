@@ -171,7 +171,7 @@
             window.history.go(-1);
             /* var evt = $A.get("e.force:navigateToComponent");
             evt.setParams({
-                componentDef : "RDNACadence4:CadenceActionList" ,
+                componentDef : "c:CadenceActionList" ,
                 componentAttributes : {
                 }
             });
@@ -188,7 +188,7 @@
         else if(myUserContext == undefined) {
             var evt = $A.get("e.force:navigateToComponent");
             evt.setParams({
-                componentDef : "RDNACadence4:ActionDetailView" ,
+                componentDef : "c:ActionDetailView" ,
                 componentAttributes : {
                     "recordId" : id
                 }

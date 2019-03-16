@@ -1,3 +1,3 @@
 <aura:application access="global" extends="ltng:outApp" >
-	<aura:dependency resource="RDNACadence2:TargetList"/>
+	<aura:dependency resource="c:TargetList"/>
 </aura:application>

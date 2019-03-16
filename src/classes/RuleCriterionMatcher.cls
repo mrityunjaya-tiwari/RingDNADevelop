@@ -51,32 +51,38 @@ public with sharing class RuleCriterionMatcher {
             cadToUpdate = RuleCriterionMatcherHelper.getPriorityCadence(matchingCadences);
         }
         
-        //Setting matching cadence data to participant
         partObj.put(nameSpace+'Cadence_Id__c', cadToUpdate.Id); 
         
-        if(cadToUpdate.Participent_Activation__c.equalsIgnoreCase(CadenceConstants.PARTICIPANT_ACTIVATION_AUTOMATIC)) {
-            partObj.put(nameSpace+'isActivated__c', true);
-            partObj.put(nameSpace+'EntranceCriteria_Matched_Date__c', System.now());
-        } else {
-            partObj.put(nameSpace+'isActivated__c', false);
+        if(!objName.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_OBJECT_NAME)){
+            //Setting matching cadence data to participant
+            if(cadToUpdate.Participent_Activation__c.equalsIgnoreCase(CadenceConstants.PARTICIPANT_ACTIVATION_AUTOMATIC)) {
+                partObj.put(nameSpace+'isActivated__c', true);
+                partObj.put(nameSpace+'EntranceCriteria_Matched_Date__c', System.now());
+            } else {
+                partObj.put(nameSpace+'isActivated__c', false);
+            }
         }
-        
         return cadToUpdate;  
     }
 	  
 	public static SObject matchExitCriterion(Cadence__c cad, SObject partObj, SObject parentObj, String objName) {
-		
+		System.debug('matchExitCriterion:##');
 		//Returning if given cad is null
 		if(cad == null) {
 			return null;
 		} 
-
+		System.debug('matchExitCriterion:##12');
 		//Getting cadence criterion for cadence		
 		Map<Id, CriterionSet> cadCriterion = RuleCriterionMatcherHelper.getCadenceWiseCriterions(new List<Cadence__c>{cad}, CadenceConstants.CRITERION_TYPE_EXIT);
-
+		System.debug('matchExitCriterion:##cadCriterion='+cadCriterion);
+        
+        //matchExitCriterion
+        
 		//Checking for exit Cadence Criterion mathcing or not 
 		Boolean isCriterionMatches = RuleCriterionMatcherHelper.cadenceCriterionMatches(partObj, parentObj, cadCriterion.get(cad.Id));
 		
+        System.debug('Exit isCriterionMatches='+isCriterionMatches);
+        
 		//Removing cadence details from participnat if it matches it's exit criterion 
 		if(isCriterionMatches) {
 			//partObj.put('CadencePerformed__c', true);
@@ -85,6 +91,20 @@ public with sharing class RuleCriterionMatcher {
 			return partObj;
 		} 
 		return null;
+	}
+	public static Boolean matchExitCriterionOpp(Cadence__c cad, SObject partObj, SObject parentObj, String objName) {
+		System.debug('matchExitCriterion:##New');
+        
+		//Returning if given cad is null
+		if(cad == null) {
+			return null;
+		} 
+		System.debug('matchExitCriterion:##12');
+		//Getting cadence criterion for cadence		
+		Map<Id, CriterionSet> cadCriterion = RuleCriterionMatcherHelper.getCadenceWiseCriterions(new List<Cadence__c>{cad}, CadenceConstants.CRITERION_TYPE_EXIT);
+		System.debug('matchExitCriterion:##cadCriterion='+cadCriterion);
+        Boolean isCriterionMatches = RuleCriterionMatcherHelper.cadenceCriterionMatches(partObj, parentObj, cadCriterion.get(cad.Id));
+		return isCriterionMatches;
 	}
 	
 	public static List<CadenceAction__c> getMatchingActions(Cadence__c cad, SObject obj, SObject parentObj, String objName, List<Sequence_Action__c> partActions) {

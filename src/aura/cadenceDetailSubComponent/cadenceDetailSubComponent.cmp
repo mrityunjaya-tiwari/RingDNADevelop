@@ -1,6 +1,6 @@
 <aura:component >
     <!--Event attribute -->
-    <aura:registerEvent name="cadDynamicRowEvent" type="RDNACadence2:CadDynamicRowEvent"/>
+    <aura:registerEvent name="cadDynamicRowEvent" type="c:CadDynamicRowEvent"/>
     <aura:method name="validateForm" action="{!c.validateForm}"/>
 
     <!--Action Objects -->

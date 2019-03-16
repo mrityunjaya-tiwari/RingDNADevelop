@@ -1,7 +1,7 @@
 <aura:component controller = 'CadenceDetailsController' access="global">
     <aura:handler name="init" action="{!c.doInit}" value="{!this}"/> 
     <!--Event attribute -->
-    <aura:registerEvent name="RecordTypeChangeEvent" type="RDNACadence4:RecordTypeChangeEvent"/>
+    <aura:registerEvent name="RecordTypeChangeEvent" type="c:RecordTypeChangeEvent"/>
     <aura:method name="validateForm" action="{!c.validateForm}"/>
     <!-- Disabled proerty-->
     <aura:attribute name = "isDisabled" type = "Boolean" default = "false"/>
@@ -19,7 +19,7 @@
     <aura:attribute name="refreshParticipant" type="Boolean"/>
     <!--create a component attributs -->
     <aura:attribute name="spinner" type="boolean" default="false"/>
-    <RDNACadence4:SpinnerComponent spinnerSync = "{!v.spinner}"/>
+    <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>
     
     <aura:attribute name="pData" type="List"/>
     <aura:attribute name="settedSequenceType" type="Boolean" default= "false"/>
@@ -80,7 +80,7 @@
                 </div>
             </div>
             <aura:if isTrue="{!v.isShowParticipantsTable}">
-                <RDNACadence4:ParticipantsList aura:id="partList" recordId="{!v.newCadence.id}" pData="{!v.pData}" toggleRows = "{!v.toggleRows}" hideCheckboxes="{!not(v.newCadence.status)}" refreshParticipant = "{!v.refreshParticipant}"/>	 
+                <c:ParticipantsList aura:id="partList" recordId="{!v.newCadence.Id}" pData="{!v.pData}" toggleRows = "{!v.toggleRows}" hideCheckboxes="{!not(v.newCadence.RDNACadence2__Status__c)}" refreshParticipant = "{!v.refreshParticipant}"/>	 
             </aura:if>
         </form>
     </fieldset>

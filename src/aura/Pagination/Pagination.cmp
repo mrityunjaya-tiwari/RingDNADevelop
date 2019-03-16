@@ -3,7 +3,7 @@
     <!--<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>-->
     <aura:handler name="change" value="{!v.total}" action="{!c.doInit}"/>
     
-    <aura:registerEvent name="cadencePagination" type="RDNACadence2:CadPagination"/>
+    <aura:registerEvent name="cadencePagination" type="c:CadPagination"/>
     
     <aura:attribute name="page" type="integer" description="using for store page Number" default="1"/>
     <aura:attribute name="pages" type="integer" description="using for store All Pages page Number" default="0"/>

@@ -1,4 +1,4 @@
-<aura:component controller="RDNACadence4.ActionDetailViewCtrl" implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,force:hasRecordId,lightning:actionOverride,force:appHostable" access="global"> 
+<aura:component controller="ActionDetailViewCtrl" implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,force:hasRecordId,lightning:actionOverride,force:appHostable" access="global"> 
 	
     
     <!--Action Objects -->
@@ -18,12 +18,12 @@
     <aura:attribute name="partRowsToLoad" type="Integer" default="5"/>				<!--Rows per page-->
     <!--create a component attributs -->
     <aura:attribute name="spinner" type="boolean" default="false"/>
-    <RDNACadence2:SpinnerComponent spinnerSync = "{!v.spinner}"/>
+    <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>
     
     <aura:attribute name="setCompanyRow" type="boolean" default = "false"/>
     <aura:handler name="change" value="{!v.setCompanyRow}" action="{!c.setCompanyRow}"/> 
     <aura:attribute name="data" type="List"/>
-    <aura:handler name="cadencePagination" event="RDNACadence2:CadPagination" action="{!c.handlePagination}"/>
+    <aura:handler name="cadencePagination" event="c:CadPagination" action="{!c.handlePagination}"/>
     <aura:handler name="change" value="{!v.data}" action="{!c.handlePagination}"/> 
     <aura:attribute name="themeName" type="String"/>
     <!-- PAGE HEADER -->
@@ -38,7 +38,7 @@
                 
                 <!-- HEADING AREA -->
                 <p class="slds-line-height_reset rdna-header-small slds-p-left_xx-small">Actions</p>
-                <h1 class="slds-page-header__title slds-m-right_small slds-align-middle slds-truncate rdna-header-large">{!v.record.name}</h1>
+                <h1 class="slds-page-header__title slds-m-right_small slds-align-middle slds-truncate rdna-header-large">{!v.record.Name}</h1>
                 <!-- / HEADING AREA -->
             </div>
             <!-- <lightning:button aura:id="newAction" label="Share" onclick="{!c.shareAction}"/> -->
@@ -56,24 +56,24 @@
 	            <div class="slds-grid slds-gutters slds-m-top_medium slds-grid_align-spread">
 	                <div class="slds-col slds-size_3-of-12">
 	                    <p class="slds-line-height_reset slds-m-bottom_xx-small field-label">Action Name</p>
-	                    <span class="field-value">{!v.record.name}</span>
+	                    <span class="field-value">{!v.record.Name}</span>
 	                </div>
 	                <div class="slds-col slds-size_3-of-12">
 	                    <p class="slds-line-height_reset slds-m-bottom_xx-small field-label">Type</p>
-	                    <span class="field-value">{!v.record.type}</span>
+	                    <span class="field-value">{!v.record.RDNACadence2__Type__c}</span>
 	                </div>
 	                <div class="slds-col slds-size_3-of-12">
 	                    <p class="slds-line-height_reset slds-m-bottom_xx-small field-label">Template</p>
-                        <aura:if isTrue = "{!v.record.type == 'Email'}">
-                            <span class="field-value"> <a class="rdna-bgcolor" href="{!'/' + v.record.templateId}" target="_blank">{!v.record.templateName}</a></span>
+                        <aura:if isTrue = "{!v.record.RDNACadence2__Type__c == 'Email'}">
+                            <span class="field-value"> <a class="rdna-bgcolor" href="{!'/' + v.record.RDNACadence2__Template_Id__c}" target="_blank">{!v.record.RDNACadence2__Template_Name__c}</a></span>
                             <aura:set attribute="else">
-                                <span class="field-value">{!v.record.templateName}</span>
+                                <span class="field-value">{!v.record.RDNACadence2__Template_Name__c}</span>
                             </aura:set>
                         </aura:if>
 	                </div>
    	                <div class="slds-col slds-size_3-of-12">
 	                    <p class="slds-line-height_reset slds-m-bottom_xx-small field-label">Activation Type</p>
-	                    <span class="field-value">{!v.record.activationType}</span>
+	                    <span class="field-value">{!v.record.RDNACadence2__Activation_Type__c}</span>
 	                </div>
 	            </div>
 	 
@@ -82,7 +82,7 @@
                 <p class=" rdna-field-values rdna-link-height slds-m-top_x-small">List of all related sequence lists associated with this action.</p>
 
 	            <div class="slds-m-top_medium slds-p-right_medium">
-	    			<RDNACadence4:Datatable columns = "{!v.cadColumns}" rawData = "{!v.cadRawData}" rowsToLoad = "{!v.cadRowsToLoad}" hideCheckboxColumn = "true" aura:id = "datatable1"/>    
+	    			<c:Datatable columns = "{!v.cadColumns}" rawData = "{!v.cadRawData}" rowsToLoad = "{!v.cadRowsToLoad}" hideCheckboxColumn = "true" aura:id = "datatable1"/>    
 				</div>
 				
 				<!-- Participant datatable -->         
@@ -90,7 +90,7 @@
                 <p class=" rdna-field-values rdna-link-height slds-m-top_x-small">List of all related participants associated with this action.</p>
 
 	            <div class="slds-m-top_medium slds-p-bottom_medium slds-p-right_medium">
-	    			<RDNACadence2:Datatable columns = "{!v.partColumns}" 
+	    			<c:Datatable columns = "{!v.partColumns}" 
                                            rawData = "{!v.partRawData}"  data="{!v.data}" 
                                            rowsToLoad = "{!v.partRowsToLoad}" hideCheckboxColumn = "true" aura:id = "datatable2"/>    
 				</div>

@@ -12,7 +12,7 @@ public class Contacts  extends SObjectDomain {
         Map<String, List<Contact>> contList = CadenceService.processObjectList(sObjectList);
         contsWithCadence = contList.get('contactListWithCadenceIds');
         contsWithoutCadence = contList.get('contactListWithoutCadenceIds');
-        cadMap = CadenceSelector.getActiveCadencesByRecordType(New List<String>{CadenceConstants.CONTACT_OBJECT_NAME,'Opportunity'});
+        cadMap = CadenceSelector.getActiveCadencesByRecordType(New List<String>{CadenceConstants.CONTACT_OBJECT_NAME,CadenceConstants.OPPORTUNITY_OBJECT_NAME});
         CadenceService.processParticipantActivation(cadMap, contsWithCadence, CadenceConstants.CONTACT_OBJECT_NAME);
     }
    

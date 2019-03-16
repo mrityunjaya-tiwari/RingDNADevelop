@@ -29,9 +29,9 @@
     <!--Show criteria fields of action -->
     <aura:attribute name="setCriteriaFields" type="Boolean" default="false"/>
     <!--Event attribute -->
-    <aura:registerEvent name="cadDynamicRowEvent" type="RDNACadence4:CadDynamicRowEvent"/>
+    <aura:registerEvent name="cadDynamicRowEvent" type="c:CadDynamicRowEvent"/>
     <!-- Handle event -->
-    <aura:handler name="cadDynamicRowEvent" event="RDNACadence4:CadDynamicRowEvent" action="{!c.handleCadDynamicRowEvent}"/>
+    <aura:handler name="cadDynamicRowEvent" event="c:CadDynamicRowEvent" action="{!c.handleCadDynamicRowEvent}"/>
     <!--Cadence Objects -->
     <aura:attribute name="newCadence" type="Sequence" default="{ 'sobjectType': 'Sequence'}"/>
     <!--List to create fields to update row-->
@@ -240,7 +240,7 @@
                                         </div>
                                     </aura:if>
                                 </div></aura:if>
-                            
+                        
                             
                             
                             <span class="slds-p-top_medium slds-page-header__row rdna-field-values-bold rdna-set-line-height slds-truncate">Criteria</span>
@@ -257,22 +257,25 @@
                                     <div class = "slds-form-element__row slds-size_1-of-1">
                                         <aura:if isTrue="{!v.setCriteriaFields}">
                                             <aura:if isTrue="{!not(empty(v.UpdateFieldList))}">
-                                                <RDNACadence4:CriterionComponent aura:id="actionCriterionComponent" 
+                                                <c:CriterionComponent aura:id="actionCriterionComponent" 
                                                                                  AllFieldList = "{!v.UpdateFieldList}"  
-                                                                                 criteriaType="Action Criteria" 
-                                                                                 criteriaSet="{!v.entranceCriteriaSet}"  
-                                                                                 cadence="{!v.newCadence}"
-                                                                                 leadFieldList="{!v.leadFieldList}"  
-                                                                                 contactFieldList="{!v.contactFieldList}"
-                                                                                 dbFieldList="{!v.dbFieldList}"
-                                                                                 accountFieldList="{!v.accountFieldList}"
-                                                                                 isViewMode = "{!v.isDisabled}"/>
+                                                                                criteriaType="Action Criteria" 
+                                                                                criteriaSet="{!v.entranceCriteriaSet}"  
+                                                                                cadence="{!v.newCadence}"
+                                                                                leadFieldList="{!v.leadFieldList}"  
+                                                                                contactFieldList="{!v.contactFieldList}"
+                                                                                dbFieldList="{!v.dbFieldList}"
+                                                                                accountFieldList="{!v.accountFieldList}"
+                                                                                isViewMode = "{!v.isDisabled}"/>
                                             </aura:if> 
                                         </aura:if>
                                     </div>
                                 </div>
                             </aura:if>
                         </form>
+                        
+                        
+                        
                     </fieldset>
                 </div>
             </div>

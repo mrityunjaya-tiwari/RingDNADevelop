@@ -44,7 +44,7 @@
                     } else{
                         var evt = $A.get("e.force:navigateToComponent");
                         evt.setParams({
-                            componentDef  : "RDNACadence:ErrorPage" ,
+                            componentDef  : "c:ErrorPage" ,
                             componentAttributes : {
                             }
                         });
@@ -163,7 +163,7 @@
         var cadenceObj = component.get("v.cadence");
         var cadence = component.get("c.getObjCriList");
         component.set("v.SpinnerForSync",true);
-        cadence.setParams({objectType: cadenceObj.recordType});
+        cadence.setParams({objectType: cadenceObj.RDNACadence2__Record_Type__c});
         cadence.setCallback(this, function(response){
             var state = response.getState();
             if(state === 'SUCCESS'){                
