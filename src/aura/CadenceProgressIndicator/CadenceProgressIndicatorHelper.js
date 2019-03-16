@@ -84,7 +84,7 @@
                 else if(myUserContext == undefined){
                     var evt = $A.get("e.force:navigateToComponent");
                     evt.setParams({
-                        componentDef : "RDNACadence4:CadenceComponent",
+                        componentDef : "c:CadenceComponent",
                         componentAttributes : {
                             "recordId" : recordId,
                             "isEdit" : false

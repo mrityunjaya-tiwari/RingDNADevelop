@@ -68,10 +68,11 @@ public class ActionDetailControllerTest {
     
     @isTest
     public static void getFieldsWithLabelsTest() {
- 
-		List<Criterion> fieldsWithLabels;
+        List<CriterionWrapper> fieldsWithLabels;
+        List<String> objectList = new List<String>();
+        objectList =new List<String>{CadenceConstants.LEAD_OBJECT_NAME,CadenceConstants.DB_OBJECT_NAME };
     	Test.startTest();
-		fieldsWithLabels = CadenceService.getFieldsWithLabels('Account');
+		fieldsWithLabels = CadenceService.getFieldsWithLabels(objectList);
     	Test.stopTest();
     	
     	System.assertEquals(true, fieldsWithLabels!=null);

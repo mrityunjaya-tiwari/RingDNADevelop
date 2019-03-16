@@ -1,4 +1,4 @@
-<aura:component controller="RDNACadence2.CadenceActionListController" implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction,force:appHostable" access="global"> 
+<aura:component controller="CadenceActionListController" implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction,force:appHostable" access="global"> 
     <!-- attributes -->
     <aura:attribute name="moretabs" type="Aura.Component[]"/>
 	<aura:attribute name="data" type="Object" default="" access="global"/>
@@ -30,10 +30,10 @@
     
     <!--handlers-->
     <aura:handler name="init" value="{! this }" action="{! c.init }"/>
-    <aura:handler name="cadencePagination" event="RDNACadence2:CadPagination" action="{!c.handleComponentEvent}"/>
+    <aura:handler name="cadencePagination" event="c:CadPagination" action="{!c.handleComponentEvent}"/>
     <!--create a component attributs -->
     <aura:attribute name="spinner" type="boolean" default="false"/>
-    <RDNACadence2:SpinnerComponent spinnerSync = "{!v.spinner}"/>
+    <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>
    
    	<!-- PAGE HEADER -->
     <div class="slds-page-header" style="background-color: #fafafa">
@@ -82,7 +82,7 @@
 			                         sortedDirection="{!v.sortedDirection}"/>
 		</div>
 	    <div class="rdna-bottom-padding">
-		     <RDNACadence2:Pagination total="{!v.totalNumberOfRows}" pageOffset="{!v.rowsToLoad}"/>
+		     <c:Pagination total="{!v.totalNumberOfRows}" pageOffset="{!v.rowsToLoad}"/>
 	    </div>
     </div>
 	<!-- / PAGE HEADER -->   

@@ -42,7 +42,7 @@
                 } else{
                 var evt = $A.get("e.force:navigateToComponent");
                 evt.setParams({
-                    componentDef  : "RDNACadence4:ErrorPage" ,
+                    componentDef  : "c:ErrorPage" ,
                     componentAttributes : {
                     }
                 });
@@ -65,7 +65,7 @@
             //var evt = $A.get("e.force:navigateToComponent");
             var evt = $A.get("e.force:navigateToComponent");
             evt.setParams({
-                componentDef  : "RDNACadence4:ActionDetails" ,
+                componentDef  : "c:ActionDetails" ,
                 componentAttributes : {
                     "recordId" : id
                 }
@@ -77,7 +77,7 @@
         
         var evt = $A.get("e.force:navigateToComponent");
         evt.setParams({
-            componentDef  : "RDNACadence4:CadenceActionList" ,
+            componentDef  : "c:CadenceActionList" ,
             componentAttributes : {
             }
         });

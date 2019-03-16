@@ -2,9 +2,9 @@
     
     <!-- handlers -->
     <aura:handler name="init" value="{! this }" action="{! c.doInit }"/>
-    <aura:registerEvent name="datatableEvt" type="RDNACadence:DatatableEvent"/>
+    <aura:registerEvent name="datatableEvt" type="c:DatatableEvent"/>
     <aura:handler name="change" value="{! v.rawData }" action="{!c.doInit}"/>
-    <aura:handler name="cadencePagination" event="RDNACadence:CadPagination" action="{!c.handleComponentEvent}"/>
+    <aura:handler name="cadencePagination" event="c:CadPagination" action="{!c.handleComponentEvent}"/>
     
     <!-- datatable attributes -->
     <aura:attribute name="title" type="String"/>
@@ -110,16 +110,15 @@
         </aura:set>
     </aura:if>
     
-    <!-- <aura:if isTrue = "{!v.totalNumberOfRows > 0}"> -->
     <aura:if isTrue = "{!empty(v.rawData)}">
         <div>
-            <RDNACadence:Pagination total="{!v.totalNumberOfRows}" pageOffset="{!v.rowsToLoad}"/>	
+            <c:Pagination total="{!v.totalNumberOfRows}" pageOffset="{!v.rowsToLoad}"/>	
         </div>
         
         <aura:set attribute="else">
             <div>
-                <RDNACadence:Pagination total="{!v.totalNumberOfRows}" pageOffset="{!v.rowsToLoad}" selectedNoOfRecords="{!v.selectedNoOfRecords}"/>	
+                <c:Pagination total="{!v.totalNumberOfRows}" pageOffset="{!v.rowsToLoad}" selectedNoOfRecords="{!v.selectedNoOfRecords}"/>	
             </div>
         </aura:set>
-    </aura:if><!--</aura:if>-->
+    </aura:if>
 </aura:component>

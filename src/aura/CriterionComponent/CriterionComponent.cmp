@@ -28,7 +28,7 @@
     <aura:method name="validateCriterion" action="{!c.validateCriterion}" access="public" />
     
     <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
-    <aura:handler name="DynamicFieldRowEvent" event="RDNACadence4:DynamicFieldRowEvent" action="{!c.handleDynamicRowEvent}"/>
+    <aura:handler name="DynamicFieldRowEvent" event="c:DynamicFieldRowEvent" action="{!c.handleDynamicRowEvent}"/>
     <fieldset class="slds-form-element slds-form_compound">
         <form class="slds slds-form slds-m-left_large">
             <div class="slds-size_1-of-1" >
@@ -79,7 +79,7 @@
                 <div class="" >
                     <div class="slds-size_1-of-1">
                         <aura:if isTrue="{!v.criteriaSet}">
-                            <RDNACadence4:ConditionLogic aura:id="customLogic" isViewMode="{!v.isViewMode}" criteriaType="{!v.criteriaType}" selectedCondition="{!v.criteriaSet.condition}" criterionPriorityFormula="{!v.criteriaSet.criterionPriorityFormula}" criteriaListCount="{!v.criteriaListCount}"/>
+                            <c:ConditionLogic aura:id="customLogic" isViewMode="{!v.isViewMode}" criteriaType="{!v.criteriaType}" selectedCondition="{!v.criteriaSet.condition}" criterionPriorityFormula="{!v.criteriaSet.criterionPriorityFormula}" criteriaListCount="{!v.criteriaListCount}"/>
                         </aura:if>
                     </div>
                 </div>

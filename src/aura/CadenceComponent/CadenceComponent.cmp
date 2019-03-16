@@ -1,5 +1,5 @@
-<aura:component controller="RDNACadence4.CadenceController" implements="force:appHostable,lightning:actionOverride,force:hasRecordId,flexipage:availableForRecordHome,flexipage:availableForAllPageTypes" access="global">
     <aura:attribute name="cadence" type="Sequence"  default="{ 'sobjectType': 'Sequence'}"/>
+<aura:component controller="CadenceController" implements="force:appHostable,lightning:actionOverride,force:hasRecordId,flexipage:availableForRecordHome,flexipage:availableForAllPageTypes" access="global">
     <!-- Cadence Id -->
     <aura:attribute name="recordId" type="String" />
     <aura:handler name="init" action="{!c.doInit}" value="{!this}"/> 
@@ -20,14 +20,14 @@
     <aura:attribute name= "newSequence" type="Boolean" default= "false"/>
     <aura:attribute name="currentStep" type="string" default="1"/>
     <!--Event handler-->    
-    <aura:handler name="CadenceComponentEvt" event="RDNACadence:CadenceComponentEvt" 
+    <aura:handler name="CadenceComponentEvt" event="c:CadenceComponentEvt" 
                   action="{!c.handleCadenceComponentEvt}"/>
     
-    <aura:handler name="CadenceComponentSaveEvt" event="RDNACadence:CadenceComponentEvt" 
+    <aura:handler name="CadenceComponentSaveEvt" event="c:CadenceComponentEvt" 
                   action="{!c.CadenceComponentSaveEvt}"/>
     <!--create a component attributs -->
     <aura:attribute name="SpinnerForSync" type="boolean" default="false"/>
-    <RDNACadence:SpinnerComponent spinnerSync = "{!v.SpinnerForSync}"/>
+    <c:SpinnerComponent spinnerSync = "{!v.SpinnerForSync}"/>
     <aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
     <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>
     
@@ -42,7 +42,7 @@
     <aura:if isTrue="{!v.isEdit}"><!-- open in new/edit mode -->        
          <aura:if isTrue="{!not(empty(v.entranceCriteriaSet) || empty(v.exitCriteriaSet)	
                          )}"><!-- open in edit mode -->
-            <RDNACadence4:CadenceProgressIndicator newCadence = "{!v.cadence}" 
+            <c:CadenceProgressIndicator newCadence = "{!v.cadence}" 
                                         AllFieldList = "{!v.AllFieldList}"   
                                         cadenceName="{!v.cadence.name}" entranceCriteriaSet="{!v.entranceCriteriaSet}"
                                         exitCriteriaSet="{!v.exitCriteriaSet}" currentStep="{!v.currentStep}"
@@ -50,7 +50,7 @@
                                         dbFieldList="{!v.dbFieldList}" themeName="{!v.themeName}"
                                         isEdit = "{!v.isEdit}" />
             <aura:set attribute="else"><!-- open in new mode -->
-                <RDNACadence4:CadenceProgressIndicator newCadence = "{!v.cadence}" 
+                <c:CadenceProgressIndicator newCadence = "{!v.cadence}" 
                                                       AllFieldList = "{!v.AllFieldList}"   
                                                       newSequence = "{!v.newSequence}"
                                                       settedSequenceType="{!v.settedSequenceType}"
@@ -64,7 +64,7 @@
             
             <aura:if isTrue="{!not(empty(v.entranceCriteriaSet) || empty(v.exitCriteriaSet) 
                              || empty(v.cadence) )}">
-                <RDNACadence4:CadenceTabset aura:id ='tabset' newCadence = "{!v.cadence}"  
+                <c:CadenceTabset aura:id ='tabset' newCadence = "{!v.cadence}"  
                                  AllFieldList = "{!v.AllFieldList}"  
                                  contactFieldList="{!v.contactFieldListCA}" leadFieldList="{!v.leadFieldListCA}"
                                  entranceCriteriaSet="{!v.entranceCriteriaSet}" exitCriteriaSet="{!v.exitCriteriaSet}" 

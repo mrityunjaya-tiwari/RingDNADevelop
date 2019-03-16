@@ -2,7 +2,7 @@
     
     <!-- Handlers -->
     <aura:handler name="init" value="{! this }" action="{! c.doInit }"/>
-    <aura:handler name="datatableEvt" event="RDNACadence2:DatatableEvent" action="{!c.handleDatatableEvent}"/>
+    <aura:handler name="datatableEvt" event="c:DatatableEvent" action="{!c.handleDatatableEvent}"/>
     
     <!-- attributes -->
     <aura:attribute name="recordId" type="Id"/> 
@@ -31,6 +31,6 @@
     </div>
     
     <div class="slds-m-top_medium">
-        <RDNACadence2:Datatable columns = "{!v.columns}" rawData = "{!v.rawData}" data="{!v.pData}"  rowsToLoad="{!v.rowsToLoad}"  aura:id = "datatable1" hideCheckboxColumn = "{!v.hideCheckboxes}"/>    
+        <c:Datatable columns = "{!v.columns}" rawData = "{!v.rawData}" data="{!v.pData}"  rowsToLoad="{!v.rowsToLoad}"  aura:id = "datatable1" hideCheckboxColumn = "{!v.hideCheckboxes}"/>    
     </div>
 </aura:component>

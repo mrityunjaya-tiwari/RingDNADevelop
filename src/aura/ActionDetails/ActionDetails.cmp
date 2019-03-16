@@ -1,6 +1,6 @@
-<aura:component controller="RDNACadence2.ActionDetailController" implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction,force:appHostable" access="global">
+<aura:component controller="ActionDetailController" implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction,force:appHostable" access="global">
     <!--aura init handler , call js "loadData" function on component load, and display data on form-->
-    <aura:handler name="cadDynamicRowEvent" event="RDNACadence2:CadDynamicRowEvent" action="{!c.handleCadDynamicRowEvent}"/>
+    <aura:handler name="cadDynamicRowEvent" event="c:CadDynamicRowEvent" action="{!c.handleCadDynamicRowEvent}"/>
     
     <!-- Disabled property-->
     <aura:attribute name = "isDisabled" type = "Boolean" default = "false"/>
@@ -42,7 +42,7 @@
     <aura:attribute name="themeName" type="String"/>
     <!--create a component attributs -->
     <aura:attribute name="spinner" type="boolean" default="false"/>
-    <RDNACadence2:SpinnerComponent spinnerSync = "{!v.spinner}"/>
+    <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>
     <aura:attribute name="activationtypeList" type="List" default="['Automatic', 'Manual']" />
     <!-- PAGE HEADER -->
     <div class="slds-page-header" style="background-color: #fafafa">
@@ -127,7 +127,7 @@
                         <div class = "slds-form-element slds-size_1-of-1 slds-hide slds-p-bottom_large" aura:id = "createTaskdiv">
                             <aura:iteration items="{!v.listTask}" var="taskObj" indexVar="index">
                                 <div class = "slds-form-element__row slds-size_1-of-1">
-                                    <RDNACadence2:ActionDetailsDynamicRow aura:id="dynamicROw"  taskObj="{!taskObj}" wrapperTaskFields="{!v.wrapperTaskFields}" currentIndex = "{!index}" listPicklistValues="" dataType = ""/>
+                                    <c:ActionDetailsDynamicRow aura:id="dynamicROw"  taskObj="{!taskObj}" wrapperTaskFields="{!v.wrapperTaskFields}" currentIndex = "{!index}" listPicklistValues="" dataType = ""/>
                                 </div>
                             </aura:iteration>
                             <div class = "slds-form-element__row slds-size_1-of-1">

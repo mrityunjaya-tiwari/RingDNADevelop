@@ -11,7 +11,7 @@ public class CadenceActionsControllerTest {
         CadenceActionsController.CadenceActionWrapper cadencewrap;
         CadenceActionsController.UiInputList uiInputwrap;
         Test.startTest();
-        cadencewrap= CadenceActionsController.getActionList();
+        cadencewrap= CadenceActionsController.getActionList('Lead');
         uiInputwrap = CadenceActionsController.createListForUIInput();
         Test.stopTest();
         System.assertEquals(2, cadencewrap.actionList.size(), 'actionlist size must be two');

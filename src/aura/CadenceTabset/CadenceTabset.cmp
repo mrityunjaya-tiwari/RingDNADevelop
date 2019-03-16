@@ -1,7 +1,7 @@
 <aura:component controller = "CadenceController" implements="flexipage:availableForRecordHome,force:hasRecordId,lightning:actionOverride" access="global"> 
     <aura:handler name="init" value="{! this }" action="{! c.init }"/>
     <!--Register event -->
-    <aura:registerEvent name="CadenceComponentEvt" type="RDNACadence4:CadenceComponentEvt"/>
+    <aura:registerEvent name="CadenceComponentEvt" type="c:CadenceComponentEvt"/>
     <!--Cadence Objects -->
     <aura:attribute name="newCadence" type="Sequence" default="{ 'sobjectType': 'Sequence'}"/>
     <!-- set this parameter to make participant table visible-->
@@ -17,7 +17,7 @@
     
     <!-- Method will be call from parent component -->
     <aura:attribute name="showSavePartButton" type="boolean" default="false" />
-    <aura:handler name="datatableEvt" event="RDNACadence2:DatatableEvent" action="{!c.handleDatatableEvent}"/>
+    <aura:handler name="datatableEvt" event="c:DatatableEvent" action="{!c.handleDatatableEvent}"/>
     <aura:attribute name="selectedRows" type="List"/>
     <aura:attribute name="toggleRows" type="List"/> 
     <aura:attribute name="contactFieldList" type="List"/>
@@ -65,25 +65,25 @@
         <div class="slds-m-top_medium">
             <lightning:tabset class="slds-p-top_x-large slds-p-left_xx-large rdna-backgroud" selectedTabId="{!v.tabToVisible}"> 
                 <lightning:tab class="slds topHeaderSmall" label="Sequence Details" id="1">
-                    <RDNACadence2:CadenceDetails aura:id="cadDetails" pData="{!v.pData}" newCadence = "{!v.newCadence}" isDisabled = "{!v.isDisabled}" isShowParticipantsTable="true" toggleRows="{!v.toggleRows}" refreshParticipant="{!v.refreshParticipant}"/>
+                    <c:CadenceDetails aura:id="cadDetails" pData="{!v.pData}" newCadence = "{!v.newCadence}" isDisabled = "{!v.isDisabled}" isShowParticipantsTable="true" toggleRows="{!v.toggleRows}" refreshParticipant="{!v.refreshParticipant}"/>
                 </lightning:tab> 
                 <lightning:tab class="slds topHeaderSmall" label="Entrance Criteria" id="2">
                     <aura:if isTrue="{!not(empty(v.entranceCriteriaSet))}">
-                        <RDNACadence2:CriterionComponent contactFieldList="{!v.contactFieldList}" leadFieldList="{!v.leadFieldList}"  aura:id="entryCriterionComponent" 
+                        <c:CriterionComponent contactFieldList="{!v.contactFieldList}" leadFieldList="{!v.leadFieldList}"  aura:id="entryCriterionComponent" 
                                               criteriaType="Entrance Criteria" criteriaSet="{!v.entranceCriteriaSet}" accountFieldList="{!v.accountFieldList}" 
                                               cadence="{!v.newCadence}" isViewMode="true" dbFieldList="{!v.dbFieldList}" 
-                                              AllFieldList = "{!v.AllFieldList}" />
+                                               AllFieldList = "{!v.AllFieldList}" />
                     </aura:if>
                 </lightning:tab>
                 <lightning:tab class="slds topHeaderSmall" label="Exit Criteria" id="3">
-                    <RDNACadence2:CriterionComponent aura:id="exitCriterionComponent" contactFieldList="{!v.contactFieldList}" leadFieldList="{!v.leadFieldList}"
+                    <c:CriterionComponent aura:id="exitCriterionComponent" contactFieldList="{!v.contactFieldList}" leadFieldList="{!v.leadFieldList}"
                                           criteriaType="Exit Criteria" criteriaSet="{!v.exitCriteriaSet}" accountFieldList="{!v.accountFieldList}"
                                           cadence="{!v.newCadence}" isViewMode="true" dbFieldList="{!v.dbFieldList}"
                                           AllFieldList = "{!v.AllFieldList}" />
                 </lightning:tab> 
                 <lightning:tab class="slds topHeaderSmall" label="Sequence Actions" id="4">
                      <aura:if isTrue="{!not(empty(v.cadenceActionList) )}"> 
-                        <RDNACadence2:CadenceActions aura:id="createCadenceActionComponent" 
+                        <c:CadenceActions aura:id="createCadenceActionComponent" 
                                                     entranceCriteriaSet="{!v.entranceCriteriaSet}" 
                                                     newCadence="{!v.newCadence}" 
                                                     cadenceActionList="{!v.cadenceActionList}"
