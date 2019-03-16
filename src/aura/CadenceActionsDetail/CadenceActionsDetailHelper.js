@@ -182,7 +182,7 @@
         if (cadObj.triggerType == 'Immediate'){
             component.set("v.disableInput",false);
             cadObj.day ='';
-            cadObj.RDNACadence4__Hour__c ='';
+            cadObj.hour ='';
         }else if (cadObj.triggerType == 'Time Based'){
             component.set("v.disableInput",true);
             

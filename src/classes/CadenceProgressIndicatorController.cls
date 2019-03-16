@@ -40,10 +40,7 @@ public class CadenceProgressIndicatorController {
             addActionOnParticipant(cadenceObj, caToInsertMap);
         }
         catch(Exception e){
-            system.debug(e.getStackTraceString());
-            system.debug(e.getCause());
-            system.debug(e.getMessage());
-            system.debug(e.getTypeName());
+            
         }
         return String.valueOf(cadenceObj.Id);
     }
