@@ -4,11 +4,6 @@
     },
     fireRecordTypeChangedEvent: function(component, event, helper) {
         component.set('v.settedSequenceType', true);
-        /*var appEvent = $A.get("e.RDNACadence4:RecordTypeChangeEvent");
-        var cadence = component.get("v.newCadence");
-        appEvent.setParams({
-            "recordType" :  cadence.RDNACadence4__Record_Type__c});
-        appEvent.fire(); */
     }, 
     createListForInput : function (component){
         var fieldList = component.get("c.createListForUIInput");
