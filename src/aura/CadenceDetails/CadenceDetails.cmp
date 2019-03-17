@@ -80,7 +80,7 @@
                 </div>
             </div>
             <aura:if isTrue="{!v.isShowParticipantsTable}">
-                <c:ParticipantsList aura:id="partList" recordId="{!v.newCadence.Id}" pData="{!v.pData}" toggleRows = "{!v.toggleRows}" hideCheckboxes="{!not(v.newCadence.status)}" refreshParticipant = "{!v.refreshParticipant}"/>	 
+                <c:ParticipantsList aura:id="partList" recordId="{!v.newCadence.id}" pData="{!v.pData}" toggleRows = "{!v.toggleRows}" hideCheckboxes="{!not(v.newCadence.status)}" refreshParticipant = "{!v.refreshParticipant}"/>	 
             </aura:if>
         </form>
     </fieldset>

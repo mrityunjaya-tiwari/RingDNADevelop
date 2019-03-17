@@ -97,7 +97,7 @@ public with sharing class RuleCriterionMatcher {
         
 		//Returning if given cad is null
 		if(cad == null) {
-			return null;
+            return false;
 		} 
 		System.debug('matchExitCriterion:##12');
 		//Getting cadence criterion for cadence		

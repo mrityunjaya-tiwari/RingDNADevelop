@@ -13,7 +13,7 @@ global class CadenceScheduler implements schedulable{
             Database.executeBatch(led,1000);
 
 			// Schedule batch for opportunity
-            PerformCadenceActionBatch opportunity=new PerformCadenceActionBatch(new List<string>{CadenceConstants.OPPORTUNITY_OBJECT_NAME, CadenceConstants.ACCOUNT_OBJECT_NAME,CadenceConstants.CONTRACT_OBJECT_NAME,CadenceConstants.PRICE_BOOK_OBJECT_NAME,CadenceConstants.OPPORTUNITY_ROLE_OBJECT_NAME});
+            PerformCadenceActionBatch opportunity=new PerformCadenceActionBatch(new List<string>{CadenceConstants.OPPORTUNITY_OBJECT_NAME, CadenceConstants.ACCOUNT_OBJECT_NAME,CadenceConstants.CONTRACT_OBJECT_NAME,CadenceConstants.PRICE_BOOK_OBJECT_NAME});
             Database.executeBatch(opportunity,1000);
             // Schedule next cadence scheduler
         }

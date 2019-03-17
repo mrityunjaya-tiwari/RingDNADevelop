@@ -60,9 +60,9 @@ public class ActionDetailControllerTest {
     }
     @isTest
     public static void testsaveAction(){
-        Test.startTest();
-        Id actionObj = ActionDetailController.saveAction(act.Name, listTask.get(0));
-        //system.assertEquals(act.Name, actionObj.Name);
+        Test.startTest();        
+        Id actionId = ActionDetailController.saveAction(system.JSON.serialize(act), listTask.get(0));        
+        system.assertNotEquals(null, actionId);
         Test.stopTest();
     }
     

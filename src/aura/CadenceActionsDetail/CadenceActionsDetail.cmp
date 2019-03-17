@@ -92,7 +92,7 @@
             </div>  
         </td>
         <td class="rdna-table-rows rdna-field-values">  
-            <div class="slds-truncate rdna-div" aura:id="detailDiv1" title="Name">{!v.actionObject.Name}</div>
+            <div class="slds-truncate rdna-div" aura:id="detailDiv1" title="Name">{!v.actionObject.name}</div>
         </td>
         <td class="rdna-table-rows rdna-field-values">
             <aura:if isTrue="{!v.cadenceAction.triggerType == 'Immediate'}">

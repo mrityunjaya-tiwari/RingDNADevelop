@@ -38,7 +38,7 @@
                 
                 <!-- HEADING AREA -->
                 <p class="slds-line-height_reset rdna-header-small slds-p-left_xx-small">Actions</p>
-                <h1 class="slds-page-header__title slds-m-right_small slds-align-middle slds-truncate rdna-header-large">{!v.record.Name}</h1>
+                <h1 class="slds-page-header__title slds-m-right_small slds-align-middle slds-truncate rdna-header-large">{!v.record.name}</h1>
                 <!-- / HEADING AREA -->
             </div>
             <!-- <lightning:button aura:id="newAction" label="Share" onclick="{!c.shareAction}"/> -->
@@ -56,7 +56,7 @@
 	            <div class="slds-grid slds-gutters slds-m-top_medium slds-grid_align-spread">
 	                <div class="slds-col slds-size_3-of-12">
 	                    <p class="slds-line-height_reset slds-m-bottom_xx-small field-label">Action Name</p>
-	                    <span class="field-value">{!v.record.Name}</span>
+	                    <span class="field-value">{!v.record.name}</span>
 	                </div>
 	                <div class="slds-col slds-size_3-of-12">
 	                    <p class="slds-line-height_reset slds-m-bottom_xx-small field-label">Type</p>
