@@ -16,7 +16,7 @@
                 component.set('v.listSmsTemplate', actionWrapper.listSmsTemplate);
                 component.set('v.listCallTemplate', actionWrapper.listCallTemplate);
                 component.set('v.listVMTemplate', actionWrapper.listVMTemplate);
-                component.set('v.wrapperTaskFields', actionWrapper.wrapperTaskFields); 
+                component.set('v.UpdateFieldList', actionWrapper.wrapperTaskFields); 
                 component.set('v.listToShowInTemplateType', actionWrapper.listSmsTemplate);
                 if(id != null) {
                     if(id != '') {

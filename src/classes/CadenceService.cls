@@ -49,13 +49,16 @@ global  without sharing class CadenceService {
         return wtList; 
     }
     
-    
-    public static List<ActionDetailController.wrapperTaskField> getFields(String objectStr) {
+    public static List<CriterionWrapper> getFields(String objectStr) {
         Schema.sObjectType sObjectName = Schema.getGlobalDescribe().get(objectStr);
         Map<String, Schema.SObjectField> fieldsMap = sObjectName.getDescribe().fields.getMap();
+        List<CriterionWrapper> criterionWrapperList = new List<CriterionWrapper>();
+        CriterionWrapper criterionWrapper = new CriterionWrapper();
+        criterionWrapper.GroupName = '';
+        List<Criterion> fieldsWithLabels = new List<Criterion>();
         List<ActionDetailController.wrapperTaskField> listWrapperTaskFields = new List<ActionDetailController.wrapperTaskField>();
         for (String field : fieldsMap.keySet()) {
-            ActionDetailController.wrapperTaskField wrapperTaskFieldObj = new ActionDetailController.wrapperTaskField();
+            
             Schema.sObjectField fieldAPIName = fieldsMap.get(field);
             Schema.DisplayType fieldDataType = fieldAPIName.getDescribe().getType();
             Schema.DescribeFieldResult dfr = fieldAPIName.getDescribe();
@@ -69,18 +72,21 @@ global  without sharing class CadenceService {
                 || (fieldDataType == Schema.DisplayType.Textarea && ((fieldDataType != Schema.DisplayType.ENCRYPTEDSTRING)) )
                ) {
                    if(!fieldAPIName.getDescribe().isCalculated() && fieldAPIName.getDescribe().isUpdateable()) {
-                       wrapperTaskFieldObj.key = fieldAPIName.getDescribe().getName();
-                       wrapperTaskFieldObj.value = fieldAPIName.getDescribe().getLabel();
-                       wrapperTaskFieldObj.apiName = fieldAPIName.getDescribe().getName();
-                       wrapperTaskFieldObj.dataType = CadenceService.getDataType(objectStr, wrapperTaskFieldObj.key);
-                       if (wrapperTaskFieldObj.dataType == 'Picklist' || wrapperTaskFieldObj.dataType == 'MultiPickList'){
-                           wrapperTaskFieldObj.listPicklistValues = CadenceService.getPicklistValues(objectStr, wrapperTaskFieldObj.key);
+                       Criterion c = new Criterion();
+                       c.fieldName = fieldAPIName.getDescribe().getName();
+                       c.fieldLabel = fieldAPIName.getDescribe().getLabel();
+                       c.fieldDataType = getDataType(objectStr, c.fieldName);
+                       if (c.fieldDataType == 'Picklist' || c.fieldDataType == 'MultiPickList'){
+                           c.listPicklistValues = getPicklistValues(objectStr, c.fieldName);
                        }
-                       listWrapperTaskFields.add(wrapperTaskFieldObj);
+                       fieldsWithLabels.add(c);
+                       
                    }
                }
         }
-        return listWrapperTaskFields;
+        criterionWrapper.fieldsDetail = fieldsWithLabels;
+        criterionWrapperList.add(criterionWrapper);
+        return criterionWrapperList;
     }
     
     public static List<CriterionWrapper> getFieldsWithLabels(List<String> objectlist){
@@ -591,14 +597,16 @@ global  without sharing class CadenceService {
                                 if(CadenceService.mapOfOpportunityRole.containskey(oppIds)) 
                                 setOfMatchRole = CadenceService.mapOfOpportunityRole.get(oppIds);
                                 system.debug('setOfMatchRole'+setOfMatchRole);
-                                if(CadenceService.mapOfOpportunityRole.containskey(oppIds) && setOfMatchRole.contains(associateContactofOpp)){
-                                    Contact contSobj = new Contact();
-                                    if(mapOfContacts.containskey(associateContactofOpp)){
-                                         contSobj =(Contact)UpdateSequenceOnParticipant(mapOfContacts.get(associateContactofOpp),cad);
-                                    }
-                                    if(contSobj != null && contSobj.isActivated__c) {
-                                        sObjectsToProcess.add(contSobj);
-                                        objIdToAllCadActListMap.put(contSobj.Id, cad.CadenceActions__r);
+                                if(CadenceService.mapOfOpportunityRole.containskey(oppIds)){
+                                    if(setOfMatchRole.contains(associateContactofOpp)){
+                                        Contact contSobj = new Contact();
+                                        if(mapOfContacts.containskey(associateContactofOpp)){
+                                             contSobj =(Contact)UpdateSequenceOnParticipant(mapOfContacts.get(associateContactofOpp),cad);
+                                        }
+                                        if(contSobj != null && contSobj.isActivated__c) {
+                                            sObjectsToProcess.add(contSobj);
+                                            objIdToAllCadActListMap.put(contSobj.Id, cad.CadenceActions__r);
+                                        } 
                                     }
                                 }
                                 else{
@@ -663,14 +671,16 @@ global  without sharing class CadenceService {
                                     Set<String> setOfMatchRole;
                                     if(CadenceService.mapOfOpportunityRole.containskey(oppIds)) 
                                     setOfMatchRole = CadenceService.mapOfOpportunityRole.get(oppIds);
-                                    if(CadenceService.mapOfOpportunityRole.containskey(oppIds) && setOfMatchRole.contains(associateContactofOpp)){
-                                        Sobject contSobj;
-                                        if(mapOfContacts.containskey(associateContactofOpp)){
-                                            contSobj =UpdateSequenceOnParticipant(mapOfContacts.get(associateContactofOpp),cad);
-                                        }
-                                        if(contSobj != null && (Boolean)contSobj.get(nameSpace + 'isActivated__c')) {
-                                            sObjectsToProcess.add((Contact)contSobj);
-                                            objIdToAllCadActListMap.put((Id)contSobj.get('Id'), cad.CadenceActions__r);
+                                    if(CadenceService.mapOfOpportunityRole.containskey(oppIds) ){
+                                        if(setOfMatchRole.contains(associateContactofOpp)){
+                                            Sobject contSobj;
+                                            if(mapOfContacts.containskey(associateContactofOpp)){
+                                                contSobj =UpdateSequenceOnParticipant(mapOfContacts.get(associateContactofOpp),cad);
+                                            }
+                                            if(contSobj != null && (Boolean)contSobj.get(nameSpace + 'isActivated__c')) {
+                                                sObjectsToProcess.add((Contact)contSobj);
+                                                objIdToAllCadActListMap.put((Id)contSobj.get('Id'), cad.CadenceActions__r);
+                                            }  
                                         }
                                     }else{
                                         Sobject contSobj;
@@ -703,13 +713,15 @@ global  without sharing class CadenceService {
                                     Set<String> setOfMatchRole;
                                     if(CadenceService.mapOfOpportunityRole.containskey(oppIds)) 
                                     setOfMatchRole = CadenceService.mapOfOpportunityRole.get(oppIds);
-                                    if(CadenceService.mapOfOpportunityRole.containskey(oppIds) && setOfMatchRole.contains(associateContactofOpp)){
-                                        if(mapOfContacts.containskey(associateContactofOpp)){
+                                    if(CadenceService.mapOfOpportunityRole.containskey(oppIds)){
+                                        if(setOfMatchRole.contains(associateContactofOpp)){
+                                            if(mapOfContacts.containskey(associateContactofOpp)){
                                             contSobj =(Contact)UpdateSequenceOnParticipant(mapOfContacts.get(associateContactofOpp),cad);
-                                        }
-                                        if(contSobj != null && contSobj.isActivated__c) {
-                                            sObjectsToProcess.add(contSobj);
-                                            objIdToAllCadActListMap.put(contSobj.Id, cad.CadenceActions__r);
+                                            }
+                                            if(contSobj != null && contSobj.isActivated__c) {
+                                                sObjectsToProcess.add(contSobj);
+                                                objIdToAllCadActListMap.put(contSobj.Id, cad.CadenceActions__r);
+                                            }
                                         }
                                     }
                                     else{
@@ -1016,11 +1028,10 @@ global  without sharing class CadenceService {
         //perform participant field update
         CadenceService.updateSObjectFields(objMap.values(), performedPartAct, objName, false);
         if(!isTrigger) {
-            //System.debug('processParticipantsWithCadences--objList:Test##'+objList);
             update objList;
-        }
-        if(objMap.keyset().size() > 0 && objMap.values().size()>0) {
-            update objMap.values();
+            if(objMap.keyset().size() > 0 && objMap.values().size()>0) {
+                update objMap.values();
+            }
         }
             
         //Updating dates on remaining participant objects 

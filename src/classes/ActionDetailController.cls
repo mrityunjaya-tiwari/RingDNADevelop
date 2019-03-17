@@ -22,11 +22,11 @@ public with sharing class ActionDetailController {
         @AuraEnabled public List<WrapperTemplateObj> listSmsTemplate;
         @AuraEnabled public List<WrapperTemplateObj> listCallTemplate;
         @AuraEnabled public List<WrapperTemplateObj> listVMTemplate;
-        @AuraEnabled public List<wrapperTaskField> wrapperTaskFields;
+        @AuraEnabled public List<CriterionWrapper> wrapperTaskFields;
         @AuraEnabled public Action action;
         public ActionWrapper(){
             listEmailTemplate = new List<EmailTemplate>();
-            wrapperTaskFields = new List<wrapperTaskField>();
+            wrapperTaskFields = new List<CriterionWrapper>();
             listSmsTemplate = new List<WrapperTemplateObj>();
             listCallTemplate = new List<WrapperTemplateObj>();
             listVMTemplate = new List<WrapperTemplateObj>();

@@ -10,7 +10,8 @@
     <aura:attribute name = "disableActivationType" type = "Boolean" default = 'true'/>
     <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
    
-  
+    <aura:attribute name="UpdateFieldList" type="List"/>
+    
     <!--Action Objects -->
     <aura:attribute name="newAction" type="Action" default="{ 'sobjectType': 'ActionWrapper'}"/>
     <!--Task Objects -->
@@ -127,7 +128,7 @@
                         <div class = "slds-form-element slds-size_1-of-1 slds-hide slds-p-bottom_large" aura:id = "createTaskdiv">
                             <aura:iteration items="{!v.listTask}" var="taskObj" indexVar="index">
                                 <div class = "slds-form-element__row slds-size_1-of-1">
-                                    <c:ActionDetailsDynamicRow aura:id="dynamicROw"  taskObj="{!taskObj}" wrapperTaskFields="{!v.wrapperTaskFields}" currentIndex = "{!index}" listPicklistValues="" dataType = ""/>
+                                    <c:ActionDetailsDynamicRow aura:id="dynamicROw"  taskObj="{!taskObj}" UpdateFieldList="{!v.UpdateFieldList}" currentIndex = "{!index}" listPicklistValues="" dataType = ""/>
                                 </div>
                             </aura:iteration>
                             <div class = "slds-form-element__row slds-size_1-of-1">
