@@ -20,7 +20,8 @@
                 var cadRecords = data.cadWrapper;
                 cadRecords.forEach(function(record) {
                     record.linkName = '/'+record.id;
-                }); 	
+                }); 
+                component.set('v.cadrawDataForFilter', cadRecords);				
                 component.set('v.cadRawData', cadRecords);                
                 
                 var partRecords = data.participantList;
@@ -29,7 +30,8 @@
                     if (record.company){
                         record.linkcompany = '/'+record.companyId;  
                     }
-                }); 	
+                }); 
+				component.set('v.partrawDataForFilter', partRecords);
                 component.set('v.partRawData', partRecords);
                 component.set('v.spinner', false);
                 

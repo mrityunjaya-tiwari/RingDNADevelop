@@ -130,7 +130,8 @@
                                        sortBy = "{!v.sortBy}" rowsToLoad = "{!v.recordsPerPage}" 
                                        isListView="{!v.listViewCondition}" 
                                        rawDataForFilter = "{!v.rawDataForFilter}"
-                                       data="{!v.data}" 
+                                       data="{!v.data}"
+									   isTodayListView = "true"
                                        selectedNoOfRecords="true"/> 
             </div>
         </div> 

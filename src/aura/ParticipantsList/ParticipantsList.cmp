@@ -5,6 +5,7 @@
     <aura:handler name="datatableEvt" event="c:DatatableEvent" action="{!c.handleDatatableEvent}"/>
     
     <!-- attributes -->
+	<aura:attribute name="rawDataForFilter" type="List"/>
     <aura:attribute name="recordId" type="Id"/> 
     <aura:attribute name="columns" type="List"/>
     <aura:attribute name="rawData" type="List"/>
@@ -30,7 +31,7 @@
         </div>
     </div>
     
-    <div class="slds-m-top_medium">
-        <c:Datatable columns = "{!v.columns}" rawData = "{!v.rawData}" data="{!v.pData}"  rowsToLoad="{!v.rowsToLoad}"  aura:id = "datatable1" hideCheckboxColumn = "{!v.hideCheckboxes}"/>    
+    <div class="slds-m-top_medium rdna-classic-datatableStyling">
+        <c:Datatable columns = "{!v.columns}" rawData = "{!v.rawData}" data="{!v.pData}"  rowsToLoad="{!v.rowsToLoad}"  aura:id = "datatable1" hideCheckboxColumn = "{!v.hideCheckboxes}" rawDataForFilter = "{!v.rawDataForFilter}" selectedNoOfRecords="true"/>    
     </div>
 </aura:component>
