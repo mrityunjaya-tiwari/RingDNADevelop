@@ -5,11 +5,13 @@
     <aura:attribute name="recordId" type="Id"/>
     
     <!--Cadence List datatable attributes-->
+	<aura:attribute name="cadrawDataForFilter" type="List"/>
     <aura:attribute name="cadRawData" type="List"/>
     <aura:attribute name="cadColumns" type="List"/>
     <aura:attribute name="cadRowsToLoad" type="Integer" default="5"/>				<!--Rows per page-->
 
     <!--participants datatable attributes-->
+	<aura:attribute name="partrawDataForFilter" type="List"/>
     <aura:attribute name="partRawData" type="List"/>
     <aura:attribute name="partColumns" type="List"/>
     <aura:attribute name="partColumnsContact" type="List"/>
@@ -79,18 +81,18 @@
                 <p class="slds-page-header__row slds-truncate rdna-field-values-bold  slds-m-top_x-large rdna-link-height" >Sequence Lists</p>
                 <p class=" rdna-field-values rdna-link-height slds-m-top_x-small">List of all related sequence lists associated with this action.</p>
 
-	            <div class="slds-m-top_medium slds-p-right_medium">
-	    			<RDNACadence2:Datatable columns = "{!v.cadColumns}" rawData = "{!v.cadRawData}" rowsToLoad = "{!v.cadRowsToLoad}" hideCheckboxColumn = "true" aura:id = "datatable1"/>    
+	            <div class="slds-m-top_medium slds-p-right_medium rdna-classic-datatableStyling">
+	    			<RDNACadence2:Datatable columns = "{!v.cadColumns}" rawData = "{!v.cadRawData}" rowsToLoad = "{!v.cadRowsToLoad}" hideCheckboxColumn = "true" aura:id = "datatable1" rawDataForFilter = "{!v.cadrawDataForFilter}" selectedNoOfRecords="true"/>    
 				</div>
 				
 				<!-- Participant datatable -->         
                 <p class="slds-page-header__row slds-truncate rdna-field-values-bold  slds-m-top_x-large rdna-link-height" >Participants</p>
                 <p class=" rdna-field-values rdna-link-height slds-m-top_x-small">List of all related participants associated with this action.</p>
 
-	            <div class="slds-m-top_medium slds-p-bottom_medium slds-p-right_medium">
+	            <div class="slds-m-top_medium slds-p-bottom_medium slds-p-right_medium rdna-classic-datatableStyling">
 	    			<RDNACadence2:Datatable columns = "{!v.partColumns}" 
                                            rawData = "{!v.partRawData}"  data="{!v.data}" 
-                                           rowsToLoad = "{!v.partRowsToLoad}" hideCheckboxColumn = "true" aura:id = "datatable2"/>    
+                                           rowsToLoad = "{!v.partRowsToLoad}" hideCheckboxColumn = "true" aura:id = "datatable2" rawDataForFilter = "{!v.partrawDataForFilter}" selectedNoOfRecords="true"/>    
 				</div>
 	            
 	        </div>

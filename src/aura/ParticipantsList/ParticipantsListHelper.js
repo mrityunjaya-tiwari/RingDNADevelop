@@ -14,6 +14,7 @@
                         record.linkcompany = '/'+record.companyId;  
                     }
                 });
+				component.set('v.rawDataForFilter', records);
                 component.set('v.rawData', records);
                 component.set('v.setPhoneLink', true);
             }
