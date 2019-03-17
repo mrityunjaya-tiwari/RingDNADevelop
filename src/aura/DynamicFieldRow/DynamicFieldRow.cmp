@@ -24,12 +24,14 @@
     <aura:attribute name="childRecordType" type="String" default="" />
     
     <!--Event attribute -->
-    <aura:registerEvent name="DynamicFieldRowEvent" type="RDNACadence:DynamicFieldRowEvent"/>
+    <aura:registerEvent name="DynamicFieldRowEvent" type="c:DynamicFieldRowEvent"/>
     
     <!-- <aura:handler name="change" value="{!v.fieldList}" action="{!c.setPicklistValues}"/> --> 
     <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
     
     <aura:method name="validateForm" action="{!c.validateForm}"/>
+    <aura:attribute name="AllFieldList" type="List"/> 
+    
     
     <!-- Table Row -->  
     <tr>
@@ -37,19 +39,16 @@
         <td class="rdna-field-values" style="padding-top:25px;"> 
             {!v.rowIndex + 1}
         </td>
-        <td class="rdna-field-label slds-size_1-of-3">                   
-            <lightning:select aura:id="criterion" class="rdna-field-values" disabled="{!v.isViewMode}" name="fieldName" value="{!v.objectInstance.fieldName}" required="true" onchange="{!c.setPicklistValues}">
+        <td class="rdna-field-label slds-size_1-of-3">                               
+             <lightning:select aura:id="criterion" class="rdna-field-values" disabled="{!v.isViewMode}" name="fieldName" value="{!v.objectInstance.fieldName}" required="true" onchange="{!c.setPicklistValues}">
                 <option value="">Select Field</option>
-                <optgroup label="{!v.recordType + ' fields'}">
-                    <aura:iteration items="{!v.parentFieldList}" var="field">
-                        <option value="{!field.fieldName}">{!field.fieldLabel}</option>
-                    </aura:iteration> 
-                </optgroup>
-                <optgroup label="{!v.childRecordType + ' fields'}">
-                    <aura:iteration items="{!v.childFieldList}" var="field">
-                        <option value="{!field.fieldName}">{!field.fieldLabel}</option>
-                    </aura:iteration> 
-                </optgroup>
+                <aura:iteration items="{!v.AllFieldList}" var="fields">
+                    <optgroup label="{!fields.GroupName + ' fields'}">
+                    	<aura:iteration items="{!fields.fieldsDetail}" var="field">
+                       		 <option value="{!field.fieldName}">{!field.fieldLabel}</option>
+                    	</aura:iteration> 
+                    </optgroup>
+                </aura:iteration> 
             </lightning:select>
         </td>
         <td class="rdna-field-label slds-size_1-of-3"><!-- create a map of operators -->
@@ -101,7 +100,7 @@
                                             <aura:if isTrue="{!v.fieldDataType == 'Reference'}">
                                                 <div class="">
                                                     <aura:if isTrue="{!not(empty(v.userWrapperList))}">
-                                                        <RDNACadence:LookupFieldComponent aura:id="LookupFieldComponent" recordType="{#v.recordType}" isDisabled="{!v.isViewMode}" 
+                                                        <c:LookupFieldComponent aura:id="LookupFieldComponent" recordType="{#v.recordType}" isDisabled="{!v.isViewMode}" 
                                                                                           userWrapperList="{!v.userWrapperList}"
                                                                                           parentId="{!v.objectInstance.value}" fieldName="{#v.objectInstance.fieldName}" />
                                                     </aura:if>

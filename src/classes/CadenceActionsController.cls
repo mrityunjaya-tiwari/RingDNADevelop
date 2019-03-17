@@ -1,20 +1,25 @@
 public class CadenceActionsController {
     public static String nameSpace = CadenceConstants.NAMESPACE;
     @AuraEnabled
-    public static CadenceActionWrapper getActionList(){
-        List<action__C> actionList = [Select id, Name, type__C, Activation_Type__c from Action__C];
+    public static CadenceActionWrapper getActionList(String type){
+        List<action__C> actionList = [Select Id, Name, type__c, Activation_Type__c from Action__c];
+        List<Action> actionClsList = new List<Action>();
+        for (action__C action : actionList){
+            actionClsList.add(New Action(action.Id, action.Activation_Type__c, action.Name, '','', '', action.Type__c));
+        }
         CadenceActionWrapper wrapperObj = new CadenceActionWrapper();
         wrapperObj.actionList = actionList;
+        wrapperObj.actionClsList = actionClsList;
         wrapperObj.actionTypeList = getActionTypeList(actionList);
-        wrapperObj.contactCriListSA = CadenceController.getFieldsForSA(CadenceConstants.CONTACT_OBJECT_NAME);
-        wrapperObj.leadCriListSA = CadenceController.getFieldsForSA(CadenceConstants.LEAD_OBJECT_NAME);
+        wrapperObj.fieldList = CadenceController.getFieldsForSA(type);
+        
         return wrapperObj;
-    } 
+    }  
     public class CadenceActionWrapper{
         @AuraEnabled public List<action__C> actionList;
+        @AuraEnabled public List<Action> actionClsList;
         @AuraEnabled public List<string> actionTypeList;
-        @AuraEnabled public List<Criterion>  contactCriListSA;
-        @AuraEnabled public List<Criterion>  leadCriListSA;
+        @AuraEnabled public List<CriterionWrapper> fieldList = New List<CriterionWrapper>{New CriterionWrapper()};
     }
     public static List<String> getActionTypeList(List<Action__C> actionList){
         List<String> actionTypeList = new List<String>();
@@ -40,22 +45,4 @@ public class CadenceActionsController {
         pList = new List<String>();           
         }
     }
-    
-    public class CadenceActionWrapperNew{
-        @AuraEnabled public List<action__C> actionList;
-        @AuraEnabled public List<string> actionTypeList;
-        @AuraEnabled public List<CriterionWrapper> fieldList = New List<CriterionWrapper>{New CriterionWrapper()};
-    }
-    
-    @AuraEnabled
-    public static CadenceActionWrapperNew getActionListNew(String type){
-        System.debug('getActionListNew:Type='+type);
-        List<action__C> actionList = [Select id, Name, type__C, Activation_Type__c from Action__C];
-        CadenceActionWrapperNew wrapperObj = new CadenceActionWrapperNew();
-        wrapperObj.actionList = actionList;
-        wrapperObj.actionTypeList = getActionTypeList(actionList);
-        wrapperObj.fieldList = CadenceController.getFieldsForSANew(type);
-        return wrapperObj;
-    } 
- 
 }

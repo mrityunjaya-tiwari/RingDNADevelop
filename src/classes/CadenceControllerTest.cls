@@ -59,6 +59,19 @@ private class CadenceControllerTest {
     }
     
     @isTest
+    public static void deactivateCadenceTestOpp(){        
+        Cadence__c cadenceobj2 = TestDataFactory.createCadence('Opportunity');
+    	insert cadenceobj2;  
+        cadenceobj2.Status__c=false;
+        upsert cadenceobj2;
+        Test.startTest();
+        CadenceController.deactivateCadence(cadenceobj2.Id);
+        Test.stopTest();
+        cadenceobj2=[select Id, Status__c from Cadence__c where id =: cadenceobj2.Id];
+        System.assertEquals(False, cadenceobj2.Status__c, 'Cadence deactivated');
+    }
+    
+    @isTest
     static void getCadenceDataTest() {
         Cadence__c cadLeadAND = TestDataFactory.createCadence(CadenceConstants.LEAD_OBJECT_NAME);
         String entryJson = TestDataFactory.createCadJsonWithNameCriterions('Test', 'Test', CadenceConstants.CONDITION_AND, '');
@@ -70,6 +83,40 @@ private class CadenceControllerTest {
         Test.startTest();
         CadenceController.getCadenceData(cadLeadAND.Id);
         Test.stopTest();
+    }
+    
+    @isTest
+    static void getCadenceDataTestOpp() {
+        Opportunity opp = TestDataFactory.createOpp('Test');
+        Cadence__c cadOppAND = TestDataFactory.createCadence(CadenceConstants.OPPORTUNITY_OBJECT_NAME);
+        String entryJson = TestDataFactory.createCadJsonWithNameCriterionsForOpp('Test', CadenceConstants.CONDITION_AND, '');
+        String exitJson = TestDataFactory.createCadJsonWithNameCriterionsForOpp('Test1', CadenceConstants.CONDITION_AND, '');
+    	cadOppAND.Entrance_Criteria__c = entryJson;
+        cadOppAND.Exit_Criteria__c = exitJson;
+        insert cadOppAND;
+		
+        Test.startTest();
+        CadenceController.getCadenceData(cadOppAND.Id);
+        Test.stopTest();
+    }
+    
+    @isTest
+    public static void activateCadenceTestOpp(){
+        Opportunity opp = TestDataFactory.createOpp('Test');
+        Cadence__c cadenceobj = TestDataFactory.createCadence('Opportunity');
+        String entryJson = TestDataFactory.createCadJsonWithNameCriterionsForOpp('Test', CadenceConstants.CONDITION_AND, '');
+        String exitJson = TestDataFactory.createCadJsonWithNameCriterionsForOpp('Test1', CadenceConstants.CONDITION_AND, '');
+    	cadenceobj.Entrance_Criteria__c = entryJson;
+        cadenceobj.Exit_Criteria__c = exitJson;
+    	insert cadenceobj;  
+        cadenceobj.Status__c=true;
+        upsert cadenceobj;
+        Test.startTest();
+        CadenceController.activateCadence(cadenceobj.Id);
+        CadenceController.updateParticipants(cadenceobj.Id);
+        Test.stopTest();
+        cadenceobj=[select Id, Status__c from Cadence__c where id =: cadenceobj.Id];
+        System.assertEquals(True, cadenceobj.Status__c, 'Cadence Activated');
     }
     
     @isTest

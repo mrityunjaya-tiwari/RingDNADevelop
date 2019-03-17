@@ -1,9 +1,9 @@
 ({
     doInit: function(component, event, helper) {
-        helper.updateTaskFieldNew(component, event, helper);
+        helper.updateTaskField(component, event, helper);
     },
     updateTaskField : function(component, event, helper){
-        helper.updateTaskFieldNew(component, event, helper);
+        helper.updateTaskField(component, event, helper);
     },
     
     removeRow : function(component, event, helper){

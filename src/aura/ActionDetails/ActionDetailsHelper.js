@@ -1,6 +1,8 @@
 ({
     createAction : function(component, event,helper) {
-        var newAct = helper.selectTemplateName(component, event,helper);
+        var newAct = helper.selectTemplateName(component, event,helper); 
+        //newAct.sobjectType = 'ActionWrapper';
+        
         var action = component.get("c.saveAction");
         var listTask = component.get("v.listTask");
         var wrapperTaskFields = component.get("v.wrapperTaskFields");
@@ -11,16 +13,18 @@
             var value = wrapperTOCreateTask.value;
             newTask[key] =  value;
         }
+        var actionWrapper = JSON.stringify(newAct); 
         action.setParams({ 
-            "act": newAct,
+            "actWra": actionWrapper,
             "taskObj":newTask
-        });
+        }); 
         action.setCallback(this, function(response) {
             var state = response.getState();
-            if (state === "SUCCESS") {
-                var actionObj = response.getReturnValue();
-                helper.viewDetails(component, event, actionObj.Id);	
-            }else{
+            if (state === "SUCCESS") { 
+                var actionId  = response.getReturnValue();
+
+                helper.viewDetails(component, event, actionId);	
+            }else{ 
             }
         });
         
@@ -30,46 +34,6 @@
         }
     },
     
-    validateActionForm: function (component, event){
-        var newAct = component.get("v.newAction");
-        component.set('v.isValid', true);
-        component.set('v.isValidationError', false)
-        if (newAct.RDNACadence2__Type__c == ''){
-            component.set('v.isValid', false);
-            component.set('v.isValidationError', true);
-            component.set('v.ValidationError', 'Please Enter Type');
-        }else if (newAct.Name == ''){
-            component.set('v.isValid', 'false');
-            component.set('v.isValidationError', true);
-            component.set('v.ValidationError', 'Please Enter Name');
-        } else if (newAct.RDNACadence2__Activation_Type__c == ''){
-            component.set('v.isValid', 'false');
-            component.set('v.isValidationError', true);
-            component.set('v.ValidationError', 'Please Enter Activation Type');
-        } else if (newAct.RDNACadence2__Template_Id__c == ''){
-            if (newAct.RDNACadence2__Type__c == 'Email'){
-                component.set('v.isValid', 'false');
-                component.set('v.isValidationError', true);
-                component.set('v.ValidationError', 'Please Select Template');
-            } else if (newAct.RDNACadence2__Type__c == 'Task'){
-                var listTask = component.get('v.listTask');
-                for(var taskIndex in listTask){
-                    var taskObj = listTask[taskIndex];
-                    if(taskObj.key == '') {
-                        component.set('v.isValid', false);
-                        component.set('v.isValidationError', true);
-                        component.set('v.ValidationError', 'Please Select Task Field');
-                    } else if (taskObj.value == ''){
-                        component.set('v.isValid', false);
-                        component.set('v.isValidationError', true);
-                        component.set('v.ValidationError', 'Please Select Task Fields Value For ' + taskObj.key );
-                    }
-                }
-            }else {
-                component.set('v.isValid', true);
-            }
-        }
-    },
     updateActionType: function (component, event, helper) {
         var newAct = component.get("v.newAction");
         var container = component.find("InputSelectTemplate");
@@ -77,38 +41,39 @@
         $A.util.addClass(createTaskdiv, 'slds-hide');
         $A.util.removeClass(container, 'slds-hide');
         
-        if (newAct.RDNACadence2__Type__c == 'Email'){
+        if (newAct.type == 'Email'){
             component.set('v.listToShowInTemplateType', component.get("v.listEmailTemplate"));
             component.set("v.isActionTypeRequired", true);
             component.set('v.disableActivationType', false);
             if(component.get('v.isNew')){
-               component.set('v.newAction.RDNACadence2__Activation_Type__c','Select Activation Type');
+               component.set('v.newAction.activationType','Select Activation Type');
                component.set('v.disableActivationType', false);
             }
-        }else if (newAct.RDNACadence2__Type__c == 'SMS'){
+        }else if (newAct.type == 'SMS'){
             component.set('v.listToShowInTemplateType', component.get("v.listSmsTemplate"));
-            component.set('v.newAction.RDNACadence2__Activation_Type__c','Manual');
+            component.set('v.newAction.activationType','Manual');
             component.set('v.disableActivationType', true);
             component.set("v.isActionTypeRequired", false);
-        }else if (newAct.RDNACadence2__Type__c == 'Call'){
+        }else if (newAct.type == 'Call'){
             component.set('v.listToShowInTemplateType', component.get("v.listCallTemplate"));
-            component.set('v.newAction.RDNACadence2__Activation_Type__c','Manual');
+            component.set('v.newAction.activationType','Manual');
             component.set('v.disableActivationType', true);
             component.set("v.isActionTypeRequired", false);
-        }else if (newAct.RDNACadence2__Type__c == 'Call+Voicemail'){
+        }else if (newAct.type == 'Call+Voicemail'){
             component.set('v.listToShowInTemplateType', component.get("v.listVMTemplate"));
-            component.set('v.newAction.RDNACadence2__Activation_Type__c','Manual');
+            component.set('v.newAction.activationType','Manual');
             component.set('v.disableActivationType', true);
             component.set("v.isActionTypeRequired", false);
-        }else if (newAct.RDNACadence2__Type__c == 'Task'){
+        }else if (newAct.type == 'Task'){
             var container = component.find("InputSelectTemplate");
             $A.util.addClass(container, 'slds-hide');
             var createTaskdiv = component.find("createTaskdiv");
             $A.util.removeClass(createTaskdiv, 'slds-hide');
             
-            component.set('v.newAction.RDNACadence2__Activation_Type__c','Manual');
+            component.set('v.newAction.activationType','Manual');
             component.set('v.disableActivationType', true);
             component.set("v.isActionTypeRequired", false);
+            var wrapperTaskFields = component.get("v.wrapperTaskFields");
         }else{
             component.set('v.listToShowInTemplateType','');
             component.set('v.isActionTypeRequired',false);
@@ -143,25 +108,29 @@
             var state = response.getState();
             if (state === "SUCCESS") {
                 var obj = response.getReturnValue();
-                var object = obj.action;
-                object.sobjectType = 'Action__c';
-                if (object.RDNACadence2__Type__c != 'Task' ){
+               
+                //component.set('v.newAction', obj.actionWrapper);
+                var object = obj.actionCls;
+                object.sobjectType = 'ActionWrapper';
+
+                if (object.type != 'Task' ){
                     var listOfTemplate = component.get("v.listEmailTemplate");
-                    if (object.RDNACadence2__Type__c == 'SMS'){
+                    if (object.type == 'SMS'){
                         listOfTemplate = component.get("v.listSmsTemplate");;
-                    }else if(object.RDNACadence2__Type__c == 'Call'){
+                    }else if(object.type == 'Call'){
                         listOfTemplate = component.get("v.listCallTemplate");;
-                    }else if(object.RDNACadence2__Type__c == 'Call+Voicemail'){
+                    }else if(object.type == 'Call+Voicemail'){
                         listOfTemplate = component.get("v.listVMTemplate");;
                     }
+                    
                     for(var index in listOfTemplate){
-                        if(listOfTemplate[index].Name == object.RDNACadence2__Template_Name__c){
-                            object.RDNACadence2__Template_Id__c = index;
+                        if(listOfTemplate[index].Name == object.templateName){
+                            object.templateId = index;
                         }
                     }
                 }
                 
-                component.set('v.newAction', object);
+                component.set('v.newAction', object); 
                 component.set('v.recordName', object.Name);
                 helper.updateActionType(component, event, helper);
                 if(obj.taskList != null) {
@@ -229,14 +198,14 @@
     },
     selectTemplateName: function(component, event, helper){
         var newAct = component.get("v.newAction");
-        if (newAct.RDNACadence2__Type__c != 'Task' && component.get("v.listToShowInTemplateType").length > 0 && newAct.RDNACadence2__Template_Id__c){
-            var index = newAct.RDNACadence2__Template_Id__c;
+        if (newAct.type != 'Task' && component.get("v.listToShowInTemplateType").length > 0 && newAct.templateId){
+            var index = newAct.templateId;
             var obj= component.get("v.listToShowInTemplateType")[index];
-            newAct.RDNACadence2__Template_Id__c = obj.Id;
-            newAct.RDNACadence2__Template_Name__c = obj.Name;
+            newAct.templateId = obj.Id;
+            newAct.templateName = obj.Name;
         }else{
-            newAct.RDNACadence2__Template_Id__c = "";
-            newAct.RDNACadence2__Template_Name__c = "";
+            newAct.templateId = "";
+            newAct.templateName = "";
         }
         return newAct;
     },

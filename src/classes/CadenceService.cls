@@ -1,5 +1,10 @@
 global  without sharing class CadenceService {
     public static String nameSpace = CadenceConstants.NAMESPACE;
+    public static map<String,set<String>> mapOfOpportunityRole = new map<String,set<String>>();
+    public Static map<String,List<OpportunityContactRole>> mapOfOppContactRoles = new map<String,list<OpportunityContactRole>>();
+   
+    // mapOfOppContactRoles= new map<String,List<OpportunityContactRole>>();
+    //mapOfOppContactRoles.put('test',new List<OpportunityContactRole>());
     
     public static List<EmailTemplate> getEmailTemplates(){ 
         List<EmailTemplate> listEmailTemplate = [Select Id, Name, IsActive, Description From EmailTemplate Where IsActive = true];
@@ -44,13 +49,16 @@ global  without sharing class CadenceService {
         return wtList; 
     }
     
-    
-    public static List<ActionDetailController.wrapperTaskField> getFields(String objectStr) {
+    public static List<CriterionWrapper> getFields(String objectStr) {
         Schema.sObjectType sObjectName = Schema.getGlobalDescribe().get(objectStr);
         Map<String, Schema.SObjectField> fieldsMap = sObjectName.getDescribe().fields.getMap();
+        List<CriterionWrapper> criterionWrapperList = new List<CriterionWrapper>();
+        CriterionWrapper criterionWrapper = new CriterionWrapper();
+        criterionWrapper.GroupName = '';
+        List<Criterion> fieldsWithLabels = new List<Criterion>();
         List<ActionDetailController.wrapperTaskField> listWrapperTaskFields = new List<ActionDetailController.wrapperTaskField>();
         for (String field : fieldsMap.keySet()) {
-            ActionDetailController.wrapperTaskField wrapperTaskFieldObj = new ActionDetailController.wrapperTaskField();
+            
             Schema.sObjectField fieldAPIName = fieldsMap.get(field);
             Schema.DisplayType fieldDataType = fieldAPIName.getDescribe().getType();
             Schema.DescribeFieldResult dfr = fieldAPIName.getDescribe();
@@ -64,126 +72,207 @@ global  without sharing class CadenceService {
                 || (fieldDataType == Schema.DisplayType.Textarea && ((fieldDataType != Schema.DisplayType.ENCRYPTEDSTRING)) )
                ) {
                    if(!fieldAPIName.getDescribe().isCalculated() && fieldAPIName.getDescribe().isUpdateable()) {
-                       wrapperTaskFieldObj.key = fieldAPIName.getDescribe().getName();
-                       wrapperTaskFieldObj.value = fieldAPIName.getDescribe().getLabel();
-                       wrapperTaskFieldObj.apiName = fieldAPIName.getDescribe().getName();
-                       wrapperTaskFieldObj.dataType = CadenceService.getDataType(objectStr, wrapperTaskFieldObj.key);
-                       if (wrapperTaskFieldObj.dataType == 'Picklist' || wrapperTaskFieldObj.dataType == 'MultiPickList'){
-                           wrapperTaskFieldObj.listPicklistValues = CadenceService.getPicklistValues(objectStr, wrapperTaskFieldObj.key);
+                       Criterion c = new Criterion();
+                       c.fieldName = fieldAPIName.getDescribe().getName();
+                       c.fieldLabel = fieldAPIName.getDescribe().getLabel();
+                       c.fieldDataType = getDataType(objectStr, c.fieldName);
+                       if (c.fieldDataType == 'Picklist' || c.fieldDataType == 'MultiPickList'){
+                           c.listPicklistValues = getPicklistValues(objectStr, c.fieldName);
                        }
-                       listWrapperTaskFields.add(wrapperTaskFieldObj);
+                       fieldsWithLabels.add(c);
+                       
                    }
                }
         }
-        return listWrapperTaskFields;
+        criterionWrapper.fieldsDetail = fieldsWithLabels;
+        criterionWrapperList.add(criterionWrapper);
+        return criterionWrapperList;
     }
     
-    public static List<Criterion> getFieldsWithLabels(String objectStr){
+    public static List<CriterionWrapper> getFieldsWithLabels(List<String> objectlist){
+        String objectStr ; 
         List<Criterion> fieldsWithLabels = new List<Criterion>();
-        Schema.sObjectType sObjectName = Schema.getGlobalDescribe().get(objectStr);
-        system.debug('getFieldsWithLabels ***********' );
-        //SObjectType r;
-        /*try{
-             r = ((SObject)(Type.forName('Schema.'+objectStr).newInstance())).getSObjectType(); 
-        }
-        catch(Exception e){
-            
-        }*/
-       
-       //SObjectType r = ((SObject)(Type.forName('Schema.'+objectStr).newInstance())).getSObjectType(); 
-        
-        if (sObjectName != null){
-            SObjectType r = ((SObject)(Type.forName('Schema.'+objectStr).newInstance())).getSObjectType(); 
-            Map<String, Schema.SObjectField> fieldsMap = r.getDescribe().fields.getMap(); 
-            for (String field : fieldsMap.keySet()) {
-                Criterion c = new Criterion();
-                Schema.sObjectField fieldAPIName = fieldsMap.get(field);
-                Schema.DisplayType fieldDataType = fieldAPIName.getDescribe().getType();           
-                Schema.DescribeFieldResult dfr = fieldAPIName.getDescribe();
-                c.fieldName = fieldAPIName.getDescribe().getName();
-                Integer LengthOfField = dfr.getLength();
-                if (fieldDataType == Schema.DisplayType.Boolean 
-                    || fieldDataType == Schema.DisplayType.REFERENCE
-                    || fieldDataType == Schema.DisplayType.Double 
-                    || fieldDataType == Schema.DisplayType.Integer
-                    || fieldDataType == Schema.DisplayType.Email
-                    || fieldDataType == Schema.DisplayType.Phone
-                    || fieldDataType == Schema.DisplayType.Date 
-                    || fieldDataType == Schema.DisplayType.URL
-                    || fieldDataType == Schema.DisplayType.Currency
-                    || fieldDataType == Schema.DisplayType.DateTime
-                    || (fieldDataType == Schema.DisplayType.String )
-                    || fieldDataType == Schema.DisplayType.Picklist
-                    || (fieldDataType == Schema.DisplayType.Textarea && (LengthOfField <= 255 && (fieldDataType != Schema.DisplayType.ENCRYPTEDSTRING)) )               
-                    || fieldDataType == Schema.DisplayType.Combobox
-                    || fieldDataType == Schema.DisplayType.MULTIPICKLIST
-                   ){
-                       c.fieldName = fieldAPIName.getDescribe().getName();
-                       c.fieldLabel = fieldAPIName.getDescribe().getLabel();
-                       
-                       c.fieldDataType = getDataType(objectStr, c.fieldName);
-                      
-                       if (c.fieldDataType == 'Picklist' || c.fieldDataType == 'MultiPickList'){
-                           c.listPicklistValues = getPicklistValues(objectStr, c.fieldName);
-                           c.picklistApiNameAndValues = Criterion.getPicklistApiNameAndValues(objectStr, c.fieldName);
-                       }
-                       if (!((c.fieldDataType == 'Reference' && objectStr == 'DandBCompany'))){
-                           if (c.fieldDataType != 'Reference' || (c.fieldDataType == 'Reference' && validForCriteria(objectStr, c.fieldName))){
-                               fieldsWithLabels.add(c);
-                           }
-                       }
-
-                   } 
+		List<CriterionWrapper> fieldList = new List<CriterionWrapper>();      
+        CriterionWrapper criterionWrapper,criterionWrapperPartnerAccount;
+        Integer index = 0;
+        Boolean IsPartnerAccount = false;
+        List<Schema.DescribeSObjectResult> descResult = Schema.describeSObjects(objectlist);
+        if(descResult != null && descResult.size() > 0){
+            for(Schema.DescribeSObjectResult dsc : descResult){ 
+                //System.debug('dsc'+dsc);
+               
+                if(dsc != null && dsc.getName()!= null){
+                    criterionWrapper = new CriterionWrapper();
+                    objectStr =dsc.getName(); 
+                    criterionWrapper.GroupName = objectStr;
+                    if(index == 0){
+                        criterionWrapper.IsParent = true;
+                    }
+                    
+                    if(objectlist[0] == CadenceConstants.OPPORTUNITY_OBJECT_NAME && objectStr == CadenceConstants.ACCOUNT_OBJECT_NAME){
+                        IsPartnerAccount = true;
+                        criterionWrapperPartnerAccount = new CriterionWrapper();
+                        criterionWrapperPartnerAccount.GroupName = CadenceConstants.PARTNER_ACCOUNT_OBJECT_NAME;
+                    }
+                    
+                    Schema.sObjectType sObjectName = Schema.getGlobalDescribe().get(objectStr);
+                    System.debug('sObjectName:'+sObjectName);
+                    if (sObjectName != null){
+                        SObjectType r = dsc.getSobjectType(); 
+                        Map<String, Schema.SObjectField> fieldsMap = dsc.fields.getMap(); 
+                        for (String field : fieldsMap.keySet()) {
+                            Criterion c = new Criterion();
+                            Schema.sObjectField fieldAPIName = fieldsMap.get(field);
+                            Schema.DisplayType fieldDataType = fieldAPIName.getDescribe().getType();           
+                            Schema.DescribeFieldResult dfr = fieldAPIName.getDescribe();
+                            c.fieldName = fieldAPIName.getDescribe().getName();
+                            Integer LengthOfField = dfr.getLength();
+                            if (fieldDataType == Schema.DisplayType.Boolean 
+                                || fieldDataType == Schema.DisplayType.REFERENCE
+                                || fieldDataType == Schema.DisplayType.Double 
+                                || fieldDataType == Schema.DisplayType.Integer
+                                || fieldDataType == Schema.DisplayType.Email
+                                || fieldDataType == Schema.DisplayType.Phone
+                                || fieldDataType == Schema.DisplayType.Date 
+                                || fieldDataType == Schema.DisplayType.URL
+                                || fieldDataType == Schema.DisplayType.Currency
+                                || fieldDataType == Schema.DisplayType.DateTime
+                                || (fieldDataType == Schema.DisplayType.String )
+                                || fieldDataType == Schema.DisplayType.Picklist
+                                || (fieldDataType == Schema.DisplayType.Textarea && (LengthOfField <= 255 && (fieldDataType != Schema.DisplayType.ENCRYPTEDSTRING)) )               
+                                || fieldDataType == Schema.DisplayType.Combobox
+                                || fieldDataType == Schema.DisplayType.MULTIPICKLIST
+                               ){
+                                   if(!fieldAPIName.getDescribe().isCalculated() && fieldAPIName.getDescribe().isUpdateable()){
+                                       c.fieldName = fieldAPIName.getDescribe().getName();
+                                       c.fieldLabel = fieldAPIName.getDescribe().getLabel();
+                                       c.fieldDataType = getDataType(objectStr, c.fieldName);
+                                       
+                                       if (c.fieldDataType == 'Picklist' || c.fieldDataType == 'MultiPickList'){
+                                           c.listPicklistValues = getPicklistValues(objectStr, c.fieldName);
+                                           c.picklistApiNameAndValues = Criterion.getPicklistApiNameAndValues(objectStr, c.fieldName);
+                                       }
+                                       
+                                       if (!(c.fieldDataType == 'Reference' && objectStr == 'DandBCompany' )){
+                                           if (c.fieldDataType != 'Reference' || (c.fieldDataType == 'Reference' && validForCriteria(objectStr, c.fieldName))){
+                                               if(index != 0){
+                                                   c.fieldName =  objectStr + '.' + c.fieldName;
+                                               }
+                                               fieldsWithLabels.add(c);
+                                           }
+                                       }
+                                       
+                                   }
+                               } 
+                        }
+                    }
+                }
+                index++; 
+                criterionWrapper.fieldsDetail = fieldsWithLabels;
+                fieldList.add(criterionWrapper);
+                
+                if(IsPartnerAccount){
+                    for(Criterion c : fieldsWithLabels){
+                        String[] fields = c.fieldName.split('\\.');
+                        if(fields.size() > 0){
+                            Criterion criterion  = new Criterion();
+                            criterion.id=c.id;
+                            criterion.fieldName='PartnerAccount.' + fields[1];
+                            criterion.fieldLabel=c.fieldLabel;
+                            criterion.fieldDataType=c.fieldDataType;
+                            criterion.operation=c.operation;
+                            criterion.value=c.value;
+                            criterion.listPicklistValues=c.listPicklistValues;
+                            criterionWrapperPartnerAccount.fieldsDetail.add(criterion);
+                        }
+                    }
+                    IsPartnerAccount = false;
+                }
+                
+                fieldsWithLabels = new List<Criterion>();
+                
             }
         }
-        return fieldsWithLabels;
+        if(criterionWrapperPartnerAccount != null){
+            fieldList.add(criterionWrapperPartnerAccount);
+        }
+        
+        return fieldList;
     }
     
-    public static List<Criterion> getFieldsWithLabelsForUpdate(String objectStr){
+    public static List<CriterionWrapper> getFieldsWithLabelsForUpdate(List<String> objectlist){ 
+        String objectStr ; 
         List<Criterion> fieldsWithLabels = new List<Criterion>();
-       SObjectType r = ((SObject)(Type.forName('Schema.'+objectStr).newInstance())).getSObjectType();
-       
-        if (r != null){
-            Map<String, Schema.SObjectField> fieldsMap = r.getDescribe().fields.getMap();
-            for (String field : fieldsMap.keySet()) {
-                Criterion c = new Criterion();
-                Schema.sObjectField fieldAPIName = fieldsMap.get(field);
-                Schema.DisplayType fieldDataType = fieldAPIName.getDescribe().getType();           
-                Schema.DescribeFieldResult dfr = fieldAPIName.getDescribe();
-                Integer LengthOfField = dfr.getLength();
-                if (fieldDataType == Schema.DisplayType.Boolean 
-                    || fieldDataType == Schema.DisplayType.REFERENCE
-                    || fieldDataType == Schema.DisplayType.Double 
-                    || fieldDataType == Schema.DisplayType.Integer
-                    || fieldDataType == Schema.DisplayType.Email
-                    || fieldDataType == Schema.DisplayType.Phone
-                    || fieldDataType == Schema.DisplayType.Date
-                    || fieldDataType == Schema.DisplayType.DateTime
-                    || (fieldDataType == Schema.DisplayType.String )
-                    || fieldDataType == Schema.DisplayType.Picklist
-                    || (fieldDataType == Schema.DisplayType.Textarea && (LengthOfField <= 255 && (fieldDataType != Schema.DisplayType.ENCRYPTEDSTRING)) )               
-                    || fieldDataType == Schema.DisplayType.Combobox
-                    || fieldDataType == Schema.DisplayType.MULTIPICKLIST
-                   ){
-                       if(!fieldAPIName.getDescribe().isCalculated() && fieldAPIName.getDescribe().isUpdateable()) {
-                           c.fieldName = fieldAPIName.getDescribe().getName();
-                           c.fieldLabel = fieldAPIName.getDescribe().getLabel();
-                           
-                           c.fieldDataType = getDataType(objectStr, c.fieldName);
-                           if (c.fieldDataType == 'Picklist' || c.fieldDataType == 'MultiPickList'){
-                               c.listPicklistValues = getPicklistValues(objectStr, c.fieldName);
-                           }
-                           if (!(c.fieldDataType == 'Reference' && (c.fieldName == 'RDNACadence__Cadence_ID__c' || c.fieldName == 'ReportsToId' || c.fieldName == 'OwnerId' ))){
-                               if (c.fieldDataType != 'Reference' || (c.fieldDataType == 'Reference' && validForCriteria(objectStr, c.fieldName))){
-                                   fieldsWithLabels.add(c);
-                               }
-                           }
-                       }
-                   } 
+        List<CriterionWrapper> fieldList = new List<CriterionWrapper>();      
+        CriterionWrapper criterionWrapper;
+        Integer index = 0;
+        List<Schema.DescribeSObjectResult> descResult = Schema.describeSObjects(objectlist);
+        if(descResult != null && descResult.size() > 0){
+            for(Schema.DescribeSObjectResult dsc : descResult){ 
+                if(dsc != null && dsc.getName()!= null){
+                    criterionWrapper = new CriterionWrapper();
+                    objectStr =dsc.getName(); 
+                    criterionWrapper.GroupName = objectStr;
+                    if(index == 0){
+                        criterionWrapper.IsParent = true;
+                    }
+                    
+                    Schema.sObjectType sObjectName = Schema.getGlobalDescribe().get(objectStr);
+                    if (sObjectName != null){
+                        SObjectType r = dsc.getSobjectType(); 
+                        Map<String, Schema.SObjectField> fieldsMap = dsc.fields.getMap(); 
+                        for (String field : fieldsMap.keySet()) {
+                            
+                            Criterion c = new Criterion();
+                            Schema.sObjectField fieldAPIName = fieldsMap.get(field);
+                            Schema.DisplayType fieldDataType = fieldAPIName.getDescribe().getType();           
+                            Schema.DescribeFieldResult dfr = fieldAPIName.getDescribe();
+                            Integer LengthOfField = dfr.getLength();
+                            
+                            if (fieldDataType == Schema.DisplayType.Boolean 
+                                || fieldDataType == Schema.DisplayType.REFERENCE
+                                || fieldDataType == Schema.DisplayType.Double 
+                                || fieldDataType == Schema.DisplayType.Integer
+                                || fieldDataType == Schema.DisplayType.Email
+                                || fieldDataType == Schema.DisplayType.Phone
+                                || fieldDataType == Schema.DisplayType.Date
+                                || fieldDataType == Schema.DisplayType.DateTime
+                                || (fieldDataType == Schema.DisplayType.String )
+                                || fieldDataType == Schema.DisplayType.Picklist
+                                || (fieldDataType == Schema.DisplayType.Textarea && (LengthOfField <= 255 && (fieldDataType != Schema.DisplayType.ENCRYPTEDSTRING)) )               
+                                || fieldDataType == Schema.DisplayType.Combobox
+                                || fieldDataType == Schema.DisplayType.MULTIPICKLIST
+                               ){
+                                   if(!fieldAPIName.getDescribe().isCalculated() && fieldAPIName.getDescribe().isUpdateable()){
+                                       
+                                       c.fieldName = fieldAPIName.getDescribe().getName();
+                                       c.fieldLabel = fieldAPIName.getDescribe().getLabel();
+                                       c.fieldDataType = getDataType(objectStr, c.fieldName);
+                                       if (c.fieldDataType == 'Picklist' || c.fieldDataType == 'MultiPickList'){
+                                           c.listPicklistValues = getPicklistValues(objectStr, c.fieldName);
+                                       }
+                                       if (!(c.fieldDataType == 'Reference' && (c.fieldName == nameSpace+'Cadence_ID__c' || c.fieldName == 'ReportsToId' || c.fieldName == 'OwnerId' ))){
+                                           if (c.fieldDataType != 'Reference' || (c.fieldDataType == 'Reference' && validForCriteria(objectStr, c.fieldName))){
+                                               if(index != 0){
+                                                   c.fieldName =  objectStr + '.' + c.fieldName;
+                                               }
+                                               fieldsWithLabels.add(c);
+                                           }
+                                       }
+                                       
+                                   }
+                               } 
+                        }
+                    }
+                }
+                index++; 
+                criterionWrapper.fieldsDetail = fieldsWithLabels;
+                fieldList.add(criterionWrapper);
+                fieldsWithLabels = new List<Criterion>();
             }
         }
         
-        return fieldsWithLabels;
+        return fieldList;
     }
     
     public static String getDataType(String objectStr, String field) {
@@ -219,19 +308,18 @@ global  without sharing class CadenceService {
         return dataType;
     }
     
-    public static List<String> getPicklistValues(String objectStr, String field) {
+    public static List<String> getPicklistValues(String objectStr, String field) { 
         List<String> picklistValues = new List<String>();
         Schema.sObjectType sObjectName = Schema.getGlobalDescribe().get(objectStr);
         Map<String, Schema.SObjectField> fieldsMap = sObjectName.getDescribe().fields.getMap();
         Schema.sObjectField fieldAPIName = fieldsMap.get(field);
-        Schema.DescribeFieldResult fieldResult = fieldAPIName.getDescribe();
+        Schema.DescribeFieldResult fieldResult = fieldAPIName.getDescribe();  
         List<Schema.PicklistEntry> values = fieldResult.getPicklistValues();
         for (Schema.PicklistEntry picklistVal : values) {
             picklistValues.add(picklistVal.getLabel());
         }     
         return picklistValues;
     }
-    
     
     public static void setParticipantsActivation(Id cadId, Boolean active) {
         Cadence__c cad = [Select Id, Status__c, Participent_Activation__c, Record_Type__c from Cadence__c where Id = :cadId];
@@ -250,10 +338,11 @@ global  without sharing class CadenceService {
             }
         }
         update objList;
-        
     }
     
     public static List<SObject> getCadenceParticipants(Id cadId, String objName) {
+        if(objName.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_OBJECT_NAME))
+            objName = CadenceConstants.CONTACT_OBJECT_NAME;  
         String query = 'Select Id, Name, '+nameSpace+'Cadence_ID__c, '+nameSpace+'isActivated__c';
         query += ' FROM '+ objName +' WHERE '+nameSpace+'Cadence_Id__c = :cadId';
         return Database.query(query);
@@ -265,7 +354,6 @@ global  without sharing class CadenceService {
         for(Id objId : objIdToActionMap.keySet()) {
             DateTime entranceDate = (DateTime)objMap.get(objId).get(namespace+'EntranceCriteria_Matched_Date__c');
             List<CadenceAction__c> cadActions = objIdToActionMap.get(objId);
-            System.debug('cadActions'+cadActions);
             Integer day = 0, hour = 0;
             for(CadenceAction__c cadAct : cadActions) {
                 if(cadAct.Day__c != null) {
@@ -280,6 +368,8 @@ global  without sharing class CadenceService {
                 partAct.Expected_Execution_Date__c = CadenceUtil.addTimeInDate(entranceDate, day, hour);
                 if(objName.equals(CadenceConstants.LEAD_OBJECT_NAME)) {
                     partAct.Lead_Id__c = objId;	
+                } else if(objName.equals(CadenceConstants.OPPORTUNITY_OBJECT_NAME)) {
+                    partAct.Contact_Id__c = objId;	
                 } else {
                     partAct.Contact_Id__c = objId;
                 }
@@ -287,8 +377,7 @@ global  without sharing class CadenceService {
             	
             }	
         }
-		System.debug('partActionsToCreate:'+partActionsToCreate);
-        insert partActionsToCreate;	
+		insert partActionsToCreate;	
         return partActionsToCreate;			
     }
     
@@ -381,7 +470,16 @@ global  without sharing class CadenceService {
                                   CadenceAction_Id__r.Action_Id__r.Task_Description__c, CadenceAction_Id__r.Action_Id__r.Template_Id__c From Sequence_Action__c 
                                   where Lead_Id__c IN :objIds AND isActionPerformed__c = false 
                                   order by CadenceAction_Id__r.Day__c, CadenceAction_Id__r.Hour__c];
-        } else {  
+        } 
+        else if(objName.equals(CadenceConstants.OPPORTUNITY_OBJECT_NAME)) {  
+            participantActions = [Select Id, Name, CadenceAction_ID__c, Expected_Execution_Date__c, Show_on_Target_List__c, Lead_Id__c, Contact_Id__c, isActionPerformed__c, CadenceAction_Id__r.Day__c,
+                                  CadenceAction_Id__r.Hour__c, CadenceAction_Id__r.Action_Id__r.Type__c, CadenceAction_Id__r.Fields_To_Update_Action__c,
+                                  CadenceAction_Id__r.Action_Id__r.Activation_Type__c, CadenceAction_Id__r.Trigger_Type__c,
+                                  CadenceAction_Id__r.Action_Id__r.Task_Description__c, CadenceAction_Id__r.Action_Id__r.Template_Id__c From Sequence_Action__c 
+                                  where Contact_Id__c IN :objIds AND isActionPerformed__c = false 
+                                  order by CadenceAction_Id__r.Day__c, CadenceAction_Id__r.Hour__c];
+        }
+        else {  
             participantActions = [Select Id, Name, CadenceAction_ID__c, Expected_Execution_Date__c, Show_on_Target_List__c, Lead_Id__c, Contact_Id__c, isActionPerformed__c, CadenceAction_Id__r.Day__c,
                                   CadenceAction_Id__r.Hour__c, CadenceAction_Id__r.Action_Id__r.Type__c, CadenceAction_Id__r.Fields_To_Update_Action__c,
                                   CadenceAction_Id__r.Action_Id__r.Activation_Type__c, CadenceAction_Id__r.Trigger_Type__c,
@@ -396,7 +494,8 @@ global  without sharing class CadenceService {
                 } else {
                     objToParticipantActionsMap.put(partAct.Lead_Id__c, new List<Sequence_Action__c>{partAct});
                 }
-            } else {
+            } 
+            else {
                 if(objToParticipantActionsMap.containsKey(partAct.Contact_Id__c)) {
                     objToParticipantActionsMap.get(partAct.Contact_Id__c).add(partAct);
                 } else {
@@ -447,54 +546,224 @@ global  without sharing class CadenceService {
         List<SObject> sObjectsToProcess;
         if(objName.equals(CadenceConstants.LEAD_OBJECT_NAME)) {
             sObjectsToProcess = new List<Lead>();
+        } else if(objName.equals(CadenceConstants.OPPORTUNITY_OBJECT_NAME)){
+            sObjectsToProcess = new List<Contact>();
         } else {
             sObjectsToProcess = new List<Contact>();
-        }   	 
+        }  
+        
+        System.debug('##Test##');
+        
         Map<Id, Id> oldPartActionToDelete = new Map<Id, Id>();
         Map<Id, List<CadenceAction__c>> objIdToAllCadActListMap = new Map<Id, List<CadenceAction__c>>();
-        
         Map<Id,List<Id>> sequenceHistoryMap = getParticipantSequenceHistory((new Map<Id,SObject>(objList)).keySet(),objName);
         List<Participant_Sequence_History__c> newSequenceHistory = new List<Participant_Sequence_History__c>(); 
+        map<string,List<String>> mapOfOppcontact =  new map<string,List<String>>();
+        map<String,Sobject> mapOfContacts= new Map<String,Sobject>();
+        List<Contact> oppContactList= new List<Contact>();
+        
+        if(objName.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_OBJECT_NAME)){
+            getMapOpporContactRole(objList);
+            mapOfOppcontact= opporContactMap(objList);
+            List<String> listOfContactids = new List<String>();
+            for(String oppids : mapOfOppcontact.keyset()){
+                if(mapOfOppcontact.get(oppids) != null){
+                    listOfContactids.addAll(mapOfOppcontact.get(oppids));
+                }
+            }
+            System.debug('mapOfOppcontact:##'+mapOfOppcontact);
+            System.debug('listOfContactids:##'+listOfContactids);
+            if(listOfContactids.size() > 0){
+                for(Contact con : [Select id,Cadence_Id__c,isActivated__c,EntranceCriteria_Matched_Date__c,Email from Contact Where Id In :listOfContactids]){
+                    mapOfContacts.put(con.id,(Sobject)con);
+                }
+            }     
+        }
+        
         //Updating the obj list with cadences 
         for(SObject obj : objList) {
+            //System.debug('hanuman'+obj.get(nameSpace+'Cadence_Id__c'));
             Map<Id, Cadence__c> cadMapNew =  removeCadencefromMap(cadMap.clone(),sequenceHistoryMap.get(obj.Id));
-            if(obj.get(nameSpace+'Cadence_Id__c') == null) {
+            //System.debug('cadMapNew:'+cadMapNew);
+            if(obj.get(nameSpace+'Cadence_Id__c') == null) {                
                 Cadence__c cad = RuleCriterionMatcher.assignCadenceToNotAssignedParticipant(cadMapNew, obj, parentMap.get((Id)obj.get('Id')), objName);
+                System.debug('test cad'+cad);
                 if(cad != null) {
-                    if((Boolean)obj.get(nameSpace + 'isActivated__c')) {
-                        sObjectsToProcess.add(obj);
-	                    objIdToAllCadActListMap.put((Id)obj.get('Id'), cad.CadenceActions__r);
+                    if(objName.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_OBJECT_NAME)){
+                        string oppIds = String.valueOf(obj.get('Id'));
+                        if(mapOfOppcontact.keyset().size() > 0 && mapOfOppcontact.containskey(oppIds)){
+                            for(String associateContactofOpp :mapOfOppcontact.get(oppIds)){
+                                Set<String> setOfMatchRole;
+                                if(CadenceService.mapOfOpportunityRole.containskey(oppIds)) 
+                                setOfMatchRole = CadenceService.mapOfOpportunityRole.get(oppIds);
+                                system.debug('setOfMatchRole'+setOfMatchRole);
+                                if(CadenceService.mapOfOpportunityRole.containskey(oppIds)){
+                                    if(setOfMatchRole.contains(associateContactofOpp)){
+                                        Contact contSobj = new Contact();
+                                        if(mapOfContacts.containskey(associateContactofOpp)){
+                                             contSobj =(Contact)UpdateSequenceOnParticipant(mapOfContacts.get(associateContactofOpp),cad);
+                                        }
+                                        if(contSobj != null && contSobj.isActivated__c) {
+                                            sObjectsToProcess.add(contSobj);
+                                            objIdToAllCadActListMap.put(contSobj.Id, cad.CadenceActions__r);
+                                        } 
+                                    }
+                                }
+                                else{
+                                    Contact contSobj = new Contact();
+                                    if(mapOfContacts.containskey(associateContactofOpp)){
+                                         contSobj =(Contact)UpdateSequenceOnParticipant(mapOfContacts.get(associateContactofOpp),cad);
+                                    }
+                                    if(contSobj != null && contSobj.isActivated__c) {
+                                        sObjectsToProcess.add(contSobj);
+                                        objIdToAllCadActListMap.put(contSobj.Id, cad.CadenceActions__r);
+                                    }
+                                }
+                            }
+                        }
                     }
+                    else{
+                        if((Boolean)obj.get(nameSpace + 'isActivated__c')) {
+                            sObjectsToProcess.add(obj);
+                            objIdToAllCadActListMap.put((Id)obj.get('Id'), cad.CadenceActions__r);
+                        }
+                    }
+                    
                 }				
             } else {
+                System.debug('Test##06:');
                 Id cadId = (Id)obj.get(nameSpace+'Cadence_Id__c'); 
-                SObject sObj = RuleCriterionMatcher.matchExitCriterion(cadMapNew.get((Id)obj.get(nameSpace+'Cadence_Id__c')), obj, parentMap.get((Id)obj.get('Id')), objName);
-                if(sObj != null) {
-                    newSequenceHistory.add(createHistoryObject(cadId,(Id)obj.get('Id'),objName));
-                    oldPartActionToDelete.put((Id)obj.get('Id'), cadId); 
+                
+                //SObject sObj = RuleCriterionMatcher.matchExitCriterion(cadMapNew.get((Id)obj.get(nameSpace+'Cadence_Id__c')), obj, parentMap.get((Id)obj.get('Id')), objName);
+                SObject sObj;
+                Boolean isexitMatchOpp=false;
+                //List<SObject> sObjList = new List<SObject>() ;
+                if(objName.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_OBJECT_NAME)){
+                    isexitMatchOpp = RuleCriterionMatcher.matchExitCriterionOpp(cadMapNew.get(cadId), obj, parentMap.get((Id)obj.get('Id')), objName);
+                    if(isexitMatchOpp){
+                        oppContactList.addAll(RemoveSequenceFromParticempant((Id)obj.get('Id'),mapOfOppcontact, mapOfContacts));
+                    }
+                    
+                }else {
+                    sObj= RuleCriterionMatcher.matchExitCriterion(cadMapNew.get(cadId), obj, parentMap.get((Id)obj.get('Id')), objName);
+                }
+                System.debug('isexitMatchOpp:'+isexitMatchOpp);
+                if(sObj != null || isexitMatchOpp) {
+                     System.debug('oppContactList:'+oppContactList);
+                    if(objName.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_OBJECT_NAME)){
+                        for(Contact con : oppContactList){
+                            newSequenceHistory.add(createHistoryObject(cadId,con.Id,objName));
+                            oldPartActionToDelete.put(con.Id, cadId); 
+                        }
+                    }else{
+                        newSequenceHistory.add(createHistoryObject(cadId,(Id)obj.get('Id'),objName));
+                        oldPartActionToDelete.put((Id)obj.get('Id'), cadId); 
+                    }
+                    System.debug('newSequenceHistory:'+newSequenceHistory);
                     Cadence__c cad = RuleCriterionMatcher.assignCadenceToNotAssignedParticipant(cadMapNew, obj, parentMap.get((Id)obj.get('Id')), objName);
+                    //System.debug('Test##07');
                     if(cad != null) {
-                        sObjectsToProcess.add(obj);
-                        objIdToAllCadActListMap.put((Id)obj.get('Id'), cad.CadenceActions__r);
+                        //System.debug('Test##08');
+                        if(objName.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_OBJECT_NAME)){
+                            string oppIds = String.valueOf(obj.get('Id'));
+                            if(mapOfOppcontact.keyset().size() > 0 && mapOfOppcontact.containskey(oppIds)){
+                                for(String associateContactofOpp :mapOfOppcontact.get(oppIds)){
+                                    Set<String> setOfMatchRole;
+                                    if(CadenceService.mapOfOpportunityRole.containskey(oppIds)) 
+                                    setOfMatchRole = CadenceService.mapOfOpportunityRole.get(oppIds);
+                                    if(CadenceService.mapOfOpportunityRole.containskey(oppIds) ){
+                                        if(setOfMatchRole.contains(associateContactofOpp)){
+                                            Sobject contSobj;
+                                            if(mapOfContacts.containskey(associateContactofOpp)){
+                                                contSobj =UpdateSequenceOnParticipant(mapOfContacts.get(associateContactofOpp),cad);
+                                            }
+                                            if(contSobj != null && (Boolean)contSobj.get(nameSpace + 'isActivated__c')) {
+                                                sObjectsToProcess.add((Contact)contSobj);
+                                                objIdToAllCadActListMap.put((Id)contSobj.get('Id'), cad.CadenceActions__r);
+                                            }  
+                                        }
+                                    }else{
+                                        Sobject contSobj;
+                                        if(mapOfContacts.containskey(associateContactofOpp)){
+                                            contSobj =UpdateSequenceOnParticipant(mapOfContacts.get(associateContactofOpp),cad);
+                                        }
+                                        if(contSobj != null && (Boolean)contSobj.get(nameSpace + 'isActivated__c')) {
+                                            sObjectsToProcess.add((Contact)contSobj);
+                                            objIdToAllCadActListMap.put((Id)contSobj.get('Id'), cad.CadenceActions__r);
+                                        }
+                                    }
+                                }
+                            }
+                        }else{
+                            //System.debug('Test##09');
+                            sObjectsToProcess.add(obj);
+                            objIdToAllCadActListMap.put((Id)obj.get('Id'), cad.CadenceActions__r);
+                        }
+                        
                     }				
                 } else {
-                    sObjectsToProcess.add(obj);
+                    //System.debug('Test##10');
+                    if(objName.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_OBJECT_NAME)){
+                        string oppIds = String.valueOf(obj.get('Id'));
+                        if(mapOfOppcontact.keyset().size() > 0 && mapOfOppcontact.containskey(oppIds)){
+                            for(String associateContactofOpp :mapOfOppcontact.get(oppIds)){
+                                Contact contSobj = new Contact();
+                                Cadence__c cad = RuleCriterionMatcher.assignCadenceToNotAssignedParticipant(cadMapNew, obj, parentMap.get((Id)obj.get('Id')), objName);
+                                if(cad != null){
+                                    Set<String> setOfMatchRole;
+                                    if(CadenceService.mapOfOpportunityRole.containskey(oppIds)) 
+                                    setOfMatchRole = CadenceService.mapOfOpportunityRole.get(oppIds);
+                                    if(CadenceService.mapOfOpportunityRole.containskey(oppIds)){
+                                        if(setOfMatchRole.contains(associateContactofOpp)){
+                                            if(mapOfContacts.containskey(associateContactofOpp)){
+                                            contSobj =(Contact)UpdateSequenceOnParticipant(mapOfContacts.get(associateContactofOpp),cad);
+                                            }
+                                            if(contSobj != null && contSobj.isActivated__c) {
+                                                sObjectsToProcess.add(contSobj);
+                                                objIdToAllCadActListMap.put(contSobj.Id, cad.CadenceActions__r);
+                                            }
+                                        }
+                                    }
+                                    else{
+                                        if(mapOfContacts.containskey(associateContactofOpp)){
+                                            contSobj =(Contact)UpdateSequenceOnParticipant(mapOfContacts.get(associateContactofOpp),cad);
+                                        }
+                                        if(contSobj != null && contSobj.isActivated__c) {
+                                            sObjectsToProcess.add(contSobj);
+                                            objIdToAllCadActListMap.put(contSobj.Id, cad.CadenceActions__r);
+                                        }
+                                    }
+                                }
+                                
+                            }
+                        }
+                    }else{
+                        //System.debug('Test##11');
+                        sObjectsToProcess.add(obj);
+                     }
+                    //sObjectsToProcess.add(obj);
                 }
             }
         }
-        
         //Insert participant History for sequence 
         if(newSequenceHistory != null && newSequenceHistory.size() > 0)
             insert newSequenceHistory;
         
+        //Update Contact which exit match form Opportunity
+        if(oppContactList != null && oppContactList.size() > 0){
+            System.debug('oppContactList:##'+oppContactList);
+             update oppContactList;
+        }
+        
+        
         //Deleting old non performed participant actions 
         CadenceService.deleteUnperformedPartActions(oldPartActionToDelete, objName);
         //Creating new participant actions for new cadence  
+        //System.debug('Test##12:'+objIdToAllCadActListMap);
         CadenceService.createActionParticipants(objIdToAllCadActListMap, new Map<Id, SObject>(sObjectsToProcess), objName); 
         
         return sObjectsToProcess;
-        
-    }    
+    }     
     
     public static Map<Id,List<Id>> getParticipantSequenceHistory(Set<Id> objIds,String objName){
         //This method will return Map contain ParticipantId as Key and List of sequenceIds as values that assigned Participant in past.
@@ -535,7 +804,7 @@ global  without sharing class CadenceService {
     }
     
     public static Map<Id, Cadence__c> removeCadencefromMap(Map<Id, Cadence__c> cadMap,List<Id> sequenceIds){
-        if(sequenceIds == null){
+        if(sequenceIds == null || cadMap == null){
             return cadMap; 
         }
         for(Id seqId:sequenceIds){
@@ -546,18 +815,17 @@ global  without sharing class CadenceService {
     
     public static Participant_Sequence_History__c createHistoryObject(Id sequenceId,Id objId,String objName){
         Participant_Sequence_History__c history = new Participant_Sequence_History__c();
-        history.RDNACadence__Sequence_Id__c = sequenceId;
+        history.Sequence_Id__c = sequenceId;
         if(objName.equals(CadenceConstants.LEAD_OBJECT_NAME)) {
-            history.RDNACadence__Lead_Id__c = objId;
+            history.Lead_Id__c = objId;
         }
         else{
-            history.RDNACadence__Contact_Id__c = objId;
+            history.Contact_Id__c = objId;
         }
         return history;
     }
     
     public static Map<Id, List<Sequence_Action__c>> performParticipantActions(List<SObject> objList, Map<Id, List<Sequence_Action__c>> partActionsMap) {
-        
         Map<Id, List<Sequence_Action__c>> performedPartActions = new Map<Id, List<Sequence_Action__c>>(); 
         Map<Id, SObject> objMap = new Map<Id, SObject>(objList); 
         List<Sequence_Action__c> partActToUpdate = new List<Sequence_Action__c>();
@@ -568,7 +836,6 @@ global  without sharing class CadenceService {
         if(partActionsMap == null || partActionsMap.isEmpty()) {
             return performedPartActions;
         } 
-        
         //Processing the data to perform 
         for(Id objId : partActionsMap.keySet()) {
             for(Sequence_Action__c partAct : partActionsMap.get(objId)) {
@@ -587,7 +854,6 @@ global  without sharing class CadenceService {
                             emailsToSend.add(createEmailMessage(objId, partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c));
                             tasksToCreate.add(getEmailTask(partAct.Id, partAct.Name, objId, partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c));
                             performed = true;
-                            
                         } 
                     }
                 } else { 
@@ -615,7 +881,6 @@ global  without sharing class CadenceService {
                     }
                 }
                 if(performed) {
-                    System.debug('performed-true');
                     partAct.Actual_Execution_Date__c = System.Now();
                     partAct.isActionPerformed__c = true;
                     partActToUpdate.add(partAct);
@@ -629,11 +894,11 @@ global  without sharing class CadenceService {
                     partAct.Show_on_Target_List__c = true;
                     partAct.isActionPerformed__c = false;
                     partActToUpdate.add(partAct);
-                    /*if(performedPartActions.containsKey(objId)) {
+                    if(performedPartActions.containsKey(objId)) {
                         performedPartActions.get(objId).add(partAct);
                     } else {
                         performedPartActions.put(objId, new List<Sequence_Action__c>{partAct});
-                    }*/
+                    }
                 }
                 
            } 
@@ -655,8 +920,8 @@ global  without sharing class CadenceService {
         
         if(!partActToUpdate.isEmpty()) {
             Database.update(partActToUpdate, false);
+            
         } 
-        
         return performedPartActions;
         
     } 
@@ -725,15 +990,16 @@ global  without sharing class CadenceService {
         
     }
     
-    
     public static void processParticipantsWithCadences(List<SObject> objList, Map<Id, SObject> parentMap, String objName, Boolean isTrigger) {
         
-        Map<Id, Cadence__c> cadMap = CadenceSelector.getActiveCadencesByRecordType(objName);
+        Map<Id, Cadence__c> cadMap = CadenceSelector.getActiveCadencesByRecordType(New List<String> {objName});
+        
         Map<Id, List<Sequence_Action__c>> partActToPerform = new Map<Id, List<Sequence_Action__c>>();
         
         //Getting objList to process (for perform cadence actions on it)
         Map<Id, SObject> objMap = new Map<Id, SObject>(CadenceService.getSObjectsToProcess(objList, parentMap, cadMap, objName));
-        System.debug('objMap'+objMap);
+        
+
         //Getting non performed participant actions 
         Map<Id, List<Sequence_Action__c>> partActionsMap = CadenceService.getRemainingParticipantAction(objMap.keySet(), objName);
         
@@ -755,6 +1021,7 @@ global  without sharing class CadenceService {
             } 	
         } 
         
+        //System.debug('partActToPerform:'+partActToPerform);
         //perform participant actions  
         Map<Id, List<Sequence_Action__c>> performedPartAct = CadenceService.performParticipantActions(objMap.values(), partActToPerform);
         
@@ -762,8 +1029,11 @@ global  without sharing class CadenceService {
         CadenceService.updateSObjectFields(objMap.values(), performedPartAct, objName, false);
         if(!isTrigger) {
             update objList;
+            if(objMap.keyset().size() > 0 && objMap.values().size()>0) {
+                update objMap.values();
+            }
         }
-        
+            
         //Updating dates on remaining participant objects 
         List<Sequence_Action__c> saToUpdate = new List<Sequence_Action__c>();
         for(Id objId : performedPartAct.keySet()) {
@@ -772,13 +1042,11 @@ global  without sharing class CadenceService {
                 saToUpdate.addAll(CadenceService.updateActionOnParticipantExpectedDate(sa.Actual_Execution_Date__c, (Integer)sa.CadenceAction_Id__r.Index__c, partActionsMap.get(partId)));
             }
         }
-        
+       
         if(!saToUpdate.isEmpty()) {
             update saToUpdate;
         }
-        
     }
-    
     
     public static Map<Id, SObject> getParentObject(List<SObject> objList, String parentFieldName, String parentName) {
         
@@ -816,7 +1084,7 @@ global  without sharing class CadenceService {
         if (objectName == CadenceConstants.CONTACT_OBJECT_NAME){
             if (fieldName == 'MasterRecordId' || fieldName == 'AccountId' 
                 || fieldName == 'CreatedById' || fieldName == 'LastModifiedById' || fieldName == 'OwnerId'
-                || fieldName == 'ReportsToId' || fieldName == 'RDNACadence__Cadence_ID__c' ){
+                || fieldName == 'ReportsToId' || fieldName == nameSpace+'Cadence_ID__c' ){
                 return true;
             }else {
                 return false;
@@ -832,9 +1100,19 @@ global  without sharing class CadenceService {
         }else if (objectName == CadenceConstants.LEAD_OBJECT_NAME){
             if (fieldName == 'MasterRecordId' 
                 || fieldName == 'CreatedById' || fieldName == 'LastModifiedById' || fieldName == 'OwnerId'
-                || fieldName == 'DandbCompanyId' || fieldName == 'RDNACadence__Cadence_ID__c' ){
+                || fieldName == 'DandbCompanyId' || fieldName == nameSpace+'Cadence_ID__c' ){
                 return true;
             }else {
+                return false;
+            }
+        }else if (objectName == CadenceConstants.OPPORTUNITY_OBJECT_NAME){
+            if (fieldName == nameSpace+'Celigo_Contract__c' 
+                || fieldName == nameSpace+'Champion__c' || fieldName == nameSpace+'Distributor__c' || fieldName == nameSpace+'Economic_Buyer__c'
+                || fieldName == nameSpace+'Eligible_Account_For_Channel_Sales__c' || fieldName == nameSpace+'End_User__c' 
+                || fieldName == nameSpace+'From_Contract__c' || fieldName == nameSpace+'Order__c' || fieldName == nameSpace+'Reseller__c'){
+                return true;
+            }else {
+                System.debug('Ref--##--No:' + fieldName);
                 return false;
             }
         }else  {
@@ -880,7 +1158,8 @@ global  without sharing class CadenceService {
     
     //This method is to process participant if they are activated firstTime
     public static void processParticipantActivation(Map<Id, Cadence__c> cadMap, List<SObject> objList, String objName) {
-    	Map<Id, List<CadenceAction__c>> objIdToAllCadActListMap = new Map<Id, List<CadenceAction__c>>();
+    	System.debug('objName:'+objName);
+        Map<Id, List<CadenceAction__c>> objIdToAllCadActListMap = new Map<Id, List<CadenceAction__c>>();
         for(SObject Obj : objList){
             if((Boolean)Obj.get(nameSpace + 'isActivated__c') == true && Obj.get(nameSpace + 'EntranceCriteria_Matched_Date__c') == null){
                 Obj.put(nameSpace + 'EntranceCriteria_Matched_Date__c', System.now());
@@ -896,22 +1175,20 @@ global  without sharing class CadenceService {
             }
         }
         
+        System.debug('objName:'+objName);
+        
 	}
     
     
     public static List<Sequence_Action__c> updateActionOnParticipantExpectedDate(DateTime lastExecutionDate, Integer index, List<Sequence_Action__c> updateActions) {
-        System.debug('updateActionOnParticipantExpectedDate');
         List<Sequence_Action__c> saToUpdate = new List<Sequence_Action__c>();
         Integer day = 0, hour = 0;
         DateTime executionDate = lastExecutionDate,nextDate;
-        System.debug('executionDate:'+executionDate);
+        
         if(updateActions == null) {
             return saToUpdate;
         }
         for(Sequence_Action__c sa : updateActions) {
-            System.debug('sa.Actual_Execution_Date__c:'+sa.Actual_Execution_Date__c);
-            System.debug('sa.CadenceAction_Id__r.Index__c:'+sa.CadenceAction_Id__r.Index__c);
-            System.debug('index:'+index);
             if(sa.Actual_Execution_Date__c == null && sa.isActionPerformed__c == false && sa.CadenceAction_Id__r.Index__c > index) {
                 if(sa.CadenceAction_ID__r.Day__c != null) {
                     day = day + (Integer)sa.CadenceAction_ID__r.Day__c;
@@ -921,7 +1198,6 @@ global  without sharing class CadenceService {
                 }
                 nextDate = CadenceUtil.addTimeInDate(executionDate, day, hour);
                 sa.Expected_Execution_Date__c = nextDate;
-                System.debug('nextDate:'+nextDate);
                 saToUpdate.add(sa);
             }	    
         }
@@ -934,8 +1210,6 @@ global  without sharing class CadenceService {
      * @return - List<Task> - Action On Participant Ids
      */
     public  static void UpdateIsPerformed(List<Task> taskList){
-        System.debug('taskList:'+taskList);
-        
         List<Id> ActionOnParticipantIds = new List<Id>(); 
         for(Task task: taskList){
             ActionOnParticipantIds.add(task.Sequence_Action__c);
@@ -946,16 +1220,12 @@ global  without sharing class CadenceService {
             AOP.isActionPerformed__c = True;
             AOP.Actual_Execution_Date__c = System.now();
         }
-        System.debug('actionOnParticipantList:'+actionOnParticipantList);
         if(actionOnParticipantList != null && actionOnParticipantList.size() > 0){
             update actionOnParticipantList;
         }
        
         Map<Id, List<Sequence_Action__c>> objToPartActMap = new Map<Id, List<Sequence_Action__c>>();
         objToPartActMap = TaskService.getAllParticipantActionsForTaskOwner(taskList);
-        
-        System.debug('objToPartActMap:'+objToPartActMap);
-        
         
         //Updating dates on remaining participant objects
         List<Sequence_Action__c> saToUpdate = new List<Sequence_Action__c>();
@@ -967,7 +1237,6 @@ global  without sharing class CadenceService {
         if(!saToUpdate.isEmpty()) {                        
             update saToUpdate;
         }
-        System.debug('saToUpdate:'+saToUpdate);
     }
     
     
@@ -978,22 +1247,29 @@ global  without sharing class CadenceService {
         List<Task> taskList = CadenceSelector.getActionOnParticipantId(ids);   
         CadenceService.UpdateIsPerformed(taskList);
    }
-   /* public static List<CriterionWrapper> getFieldsWithLabelsNew(List<String> objectlist){
+    
+    public static List<CriterionWrapper> getFieldsWithLabelsForBatch(List<String> objectlist){
         String objectStr ; 
         List<Criterion> fieldsWithLabels = new List<Criterion>();
-		List<CriterionWrapper> fieldList = new List<CriterionWrapper>();      
-        CriterionWrapper criterionWrapper;
+        List<CriterionWrapper> fieldList = new List<CriterionWrapper>();      
+        CriterionWrapper criterionWrapper,criterionWrapperPartnerAccount;
         Integer index = 0;
+        Boolean IsPartnerAccount = false;
         List<Schema.DescribeSObjectResult> descResult = Schema.describeSObjects(objectlist);
         if(descResult != null && descResult.size() > 0){
             for(Schema.DescribeSObjectResult dsc : descResult){ 
-                System.debug('dsc'+dsc);
                 if(dsc != null && dsc.getName()!= null){
                     criterionWrapper = new CriterionWrapper();
                     objectStr =dsc.getName(); 
                     criterionWrapper.GroupName = objectStr;
                     if(index == 0){
                         criterionWrapper.IsParent = true;
+                    }
+                    
+                    if(objectlist[0] == CadenceConstants.OPPORTUNITY_OBJECT_NAME && objectStr == CadenceConstants.ACCOUNT_OBJECT_NAME){
+                        IsPartnerAccount = true;
+                        criterionWrapperPartnerAccount = new CriterionWrapper();
+                        criterionWrapperPartnerAccount.GroupName = CadenceConstants.PARTNER_ACCOUNT_OBJECT_NAME;
                     }
                     
                     Schema.sObjectType sObjectName = Schema.getGlobalDescribe().get(objectStr);
@@ -1026,155 +1302,123 @@ global  without sharing class CadenceService {
                                    c.fieldName = fieldAPIName.getDescribe().getName();
                                    c.fieldLabel = fieldAPIName.getDescribe().getLabel();
                                    c.fieldDataType = getDataType(objectStr, c.fieldName);
-                                  
+                                   
                                    if (c.fieldDataType == 'Picklist' || c.fieldDataType == 'MultiPickList'){
                                        c.listPicklistValues = getPicklistValues(objectStr, c.fieldName);
                                    }
-                                   if (!((c.fieldDataType == 'Reference' && objectStr == 'DandBCompany'))){
-                                       if (c.fieldDataType != 'Reference' || (c.fieldDataType == 'Reference' && validForCriteria(objectStr, c.fieldName))){
-                                   			if(index != 0){
-                                       			c.fieldName =  objectStr + '.' + c.fieldName;
-                                   			}
-                                   			fieldsWithLabels.add(c);
-                                       }
+                                   if(index != 0){
+                                       c.fieldName =  objectStr + '.' + c.fieldName;
                                    }
-            
+                                   fieldsWithLabels.add(c);
                                } 
                         }
                     }
                 }
-               index++; 
+                index++; 
                 criterionWrapper.fieldsDetail = fieldsWithLabels;
                 fieldList.add(criterionWrapper);
+                
+                if(IsPartnerAccount){
+                    for(Criterion c : fieldsWithLabels){
+                        String[] fields = c.fieldName.split('\\.');
+                        if(fields.size() > 0){
+                            Criterion criterion  = new Criterion();
+                            criterion.id=c.id;
+                            criterion.fieldName='PartnerAccount.' + fields[1];
+                            criterion.fieldLabel=c.fieldLabel;
+                            criterion.fieldDataType=c.fieldDataType;
+                            criterion.operation=c.operation;
+                            criterion.value=c.value;
+                            criterion.listPicklistValues=c.listPicklistValues;
+                            criterionWrapperPartnerAccount.fieldsDetail.add(criterion);
+                        }
+                    }
+                    IsPartnerAccount = false;
+                }
                 fieldsWithLabels = new List<Criterion>();
                 
             }
         }
-        System.debug('fieldList'+fieldList);
+        
+        if(criterionWrapperPartnerAccount != null){
+            fieldList.add(criterionWrapperPartnerAccount);
+        }
         
         return fieldList;
     }
-     public static Map<Id, List<Sequence_Action__c>> getRemainingParticipantActionsNew(Set<Id> objIds, String objName) {
-        Map<Id, List<Sequence_Action__c>> objToParticipantActionsMap = new Map<Id, List<Sequence_Action__c>>(); 
-        List<Sequence_Action__c> participantActions;
-        if(objName.equals(CadenceConstants.LEAD_OBJECT_NAME)) {
-            participantActions = [Select Id, Name, CadenceAction_ID__c, Expected_Execution_Date__c, Show_on_Target_List__c, Lead_Id__c, Contact_Id__c, isActionPerformed__c, CadenceAction_Id__r.Day__c,
-                                  CadenceAction_Id__r.Hour__c, CadenceAction_Id__r.Action_Id__r.Type__c, CadenceAction_Id__r.Fields_To_Update_Action__c,
-                                  CadenceAction_Id__r.Action_Id__r.Activation_Type__c, CadenceAction_Id__r.Trigger_Type__c,
-                                  CadenceAction_Id__r.Action_Id__r.Task_Description__c, CadenceAction_Id__r.Action_Id__r.Template_Id__c From Sequence_Action__c 
-                                  where Lead_Id__c IN :objIds AND isActionPerformed__c = false 
-                                  order by CadenceAction_Id__r.Day__c, CadenceAction_Id__r.Hour__c];
-        } 
-        else if(objName.equals(CadenceConstants.OPPORTUNITY_OBJECT_NAME)) {  
-            participantActions = [Select Id, Name, CadenceAction_ID__c, Expected_Execution_Date__c, Show_on_Target_List__c, Lead_Id__c, Contact_Id__c, isActionPerformed__c, CadenceAction_Id__r.Day__c,
-                                  CadenceAction_Id__r.Hour__c, CadenceAction_Id__r.Action_Id__r.Type__c, CadenceAction_Id__r.Fields_To_Update_Action__c,
-                                  CadenceAction_Id__r.Action_Id__r.Activation_Type__c, CadenceAction_Id__r.Trigger_Type__c,
-                                  CadenceAction_Id__r.Action_Id__r.Task_Description__c, CadenceAction_Id__r.Action_Id__r.Template_Id__c From Sequence_Action__c 
-                                  where Contact_Id__c IN :objIds AND isActionPerformed__c = false 
-                                  order by CadenceAction_Id__r.Day__c, CadenceAction_Id__r.Hour__c];
-        }
-        else {  
-            participantActions = [Select Id, Name, CadenceAction_ID__c, Expected_Execution_Date__c, Show_on_Target_List__c, Lead_Id__c, Contact_Id__c, isActionPerformed__c, CadenceAction_Id__r.Day__c,
-                                  CadenceAction_Id__r.Hour__c, CadenceAction_Id__r.Action_Id__r.Type__c, CadenceAction_Id__r.Fields_To_Update_Action__c,
-                                  CadenceAction_Id__r.Action_Id__r.Activation_Type__c, CadenceAction_Id__r.Trigger_Type__c,
-                                  CadenceAction_Id__r.Action_Id__r.Task_Description__c, CadenceAction_Id__r.Action_Id__r.Template_Id__c From Sequence_Action__c 
-                                  where Contact_Id__c IN :objIds AND isActionPerformed__c = false 
-                                  order by CadenceAction_Id__r.Day__c, CadenceAction_Id__r.Hour__c];
-        }
-         System.debug('participantActions'+participantActions);
-        for(Sequence_Action__c partAct : participantActions) {
-            if(objName.equals(CadenceConstants.LEAD_OBJECT_NAME)) {
-                if(objToParticipantActionsMap.containsKey(partAct.Lead_Id__c)) {
-                    objToParticipantActionsMap.get(partAct.Lead_Id__c).add(partAct);
-                } else {
-                    objToParticipantActionsMap.put(partAct.Lead_Id__c, new List<Sequence_Action__c>{partAct});
+    
+    public static Sobject UpdateSequenceOnParticipant(Sobject partObj,Cadence__c cadToUpdate){
+        //After matching criteria setting matching cadence data to participant
+        //for(SObject partObj :  partList){
+        System.debug('partObj:##'+partObj);
+            partObj.put(nameSpace+'Cadence_Id__c', cadToUpdate.Id); 
+            if(cadToUpdate.Participent_Activation__c.equalsIgnoreCase(CadenceConstants.PARTICIPANT_ACTIVATION_AUTOMATIC)) {
+                partObj.put(nameSpace+'isActivated__c', true);
+                partObj.put(nameSpace+'EntranceCriteria_Matched_Date__c', System.now());
+            } else {
+                partObj.put(nameSpace+'isActivated__c', false);
+            }
+        //}
+        return partObj;
+		
+    }
+    public static map<string,List<String>> opporContactMap(List<sobject> sobjectList){
+        //map<String,List<Sobject>> mapofOppContact = new Map<String,List<Sobject>>();
+        map<string,List<String>> mapOfoppcontactIds= new map<String,List<string>>();
+        List<String> setOfcontactstring = new List<string>();
+        list<OpportunityContactRole> templist = [Select ContactId,OpportunityId From OpportunityContactRole Where OpportunityId In :(sobjectList)];
+        for(OpportunityContactRole oppCont : templist){
+            System.debug('oppCont'+oppCont);
+            System.debug('oppCont.ContactId'+oppCont.ContactId);
+            setOfcontactstring = new List<string>();
+            if(oppCont.ContactId != null ){
+                if(mapOfoppcontactIds.containskey(oppCont.OpportunityId) && mapOfoppcontactIds.get(oppCont.OpportunityId) != null){
+                    setOfcontactstring = mapOfoppcontactIds.get(oppCont.OpportunityId);
+                    setOfcontactstring.add(oppCont.ContactId);
+                }else{
+                    setOfcontactstring.add(oppCont.ContactId);
                 }
-            } 
-            else {
-                if(objToParticipantActionsMap.containsKey(partAct.Contact_Id__c)) {
-                    objToParticipantActionsMap.get(partAct.Contact_Id__c).add(partAct);
-                } else {
-                    objToParticipantActionsMap.put(partAct.Contact_Id__c, new List<Sequence_Action__c>{partAct});
-                } 
-            }	
+                
+            }
+            mapOfoppcontactIds.put(oppCont.OpportunityId,setOfcontactstring);
         }
-        return objToParticipantActionsMap;
+        return mapOfoppcontactIds;
     }
     
-     public static List<CriterionWrapper> getFieldsWithLabelsForUpdateNew(List<String> objectlist){
-         
-          String objectStr ; 
-        List<Criterion> fieldsWithLabels = new List<Criterion>();
-		List<CriterionWrapper> fieldList = new List<CriterionWrapper>();      
-        CriterionWrapper criterionWrapper;
-        Integer index = 0;
-        List<Schema.DescribeSObjectResult> descResult = Schema.describeSObjects(objectlist);
-        if(descResult != null && descResult.size() > 0){
-            for(Schema.DescribeSObjectResult dsc : descResult){ 
-                if(dsc != null && dsc.getName()!= null){
-                    criterionWrapper = new CriterionWrapper();
-                    objectStr =dsc.getName(); 
-                    criterionWrapper.GroupName = objectStr;
-                    if(index == 0){
-                        criterionWrapper.IsParent = true;
-                    }
-                    
-                    Schema.sObjectType sObjectName = Schema.getGlobalDescribe().get(objectStr);
-                    if (sObjectName != null){
-                        SObjectType r = dsc.getSobjectType(); 
-                        Map<String, Schema.SObjectField> fieldsMap = dsc.fields.getMap(); 
-                        for (String field : fieldsMap.keySet()) {
-                            
-                            Criterion c = new Criterion();
-                            Schema.sObjectField fieldAPIName = fieldsMap.get(field);
-                            Schema.DisplayType fieldDataType = fieldAPIName.getDescribe().getType();           
-                            Schema.DescribeFieldResult dfr = fieldAPIName.getDescribe();
-                            Integer LengthOfField = dfr.getLength();
-                            
-                            if (fieldDataType == Schema.DisplayType.Boolean 
-                                || fieldDataType == Schema.DisplayType.REFERENCE
-                                || fieldDataType == Schema.DisplayType.Double 
-                                || fieldDataType == Schema.DisplayType.Integer
-                                || fieldDataType == Schema.DisplayType.Email
-                                || fieldDataType == Schema.DisplayType.Phone
-                                || fieldDataType == Schema.DisplayType.Date
-                                || fieldDataType == Schema.DisplayType.DateTime
-                                || (fieldDataType == Schema.DisplayType.String )
-                                || fieldDataType == Schema.DisplayType.Picklist
-                                || (fieldDataType == Schema.DisplayType.Textarea && (LengthOfField <= 255 && (fieldDataType != Schema.DisplayType.ENCRYPTEDSTRING)) )               
-                                || fieldDataType == Schema.DisplayType.Combobox
-                                || fieldDataType == Schema.DisplayType.MULTIPICKLIST
-                               ){
-                                   if(!fieldAPIName.getDescribe().isCalculated() && fieldAPIName.getDescribe().isUpdateable()){
-                                       
-                                       c.fieldName = fieldAPIName.getDescribe().getName();
-                                       c.fieldLabel = fieldAPIName.getDescribe().getLabel();
-                                       c.fieldDataType = getDataType(objectStr, c.fieldName);
-                                       if (c.fieldDataType == 'Picklist' || c.fieldDataType == 'MultiPickList'){
-                                           c.listPicklistValues = getPicklistValues(objectStr, c.fieldName);
-                                       }
-                                       if (!(c.fieldDataType == 'Reference' && (c.fieldName == 'RDNACadence__Cadence_ID__c' || c.fieldName == 'ReportsToId' || c.fieldName == 'OwnerId' ))){
-                                           if (c.fieldDataType != 'Reference' || (c.fieldDataType == 'Reference' && validForCriteria(objectStr, c.fieldName))){
-                                               if(index != 0){
-                                                   c.fieldName =  objectStr + '.' + c.fieldName;
-                                               }
-                                               fieldsWithLabels.add(c);
-                                           }
-                                       }
-                                       
-                                   }
-                               } 
-                        }
-                    }
+    public static void getMapOpporContactRole(List<sobject> sobjectList){
+        List<OpportunityContactRole> listOfContactRole = new List<OpportunityContactRole>();
+        //CadenceService.mapOfOppContactRoles
+        map<String,list<OpportunityContactRole>> mapOfOppContRole=new map<String,list<OpportunityContactRole>>();
+        for(OpportunityContactRole oppCont : [Select ContactId,OpportunityId,Role From OpportunityContactRole Where OpportunityId In :(sobjectList)]){
+            if(mapOfOppContRole.containskey(oppCont.OpportunityId)){
+                if(mapOfOppContRole.get(oppCont.OpportunityId) != null)
+                listOfContactRole =  mapOfOppContRole.get(oppCont.OpportunityId);
+                listOfContactRole.add(oppCont);
+            }  
+            else
+                listOfContactRole.add(oppCont);
+                
+            mapOfOppContRole.put(oppCont.OpportunityId,listOfContactRole);
+        }
+        CadenceService.mapOfOppContactRoles =mapOfOppContRole;
+    }
+    
+    public static List<Contact> RemoveSequenceFromParticempant(string opportunityId, map<string,List<String>> mapOfOppcontact,map<String,Sobject> mapOfContacts){
+        //map<string,List<String>> mapOfOppcontact =  new map<string,List<String>>();
+        //map<String,Sobject> mapOfContacts= new Map<String,Sobject>();
+        List<Contact> contactList = new List<Contact>();
+        Contact contactObj = new Contact();
+        if(mapOfOppcontact != null && mapOfOppcontact.containsKey(opportunityId) && mapOfOppcontact.get(opportunityId) != null){
+            for(Id contatId :  mapOfOppcontact.get(opportunityId)){
+                if(mapOfContacts.containsKey(contatId)){
+                    contactObj =(Contact)mapOfContacts.get(contatId);
+                    contactObj.Cadence_Id__c = null;
+                    contactObj.isActivated__c = false;
+                    contactList.add(contactObj);
                 }
-               index++; 
-                criterionWrapper.fieldsDetail = fieldsWithLabels;
-                fieldList.add(criterionWrapper);
-                fieldsWithLabels = new List<Criterion>();
                 
             }
         }
-        return fieldList;
-     
-    } */
+        return contactList;
+    }
 }

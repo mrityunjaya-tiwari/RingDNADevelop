@@ -15,7 +15,7 @@ public class CadenceProgressIndicatorControllerTest {
         insert action1;
         
         List<Criterion> criterionList = new List<Criterion>();
-        Cadence__c cadenceObj= TestDataFactory.createCadence(RECORD_TYPE_LEAD);
+        Cadence__c cadenceObj= TestDataFactory.createCadence(RECORD_TYPE_LEAD);        
         Criterion c = TestDataFactory.createCriterion(1, 'Status', 'PICKLIST', 'equals', 'Open - Not Contacted');
         criterionList.add(c);
         jsonString = TestDataFactory.createCadenceJSON(criterionList, CadenceConstants.CONDITION_AND, CUSTOM_LOGIC);
@@ -34,17 +34,21 @@ public class CadenceProgressIndicatorControllerTest {
         CadenceAction__c cadenceActionobj2= TestDataFactory.createCadenceAction(cadenceObj.Id, action1.Id);
         cadenceActionobj2.Action_Criterion__c = jsonString;
         cadenceActionobj2.Cadence_Id__c=cadenceobj.Id;
-       // insert cadenceActionobj1;
+        
+       	Sequence sequence = TestDataFactory.createSequence(cadenceobj);
+        SequenceAction sequenceAction= TestDataFactory.createSequenceAction(cadenceActionobj);
+        SequenceAction sequenceAction1= TestDataFactory.createSequenceAction(cadenceActionobj1);
+        SequenceAction sequenceAction2= TestDataFactory.createSequenceAction(cadenceActionobj2);
  
-        Test.startTest();
-        CadenceProgressIndicatorController.saveCadence(cadenceObj, new List<CadenceAction__c> {cadenceActionobj}, New List<String>());  
+        Test.startTest();		
+        CadenceProgressIndicatorController.saveCadence(system.JSON.serialize(sequence), system.JSON.serialize(new List<SequenceAction> {sequenceAction}), New List<String>());  
   //      Lead testLead = TestDataFactory.createLead(cadenceObj.Id);
 //        insert testLead;
-        CadenceProgressIndicatorController.saveCadence(cadenceObj, new List<CadenceAction__c> {cadenceActionobj, cadenceActionobj1, cadenceActionobj2}, New List<String>());  
+        CadenceProgressIndicatorController.saveCadence(system.JSON.serialize(sequence), system.JSON.serialize(new List<SequenceAction> {sequenceAction, sequenceAction1, sequenceAction2}), New List<String>());  
         
         List<String> idListString = New List<String>();
         idListString.add(String.valueOf(cadenceActionobj1.ID));
-        CadenceProgressIndicatorController.saveCadence(cadenceObj, new List<CadenceAction__c> {cadenceActionobj, cadenceActionobj2}, idListString);  
+        CadenceProgressIndicatorController.saveCadence(system.JSON.serialize(sequence), system.JSON.serialize(new List<SequenceAction> {sequenceAction, sequenceAction2}), idListString);  
         
         Test.stopTest();        
         List<CadenceAction__c> ListOfCadenceActionToDelete = [Select id from CadenceAction__c where Id =:cadenceActionobj.Id];

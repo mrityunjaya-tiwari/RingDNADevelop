@@ -2,7 +2,7 @@
     
     <!-- Handlers -->
     <aura:handler name="init" value="{! this }" action="{! c.doInit }"/>
-    <aura:handler name="datatableEvt" event="RDNACadence2:DatatableEvent" action="{!c.handleDatatableEvent}"/>
+    <aura:handler name="datatableEvt" event="c:DatatableEvent" action="{!c.handleDatatableEvent}"/>
     
     <!-- attributes -->
 	<aura:attribute name="rawDataForFilter" type="List"/>
@@ -32,6 +32,6 @@
     </div>
     
     <div class="slds-m-top_medium rdna-classic-datatableStyling">
-        <RDNACadence2:Datatable columns = "{!v.columns}" rawData = "{!v.rawData}" data="{!v.pData}"  rowsToLoad="{!v.rowsToLoad}"  aura:id = "datatable1" hideCheckboxColumn = "{!v.hideCheckboxes}" rawDataForFilter = "{!v.rawDataForFilter}" selectedNoOfRecords="true"/>    
+        <c:Datatable columns = "{!v.columns}" rawData = "{!v.rawData}" data="{!v.pData}"  rowsToLoad="{!v.rowsToLoad}"  aura:id = "datatable1" hideCheckboxColumn = "{!v.hideCheckboxes}" rawDataForFilter = "{!v.rawDataForFilter}" selectedNoOfRecords="true"/>    
     </div>
 </aura:component>

@@ -1,7 +1,6 @@
 ({
     init: function (cmp, event, helper) {
         var rowActions = helper.getRowActions.bind(this, cmp);
-        
         cmp.set('v.columns', [
             {label: 'Action', fieldName: 'linkName', type: 'url', sortable:'true',
              typeAttributes: {label: { fieldName: 'name'}, tooltip: {fieldName: 'name'}, target: '_self', sortable: true}},

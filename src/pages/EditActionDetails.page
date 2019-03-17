@@ -6,9 +6,9 @@
     	var myUserContext = "{!$User.UITheme}";
         var recordIds = '{!$CurrentPage.parameters.id}'; 
         var isNewVar = '{!$CurrentPage.parameters.isNew}' != undefined ? '{!$CurrentPage.parameters.isNew}':true;
-        $Lightning.use("RDNACadence2:CadenceActionListApp", function() {
+        $Lightning.use("c:CadenceActionListApp", function() {
             $Lightning.createComponent(
-                "RDNACadence2:ActionDetails",
+                "c:ActionDetails",
                 {recordId: recordIds,themeName: myUserContext,isNew : isNewVar},
                 "myDivId3",
                 function(cmp) {

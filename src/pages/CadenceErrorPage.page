@@ -5,9 +5,9 @@
     <div id="myDivId3" />
     <script>
     	var myUserContext = "{!$User.UITheme}";
-        $Lightning.use("RDNACadence2:CadenceActionListApp", function() {
+        $Lightning.use("c:CadenceActionListApp", function() {
         $Lightning.createComponent(
-                "RDNACadence2:ErrorPage",
+                "c:ErrorPage",
                 {themeName: myUserContext},
                 "myDivId3",
                 function(cmp) {

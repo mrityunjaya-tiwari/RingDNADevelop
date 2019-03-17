@@ -12,7 +12,7 @@ public class Leads  extends SObjectDomain {
         Map<String, List<Lead>> leadList = CadenceService.processObjectList(sObjectList);
         leadsWithCadence = leadList.get('leadListWithCadenceIds');
         leadsWithoutCadence = leadList.get('leadListWithoutCadenceIds');
-        cadMap = CadenceSelector.getActiveCadencesByRecordType(CadenceConstants.LEAD_OBJECT_NAME);
+        cadMap = CadenceSelector.getActiveCadencesByRecordType(new List<String>{CadenceConstants.LEAD_OBJECT_NAME});
         CadenceService.processParticipantActivation(cadMap, leadsWithCadence, CadenceConstants.LEAD_OBJECT_NAME);
     }
     

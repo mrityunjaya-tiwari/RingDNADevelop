@@ -24,6 +24,14 @@ public class TestDataFactory {
         return l;
     }
     
+    public static Opportunity createOpp(String name) {
+        Opportunity opp= new Opportunity();
+        opp.Name = name;
+        opp.CloseDate = system.today();
+        opp.StageName = 'Qualification';
+        return opp;
+    }
+    
     public static Lead createLead() { 
         Lead l = new Lead();
         l.LastName = 'Test Lead';
@@ -49,13 +57,34 @@ public class TestDataFactory {
         return cad;
     } 
     
+    public static Sequence createSequence(Cadence__c cObj) {    	        
+         Sequence sequence  = new Sequence(cObj.Id, cObj.Entrance_Criteria__c, '', cObj.Exit_Criteria__c, 
+                    '', cObj.matching_priority__c, cObj.Name, cObj.Participent_Activation__c,
+                    cObj.Record_Type__c, string.valueOf(cObj.Status__c), string.valueOf(cObj.Total_Participants__c));                
+        return sequence;
+    }
+    
     public static CadenceAction__c createCadenceAction(Id cadId, Id actionId) {
         CadenceAction__c cadAction = new CadenceAction__c();
         cadAction.Cadence_Id__c = cadId;
         cadAction.Action_Id__c = actionId;
         cadAction.Name = 'Test Cadence Action';
         cadAction.Trigger_Type__c = 'Immediate';
+               
         return cadAction;
+    }
+    
+    public static SequenceAction createSequenceAction(CadenceAction__c cadenceAction) {
+        SequenceAction sequenceAction = new SequenceAction (cadenceAction.Id, cadenceAction.Action_Criterion__c, 
+                                                               null, string.valueOf(cadenceAction.Action_Id__c), 
+                                                               string.valueOf(cadenceAction.Day__c), 
+                                                               cadenceAction.Fields_To_Update_Action__c, 
+                                                               string.valueOf(cadenceAction.Hour__c), null, 
+                                                               cadenceAction.Name, cadenceAction.Priority__c,
+                                                               null, string.valueOf(cadenceAction.Cadence_Id__c), 
+                                                               cadenceAction.Trigger_Type__c);
+               
+        return sequenceAction;
     }
     
 	public static String createCadenceJSON(List<Criterion> criterionList, String condition, String priorityFormula) {
@@ -103,6 +132,16 @@ public class TestDataFactory {
         criterionList.add(c1);
         criterionList.add(c2);
         criterionList.add(c3);
+        
+        return createCadenceJSON(criterionList, condition, priorityFormula);
+
+    }
+    
+    public static String createCadJsonWithNameCriterionsForOpp(String firstName, String condition, String priorityFormula) {
+        
+        List<Criterion> criterionList = new List<Criterion>();
+        Criterion c1 = TestDataFactory.createCriterion(1, 'Name', 'STRING', 'equals', firstName);
+        criterionList.add(c1);
         
         return createCadenceJSON(criterionList, condition, priorityFormula);
 

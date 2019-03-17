@@ -14,44 +14,28 @@
                 var state = response.getState();
                 if(state === 'SUCCESS'){
                     var wrapperResult = response.getReturnValue();
-                    // Set contact list
-                    var conList = wrapperResult.conCriList;
-                    var sortedConList = conList.sort((a, b) => a.fieldLabel.localeCompare(b.fieldLabel));
-                    component.set('v.contactFieldList', sortedConList);
-                    //Set lead List
-                    var ldList = wrapperResult.ldCriList;
-                    var sortedLdList = ldList.sort((a, b) => a.fieldLabel.localeCompare(b.fieldLabel));
-                    component.set("v.leadFieldList", sortedLdList);
-                    /*// Set contact list SA
-                    var conCAList = wrapperResult.conCriListSA;
-                    var sortedconCAList = conCAList.sort((a, b) => a.fieldLabel.localeCompare(b.fieldLabel));
-                    component.set('v.contactFieldListCA', sortedconCAList);
-                    //Set lead List SA
-                    var ldListSA = wrapperResult.ldCriListSA;
-                    var sortedldListSA = ldListSA.sort((a, b) => a.fieldLabel.localeCompare(b.fieldLabel));
-                    component.set("v.leadFieldListCA", sortedldListSA); */
+                    // Set All field list
+                	var fieldList = wrapperResult.fieldList;
                     
-                    //Set Account List
-                    var accList = wrapperResult.accCriList;
-                    var sortedAccList = accList.sort((a, b) => a.fieldLabel.localeCompare(b.fieldLabel));
-                    component.set("v.accountFieldList", sortedAccList);
-                    //Set DBAccount List
-                    var dbList = wrapperResult.dbCriList;
-                    var sortedDbList = dbList.sort((a, b) => a.fieldLabel.localeCompare(b.fieldLabel));
-                    component.set("v.dbFieldList", sortedDbList);
+                    for(var i=0;fieldList.length > i;i++){
+                       //fieldList[i]["fieldsDetail"].sort((a, b) => a['fieldLabel'].localeCompare(b['fieldLabel']));
+                       fieldList[i]["fieldsDetail"].sort((a, b) => a.fieldLabel.localeCompare(b.fieldLabel));
+                    }
+                    
+                    component.set('v.AllFieldList', fieldList);
+                    
                     // Set cadence data
                     var result = wrapperResult.cObj;
-                    component.set("v.cadence", result);                   
-                    if(result.RDNACadence__CadenceActions__r){
-                        component.set("v.cadenceActionList", result.RDNACadence__CadenceActions__r);                  
+                    component.set("v.cadence", wrapperResult.sObj); 
+                    if(wrapperResult.sObj.cadenceActions){
+                        component.set("v.cadenceActionList", wrapperResult.sObj.cadenceActions);                  
                     }
                     
                     //apply error message here.	
-                    var entryCriterion = JSON.parse(result.RDNACadence__Entrance_Criteria__c);
-                    var exitCriterion = JSON.parse(result.RDNACadence__Exit_Criteria__c);
+                    var entryCriterion = JSON.parse(wrapperResult.sObj.entranceCriteria);
+                    var exitCriterion = JSON.parse(wrapperResult.sObj.exitCriteria);
                     component.set("v.entranceCriteriaSet",entryCriterion);
                     component.set("v.exitCriteriaSet",exitCriterion);
-                    helper.updateCriteriaList(component, event, helper);
                     component.set("v.SpinnerForSync",false);
                 }else if(state === "ERROR"){
                     var myUserContext = component.get("v.themeName");
@@ -60,7 +44,7 @@
                     } else{
                         var evt = $A.get("e.force:navigateToComponent");
                         evt.setParams({
-                            componentDef  : "RDNACadence:ErrorPage" ,
+                            componentDef  : "c:ErrorPage" ,
                             componentAttributes : {
                             }
                         });
@@ -71,61 +55,8 @@
             });
             $A.enqueueAction(cadence);
         }else{
-           
-            var cadence = { 'sobjectType': 'RDNACadence__Cadence__c', 'Name': '','RDNACadence__Record_Type__c':'', 'RDNACadence__Participent_Activation__c':''};
+            var cadence = { 'sobjectType': 'Sequence'};
             component.set("v.cadence", cadence);
-            /*var cadence = component.get("c.getObjCriList");
-            component.set("v.SpinnerForSync",false);
-            cadence.setCallback(this, function(response){
-                var state = response.getState();
-                if(state === 'SUCCESS'){
-                   
-                    var wrapperResult = response.getReturnValue();
-                    // Set contact list
-                    var conList = wrapperResult.conCriList;
-                    var sortedConList = conList.sort((a, b) => a.fieldLabel.localeCompare(b.fieldLabel));
-                    component.set('v.contactFieldList', sortedConList);
-                    
-                    //Set lead List
-                    var ldList = wrapperResult.ldCriList;
-                    var sortedLdList = ldList.sort((a, b) => a.fieldLabel.localeCompare(b.fieldLabel));
-                    component.set('v.leadFieldList', sortedLdList);
-                    /* // Set contact list SA
-                    var conCAList = wrapperResult.conCriListSA;
-                    var sortedconCAList = conCAList.sort((a, b) => a.fieldLabel.localeCompare(b.fieldLabel));
-                    component.set('v.contactFieldListCA', sortedconCAList);
-                    //Set lead List SA
-                    var ldListSA = wrapperResult.ldCriListSA;
-                    var sortedldListSA = ldListSA.sort((a, b) => a.fieldLabel.localeCompare(b.fieldLabel));
-                    component.set("v.leadFieldListCA", sortedldListSA); 
-                    //Set Account List
-                    var accList = wrapperResult.accCriList;
-                    var sortedAccList = accList.sort((a, b) => a.fieldLabel.localeCompare(b.fieldLabel));
-                    component.set("v.accountFieldList", sortedAccList);
-                    //Set DBAccount List
-                    var dbList = wrapperResult.dbCriList;
-                    var sortedDbList = dbList.sort((a, b) => a.fieldLabel.localeCompare(b.fieldLabel));
-                    component.set("v.dbFieldList", sortedDbList);
-                    helper.updateCriteriaList(component, event, helper);
-                    component.set("v.SpinnerForSync",false);
-                }else if(state === "ERROR"){
-                    
-                    var myUserContext = component.get("v.themeName");
-                    if(myUserContext == 'Theme3') {
-                        window.location = '/apex/CadenceErrorPage';
-                    } else{
-                        var evt = $A.get("e.force:navigateToComponent");
-                        evt.setParams({
-                            componentDef  : "RDNACadence:ErrorPage" ,
-                            componentAttributes : {
-                            }
-                        });
-                        evt.fire();
-                    }}else{
-                    component.set("v.SpinnerForSync",false);
-                }
-            });
-            $A.enqueueAction(cadence);*/
         }
     },
     setPhoneRow : function(component, event, helper){
@@ -133,14 +64,14 @@
         var phRow = document.getElementsByClassName('ringdna-phone-td');  
         var rawData = component.get('v.pData');
         var cadencedata = component.get('v.cadence');
-        var cadencActions = cadencedata.RDNACadence__CadenceActions__r;
+        var cadencActions = cadencedata.cadenceActions;
         var templateId ;
         var actionType;
         if(cadencActions.length>0){
-            templateId = cadencActions[0].RDNACadence__Action_Id__r.RDNACadence__Template_Id__c;
-            actionType = cadencActions[0].RDNACadence__Action_Id__r.RDNACadence__Type__c;
+            templateId = cadencActions[0].actiontemplateId;
+            actionType = cadencActions[0].actiontype;
         }
-       
+        
         for (var index = 0; index < phRow.length ; index++){
             try {
                 var rdpElement = phRow[index];
@@ -192,7 +123,7 @@
         var cfList = [];
         var cList = component.get("v.contactFieldList");
         for(var x in cList){
-            cfList.push(cList[x]); 
+            cfList.push(cList[x]);
         }
         
         var afList = component.get("v.accountFieldList");
@@ -232,45 +163,7 @@
         var cadenceObj = component.get("v.cadence");
         var cadence = component.get("c.getObjCriList");
         component.set("v.SpinnerForSync",true);
-        cadence.setParams({objectType: cadenceObj.RDNACadence__Record_Type__c});
-        cadence.setCallback(this, function(response){
-            var state = response.getState();
-            if(state === 'SUCCESS'){                
-               	component.set("v.SpinnerForSync",false);         
-                
-                var wrapperResult = response.getReturnValue();
-                // Set contact list
-                var conList = wrapperResult.conCriList;
-                var sortedConList = conList.sort((a, b) => a.fieldLabel.localeCompare(b.fieldLabel));
-                component.set('v.contactFieldList', sortedConList);
-                
-                //Set lead List
-                var ldList = wrapperResult.ldCriList;
-                var sortedLdList = ldList.sort((a, b) => a.fieldLabel.localeCompare(b.fieldLabel));
-                component.set('v.leadFieldList', sortedLdList);
-               
-                //Set Account List
-                var accList = wrapperResult.accCriList;
-                var sortedAccList = accList.sort((a, b) => a.fieldLabel.localeCompare(b.fieldLabel));
-                component.set("v.accountFieldList", sortedAccList);
-                //Set DBAccount List
-                var dbList = wrapperResult.dbCriList;
-                var sortedDbList = dbList.sort((a, b) => a.fieldLabel.localeCompare(b.fieldLabel));
-                component.set("v.dbFieldList", sortedDbList);
-                helper.updateCriteriaList(component, event, helper);
-                component.set("v.SpinnerForSync",false);
-            }else {
-                component.set("v.SpinnerForSync",false);
-            }
-            component.set("v.settedSequenceType",false);
-        });
-        $A.enqueueAction(cadence);
-    }
-    /*getObjectFieldsListNew: function(component, event, helper){
-        var cadenceObj = component.get("v.cadence");
-        var cadence = component.get("c.getObjCriListNew");
-        component.set("v.SpinnerForSync",true);
-        cadence.setParams({objectType: cadenceObj.RDNACadence__Record_Type__c});
+        cadence.setParams({objectType: cadenceObj.recordType});
         cadence.setCallback(this, function(response){
             var state = response.getState();
             if(state === 'SUCCESS'){                
@@ -292,57 +185,5 @@
             component.set("v.settedSequenceType",false);
         });
         $A.enqueueAction(cadence);
-    },
-    
-    getCadenceDataNew: function(component,helper){
-        component.set("v.SpinnerForSync",true);
-        var cadenceId = component.get("v.recordId");
-        
-        if(cadenceId){
-            var cadence = component.get("c.getCadenceDataNew");
-            cadence.setParams({cadenceId: cadenceId});
-            cadence.setCallback(this, function(response){
-                var state = response.getState();
-                if(state === 'SUCCESS'){
-                    var wrapperResult = response.getReturnValue();
-                    // Set All field list
-                	var fieldList = wrapperResult.fieldList;
-                    
-                    component.set('v.AllFieldList', fieldList);
-                    
-                    // Set cadence data
-                    var result = wrapperResult.cObj;
-                    component.set("v.cadence", result);                   
-                    if(result.RDNACadence__CadenceActions__r){
-                        component.set("v.cadenceActionList", result.RDNACadence__CadenceActions__r);                  
-                    }
-                    
-                    //apply error message here.	
-                    var entryCriterion = JSON.parse(result.RDNACadence__Entrance_Criteria__c);
-                    var exitCriterion = JSON.parse(result.RDNACadence__Exit_Criteria__c);
-                    component.set("v.entranceCriteriaSet",entryCriterion);
-                    component.set("v.exitCriteriaSet",exitCriterion);
-                    component.set("v.SpinnerForSync",false);
-                }else if(state === "ERROR"){
-                    var myUserContext = component.get("v.themeName");
-                    if(myUserContext == 'Theme3') {
-                        window.location = '/apex/CadenceErrorPage';
-                    } else{
-                        var evt = $A.get("e.force:navigateToComponent");
-                        evt.setParams({
-                            componentDef  : "RDNACadence:ErrorPage" ,
-                            componentAttributes : {
-                            }
-                        });
-                        evt.fire();
-                    }}else{
-                        component.set("v.SpinnerForSync",false);
-                    }
-            });
-            $A.enqueueAction(cadence);
-        }else{
-            var cadence = { 'sobjectType': 'RDNACadence__Cadence__c', 'Name': '','RDNACadence__Record_Type__c':'', 'RDNACadence__Participent_Activation__c':''};
-            component.set("v.cadence", cadence);
-        }
-    },*/
+    }
 })
