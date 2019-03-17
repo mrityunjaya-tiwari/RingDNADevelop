@@ -587,15 +587,21 @@ global  without sharing class CadenceService {
                         string oppIds = String.valueOf(obj.get('Id'));
                         if(mapOfOppcontact.keyset().size() > 0 && mapOfOppcontact.containskey(oppIds)){
                             for(String associateContactofOpp :mapOfOppcontact.get(oppIds)){
-                                system.debug('associateContactofOpp'+associateContactofOpp);
-                                system.debug('test contactrole match CadenceService.mapOfOpportunityRole '+CadenceService.mapOfOpportunityRole);
-                                system.debug('test contactrole match'+CadenceService.mapOfOpportunityRole.get(oppIds));
-                                system.debug('test contactrole match####'+CadenceService.mapOfOpportunityRole.get(oppIds).contains(associateContactofOpp));
                                 Set<String> setOfMatchRole;
                                 if(CadenceService.mapOfOpportunityRole.containskey(oppIds)) 
                                 setOfMatchRole = CadenceService.mapOfOpportunityRole.get(oppIds);
                                 system.debug('setOfMatchRole'+setOfMatchRole);
                                 if(CadenceService.mapOfOpportunityRole.containskey(oppIds) && setOfMatchRole.contains(associateContactofOpp)){
+                                    Contact contSobj = new Contact();
+                                    if(mapOfContacts.containskey(associateContactofOpp)){
+                                         contSobj =(Contact)UpdateSequenceOnParticipant(mapOfContacts.get(associateContactofOpp),cad);
+                                    }
+                                    if(contSobj != null && contSobj.isActivated__c) {
+                                        sObjectsToProcess.add(contSobj);
+                                        objIdToAllCadActListMap.put(contSobj.Id, cad.CadenceActions__r);
+                                    }
+                                }
+                                else{
                                     Contact contSobj = new Contact();
                                     if(mapOfContacts.containskey(associateContactofOpp)){
                                          contSobj =(Contact)UpdateSequenceOnParticipant(mapOfContacts.get(associateContactofOpp),cad);
@@ -666,6 +672,15 @@ global  without sharing class CadenceService {
                                             sObjectsToProcess.add((Contact)contSobj);
                                             objIdToAllCadActListMap.put((Id)contSobj.get('Id'), cad.CadenceActions__r);
                                         }
+                                    }else{
+                                        Sobject contSobj;
+                                        if(mapOfContacts.containskey(associateContactofOpp)){
+                                            contSobj =UpdateSequenceOnParticipant(mapOfContacts.get(associateContactofOpp),cad);
+                                        }
+                                        if(contSobj != null && (Boolean)contSobj.get(nameSpace + 'isActivated__c')) {
+                                            sObjectsToProcess.add((Contact)contSobj);
+                                            objIdToAllCadActListMap.put((Id)contSobj.get('Id'), cad.CadenceActions__r);
+                                        }
                                     }
                                 }
                             }
@@ -697,6 +712,15 @@ global  without sharing class CadenceService {
                                             objIdToAllCadActListMap.put(contSobj.Id, cad.CadenceActions__r);
                                         }
                                     }
+                                    else{
+                                        if(mapOfContacts.containskey(associateContactofOpp)){
+                                            contSobj =(Contact)UpdateSequenceOnParticipant(mapOfContacts.get(associateContactofOpp),cad);
+                                        }
+                                        if(contSobj != null && contSobj.isActivated__c) {
+                                            sObjectsToProcess.add(contSobj);
+                                            objIdToAllCadActListMap.put(contSobj.Id, cad.CadenceActions__r);
+                                        }
+                                    }
                                 }
                                 
                             }
@@ -709,7 +733,6 @@ global  without sharing class CadenceService {
                 }
             }
         }
-        System.debug('newSequenceHistory:'+newSequenceHistory);
         //Insert participant History for sequence 
         if(newSequenceHistory != null && newSequenceHistory.size() > 0)
             insert newSequenceHistory;
@@ -1218,8 +1241,9 @@ global  without sharing class CadenceService {
         String objectStr ; 
         List<Criterion> fieldsWithLabels = new List<Criterion>();
         List<CriterionWrapper> fieldList = new List<CriterionWrapper>();      
-        CriterionWrapper criterionWrapper;
+        CriterionWrapper criterionWrapper,criterionWrapperPartnerAccount;
         Integer index = 0;
+        Boolean IsPartnerAccount = false;
         List<Schema.DescribeSObjectResult> descResult = Schema.describeSObjects(objectlist);
         if(descResult != null && descResult.size() > 0){
             for(Schema.DescribeSObjectResult dsc : descResult){ 
@@ -1229,6 +1253,12 @@ global  without sharing class CadenceService {
                     criterionWrapper.GroupName = objectStr;
                     if(index == 0){
                         criterionWrapper.IsParent = true;
+                    }
+                    
+                    if(objectlist[0] == CadenceConstants.OPPORTUNITY_OBJECT_NAME && objectStr == CadenceConstants.ACCOUNT_OBJECT_NAME){
+                        IsPartnerAccount = true;
+                        criterionWrapperPartnerAccount = new CriterionWrapper();
+                        criterionWrapperPartnerAccount.GroupName = CadenceConstants.PARTNER_ACCOUNT_OBJECT_NAME;
                     }
                     
                     Schema.sObjectType sObjectName = Schema.getGlobalDescribe().get(objectStr);
@@ -1258,7 +1288,6 @@ global  without sharing class CadenceService {
                                 || fieldDataType == Schema.DisplayType.Combobox
                                 || fieldDataType == Schema.DisplayType.MULTIPICKLIST
                                ){
-                                   //if(!fieldAPIName.getDescribe().isCalculated() && fieldAPIName.getDescribe().isUpdateable()){
                                    c.fieldName = fieldAPIName.getDescribe().getName();
                                    c.fieldLabel = fieldAPIName.getDescribe().getLabel();
                                    c.fieldDataType = getDataType(objectStr, c.fieldName);
@@ -1266,15 +1295,10 @@ global  without sharing class CadenceService {
                                    if (c.fieldDataType == 'Picklist' || c.fieldDataType == 'MultiPickList'){
                                        c.listPicklistValues = getPicklistValues(objectStr, c.fieldName);
                                    }
-                                   // if (!((c.fieldDataType == 'Reference' && objectStr == 'DandBCompany'))){
-                                   //  if (c.fieldDataType != 'Reference' || (c.fieldDataType == 'Reference' && validForCriteria(objectStr, c.fieldName))){
                                    if(index != 0){
                                        c.fieldName =  objectStr + '.' + c.fieldName;
                                    }
                                    fieldsWithLabels.add(c);
-                                   //}
-                                   //}
-                                   //}
                                } 
                         }
                     }
@@ -1282,9 +1306,31 @@ global  without sharing class CadenceService {
                 index++; 
                 criterionWrapper.fieldsDetail = fieldsWithLabels;
                 fieldList.add(criterionWrapper);
+                
+                if(IsPartnerAccount){
+                    for(Criterion c : fieldsWithLabels){
+                        String[] fields = c.fieldName.split('\\.');
+                        if(fields.size() > 0){
+                            Criterion criterion  = new Criterion();
+                            criterion.id=c.id;
+                            criterion.fieldName='PartnerAccount.' + fields[1];
+                            criterion.fieldLabel=c.fieldLabel;
+                            criterion.fieldDataType=c.fieldDataType;
+                            criterion.operation=c.operation;
+                            criterion.value=c.value;
+                            criterion.listPicklistValues=c.listPicklistValues;
+                            criterionWrapperPartnerAccount.fieldsDetail.add(criterion);
+                        }
+                    }
+                    IsPartnerAccount = false;
+                }
                 fieldsWithLabels = new List<Criterion>();
                 
             }
+        }
+        
+        if(criterionWrapperPartnerAccount != null){
+            fieldList.add(criterionWrapperPartnerAccount);
         }
         
         return fieldList;
@@ -1363,13 +1409,5 @@ global  without sharing class CadenceService {
             }
         }
         return contactList;
-    }
-    
-    public Static void batchtest(){
-        string ids ='0030o00002gnNTbAAM';
- 		List<Sobject> objList =  [Select id ,name,Cadence_Id__c,LeadSource from Contact where id =:ids];
-
-         Map<Id, SObject> parentMap = new Map<Id, SObject>();
-         CadenceService.processParticipantsWithCadences(objList, parentMap, 'Contact', false); 
     }
 }

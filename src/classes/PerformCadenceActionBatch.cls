@@ -4,22 +4,17 @@ public class PerformCadenceActionBatch implements Database.Batchable<sObject>, D
     public String objType;
     public String parentObj;
     public list<string> listOfobjecttype;
-
-    public PerformCadenceActionBatch(String objType, String parentObj) { 
-        this.objType = objType; 
-        this.parentObj = parentObj;  
-    }
+    
     public PerformCadenceActionBatch(List<String> listOfObjTypeAndParent) { 
         this.listOfobjecttype = listOfObjTypeAndParent; 
          if(listOfObjTypeAndParent != null && listOfObjTypeAndParent.size() > 0)
              this.objType=listOfObjTypeAndParent[0];
-        
     }
      
     public Database.QueryLocator start(Database.BatchableContext bc) {
         //String query = formQuery(objType, parentObj);
-        Set<string>  ids =new Set<string>{'0060o00001DR4mWAAT'};
-        String query = formQuery(listOfobjecttype) +' where id IN :ids' ;
+        //Set<string>  ids =new Set<string>{'0060o00001E3CrdAAF'}; 
+        String query = formQuery(listOfobjecttype) ;//+' where id IN :ids';
         return Database.getQueryLocator(query);
     }
     
@@ -46,7 +41,6 @@ public class PerformCadenceActionBatch implements Database.Batchable<sObject>, D
          }
          query = query.substring(0,query.length()-1);
          query += ' FROM '+objecttype ;
-         System.debug('query'+query);
          return query;
     }
     

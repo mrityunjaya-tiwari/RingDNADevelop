@@ -3,7 +3,7 @@ global class CadenceScheduler implements schedulable{
     public static Integer nextScheduleTime  = 15;
     global void execute(SchedulableContext SC) {
         Integer runningBatch = CadenceUtil.getAllRunningBatch();
-       /*if (runningBatch == 0){
+       if (runningBatch == 0){
             // Schedule batch for Contact
             PerformCadenceActionBatch con=new PerformCadenceActionBatch(new List<string>{CadenceConstants.CONTACT_OBJECT_NAME, CadenceConstants.ACCOUNT_OBJECT_NAME});
             Database.executeBatch(con,1000);
@@ -16,7 +16,7 @@ global class CadenceScheduler implements schedulable{
             PerformCadenceActionBatch opportunity=new PerformCadenceActionBatch(new List<string>{CadenceConstants.OPPORTUNITY_OBJECT_NAME, CadenceConstants.ACCOUNT_OBJECT_NAME,CadenceConstants.CONTRACT_OBJECT_NAME,CadenceConstants.PRICE_BOOK_OBJECT_NAME,CadenceConstants.OPPORTUNITY_ROLE_OBJECT_NAME});
             Database.executeBatch(opportunity,1000);
             // Schedule next cadence scheduler
-        }*/
+        }
         CadenceUtil.scheduleNextCadenceScheduler(nextScheduleTime);
         // We also create a log if Batch is skipped.
     }
