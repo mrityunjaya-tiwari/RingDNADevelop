@@ -37,8 +37,8 @@ public class Leads  extends SObjectDomain {
             if(leadObj.ringdna100__Message_Attempts__c == null){
                 leadObj.ringdna100__Message_Attempts__c=0;
             }
-            if(leadObj.RDNACadence__NumberofLocations__c == null){
-                leadObj.RDNACadence__NumberofLocations__c=0;
+            if(leadObj.NumberofLocations__c == null){
+                leadObj.NumberofLocations__c=0;
             }
             if(leadObj.NumberOfEmployees == null){
                 leadObj.NumberOfEmployees=0;
