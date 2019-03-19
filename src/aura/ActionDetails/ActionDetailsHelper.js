@@ -131,7 +131,7 @@
                 }
                 
                 component.set('v.newAction', object); 
-                component.set('v.recordName', object.Name);
+                component.set('v.recordName', object.name);
                 helper.updateActionType(component, event, helper);
                 if(obj.taskList != null) {
                     var taskList = [];

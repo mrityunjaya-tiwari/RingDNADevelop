@@ -37,7 +37,9 @@
         
         var newAct = component.get("v.newAction");
         var name = newAct.name;
-        newAct.name = name.trim();
+        if (name){
+            newAct.name = name.trim();
+        }
         component.set("v.newAction", newAct);
         var isValidActioin = component.find('formValidationId').reduce(function (validSoFar, inputCmp) {
             inputCmp.showHelpMessageIfInvalid();

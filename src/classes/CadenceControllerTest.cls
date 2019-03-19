@@ -22,6 +22,16 @@ private class CadenceControllerTest {
         CadenceController.getFields('Contact');
         Test.stopTest();       
     }
+    
+    @isTest
+    public static void getDateFormat(){
+        String dateStr= '2019-03-18 01:01:23';
+        String expectedOutput = '2019-03-18'; 
+        Test.startTest();
+        String actualOutput = CadenceController.getDateFormat(Date.valueOf(dateStr));
+        System.assertEquals(actualOutput, expectedOutput);
+        Test.stopTest();
+    }
    @isTest
     public static void activateCadenceTest(){
         /*Cadence__c cadLeadAND = TestDataFactory.createCadence(CadenceConstants.LEAD_OBJECT_NAME);

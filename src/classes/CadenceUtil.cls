@@ -106,7 +106,8 @@ public with sharing class CadenceUtil {
             list<String> apiList = new list<String>();
             String dataType = fieldMap.get(fieldName).getDescribe().getType().name();
             Schema.sObjectField fieldAPIName = fieldMap.get(fieldName);
-            String nameLable = fieldAPIName.getDescribe().getLabel();
+            //String nameLable = fieldAPIName.getDescribe().getLabel();
+            String nameLable = fieldAPIName.getDescribe().getName();
             apiList.add(fieldAPIName.getDescribe().getName());
             apiList.add(dataType);
             objectFieldDataTypeMap.put(nameLable, apiList);
