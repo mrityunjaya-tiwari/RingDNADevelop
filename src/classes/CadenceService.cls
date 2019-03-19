@@ -1,5 +1,6 @@
 global  without sharing class CadenceService {
     public static String nameSpace = CadenceConstants.NAMESPACE;
+    public static String partnerAccountAPIName = 'PartnerAccount';
     public static map<String,set<String>> mapOfOpportunityRole = new map<String,set<String>>();
     public Static map<String,List<OpportunityContactRole>> mapOfOppContactRoles = new map<String,list<OpportunityContactRole>>();
    
@@ -50,42 +51,45 @@ global  without sharing class CadenceService {
     }
     
     public static List<CriterionWrapper> getFields(String objectStr) {
-        Schema.sObjectType sObjectName = Schema.getGlobalDescribe().get(objectStr);
-        Map<String, Schema.SObjectField> fieldsMap = sObjectName.getDescribe().fields.getMap();
         List<CriterionWrapper> criterionWrapperList = new List<CriterionWrapper>();
-        CriterionWrapper criterionWrapper = new CriterionWrapper();
-        criterionWrapper.GroupName = '';
-        List<Criterion> fieldsWithLabels = new List<Criterion>();
-        List<ActionDetailController.wrapperTaskField> listWrapperTaskFields = new List<ActionDetailController.wrapperTaskField>();
-        for (String field : fieldsMap.keySet()) {
+        Schema.sObjectType sObjectName = Schema.getGlobalDescribe().get(objectStr);
+        if(sObjectName != null){
+            Map<String, Schema.SObjectField> fieldsMap = sObjectName.getDescribe().fields.getMap();
             
-            Schema.sObjectField fieldAPIName = fieldsMap.get(field);
-            Schema.DisplayType fieldDataType = fieldAPIName.getDescribe().getType();
-            Schema.DescribeFieldResult dfr = fieldAPIName.getDescribe();
-            Integer LengthOfField = dfr.getLength();
-            if (fieldDataType == Schema.DisplayType.Boolean || fieldDataType == Schema.DisplayType.Double 
-                || fieldDataType == Schema.DisplayType.Integer 
-                || fieldDataType == Schema.DisplayType.String 
-                || fieldDataType == Schema.DisplayType.Picklist
-                || fieldDataType == Schema.DisplayType.Combobox 
-                || fieldDataType == Schema.DisplayType.MULTIPICKLIST
-                || (fieldDataType == Schema.DisplayType.Textarea && ((fieldDataType != Schema.DisplayType.ENCRYPTEDSTRING)) )
-               ) {
-                   if(!fieldAPIName.getDescribe().isCalculated() && fieldAPIName.getDescribe().isUpdateable()) {
-                       Criterion c = new Criterion();
-                       c.fieldName = fieldAPIName.getDescribe().getName();
-                       c.fieldLabel = fieldAPIName.getDescribe().getLabel();
-                       c.fieldDataType = getDataType(objectStr, c.fieldName);
-                       if (c.fieldDataType == 'Picklist' || c.fieldDataType == 'MultiPickList'){
-                           c.listPicklistValues = getPicklistValues(objectStr, c.fieldName);
+            CriterionWrapper criterionWrapper = new CriterionWrapper();
+            criterionWrapper.GroupName = '';
+            List<Criterion> fieldsWithLabels = new List<Criterion>();
+            List<ActionDetailController.wrapperTaskField> listWrapperTaskFields = new List<ActionDetailController.wrapperTaskField>();
+            for (String field : fieldsMap.keySet()) {
+                
+                Schema.sObjectField fieldAPIName = fieldsMap.get(field);
+                Schema.DisplayType fieldDataType = fieldAPIName.getDescribe().getType();
+                Schema.DescribeFieldResult dfr = fieldAPIName.getDescribe();
+                Integer LengthOfField = dfr.getLength();
+                if (fieldDataType == Schema.DisplayType.Boolean || fieldDataType == Schema.DisplayType.Double 
+                    || fieldDataType == Schema.DisplayType.Integer 
+                    || fieldDataType == Schema.DisplayType.String 
+                    || fieldDataType == Schema.DisplayType.Picklist
+                    || fieldDataType == Schema.DisplayType.Combobox 
+                    || fieldDataType == Schema.DisplayType.MULTIPICKLIST
+                    || (fieldDataType == Schema.DisplayType.Textarea && ((fieldDataType != Schema.DisplayType.ENCRYPTEDSTRING)) )
+                   ) {
+                       if(!fieldAPIName.getDescribe().isCalculated() && fieldAPIName.getDescribe().isUpdateable()) {
+                           Criterion c = new Criterion();
+                           c.fieldName = fieldAPIName.getDescribe().getName();
+                           c.fieldLabel = fieldAPIName.getDescribe().getLabel();
+                           c.fieldDataType = getDataType(objectStr, c.fieldName);
+                           if (c.fieldDataType == 'Picklist' || c.fieldDataType == 'MultiPickList'){
+                               c.listPicklistValues = getPicklistValues(objectStr, c.fieldName);
+                           }
+                           fieldsWithLabels.add(c);
+                           
                        }
-                       fieldsWithLabels.add(c);
-                       
                    }
-               }
+            }
+            criterionWrapper.fieldsDetail = fieldsWithLabels;
+            criterionWrapperList.add(criterionWrapper);
         }
-        criterionWrapper.fieldsDetail = fieldsWithLabels;
-        criterionWrapperList.add(criterionWrapper);
         return criterionWrapperList;
     }
     
@@ -99,25 +103,22 @@ global  without sharing class CadenceService {
         List<Schema.DescribeSObjectResult> descResult = Schema.describeSObjects(objectlist);
         if(descResult != null && descResult.size() > 0){
             for(Schema.DescribeSObjectResult dsc : descResult){ 
-                //System.debug('dsc'+dsc);
-               
                 if(dsc != null && dsc.getName()!= null){
                     criterionWrapper = new CriterionWrapper();
-                    objectStr =dsc.getName(); 
-                    criterionWrapper.GroupName = objectStr;
-                    if(index == 0){
-                        criterionWrapper.IsParent = true;
-                    }
-                    
-                    if(objectlist[0] == CadenceConstants.OPPORTUNITY_OBJECT_NAME && objectStr == CadenceConstants.ACCOUNT_OBJECT_NAME){
-                        IsPartnerAccount = true;
-                        criterionWrapperPartnerAccount = new CriterionWrapper();
-                        criterionWrapperPartnerAccount.GroupName = CadenceConstants.PARTNER_ACCOUNT_OBJECT_NAME;
-                    }
-                    
+                    objectStr =dsc.getName();
                     Schema.sObjectType sObjectName = Schema.getGlobalDescribe().get(objectStr);
-                    System.debug('sObjectName:'+sObjectName);
                     if (sObjectName != null){
+                        criterionWrapper.GroupName = objectStr;
+                        if(index == 0){
+                            criterionWrapper.IsParent = true;
+                        }
+                        
+                        if(objectlist[0] == CadenceConstants.OPPORTUNITY_OBJECT_NAME && objectStr == CadenceConstants.ACCOUNT_OBJECT_NAME){
+                            IsPartnerAccount = true;
+                            criterionWrapperPartnerAccount = new CriterionWrapper();
+                            criterionWrapperPartnerAccount.GroupName = CadenceConstants.PARTNER_ACCOUNT_OBJECT_NAME;
+                        }
+                        
                         SObjectType r = dsc.getSobjectType(); 
                         Map<String, Schema.SObjectField> fieldsMap = dsc.fields.getMap(); 
                         for (String field : fieldsMap.keySet()) {
@@ -171,7 +172,7 @@ global  without sharing class CadenceService {
                 criterionWrapper.fieldsDetail = fieldsWithLabels;
                 fieldList.add(criterionWrapper);
                 
-                if(IsPartnerAccount){
+                if(IsPartnerAccount && Schema.getGlobalDescribe().get('Opportunity').getDescribe().fields.getMap().get('PartnerAccountId') != null){
                     for(Criterion c : fieldsWithLabels){
                         String[] fields = c.fieldName.split('\\.');
                         if(fields.size() > 0){
@@ -186,6 +187,9 @@ global  without sharing class CadenceService {
                             criterionWrapperPartnerAccount.fieldsDetail.add(criterion);
                         }
                     }
+                    if(criterionWrapperPartnerAccount != null){
+            			fieldList.add(criterionWrapperPartnerAccount);
+        			}
                     IsPartnerAccount = false;
                 }
                 
@@ -193,9 +197,7 @@ global  without sharing class CadenceService {
                 
             }
         }
-        if(criterionWrapperPartnerAccount != null){
-            fieldList.add(criterionWrapperPartnerAccount);
-        }
+        
         
         return fieldList;
     }
@@ -826,6 +828,7 @@ global  without sharing class CadenceService {
     }
     
     public static Map<Id, List<Sequence_Action__c>> performParticipantActions(List<SObject> objList, Map<Id, List<Sequence_Action__c>> partActionsMap) {
+        System.debug('Task-18-performParticipantActions');
         Map<Id, List<Sequence_Action__c>> performedPartActions = new Map<Id, List<Sequence_Action__c>>(); 
         Map<Id, SObject> objMap = new Map<Id, SObject>(objList); 
         List<Sequence_Action__c> partActToUpdate = new List<Sequence_Action__c>();
@@ -881,6 +884,7 @@ global  without sharing class CadenceService {
                     }
                 }
                 if(performed) {
+                    System.debug('Task-18-performed');
                     partAct.Actual_Execution_Date__c = System.Now();
                     partAct.isActionPerformed__c = true;
                     partActToUpdate.add(partAct);
@@ -1261,19 +1265,19 @@ global  without sharing class CadenceService {
                 if(dsc != null && dsc.getName()!= null){
                     criterionWrapper = new CriterionWrapper();
                     objectStr =dsc.getName(); 
-                    criterionWrapper.GroupName = objectStr;
-                    if(index == 0){
-                        criterionWrapper.IsParent = true;
-                    }
-                    
-                    if(objectlist[0] == CadenceConstants.OPPORTUNITY_OBJECT_NAME && objectStr == CadenceConstants.ACCOUNT_OBJECT_NAME){
-                        IsPartnerAccount = true;
-                        criterionWrapperPartnerAccount = new CriterionWrapper();
-                        criterionWrapperPartnerAccount.GroupName = CadenceConstants.PARTNER_ACCOUNT_OBJECT_NAME;
-                    }
-                    
                     Schema.sObjectType sObjectName = Schema.getGlobalDescribe().get(objectStr);
                     if (sObjectName != null){
+                        criterionWrapper.GroupName = objectStr;
+                        if(index == 0){
+                            criterionWrapper.IsParent = true;
+                        }
+                        
+                        if(objectlist[0] == CadenceConstants.OPPORTUNITY_OBJECT_NAME && objectStr == CadenceConstants.ACCOUNT_OBJECT_NAME){
+                            IsPartnerAccount = true;
+                            criterionWrapperPartnerAccount = new CriterionWrapper();
+                            criterionWrapperPartnerAccount.GroupName = CadenceConstants.PARTNER_ACCOUNT_OBJECT_NAME;
+                        }
+                        
                         SObjectType r = dsc.getSobjectType(); 
                         Map<String, Schema.SObjectField> fieldsMap = dsc.fields.getMap(); 
                         for (String field : fieldsMap.keySet()) {
@@ -1318,13 +1322,14 @@ global  without sharing class CadenceService {
                 criterionWrapper.fieldsDetail = fieldsWithLabels;
                 fieldList.add(criterionWrapper);
                 
-                if(IsPartnerAccount){
+                if(IsPartnerAccount && Schema.getGlobalDescribe().get('Opportunity').getDescribe().fields.getMap().get('PartnerAccountId') != null){
+                    //Schema.sObjectType sObjectName = Schema.getGlobalDescribe().get(partnerAccountAPIName);
                     for(Criterion c : fieldsWithLabels){
                         String[] fields = c.fieldName.split('\\.');
                         if(fields.size() > 0){
                             Criterion criterion  = new Criterion();
                             criterion.id=c.id;
-                            criterion.fieldName='PartnerAccount.' + fields[1];
+                            criterion.fieldName = partnerAccountAPIName +'.' + fields[1];
                             criterion.fieldLabel=c.fieldLabel;
                             criterion.fieldDataType=c.fieldDataType;
                             criterion.operation=c.operation;
@@ -1334,15 +1339,16 @@ global  without sharing class CadenceService {
                         }
                     }
                     IsPartnerAccount = false;
+                    if(criterionWrapperPartnerAccount != null){
+                        fieldList.add(criterionWrapperPartnerAccount); 
+                    }
                 }
                 fieldsWithLabels = new List<Criterion>();
                 
             }
         }
         
-        if(criterionWrapperPartnerAccount != null){
-            fieldList.add(criterionWrapperPartnerAccount);
-        }
+       
         
         return fieldList;
     }

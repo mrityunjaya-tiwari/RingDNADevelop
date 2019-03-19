@@ -5,9 +5,9 @@
     <div id="myDivId9" />
     <script>
         var myUserContext = "{!$User.UITheme}";
-        $Lightning.use("c:CadenceActionListApp", function() {
+        $Lightning.use("RDNACadence:CadenceActionListApp", function() {
         $Lightning.createComponent(
-            "c:CadenceActionList",
+            "RDNACadence:CadenceActionList",
             {themeName: myUserContext},
             "myDivId9",
             function(cmp) {

@@ -1,8 +1,8 @@
 public with sharing class CadenceConstants {
     
     //Namespace for managed package
-	public static final String orgNamespace = [SELECT NamespacePrefix FROM Organization].NamespacePrefix;
-    public static final String NAMESPACE = orgNamespace+'__'; 
+    public static final String orgNamespace = [SELECT NamespacePrefix FROM Organization].NamespacePrefix;
+    public static final String NAMESPACE = 'RDNACadence__'; 
     
     // Object names
     public static final String CONTACT_OBJECT_NAME = 'Contact';

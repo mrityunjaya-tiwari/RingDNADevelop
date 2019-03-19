@@ -185,9 +185,9 @@ public with sharing class RuleCriterionMatcher {
 		
 		//Returning if no action to be performed
 		List<Sequence_Action__c> actionsToPerform = new List<Sequence_Action__c>();
-		if(partActions == null || partActions.isEmpty()) {
-			return actionsToPerform;
-		}
+		if(partActions == null || partActions.isEmpty() || cad == null || cad.CadenceActions__r == null) {
+            return actionsToPerform;
+        }
 		System.debug('cad getMatchingParticipantActions'+cad);
 		Map<Id, CadenceAction__c> allCadActionMap = new Map<Id, CadenceAction__c>(cad.CadenceActions__r);
 		List<CadenceAction__c> remainingCadActions = new List<CadenceAction__c>();

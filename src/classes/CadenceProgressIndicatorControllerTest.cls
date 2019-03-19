@@ -48,13 +48,17 @@ public class CadenceProgressIndicatorControllerTest {
         
         List<String> idListString = New List<String>();
         idListString.add(String.valueOf(cadenceActionobj1.ID));
-        CadenceProgressIndicatorController.saveCadence(system.JSON.serialize(sequence), system.JSON.serialize(new List<SequenceAction> {sequenceAction, sequenceAction2}), idListString);  
-        
+        String sequenceId = CadenceProgressIndicatorController.saveCadence(system.JSON.serialize(sequence), system.JSON.serialize(new List<SequenceAction> {sequenceAction, sequenceAction2}), idListString);  
+        cadenceobj.Id = Id.valueof(sequenceId);
         Test.stopTest();        
         List<CadenceAction__c> ListOfCadenceActionToDelete = [Select id from CadenceAction__c where Id =:cadenceActionobj.Id];
         System.assertEquals(1, ListOfCadenceActionToDelete.size(),  'cadenceAction size must be 1');  
         CadenceProgressIndicatorController.deleteParticipantActionsByCadenceActions(new list<Id>{cadenceActionobj.Id} );         
         
+        
+        CadenceProgressIndicatorController.getParticipantActionsByCadenceActionsIds(new List<Id>{cadenceActionobj1.ID});
+        
+        CadenceProgressIndicatorController.updateCadenceActionAndDelete(cadenceobj, new list<Id>{cadenceActionobj.Id} );
         //List<CadenceAction__c> caListToInsert = new List<CadenceAction__c>();
        // caListToInsert.add(cadenceActionobj);
     }
