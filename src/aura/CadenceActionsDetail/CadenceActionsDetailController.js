@@ -116,9 +116,9 @@
         var pageIndex = component.get("v.currentIndex");
         var eventObj = component.getEvent("cadDynamicRowEvent");
         var cadenceAction = component.get("v.cadenceAction");
-        if((cadenceAction.Id)){
+        if((cadenceAction.id)){
             var caIdsList = component.get("v.caIdsList");
-            caIdsList.push(cadenceAction.Id);
+            caIdsList.push(cadenceAction.id);
             component.set("v.caIdsList", caIdsList);
         }
         eventObj.setParams({
