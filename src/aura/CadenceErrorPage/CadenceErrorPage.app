@@ -1,3 +1,3 @@
 <aura:application access="global" extends="ltng:outApp" >
-<aura:dependency resource="RDNACadence2:CadenceErrorPage"/>
+<aura:dependency resource="c:CadenceErrorPage"/>
 </aura:application>

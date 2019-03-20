@@ -2,9 +2,9 @@
     
     <!-- handlers -->
     <aura:handler name="init" value="{! this }" action="{! c.doInit }"/>
-    <aura:registerEvent name="datatableEvt" type="RDNACadence:DatatableEvent"/>
+    <aura:registerEvent name="datatableEvt" type="c:DatatableEvent"/>
     <aura:handler name="change" value="{! v.rawData }" action="{!c.doInit}"/>
-    <aura:handler name="cadencePagination" event="RDNACadence:CadPagination" action="{!c.handleComponentEvent}"/>
+    <aura:handler name="cadencePagination" event="c:CadPagination" action="{!c.handleComponentEvent}"/>
     
     <!-- datatable attributes -->
     <aura:attribute name="title" type="String"/>
@@ -20,7 +20,8 @@
     <aura:attribute name="hideCheckboxColumn" type="boolean" default="false"/>
     <aura:attribute name="isListView" type="Boolean" default="false"/>
     <aura:attribute name="selectedNoOfRecords" type="Boolean" default="false"/> 
-    
+    <aura:attribute name="isTodayListView" type="Boolean" default="false"/>
+	
     <!-- pagination attributes -->
     <aura:attribute name="totalNumberOfRows" type="Integer" default="0"/>
     <aura:attribute name="currentPage" type="Integer" default="1"/>
@@ -28,13 +29,15 @@
     <aura:method name="clearRowSelection" action="{!c.deselectRows}"/> 
     <aura:handler name="change" value="{!v.data}" action="{!c.dataUpdated}"/> 
     <aura:if isTrue = "{! v.selectedNoOfRecords }">
-        <aura:if isTrue = "{!empty(v.rawDataForFilter)}">
+        <aura:if  isTrue="{!and(empty(v.rawDataForFilter), v.isTodayListView)}" >
+            <!--<aura:if isTrue = "{!empty(v.rawDataForFilter)}">-->
             <div class="slds-align_absolute-center" style="height: 300px;background-color:white">
                 <p class="rdna-style">There are currently no entries in your Today's List.
                     <p class="rdna-text">Leads and contacts will automatically be added to your today view based on sequence actions.</p>
                 </p></div>
             <aura:set attribute="else">
-                <aura:if isTrue = "{!empty(v.rawData)}">
+                <aura:if  isTrue="{!and(empty(v.rawData), v.isTodayListView)}" >
+                <!--<aura:if isTrue = "{!empty(v.rawData)}">-->
                     <div class="slds-align_absolute-center " style="height: 300px;background-color:white">
                         <p class="rdna-text-style">Sorry, We couldn't find any results with that name.</p>
                     </div>
@@ -110,16 +113,15 @@
         </aura:set>
     </aura:if>
     
-    <!-- <aura:if isTrue = "{!v.totalNumberOfRows > 0}"> -->
     <aura:if isTrue = "{!empty(v.rawData)}">
         <div>
-            <RDNACadence:Pagination total="{!v.totalNumberOfRows}" pageOffset="{!v.rowsToLoad}"/>	
+            <c:Pagination total="{!v.totalNumberOfRows}" pageOffset="{!v.rowsToLoad}"/>	
         </div>
         
         <aura:set attribute="else">
             <div>
-                <RDNACadence:Pagination total="{!v.totalNumberOfRows}" pageOffset="{!v.rowsToLoad}" selectedNoOfRecords="{!v.selectedNoOfRecords}"/>	
+                <c:Pagination total="{!v.totalNumberOfRows}" pageOffset="{!v.rowsToLoad}" selectedNoOfRecords="{!v.selectedNoOfRecords}" isTodayListView="{!v.isTodayListView}"/>	
             </div>
         </aura:set>
-    </aura:if><!--</aura:if>-->
+    </aura:if>
 </aura:component>

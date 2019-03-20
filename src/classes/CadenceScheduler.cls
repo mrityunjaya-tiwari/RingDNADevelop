@@ -1,15 +1,20 @@
 global class CadenceScheduler implements schedulable{
     // Next schedule time must be in minutes
-    public static Integer nextScheduleTime  = 1440;
+    public static Integer nextScheduleTime  = 15;
     global void execute(SchedulableContext SC) {
         Integer runningBatch = CadenceUtil.getAllRunningBatch();
-        if (runningBatch == 0){
+       if (runningBatch == 0){
             // Schedule batch for Contact
-            PerformCadenceActionBatch con=new PerformCadenceActionBatch(CadenceConstants.CONTACT_OBJECT_NAME, CadenceConstants.ACCOUNT_OBJECT_NAME);
+            PerformCadenceActionBatch con=new PerformCadenceActionBatch(new List<string>{CadenceConstants.CONTACT_OBJECT_NAME, CadenceConstants.ACCOUNT_OBJECT_NAME});
             Database.executeBatch(con,1000);
+            
             // Schedule batch for lead
-            PerformCadenceActionBatch led=new PerformCadenceActionBatch(CadenceConstants.LEAD_OBJECT_NAME, CadenceConstants.DB_OBJECT_NAME);
+            PerformCadenceActionBatch led=new PerformCadenceActionBatch(new List<string>{CadenceConstants.LEAD_OBJECT_NAME, CadenceConstants.DB_OBJECT_NAME});
             Database.executeBatch(led,1000);
+
+			// Schedule batch for opportunity
+            PerformCadenceActionBatch opportunity=new PerformCadenceActionBatch(new List<string>{CadenceConstants.OPPORTUNITY_OBJECT_NAME, CadenceConstants.ACCOUNT_OBJECT_NAME,CadenceConstants.CONTRACT_OBJECT_NAME,CadenceConstants.PRICE_BOOK_OBJECT_NAME});
+            Database.executeBatch(opportunity,1000);
             // Schedule next cadence scheduler
         }
         CadenceUtil.scheduleNextCadenceScheduler(nextScheduleTime);

@@ -14,13 +14,13 @@
     <!-- wrapperContactFields List-->
     <aura:attribute name="wrapperContactFields" type = "List" />  
     <!-- Action Object-->
-    <aura:attribute name="actionObject" type = "RDNACadence__Action__C" default="{ 'sobjectType': 'RDNACadence__Action__C', 'RDNACadence__Activation_Type__c':''}"/> 
+    <aura:attribute name="actionObject" type = "Action" default="{ 'sobjectType': 'Action'}"/> 
     <!--Contact Objects -->
     <aura:attribute name="ContactObj" type="Contact" default="{ 'sobjectType': 'Contact'}"/>
     <!--Lead Objects -->
     <aura:attribute name="LeadObj" type="Lead" default="{ 'sobjectType': 'Lead'}"/>
     <!-- Cadence Action -->
-    <aura:attribute name="cadenceAction" type = "RDNACadence__CadenceAction__c" default="{ 'sobjectType': 'RDNACadence__CadenceAction__c','RDNACadence__Priority__c':'','RDNACadence__Priority_number__c':2}" />
+    <aura:attribute name="cadenceAction" type = "SequenceAction" default="{ 'sobjectType': 'SequenceAction','priority':'','priorityNumber':2}" />
     <!--Current Index -->
     <aura:attribute name="currentIndex" type="string"/>
     <!--Show fields to updates on objects -->
@@ -29,11 +29,11 @@
     <!--Show criteria fields of action -->
     <aura:attribute name="setCriteriaFields" type="Boolean" default="false"/>
     <!--Event attribute -->
-    <aura:registerEvent name="cadDynamicRowEvent" type="RDNACadence:CadDynamicRowEvent"/>
+    <aura:registerEvent name="cadDynamicRowEvent" type="c:CadDynamicRowEvent"/>
     <!-- Handle event -->
-    <aura:handler name="cadDynamicRowEvent" event="RDNACadence:CadDynamicRowEvent" action="{!c.handleCadDynamicRowEvent}"/>
+    <aura:handler name="cadDynamicRowEvent" event="c:CadDynamicRowEvent" action="{!c.handleCadDynamicRowEvent}"/>
     <!--Cadence Objects -->
-    <aura:attribute name="newCadence" type="RDNACadence__Cadence__c" default="{ 'sobjectType': 'RDNACadence__Cadence__c', 'Name': '','RDNACadence__Record_Type__c':'Contact', 'RDNACadence__Participent_Activation__c':''}"/>
+    <aura:attribute name="newCadence" type="Sequence" default="{ 'sobjectType': 'Sequence'}"/>
     <!--List to create fields to update row-->
     <aura:attribute name="rowToCreateFieldsToUpdate" type="List"/>
     <aura:attribute name="entranceCriteriaSet" type="Object"/>
@@ -92,19 +92,19 @@
             </div>  
         </td>
         <td class="rdna-table-rows rdna-field-values">  
-            <div class="slds-truncate rdna-div" aura:id="detailDiv1" title="Name">{!v.actionObject.Name}</div>
+            <div class="slds-truncate rdna-div" aura:id="detailDiv1" title="Name">{!v.actionObject.name}</div>
         </td>
         <td class="rdna-table-rows rdna-field-values">
-            <aura:if isTrue="{!v.cadenceAction.RDNACadence__Trigger_Type__c == 'Immediate'}">
+            <aura:if isTrue="{!v.cadenceAction.triggerType == 'Immediate'}">
                 <span   aura:id="detailDiv1"> Immediate </span>
                 <aura:set attribute="else">
-                    <aura:if isTrue="{!v.cadenceAction.RDNACadence__Trigger_Type__c == 'Time Based'}">
-                        <span  aura:id="detailDiv1">{!'Days: ' + v.cadenceAction.RDNACadence__Day__c + ' Hours: ' + v.cadenceAction.RDNACadence__Hour__c}</span>
+                    <aura:if isTrue="{!v.cadenceAction.triggerType == 'Time Based'}">
+                        <span  aura:id="detailDiv1">{!'Days: ' + v.cadenceAction.day + ' Hours: ' + v.cadenceAction.hour}</span>
                         <aura:set attribute="else">
-                        <span  aura:id="detailDiv1"> </span>
+                            <span  aura:id="detailDiv1"> </span>
                         </aura:set>
                     </aura:if>
-                     </aura:set>
+                </aura:set>
             </aura:if> 
         </td>
         <td class="rdna-table-rows rdna-field-values">
@@ -142,12 +142,12 @@
                                 <div aura:id="updatePriorityChanges" class="slds-form-element__control slds-size_1-of-4">
                                     <lightning:select aura:id="formValidationId" name="Action" 
                                                       label="Action" required="true" 
-                                                      value="{!v.cadenceAction.RDNACadence__Action_Id__c}" 
+                                                      value="{!v.cadenceAction.actionId}" 
                                                       onchange="{!c.setActionObject}"
                                                       disabled = "{!v.isDisabled}">
                                         <option value="">Select Action</option>
                                         <aura:iteration items="{!v.actionList}" var= "actionObj">
-                                            <option value="{!actionObj.Id}">{!actionObj.Name}</option>
+                                            <option value="{!actionObj.id}">{!actionObj.name}</option>
                                         </aura:iteration>
                                     </lightning:select>
                                 </div>
@@ -155,7 +155,7 @@
                                     <div aura:id="updatePriorityChanges" class="slds-form-element__control slds-size_1-of-4">
                                         <lightning:select aura:id="formValidationId" name="selectPriority" 
                                                           disabled = "{!v.isDisabled}" 
-                                                          label="Priority" required="true" value="{!v.cadenceAction.RDNACadence__Priority__c}" 
+                                                          label="Priority" required="true" value="{!v.cadenceAction.priority}" 
                                                           messageWhenValueMissing="Please Select priority."
                                                           onchange="{!c.updatePriorityNumber}">
                                             <option value="">Select Priority</option>
@@ -168,7 +168,7 @@
                                 
                                 <div aura:id="updatePriorityChanges" class="slds-form-element__control slds-size_1-of-4">
                                     <lightning:select aura:id="formValidationId" name="selectActionType" 
-                                                      label="Execute After Delay" required="true" value="{!v.cadenceAction.RDNACadence__Trigger_Type__c}" 
+                                                      label="Execute After Delay" required="true" value="{!v.cadenceAction.triggerType}" 
                                                       onchange="{! c.disablUnitInput }" disabled = "{!v.isDisabled}">
                                         <option value="">Select Trigger</option>
                                         <option value="Immediate">Immediate</option>
@@ -180,7 +180,7 @@
                                         <div class="slds-form-element__control slds-size_1-of-2">
                                             <lightning:input type="number" aura:id="formValidationId" label="Days"
                                                              name="actionname"
-                                                             value="{!v.cadenceAction.RDNACadence__Day__c}"
+                                                             value="{!v.cadenceAction.day}"
                                                              placeholder = "Enter Days" pattern="[0-9]*" min="0"
                                                              messageWhenPatternMismatch="Days Can't be less than 0"
                                                              messageWhenRangeUnderflow="Days Can't be less than 0"
@@ -189,7 +189,7 @@
                                         <div class="slds-form-element__control slds-size_1-of-2">
                                             <lightning:input type="number" aura:id="formValidationId" label="Hours"
                                                              name="actionname"
-                                                             value="{!v.cadenceAction.RDNACadence__Hour__c}"
+                                                             value="{!v.cadenceAction.hour}"
                                                              placeholder = "Enter Hours"  pattern="[0-9]*" max="23" min="0"
                                                              messageWhenPatternMismatch="Hours is not valid"
                                                              messageWhenBadInput="Please Enter valid Hours (0-23)"
@@ -215,14 +215,9 @@
                                 <div class = "slds-form-element slds-size_1-of-1 slds-p-bottom_large" >
                                     <aura:iteration items="{!v.rowToCreateFieldsToUpdate}" var="wrapperObj" indexVar="index">                                        
                                         <div class = "slds-form-element__row slds-size_1-of-1">
-                                            <aura:if isTrue="{!'Lead' ==  v.newCadence.RDNACadence__Record_Type__c}">
-                                                <RDNACadence:ActionDetailsDynamicRow aura:id="dynamicROw" recordType="{!v.newCadence.RDNACadence__Record_Type__c}"
-                                                                                     taskObj="{!wrapperObj}" wrapperTaskFields="{!v.wrapperLeadFields}" currentIndex = "{!index}" isrequired="true" isDisabled="{!v.isDisabled}"/>
-                                                <aura:set attribute="else">
-                                                    <RDNACadence:ActionDetailsDynamicRow aura:id="dynamicROw" recordType="{!v.newCadence.RDNACadence__Record_Type__c}"
-                                                                                         taskObj="{!wrapperObj}" wrapperTaskFields="{!v.wrapperContactFields}" currentIndex = "{!index}" isrequired="true" isDisabled="{!v.isDisabled}"/>
-                                                </aura:set>
-                                            </aura:if>
+                                            <c:ActionDetailsDynamicRow aura:id="dynamicROw" recordType="{!v.newCadence.recordType}"
+                                                                                  UpdateFieldList = "{!v.UpdateFieldList}"
+                                                                                  taskObj="{!wrapperObj}" wrapperTaskFields="{!v.UpdateFieldList}" currentIndex = "{!index}" isrequired="true" isDisabled="{!v.isDisabled}"/>
                                         </div>
                                     </aura:iteration>
                                     <aura:if isTrue="{!not(v.isDisabled)}">
@@ -249,8 +244,9 @@
                                 <div class = "slds-form-element slds-size_1-of-1 slds-m-top_small slds-p-bottom_large" >
                                     <div class = "slds-form-element__row slds-size_1-of-1">
                                         <aura:if isTrue="{!v.setCriteriaFields}">
-                                            <aura:if isTrue="{!not(empty(v.contactFieldList) || empty(v.leadFieldList))}">
-                                                <RDNACadence:CriterionComponent aura:id="actionCriterionComponent" 
+                                            <aura:if isTrue="{!not(empty(v.UpdateFieldList))}">
+                                                <c:CriterionComponent aura:id="actionCriterionComponent" 
+                                                                                 AllFieldList = "{!v.UpdateFieldList}"  
                                                                                 criteriaType="Action Criteria" 
                                                                                 criteriaSet="{!v.entranceCriteriaSet}"  
                                                                                 cadence="{!v.newCadence}"

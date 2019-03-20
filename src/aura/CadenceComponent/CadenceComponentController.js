@@ -1,17 +1,14 @@
 ({
     doInit : function(component, event, helper) {
-        helper.getCadenceData(component, helper);
-        //helper.getCadenceDataNew(component, helper);
+        helper.getCadenceData(component, helper);        
     },
     
     handleCadenceComponentEvt: function(component, event, helper){
         var isEdit = event.getParam("isEdit"); 
-        console.log('isEdit:'+isEdit);
         component.set('v.isEdit', isEdit);
     },
     
     CadenceComponentSaveEvt : function(component, event, helper) {
-        console.log('CadenceComponentSaveEvt:');
         var recordId = event.getParam("recordId");
         var isEdit = event.getParam("isEdit");
         component.set('v.recordId', recordId);
@@ -37,8 +34,7 @@
     settedSequenceType: function(component,event,helper){
         var settedSequenceType = component.get("v.settedSequenceType");
         if(settedSequenceType){
-         helper.getObjectFieldsList(component, event, helper);
-         //helper.getObjectFieldsListNew(component, event, helper);   
+         helper.getObjectFieldsList(component, event, helper);   
         }        
     },
    

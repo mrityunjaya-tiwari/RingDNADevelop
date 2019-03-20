@@ -15,67 +15,74 @@ public with sharing class RuleCriterionMatcher {
     	 
     } 
 	
-	
-	public static Cadence__c assignCadenceToNotAssignedParticipant(Map<Id, Cadence__c> cadenceMap, SObject partObj, SObject parentObj, String objName) {
-	 
-		List<Cadence__c> matchingCadences = new List<Cadence__c>(); 
-		Cadence__c cadToUpdate;
+    public static Cadence__c assignCadenceToNotAssignedParticipant(Map<Id, Cadence__c> cadenceMap, SObject partObj, SObject parentObj, String objName) {
+        List<Cadence__c> matchingCadences = new List<Cadence__c>(); 
+        Cadence__c cadToUpdate;
         Map<Id, CriterionSet> cadCriterion = New Map<Id, CriterionSet>();
         Map<Id, CriterionSet> cadExitCriterion = New Map<Id, CriterionSet>();
+        
         if (cadenceMap != null){
             cadCriterion = RuleCriterionMatcherHelper.getCadenceWiseCriterions(cadenceMap.values(), CadenceConstants.CRITERION_TYPE_ENTRY);
             cadExitCriterion = RuleCriterionMatcherHelper.getCadenceWiseCriterions(cadenceMap.values(), CadenceConstants.CRITERION_TYPE_EXIT);
         }
-		
-		//Getting matching cadences	
-		for(Id cadId : cadCriterion.keySet()) {
-			Boolean isExitCriterionMatches = RuleCriterionMatcherHelper.cadenceCriterionMatches(partObj, parentObj, cadExitCriterion.get(cadId));
-			if(isExitCriterionMatches) {
-				continue;
-			}
-			Boolean isCriterionMatches = RuleCriterionMatcherHelper.cadenceCriterionMatches(partObj, parentObj, cadCriterion.get(cadId));
-    		if(isCriterionMatches) {
-    			matchingCadences.add(cadenceMap.get(cadId));
-    		} 
-		}
-
-		//Return if no matching cadence found 
-		if(matchingCadences.isEmpty()) {
-			return null;
-		}
-		
-		//Setting matched cadence
-		if(matchingCadences.size() == 1) {
-			cadToUpdate = matchingCadences.get(0);
-		} else {
-			cadToUpdate = RuleCriterionMatcherHelper.getPriorityCadence(matchingCadences);
-		}
-
-		//Setting matching cadence data to participant
-		partObj.put(nameSpace+'Cadence_Id__c', cadToUpdate.Id); 
-		if(cadToUpdate.Participent_Activation__c.equalsIgnoreCase(CadenceConstants.PARTICIPANT_ACTIVATION_AUTOMATIC)) {
-			partObj.put(nameSpace+'isActivated__c', true);
-            partObj.put(nameSpace+'EntranceCriteria_Matched_Date__c', System.now());
-		} else {
-			partObj.put(nameSpace+'isActivated__c', false);
-		}
-		 
-		return cadToUpdate;  
-	} 
+        
+        //Getting matching cadences	
+        for(Id cadId : cadCriterion.keySet()) {
+            Boolean isExitCriterionMatches = RuleCriterionMatcherHelper.cadenceCriterionMatches(partObj, parentObj, cadExitCriterion.get(cadId));
+            if(isExitCriterionMatches) {
+                continue;
+            }
+            Boolean isCriterionMatches = RuleCriterionMatcherHelper.cadenceCriterionMatches(partObj, parentObj, cadCriterion.get(cadId));
+            System.debug('Test#1234567:'+isCriterionMatches);
+            if(isCriterionMatches) {
+                matchingCadences.add(cadenceMap.get(cadId));
+            } 
+        }
+        
+        //Return if no matching cadence found 
+        if(matchingCadences.isEmpty()) {
+            return null;
+        }
+        
+        //Setting matched cadence
+        if(matchingCadences.size() == 1) {
+            cadToUpdate = matchingCadences.get(0);
+        } else {
+            cadToUpdate = RuleCriterionMatcherHelper.getPriorityCadence(matchingCadences);
+        }
+        
+        partObj.put(nameSpace+'Cadence_Id__c', cadToUpdate.Id); 
+        
+        if(!objName.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_OBJECT_NAME)){
+            //Setting matching cadence data to participant
+            if(cadToUpdate.Participent_Activation__c.equalsIgnoreCase(CadenceConstants.PARTICIPANT_ACTIVATION_AUTOMATIC)) {
+                partObj.put(nameSpace+'isActivated__c', true);
+                partObj.put(nameSpace+'EntranceCriteria_Matched_Date__c', System.now());
+            } else {
+                partObj.put(nameSpace+'isActivated__c', false);
+            }
+        }
+        return cadToUpdate;  
+    }
 	  
 	public static SObject matchExitCriterion(Cadence__c cad, SObject partObj, SObject parentObj, String objName) {
-		
+		System.debug('matchExitCriterion:##');
 		//Returning if given cad is null
 		if(cad == null) {
 			return null;
 		} 
-
+		System.debug('matchExitCriterion:##12');
 		//Getting cadence criterion for cadence		
 		Map<Id, CriterionSet> cadCriterion = RuleCriterionMatcherHelper.getCadenceWiseCriterions(new List<Cadence__c>{cad}, CadenceConstants.CRITERION_TYPE_EXIT);
-
+		System.debug('matchExitCriterion:##cadCriterion='+cadCriterion);
+        
+        //matchExitCriterion
+        
 		//Checking for exit Cadence Criterion mathcing or not 
 		Boolean isCriterionMatches = RuleCriterionMatcherHelper.cadenceCriterionMatches(partObj, parentObj, cadCriterion.get(cad.Id));
 		
+        System.debug('Exit isCriterionMatches='+isCriterionMatches);
+        
 		//Removing cadence details from participnat if it matches it's exit criterion 
 		if(isCriterionMatches) {
 			//partObj.put('CadencePerformed__c', true);
@@ -84,6 +91,20 @@ public with sharing class RuleCriterionMatcher {
 			return partObj;
 		} 
 		return null;
+	}
+	public static Boolean matchExitCriterionOpp(Cadence__c cad, SObject partObj, SObject parentObj, String objName) {
+		System.debug('matchExitCriterion:##New');
+        
+		//Returning if given cad is null
+		if(cad == null) {
+            return false;
+		} 
+		System.debug('matchExitCriterion:##12');
+		//Getting cadence criterion for cadence		
+		Map<Id, CriterionSet> cadCriterion = RuleCriterionMatcherHelper.getCadenceWiseCriterions(new List<Cadence__c>{cad}, CadenceConstants.CRITERION_TYPE_EXIT);
+		System.debug('matchExitCriterion:##cadCriterion='+cadCriterion);
+        Boolean isCriterionMatches = RuleCriterionMatcherHelper.cadenceCriterionMatches(partObj, parentObj, cadCriterion.get(cad.Id));
+		return isCriterionMatches;
 	}
 	
 	public static List<CadenceAction__c> getMatchingActions(Cadence__c cad, SObject obj, SObject parentObj, String objName, List<Sequence_Action__c> partActions) {
@@ -164,10 +185,10 @@ public with sharing class RuleCriterionMatcher {
 		
 		//Returning if no action to be performed
 		List<Sequence_Action__c> actionsToPerform = new List<Sequence_Action__c>();
-		if(partActions == null || partActions.isEmpty()) {
-			return actionsToPerform;
-		}
-		
+		if(partActions == null || partActions.isEmpty() || cad == null || cad.CadenceActions__r == null) {
+            return actionsToPerform;
+        }
+		System.debug('cad getMatchingParticipantActions'+cad);
 		Map<Id, CadenceAction__c> allCadActionMap = new Map<Id, CadenceAction__c>(cad.CadenceActions__r);
 		List<CadenceAction__c> remainingCadActions = new List<CadenceAction__c>();
 		
@@ -197,5 +218,4 @@ public with sharing class RuleCriterionMatcher {
 		}
 		return actionsToPerform;
 	}
-	
 }

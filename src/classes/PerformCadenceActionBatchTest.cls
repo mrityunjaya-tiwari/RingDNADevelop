@@ -112,8 +112,9 @@ public class PerformCadenceActionBatchTest {
         insert l2;
         
         Test.startTest();
-        PerformCadenceActionBatch led=new PerformCadenceActionBatch(CadenceConstants.LEAD_OBJECT_NAME, CadenceConstants.DB_OBJECT_NAME);
-        Database.executeBatch(led,200);
+        PerformCadenceActionBatch lead=new PerformCadenceActionBatch(new List<string>{CadenceConstants.LEAD_OBJECT_NAME, CadenceConstants.DB_OBJECT_NAME});
+        PerformCadenceActionBatch contact=new PerformCadenceActionBatch(new List<string>{CadenceConstants.CONTACT_OBJECT_NAME, CadenceConstants.ACCOUNT_OBJECT_NAME});
+        Database.executeBatch(lead,200);
         Test.stopTest();
         
         l1 = [Select Id, Cadence_Id__c from Lead where Id = :l1.Id];

@@ -39,4 +39,13 @@ public with sharing class FormulaSObjectValue {
             return null;
         }
     }
+    
+    public Object getId() {
+        try {
+            return current.get('Id');
+        } catch (System.SObjectException exc) {
+            return null;
+        }
+    }
+    
 }

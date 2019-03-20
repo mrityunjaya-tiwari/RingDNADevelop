@@ -49,7 +49,7 @@ public class ActionDetailControllerTest {
         insert action;*/
         Test.startTest();
         //insert emailTemplateObj;
-        ActionDetailController.InitActionData initActionObj = ActionDetailController.initCadenceActionData();
+        ActionDetailController.ActionWrapper initActionObj = ActionDetailController.getActionWrapper();
         system.assert(numberValidate(initActionObj.listEmailTemplate.size(), 1), 'List of email template size must be 1');
         //system.assert(numberValidate(initActionObj.listSmsTemplate.size(), 1), 'List of sms template size must be 1');
         //system.assert(numberValidate(initActionObj.listCallTemplate.size(), 1), 'List of csll template size must be 1');
@@ -60,18 +60,19 @@ public class ActionDetailControllerTest {
     }
     @isTest
     public static void testsaveAction(){
-        Test.startTest();
-        Action__c actionObj = ActionDetailController.saveAction(act, listTask.get(0));
-        system.assertEquals(act.Name, actionObj.Name);
+        Test.startTest();        
+        Id actionId = ActionDetailController.saveAction(system.JSON.serialize(act), listTask.get(0));        
+        system.assertNotEquals(null, actionId);
         Test.stopTest();
     }
     
     @isTest
     public static void getFieldsWithLabelsTest() {
- 
-		List<Criterion> fieldsWithLabels;
+        List<CriterionWrapper> fieldsWithLabels;
+        List<String> objectList = new List<String>();
+        objectList =new List<String>{CadenceConstants.LEAD_OBJECT_NAME,CadenceConstants.DB_OBJECT_NAME };
     	Test.startTest();
-		fieldsWithLabels = CadenceService.getFieldsWithLabels('Account');
+		fieldsWithLabels = CadenceService.getFieldsWithLabels(objectList);
     	Test.stopTest();
     	
     	System.assertEquals(true, fieldsWithLabels!=null);

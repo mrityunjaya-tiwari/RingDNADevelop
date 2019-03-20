@@ -126,7 +126,16 @@ public with sharing class RuleCriterionMatcherHelper {
 		Boolean matchResult = false;
 		if(op instanceOf Integer){
 			Criterion c = criteriaMap.get(Integer.valueOf(op));
-    		matchResult = c.matches(fsv)?true:false;
+            
+            if(c.fieldName.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_ROLE_OBJECT_NAME+'.Role')){
+               matchResult = IsCriteriasMatched((String)fsv.getId(),matchResult,c,fsv,'Custom');
+            } else if(c.matches(fsv)){
+                matchResult = true;
+            }else {
+                matchResult = false;
+            }
+            
+    		//matchResult = ?true:false;
     	}else if(op instanceOf Boolean){
     		matchResult = Boolean.valueOf(op);
     	}
@@ -134,21 +143,54 @@ public with sharing class RuleCriterionMatcherHelper {
 	}
     
     public static Boolean matchANDOperatorCriterias(List<Criterion> criteriaList, FormulaSObjectValue fsv){
+        System.debug('criteriaList#####'+criteriaList);
+        System.debug('fsv#####'+fsv);
 		Boolean isAllCriteriasMatched = true;
 		for(Criterion c: criteriaList){
-			if(c.matches(fsv)){
+            System.debug('c.fieldName'+c.fieldName); 
+            if(c.fieldName.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_ROLE_OBJECT_NAME+'.Role')){
+               isAllCriteriasMatched = IsCriteriasMatched((String)fsv.getId(),isAllCriteriasMatched,c,fsv,'AND');
+            } else if(c.matches(fsv)){
 				isAllCriteriasMatched = isAllCriteriasMatched && true;
 			} else {
+                //System.debug('else matchANDOperatorCriterias'+isAllCriteriasMatched);
 				isAllCriteriasMatched = false;
 			}
 		}
+        //System.debug('if matchANDOperatorCriterias isAllCriteriasMatched'+isAllCriteriasMatched);
 		return isAllCriteriasMatched;
 	}
+  
+    public static Boolean IsCriteriasMatched(String oppId,Boolean isAllCriteriasMatched,Criterion c,FormulaSObjectValue fsv,String operator){
+        System.debug('IsCriteriasMatched:operator='+operator);
+        Set<String> listOfRoleMatchContacts = new Set<String>();
+        if(CadenceService.mapOfOppContactRoles.containskey(oppId)){
+            for(OpportunityContactRole OppContactRole : CadenceService.mapOfOppContactRoles.get(oppId)){
+                if(c.value.equalsIgnoreCase(OppContactRole.Role)){
+                    listOfRoleMatchContacts.add(OppContactRole.ContactId);
+                }
+            }
+            CadenceService.mapOfOpportunityRole.put((String)fsv.getId(),listOfRoleMatchContacts);
+            if(listOfRoleMatchContacts.size() > 0){
+                if(operator == 'AND'){
+                    isAllCriteriasMatched = isAllCriteriasMatched && true;
+                }else{
+                    isAllCriteriasMatched = true;
+                }
+            } else {
+                isAllCriteriasMatched = false;
+            }
+        }
+        System.debug('IsCriteriasMatched:Result='+isAllCriteriasMatched);
+        return isAllCriteriasMatched;
+    }
 	
 	public static Boolean matchOROperatorCriterias(List<Criterion> criteriaList, FormulaSObjectValue fsv){
 		Boolean isAllCriteriasMatched = false;
 		for(Criterion c: criteriaList){
-			if(c.matches(fsv)){
+			if(c.fieldName.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_ROLE_OBJECT_NAME+'.Role')){
+               isAllCriteriasMatched = IsCriteriasMatched((String)fsv.getId(),isAllCriteriasMatched,c,fsv,'OR');
+            } else if(c.matches(fsv)){
 				isAllCriteriasMatched = true;
 			}
 		}

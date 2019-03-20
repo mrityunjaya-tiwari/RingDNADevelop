@@ -1,14 +1,14 @@
 <aura:component controller = 'CadenceDetailsController' access="global">
     <aura:handler name="init" action="{!c.doInit}" value="{!this}"/> 
     <!--Event attribute -->
-    <aura:registerEvent name="RecordTypeChangeEvent" type="RDNACadence2:RecordTypeChangeEvent"/>
+    <aura:registerEvent name="RecordTypeChangeEvent" type="c:RecordTypeChangeEvent"/>
     <aura:method name="validateForm" action="{!c.validateForm}"/>
     <!-- Disabled proerty-->
     <aura:attribute name = "isDisabled" type = "Boolean" default = "false"/>
     <!-- Disabled proerty for cadence type-->
     <aura:attribute name = "disableCadenceType" type = "Boolean" default = "false"/>
     <!--Action Objects -->
-    <aura:attribute name="newCadence" type="RDNACadence2__Cadence__c"/>
+    <aura:attribute name="newCadence" type="Sequence"/>
     <!--Maching Priority List -->
     <aura:attribute name="mpList" type="List"/>
     <!--Activation Type List -->
@@ -19,7 +19,7 @@
     <aura:attribute name="refreshParticipant" type="Boolean"/>
     <!--create a component attributs -->
     <aura:attribute name="spinner" type="boolean" default="false"/>
-    <RDNACadence2:SpinnerComponent spinnerSync = "{!v.spinner}"/>
+    <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>
     
     <aura:attribute name="pData" type="List"/>
     <aura:attribute name="settedSequenceType" type="Boolean" default= "false"/>
@@ -38,7 +38,7 @@
                 <div class="slds-form-element__control slds-size_1-of-4 rdna-field-lable">
                     <lightning:input aura:id="formValidationId" label="Sequence Name" class= "rdna-field-values"
                                      name="actionname"
-                                     value="{!v.newCadence.Name}"
+                                     value="{!v.newCadence.name}"
                                      placeholder = "Enter Sequence Name"
                                      messageWhenBadInput = "Please Enter Name"
                                      disabled = "{!v.isDisabled}"
@@ -46,20 +46,20 @@
                 </div>
                 <div class="slds-form-element__control slds-size_1-of-4 rdna-field-label">
                     <lightning:select aura:id="formValidationId" name="selectActionType"  class= "rdna-field-values myTest"
-                                      label="Type" required="true" value="{!v.newCadence.RDNACadence2__Record_Type__c}" 
+                                      label="Type" required="true" value="{!v.newCadence.recordType}" 
                                       messageWhenValueMissing="Please Select Record Type."
                                       disabled = "{!v.isDisabled || v.disableCadenceType || v.settedSequenceType}"
                                       onchange="{!c.fireRecordTypeChangedEvent}">
                         <option value="">Record Type</option>
                         <option value="Contact">Contact</option>
                         <option value="Lead">Lead</option>
-                        <!--<option value="Opportunity">Opportunity</option>-->
+                        <option value="Opportunity">Opportunity</option>
                     </lightning:select>
                 </div>
                 <div class="slds-form-element__control slds-size_1-of-4 rdna-field-lable">
                     <lightning:select aura:id="formValidationId" name="selectActionType"  class= "rdna-field-values"
                                       disabled = "{!v.isDisabled}"
-                                      label="Activation Type" required="true" value="{!v.newCadence.RDNACadence2__Participent_Activation__c}" 
+                                      label="Activation Type" required="true" value="{!v.newCadence.participentActivation}" 
                                       messageWhenValueMissing="Please Select Activation Type.">
                         <option value="">Select Activation Type</option>
                         <aura:iteration items="{!v.atList}" var="obj">
@@ -70,7 +70,7 @@
                 <div class="slds-form-element__control slds-size_1-of-4 rdna-field-lable">
                     <lightning:select aura:id="formValidationId" name="selectMatchingPriority" 
                                       disabled = "{!v.isDisabled}" class= "rdna-field-values"
-                                      label="Matching priority" required="true" value="{!v.newCadence.RDNACadence2__matching_priority__c}" 
+                                      label="Matching priority" required="true" value="{!v.newCadence.matchingPriority}" 
                                       messageWhenValueMissing="Please Select matching priority.">
                         <option value="">Matching priority</option>
                         <aura:iteration items="{!v.mpList}" var="obj">
@@ -80,7 +80,7 @@
                 </div>
             </div>
             <aura:if isTrue="{!v.isShowParticipantsTable}">
-                <RDNACadence2:ParticipantsList aura:id="partList" recordId="{!v.newCadence.Id}" pData="{!v.pData}" toggleRows = "{!v.toggleRows}" hideCheckboxes="{!not(v.newCadence.RDNACadence2__Status__c)}" refreshParticipant = "{!v.refreshParticipant}"/>	 
+                <c:ParticipantsList aura:id="partList" recordId="{!v.newCadence.id}" pData="{!v.pData}" toggleRows = "{!v.toggleRows}" hideCheckboxes="{!not(v.newCadence.status)}" refreshParticipant = "{!v.refreshParticipant}"/>	 
             </aura:if>
         </form>
     </fieldset>

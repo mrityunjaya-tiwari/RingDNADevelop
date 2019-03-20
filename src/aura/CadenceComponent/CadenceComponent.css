@@ -168,15 +168,9 @@
     line-height: 1.43 !important;
 }
 
-/*@font-face {
-    font-family: 'Logical';LogicalFontRegular
-    src: url(/resource/RDNACadence2__LogicalFontRegular) format('woff');
-}*/
-
-
 @font-face {
     font-family: 'Logical';
-    src: url(/resource/RDNACadence2__LogicalFontRegular) format('woff');
+    src: url(/resource/RDNACadence__LogicalFontRegular) format('woff');
 }
 
 /*----- useful table css---------------------------------*/

@@ -12,10 +12,10 @@ public class Contacts  extends SObjectDomain {
         Map<String, List<Contact>> contList = CadenceService.processObjectList(sObjectList);
         contsWithCadence = contList.get('contactListWithCadenceIds');
         contsWithoutCadence = contList.get('contactListWithoutCadenceIds');
-        cadMap = CadenceSelector.getActiveCadencesByRecordType(CadenceConstants.CONTACT_OBJECT_NAME);
+        cadMap = CadenceSelector.getActiveCadencesByRecordType(New List<String>{CadenceConstants.CONTACT_OBJECT_NAME,CadenceConstants.OPPORTUNITY_OBJECT_NAME});
         CadenceService.processParticipantActivation(cadMap, contsWithCadence, CadenceConstants.CONTACT_OBJECT_NAME);
     }
-    
+   
     public class Constructor implements SObjectDomain.IConstructable {
         public SObjectDomain construct(List<SObject> sObjectList) {
             return new Contacts(sObjectList);
@@ -26,6 +26,18 @@ public class Contacts  extends SObjectDomain {
         
         Set<Id> accountIds = new Set<Id>();
         for(Contact contObj : (List<Contact>)contsWithoutCadence) {
+		
+		if(contObj.ringdna100__Call_Attempts__c == null){
+                contObj.ringdna100__Call_Attempts__c=0;
+            }
+             if(contObj.ringdna100__Email_Attempts__c == null){
+                contObj.ringdna100__Email_Attempts__c=0;
+            }
+            
+            if(contObj.ringdna100__Message_Attempts__c == null){
+                contObj.ringdna100__Message_Attempts__c=0;
+            }
+		
             if(contObj.AccountId != null) {
                 accountIds.add(contObj.AccountId);
             }
@@ -37,7 +49,7 @@ public class Contacts  extends SObjectDomain {
 		List<Account> accList = Database.query(query);
         Map<Id, Account> accMap = new Map<Id, Account>(accList);
         
-    	Map<Id, Cadence__c> cadMap = CadenceSelector.getActiveCadencesByRecordType(CadenceConstants.CONTACT_OBJECT_NAME);
+    	Map<Id, Cadence__c> cadMap = CadenceSelector.getActiveCadencesByRecordType(New List<String>{CadenceConstants.CONTACT_OBJECT_NAME,'Opportunity'});
         for(Contact contObj: (List<Contact>)contsWithoutCadence) {
 			Account parentObj;
             if(contObj.AccountId != null) {
@@ -71,6 +83,7 @@ public class Contacts  extends SObjectDomain {
         Map<Id, Account> accMap = new Map<Id, Account>(accList);
         
 		Map<Id, Contact> contMap = new Map<Id, Contact>(contsWithCadence);
+        
         CadenceService.createActionParticipants(contIdToAllCadActListMap, new Map<Id, SObject>(contsWithCadence), CadenceConstants.CONTACT_OBJECT_NAME); 
 
 		//Getting non performed participant actions 
@@ -188,9 +201,4 @@ public class Contacts  extends SObjectDomain {
     	
         
      }
-    
-    public override void onafterUpdate(Map<Id,SObject> existingRecords){
-  
-    }
-    
 }

@@ -11,9 +11,9 @@
         <div class="slds-scope"/>
     <script>
         var myUserContext = "{!$User.UITheme}";
-        $Lightning.use("RDNACadence2:CadenceActionListApp", function() {
+        $Lightning.use("RDNACadence:CadenceActionListApp", function() {
             $Lightning.createComponent(
-                "RDNACadence2:TargetList",
+                "RDNACadence:TargetList",
                 {recordId: '{!$CurrentPage.parameters.id}',themeName: myUserContext},
                 "myDivId5",
                 function(cmp) {

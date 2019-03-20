@@ -1,4 +1,4 @@
-<aura:component controller="RDNACadence2.TargetListController" implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction,force:appHostable" access="global">
+<aura:component controller="TargetListController" implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction,force:appHostable" access="global">
     
     <ltng:require scripts="{!join(',',
             $Resource.StreamingAPI + '/cometd.js',
@@ -11,7 +11,7 @@
     
     <!--  HANDLERS -->
     <aura:handler name="init" value="{!this}" action="{!c.init}" />
-    <aura:handler name="datatableEvt" event="RDNACadence2:DatatableEvent" action="{!c.handleDatatableEvent}"/>
+    <aura:handler name="datatableEvt" event="c:DatatableEvent" action="{!c.handleDatatableEvent}"/>
     
     <aura:attribute name="totalNumberOfRows" type="Integer" default="0" description="Contains the data of total no of records present on table" />
     <aura:attribute name="sortBy" type="String" default="Type"/>
@@ -31,12 +31,12 @@
     <aura:attribute name="setPhoneLink" type="boolean" default = "false"/>
     <aura:handler name="change" value="{!v.setPhoneLink}" action="{!c.setPhoneLink}"/> 
     <aura:handler event="force:refreshView" action="{!c.init}" />
-    <aura:handler name="cadencePagination" event="RDNACadence2:CadPagination" action="{!c.handlePagination}"/>
+    <aura:handler name="cadencePagination" event="c:CadPagination" action="{!c.handlePagination}"/>
     <aura:attribute name="data" type="List" />
     <aura:handler name="change" value="{!v.data}" action="{!c.pageUpdated}"/> 
     <!--create a component attributs -->
     <aura:attribute name="spinner" type="boolean" default="false"/>
-    <RDNACadence2:SpinnerComponent spinnerSync = "{!v.spinner}"/>
+    <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>
     <aura:attribute name="selectedGroup" type="String" default=""/>
     <aura:attribute name="groupList" type="List"/>
     <aura:attribute name="currentUserId" type="String"/>
@@ -126,11 +126,12 @@
         <!-- RECORD TABLE -->
         <div >
             <div class="slds-m-top_medium rdna-classic-datatableStyling">
-                <RDNACadence2:Datatable columns = "{!v.columns}" rawData = "{!v.rawData}" aura:id = "datatable" hideCheckboxColumn = "{!v.hideCheckboxes}" 
+                <c:Datatable columns = "{!v.columns}" rawData = "{!v.rawData}" aura:id = "datatable" hideCheckboxColumn = "{!v.hideCheckboxes}" 
                                        sortBy = "{!v.sortBy}" rowsToLoad = "{!v.recordsPerPage}" 
                                        isListView="{!v.listViewCondition}" 
                                        rawDataForFilter = "{!v.rawDataForFilter}"
-                                       data="{!v.data}" 
+                                       data="{!v.data}"
+									   isTodayListView = "true"
                                        selectedNoOfRecords="true"/> 
             </div>
         </div> 

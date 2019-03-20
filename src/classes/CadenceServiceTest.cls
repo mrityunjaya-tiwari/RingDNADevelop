@@ -205,7 +205,14 @@ public class CadenceServiceTest {
         cadMap = CadenceService.removeCadencefromMap(cadMap,sequenceIds);
         System.assertEquals(0,cadMap.size());
         
+        
+        CadenceController.getCadenceData(cadence1.Id);
+        
+        
         Task taskObj = CadenceService.getEmailTask(seqAction.Id, 'testAction', l1.id, l1.id );
+        
+        insert taskObj;
+        update taskObj;
         System.assertEquals(taskObj.WhoId, l1.id);
         System.assertEquals(taskObj.Sequence_Action__c, seqAction.Id);
         System.assertEquals(taskObj.TaskSubtype, 'Email');

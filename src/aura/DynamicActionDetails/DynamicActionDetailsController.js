@@ -3,12 +3,13 @@
         component.set('v.disableActivationType', false);
         var listEmailTemplate;
         var id = component.get('v.recordId');
-        var action = component.get("c.initCadenceActionData");
+        var action = component.get("c.getActionWrapper");
         helper.createObjectData(component, event);
         action.setCallback(this, function(response) {
             var state = response.getState();
             if (state === "SUCCESS") {
                 listEmailTemplate= response.getReturnValue();
+                component.set('v.newAction', listEmailTemplate.action);
                 component.set('v.listEmailTemplate', listEmailTemplate.listEmailTemplate);
                 component.set('v.listSmsTemplate', listEmailTemplate.listSmsTemplate);
                 component.set('v.listCallTemplate', listEmailTemplate.listCallTemplate);
@@ -26,17 +27,17 @@
         $A.enqueueAction(action)
     },
     
-    clickCreate: function(component, event, helper) {        
+    clickCreate: function(component, event, helper) { 
         var newAct = component.get("v.newAction");
-        var name = newAct.Name;
-        newAct.Name = name.trim();
+        var name = newAct.name;
+        newAct.name = name.trim();
         component.set("v.newAction", newAct);
         var isValidAction = component.find('formValidationId').reduce(function (validSoFar, inputCmp) {
             inputCmp.showHelpMessageIfInvalid();
             return validSoFar && inputCmp.get('v.validity').valid;
             
         }, true);
-        if(isValidAction && newAct.RDNACadence2__Type__c == 'Task'){
+        if(isValidAction && newAct.type == 'Task'){
             isValidAction = helper.validateFieldsToUpdateComponent(component, event, helper);
         }
         if(isValidAction){

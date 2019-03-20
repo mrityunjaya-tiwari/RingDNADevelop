@@ -69,7 +69,7 @@ public class CadenceActionListControllerTest {
         CadenceActionListController.deleteActions(actionIdListForDelete);
         Test.stopTest();
         List<Action__c> actions = [Select Id from Action__c where Id IN :actionIdListForDelete];
-        System.assertEquals(actions.size(), 1);    
+        System.assertEquals(actions.size(), 0);    
         
     } 
    
