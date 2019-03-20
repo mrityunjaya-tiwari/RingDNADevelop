@@ -31,7 +31,7 @@
                 <p class="slds-align_absolute-center rdna-sub-header" style="padding-top:15px;">Enter the basic sequence details for your new sequence list.</p>
                 <aura:set attribute="else">
                     <p class="slds-page-header__row slds-truncate rdna-field-values-bold  slds-m-top_medium rdna-link-height" >Sequence Details</p>
-                    <p class=" rdna-field-values rdna-link-height">Enter the basic sequence details for your new sequence list.</p>
+                    <p class=" rdna-field-values rdna-link-height">Following are the details of your sequence.</p>
                 </aura:set>
             </aura:if>
             <div class="slds-form-element__row" style="padding-top:40px">
