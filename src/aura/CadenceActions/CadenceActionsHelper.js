@@ -20,7 +20,7 @@
         }else{
             isValid = false;
             component.set('v.isValidationError', true);
-            component.set('v.ValidationError', 'Please Add Cadence Actions');
+            component.set('v.ValidationError', 'Please Add Sequence Actions');
         }
         return isValid;
     },

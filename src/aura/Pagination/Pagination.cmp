@@ -44,7 +44,8 @@
                     <ui:inputSelectOption text="{!v.total}" label="All" /> 
                     <ui:inputSelectOption text="5" label="5" value="true"/>
                     <ui:inputSelectOption text="10" label="10"/>
-                    <ui:inputSelectOption text="20" label="20"/>
+                    <ui:inputSelectOption text="25" label="25"/>
+                    <ui:inputSelectOption text="50" label="50"/>
                 </ui:inputSelect>
             </div>
                 
