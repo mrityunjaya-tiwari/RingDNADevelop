@@ -546,6 +546,7 @@ global  without sharing class CadenceService {
     public static List<SObject> getSObjectsToProcess(List<SObject> objList, Map<Id, SObject> parentMap, Map<Id, Cadence__c> cadMap, String objName) {
         //Initializing the soject list as per obj
         List<SObject> sObjectsToProcess;
+		List<SObject> sObjectsForOpportunity = new List<SObject>();
         if(objName.equals(CadenceConstants.LEAD_OBJECT_NAME)) {
             sObjectsToProcess = new List<Lead>();
         } else if(objName.equals(CadenceConstants.OPPORTUNITY_OBJECT_NAME)){
@@ -643,6 +644,8 @@ global  without sharing class CadenceService {
                 if(objName.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_OBJECT_NAME)){
                     isexitMatchOpp = RuleCriterionMatcher.matchExitCriterionOpp(cadMapNew.get(cadId), obj, parentMap.get((Id)obj.get('Id')), objName);
                     if(isexitMatchOpp){
+					    obj.put(nameSpace+'Cadence_Id__c', null);
+                        sObjectsForOpportunity.add(obj);
                         oppContactList.addAll(RemoveSequenceFromParticempant((Id)obj.get('Id'),mapOfOppcontact, mapOfContacts));
                     }
                     
@@ -757,6 +760,10 @@ global  without sharing class CadenceService {
              update oppContactList;
         }
         
+		//Update Opportunity 
+        if(sObjectsForOpportunity != null && sObjectsForOpportunity.size() > 0){
+            update sObjectsForOpportunity;
+        } 
         
         //Deleting old non performed participant actions 
         CadenceService.deleteUnperformedPartActions(oldPartActionToDelete, objName);
