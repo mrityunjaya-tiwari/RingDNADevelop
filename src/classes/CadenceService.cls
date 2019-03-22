@@ -1420,6 +1420,7 @@ global  without sharing class CadenceService {
                     contactObj =(Contact)mapOfContacts.get(contatId);
                     contactObj.Cadence_Id__c = null;
                     contactObj.isActivated__c = false;
+					contactObj.EntranceCriteria_Matched_Date__c = null;
                     contactList.add(contactObj);
                 }
                 
