@@ -159,7 +159,9 @@ global  without sharing class CadenceService {
                                                if(index != 0){
                                                    c.fieldName =  objectStr + '.' + c.fieldName;
                                                }
-                                               fieldsWithLabels.add(c);
+                                               if(!(objectStr == CadenceConstants.OPPORTUNITY_ROLE_OBJECT_NAME && c.fieldLabel == 'Primary')){
+                                                   fieldsWithLabels.add(c);
+                                               }
                                            }
                                        }
                                        
@@ -1321,7 +1323,10 @@ global  without sharing class CadenceService {
                                    if(index != 0){
                                        c.fieldName =  objectStr + '.' + c.fieldName;
                                    }
-                                   fieldsWithLabels.add(c);
+                                   if(!(objectStr == CadenceConstants.OPPORTUNITY_ROLE_OBJECT_NAME && c.fieldLabel == 'Primary')){
+                                       fieldsWithLabels.add(c);
+                                   }
+                                   
                                } 
                         }
                     }
