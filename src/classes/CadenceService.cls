@@ -644,8 +644,9 @@ global  without sharing class CadenceService {
                 if(objName.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_OBJECT_NAME)){
                     isexitMatchOpp = RuleCriterionMatcher.matchExitCriterionOpp(cadMapNew.get(cadId), obj, parentMap.get((Id)obj.get('Id')), objName);
                     if(isexitMatchOpp){
-					    obj.put(nameSpace+'Cadence_Id__c', null);
+                        obj.put(nameSpace+'Cadence_Id__c', null);
                         sObjectsForOpportunity.add(obj);
+                        
                         oppContactList.addAll(RemoveSequenceFromParticempant((Id)obj.get('Id'),mapOfOppcontact, mapOfContacts));
                     }
                     
