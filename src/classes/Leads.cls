@@ -27,16 +27,6 @@ public class Leads  extends SObjectDomain {
         for(Lead leadObj: (List<Lead>) leadsWithoutCadence) {
             SObject parentObj;
 			
-			if(leadObj.ringdna100__Call_Attempts__c == null){
-                leadObj.ringdna100__Call_Attempts__c=0;
-            }
-            if(leadObj.ringdna100__Email_Attempts__c == null){
-                leadObj.ringdna100__Email_Attempts__c=0;
-            }
-            
-            if(leadObj.ringdna100__Message_Attempts__c == null){
-                leadObj.ringdna100__Message_Attempts__c=0;
-            }
             if(leadObj.NumberofLocations__c == null){
                 leadObj.NumberofLocations__c=0;
             }

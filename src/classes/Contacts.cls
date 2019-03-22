@@ -27,17 +27,6 @@ public class Contacts  extends SObjectDomain {
         Set<Id> accountIds = new Set<Id>();
         for(Contact contObj : (List<Contact>)contsWithoutCadence) {
 		
-		if(contObj.ringdna100__Call_Attempts__c == null){
-                contObj.ringdna100__Call_Attempts__c=0;
-            }
-             if(contObj.ringdna100__Email_Attempts__c == null){
-                contObj.ringdna100__Email_Attempts__c=0;
-            }
-            
-            if(contObj.ringdna100__Message_Attempts__c == null){
-                contObj.ringdna100__Message_Attempts__c=0;
-            }
-		
             if(contObj.AccountId != null) {
                 accountIds.add(contObj.AccountId);
             }
