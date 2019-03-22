@@ -1,4 +1,4 @@
-<apex:page sidebar="false" showHeader="true">
+<apex:page controller="GetNamespace" sidebar="false" showHeader="true">
    <style type="text/css">
         .rdna-classic-search { margin-top: 7px !important; }
         .rdna-pageSelect { height: 27px !important; width: 62px !important;  border-radius: 6px !important; border-color: #cccccc !important;} 
@@ -11,9 +11,9 @@
         <div class="slds-scope"/>
     <script>
         var myUserContext = "{!$User.UITheme}";
-        $Lightning.use("RDNACadence:CadenceActionListApp", function() {
+        $Lightning.use("{!namespace}:CadenceActionListApp", function() {
             $Lightning.createComponent(
-                "RDNACadence:TargetList",
+                "{!namespace}:TargetList",
                 {recordId: '{!$CurrentPage.parameters.id}',themeName: myUserContext},
                 "myDivId5",
                 function(cmp) {
