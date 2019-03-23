@@ -271,8 +271,16 @@ public with sharing class CadenceController {
                                 	query =query+' <'+  dt.getDateTime(mapofCriterion.get(num).value).formatGMT('yyyy-MM-dd\'T\'HH:mm:ss\'Z\'');
                             }
                         }
+                        else if(mapofCriterion.get(num).operation == 'start_with')
+                        {
+                         
+                            query =query+' LIKE  \'' +mapofCriterion.get(num).value + '%\'';
+                        }
                         else
+                        {
                             query =query+' LIKE  \'%' +mapofCriterion.get(num).value +'\''; 
+                            
+                        }
                         listcount++;
                         if(listcount <= mapofCriterion.keyset().size()){
                             if(!conditionforAll.containsIgnoreCase('Custom logic') && num != mapofCriterion.keyset().size()){
