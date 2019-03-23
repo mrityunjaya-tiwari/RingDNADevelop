@@ -197,14 +197,13 @@ public class CadenceProgressIndicatorController {
                     aopToUpdateList.add(sa);
                 }
             }
-            if (aopToUpdateList.size() > 0 ){
-                update aopToUpdateList; 
-            }
-            
-            if (aopToDeleteRelatedToCadence.size() > 0 ){
-                delete aopToDeleteRelatedToCadence;
-            }
-            
+        }
+        if (aopToUpdateList.size() > 0 ){
+            update aopToUpdateList; 
+        }
+        
+        if (aopToDeleteRelatedToCadence.size() > 0 ){
+            delete aopToDeleteRelatedToCadence;
         }
     }
     /*********************Updated logic for add  AOP*******************/
