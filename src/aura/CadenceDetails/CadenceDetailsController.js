@@ -1,7 +1,7 @@
 ({
     doInit : function(component, event, helper) {
         var cadenceObj = component.get("v.newCadence");
-        if(cadenceObj.Id !=null){
+        if(cadenceObj.id !=null){
             component.set('v.disableCadenceType' , true);
         }
         helper.createListForInput(component);
