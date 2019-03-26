@@ -838,7 +838,6 @@ global  without sharing class CadenceService {
     }
     
     public static Map<Id, List<Sequence_Action__c>> performParticipantActions(List<SObject> objList, Map<Id, List<Sequence_Action__c>> partActionsMap) {
-        System.debug('Task-18-performParticipantActions');
         Map<Id, List<Sequence_Action__c>> performedPartActions = new Map<Id, List<Sequence_Action__c>>(); 
         Map<Id, SObject> objMap = new Map<Id, SObject>(objList); 
         List<Sequence_Action__c> partActToUpdate = new List<Sequence_Action__c>();
@@ -886,7 +885,7 @@ global  without sharing class CadenceService {
                         
                      }
                         else{
-                        		partAct.Show_on_Target_List__c = true;
+                            	partAct.Show_on_Target_List__c = true;
                         		partActToUpdate.add(partAct);    
                         }
                         
@@ -894,7 +893,6 @@ global  without sharing class CadenceService {
                     }
                 }
                 if(performed) {
-                    System.debug('Task-18-performed');
                     partAct.Actual_Execution_Date__c = System.Now();
                     partAct.isActionPerformed__c = true;
                     partActToUpdate.add(partAct);
@@ -934,7 +932,6 @@ global  without sharing class CadenceService {
         
         if(!partActToUpdate.isEmpty()) {
             Database.update(partActToUpdate, false);
-            
         } 
         return performedPartActions;
         
@@ -1005,7 +1002,6 @@ global  without sharing class CadenceService {
     }
     
     public static void processParticipantsWithCadences(List<SObject> objList, Map<Id, SObject> parentMap, String objName, Boolean isTrigger) {
-        
         Map<Id, Cadence__c> cadMap = CadenceSelector.getActiveCadencesByRecordType(New List<String> {objName});
         
         Map<Id, List<Sequence_Action__c>> partActToPerform = new Map<Id, List<Sequence_Action__c>>();
@@ -1037,15 +1033,22 @@ global  without sharing class CadenceService {
         
         //System.debug('partActToPerform:'+partActToPerform);
         //perform participant actions  
-        Map<Id, List<Sequence_Action__c>> performedPartAct = CadenceService.performParticipantActions(objMap.values(), partActToPerform);
+       Map<Id, List<Sequence_Action__c>> performedPartAct = CadenceService.performParticipantActions(objMap.values(), partActToPerform);
         
         //perform participant field update
         CadenceService.updateSObjectFields(objMap.values(), performedPartAct, objName, false);
         if(!isTrigger) {
-            update objList;
-            if(objMap.keyset().size() > 0 && objMap.values().size()>0) {
-                update objMap.values();
+            Database.UpsertResult [] upsertResult;
+            try{
+                //update objList;
+                upsertResult = Database.upsert(objList, false);
+                if(objMap.keyset().size() > 0 && objMap.values().size()>0) {
+                    update objMap.values();
+                }
+            }catch(exception e){ 
+                
             }
+            
         }
             
         //Updating dates on remaining participant objects 
