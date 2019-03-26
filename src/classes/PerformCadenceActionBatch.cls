@@ -21,6 +21,7 @@ public class PerformCadenceActionBatch implements Database.Batchable<sObject>, D
     public void execute(Database.BatchableContext bc, List<sObject> objList) {
         system.debug('execute');
         Map<Id, SObject> parentMap = new Map<Id, SObject>();
+        Logger.create('BatchStart', 'BatchStart');
         CadenceService.processParticipantsWithCadences(objList, parentMap, objType, false);
        
     }
@@ -30,18 +31,30 @@ public class PerformCadenceActionBatch implements Database.Batchable<sObject>, D
     
     public static String formQuery(List<String> objList){
         List<CriterionWrapper> criterionWrapperList =  CadenceService.getFieldsWithLabelsForBatch(objList);
-         String objecttype;
-         if(objList != null && objList.size() > 0)
-             objecttype=objList[0];
-         String query = 'Select ';
-         for(CriterionWrapper wrapper : criterionWrapperList ){
-             for(Criterion criteria : wrapper.fieldsDetail ){
-                 query += criteria.fieldName + ',';
-             }
-         }
-         query = query.substring(0,query.length()-1);
-         query += ' FROM '+objecttype ;
-         return query;
+        String objecttype;
+        if(objList != null && objList.size() > 0)
+            objecttype=objList[0];
+        String query = 'Select ';
+        Set<String> allowedFields = new Set<String>();
+        for(CriterionWrapper wrapper : criterionWrapperList ){
+            for(Criterion criteria : wrapper.fieldsDetail ){
+                //query += criteria.fieldName + ',';
+                allowedFields.add(criteria.fieldName);
+            }
+        }
+        //query = query.substring(0,query.length()-1);
+        if(nameSpace != ''  && allowedFields.size() > 0){
+            String apiNameWithNamespace;
+            for(String fld : allowedFields){
+                apiNameWithNamespace = nameSpace + fld;
+                if(allowedFields.contains(apiNameWithNamespace)){
+                    allowedFields.remove(fld); 
+                }
+            }
+        }
+        query += String.join(new List<String>(allowedFields), ',');
+        query += ' FROM '+ objecttype + '';
+        return query;
     }
     
     public static Set<String> getObjectFields(String objType, Boolean parentField) {
