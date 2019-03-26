@@ -160,7 +160,7 @@ public with sharing class CadenceUtil {
             allowedFields.add(fieldName);
         }
         
-        if(allowedFields.size() > 0){
+        if(allowedFields.size() > 0 && nameSpace != ''){
             String apiNameWithNamespace;
             for(String fld : allowedFields){
                 apiNameWithNamespace = nameSpace + fld;
@@ -232,7 +232,7 @@ public with sharing class CadenceUtil {
             allowedFields.add(fieldName);
         }
         
-        if(allowedFields.size() > 0){
+        if(allowedFields.size() > 0 && nameSpace != ''){
             String apiNameWithNamespace;
             for(String fld : allowedFields){
                 apiNameWithNamespace = nameSpace + fld;

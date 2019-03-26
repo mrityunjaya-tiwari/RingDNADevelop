@@ -38,7 +38,7 @@ public with sharing class CadenceBatch implements Database.Batchable<sObject>, D
             allowedFields.add(fieldName);
    		}
         
-        if(allowedFields.size() > 0){
+        if(allowedFields.size() > 0 && nameSpace != ''){
             String apiNameWithNamespace;
             for(String fld : allowedFields){
                 apiNameWithNamespace = nameSpace + fld;
