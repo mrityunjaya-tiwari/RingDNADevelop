@@ -9,6 +9,6 @@ public class Logger {
         }
 		*/
         Logger__c loggerInstance = new Logger__c(Title__c=title, Description__c=description);
-        insert loggerInstance;
+        //insert loggerInstance;
     }
 }

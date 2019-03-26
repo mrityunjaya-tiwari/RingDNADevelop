@@ -838,7 +838,6 @@ global  without sharing class CadenceService {
     }
     
     public static Map<Id, List<Sequence_Action__c>> performParticipantActions(List<SObject> objList, Map<Id, List<Sequence_Action__c>> partActionsMap) {
-        Logger.create('performParticipantActions', String.valueOf(partActionsMap));
         Map<Id, List<Sequence_Action__c>> performedPartActions = new Map<Id, List<Sequence_Action__c>>(); 
         Map<Id, SObject> objMap = new Map<Id, SObject>(objList); 
         List<Sequence_Action__c> partActToUpdate = new List<Sequence_Action__c>();
@@ -847,13 +846,11 @@ global  without sharing class CadenceService {
         
         //Return if no unperformed participant actions 
         if(partActionsMap == null || partActionsMap.isEmpty()) {
-            Logger.create('partActionsMap NUll', String.valueOf(partActionsMap));
             return performedPartActions;
         } 
         //Processing the data to perform 
         for(Id objId : partActionsMap.keySet()) {
             for(Sequence_Action__c partAct : partActionsMap.get(objId)) {
-                Logger.create('partActionsMap For loop IN', String.valueOf(partAct));
                 Boolean performed = false,IsTaskNotCompleted = false;
                 if(partAct.CadenceAction_Id__r.Action_Id__r.Activation_Type__c.equals(CadenceConstants.PARTICIPANT_ACTIVATION_AUTOMATIC)) {
                     //Processing task type of participant action
@@ -865,9 +862,7 @@ global  without sharing class CadenceService {
                     }*/
                     //Processing email type of participant action
                     if(partAct.CadenceAction_Id__r.Action_Id__r.Type__c.equals(CadenceConstants.ACTION_TYPE_EMAIL)) {
-                        Logger.create('If condition mail IN', String.valueOf(partAct));
                         if(objMap.containsKey(objId) && objMap.get(objId).get('Email')!=null) {
-                            Logger.create('Inner If condition for null mail IN', String.valueOf(partAct));
                             emailsToSend.add(createEmailMessage(objId, partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c));
                             tasksToCreate.add(getEmailTask(partAct.Id, partAct.Name, objId, partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c));
                             performed = true;
@@ -878,7 +873,6 @@ global  without sharing class CadenceService {
                     if(partAct.CadenceAction_Id__r.Action_Id__r.Activation_Type__c.equals(CadenceConstants.PARTICIPANT_ACTIVATION_MANUAL)) {
                         
                     if(partAct.CadenceAction_Id__r.Action_Id__r.Type__c.equals(CadenceConstants.ACTION_TYPE_TASK)) {
-                        Logger.create('Else condition mail IN', String.valueOf(partAct));
                         Task tsk = performTaskAction(objId, partAct.CadenceAction_Id__r.Action_Id__r.Task_Description__c);
                         tsk.Sequence_Action__c = partAct.Id; 
                         tasksToCreate.add(tsk);
@@ -891,8 +885,7 @@ global  without sharing class CadenceService {
                         
                      }
                         else{
-                            	Logger.create('Else Show on target', String.valueOf(partAct));
-                        		partAct.Show_on_Target_List__c = true;
+                            	partAct.Show_on_Target_List__c = true;
                         		partActToUpdate.add(partAct);    
                         }
                         
@@ -900,8 +893,6 @@ global  without sharing class CadenceService {
                     }
                 }
                 if(performed) {
-                    System.debug('Task-18-performed');
-                    Logger.create('if(performed)', String.valueOf(partAct));
                     partAct.Actual_Execution_Date__c = System.Now();
                     partAct.isActionPerformed__c = true;
                     partActToUpdate.add(partAct);
@@ -912,7 +903,6 @@ global  without sharing class CadenceService {
                     }
                 }
                 if(IsTaskNotCompleted) {
-                    Logger.create('IsTaskNotCompleted', String.valueOf(partAct));
                     partAct.Show_on_Target_List__c = true;
                     partAct.isActionPerformed__c = false;
                     partActToUpdate.add(partAct);
@@ -928,7 +918,6 @@ global  without sharing class CadenceService {
         
         if(!emailsToSend.isEmpty()) {
             Messaging.SendEmailResult[] results = Messaging.sendEmail(emailsToSend, false);
-            Logger.create('emailsToSend.isEmpty()', String.valueOf(results));
         }
         
         if(!tasksToCreate.isEmpty()) {
@@ -943,7 +932,6 @@ global  without sharing class CadenceService {
         
         if(!partActToUpdate.isEmpty()) {
             Database.update(partActToUpdate, false);
-            Logger.create('partActToUpdate', String.valueOf(partActToUpdate));
         } 
         return performedPartActions;
         
@@ -1014,7 +1002,6 @@ global  without sharing class CadenceService {
     }
     
     public static void processParticipantsWithCadences(List<SObject> objList, Map<Id, SObject> parentMap, String objName, Boolean isTrigger) {
-        Logger.create('processParticipantsWithCadences', String.valueOf(objList));
         Map<Id, Cadence__c> cadMap = CadenceSelector.getActiveCadencesByRecordType(New List<String> {objName});
         
         Map<Id, List<Sequence_Action__c>> partActToPerform = new Map<Id, List<Sequence_Action__c>>();
@@ -1046,10 +1033,7 @@ global  without sharing class CadenceService {
         
         //System.debug('partActToPerform:'+partActToPerform);
         //perform participant actions  
-        Logger.create('partActToPerform start', String.valueOf(partActToPerform));
-        Logger.create('objMap.values()', String.valueOf(objMap.values()));
-        Map<Id, List<Sequence_Action__c>> performedPartAct = CadenceService.performParticipantActions(objMap.values(), partActToPerform);
-        Logger.create('partActToPerform done', String.valueOf(performedPartAct));
+       Map<Id, List<Sequence_Action__c>> performedPartAct = CadenceService.performParticipantActions(objMap.values(), partActToPerform);
         
         //perform participant field update
         CadenceService.updateSObjectFields(objMap.values(), performedPartAct, objName, false);
@@ -1060,10 +1044,9 @@ global  without sharing class CadenceService {
                 upsertResult = Database.upsert(objList, false);
                 if(objMap.keyset().size() > 0 && objMap.values().size()>0) {
                     update objMap.values();
-                    Logger.create('perform field update done', String.valueOf(objMap.values()));
                 }
             }catch(exception e){ 
-                Logger.create('update objList - cadence Service ',String.valueOf(e.getMessage()) ); 
+                
             }
             
         }
@@ -1079,7 +1062,6 @@ global  without sharing class CadenceService {
        
         if(!saToUpdate.isEmpty()) {
             update saToUpdate;
-            Logger.create('perform date update done', String.valueOf(saToUpdate));
         }
     }
     

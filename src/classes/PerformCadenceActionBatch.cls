@@ -21,7 +21,6 @@ public class PerformCadenceActionBatch implements Database.Batchable<sObject>, D
     public void execute(Database.BatchableContext bc, List<sObject> objList) {
         system.debug('execute');
         Map<Id, SObject> parentMap = new Map<Id, SObject>();
-        Logger.create('BatchStart', 'BatchStart');
         CadenceService.processParticipantsWithCadences(objList, parentMap, objType, false);
        
     }
