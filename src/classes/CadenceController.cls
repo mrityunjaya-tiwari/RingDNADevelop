@@ -320,7 +320,13 @@ public with sharing class CadenceController {
         if(type == CadenceConstants.OPPORTUNITY_OBJECT_NAME){
            objectList =new List<String>{CadenceConstants.OPPORTUNITY_OBJECT_NAME,CadenceConstants.ACCOUNT_OBJECT_NAME,CadenceConstants.CONTRACT_OBJECT_NAME,CadenceConstants.PRICE_BOOK_OBJECT_NAME,CadenceConstants.CAMPAIGN_OBJECT_NAME,'OpportunityContactRole' };
         } else if(type == CadenceConstants.LEAD_OBJECT_NAME ){
-           objectList =new List<String>{CadenceConstants.LEAD_OBJECT_NAME,CadenceConstants.DB_OBJECT_NAME };
+            Schema.sObjectType sObjectName = Schema.getGlobalDescribe().get(CadenceConstants.DB_OBJECT_NAME);
+            if (sObjectName != null){
+                objectList =new List<String>{CadenceConstants.LEAD_OBJECT_NAME,CadenceConstants.DB_OBJECT_NAME };
+                    } else{
+                        objectList =new List<String>{CadenceConstants.LEAD_OBJECT_NAME};
+                            }
+           
         } else if(type == CadenceConstants.CONTACT_OBJECT_NAME ){
            objectList =new List<String>{CadenceConstants.CONTACT_OBJECT_NAME,CadenceConstants.ACCOUNT_OBJECT_NAME };
         }
