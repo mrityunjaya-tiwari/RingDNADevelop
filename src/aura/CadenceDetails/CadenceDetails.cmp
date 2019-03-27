@@ -18,8 +18,7 @@
     <aura:attribute name="toggleRows" type="List" description="" />
     <aura:attribute name="refreshParticipant" type="Boolean"/>
     <!--create a component attributs -->
-    <aura:attribute name="spinner" type="boolean" default="false"/>
-    <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>
+    <aura:attribute name="spinner" type="boolean"/>
     
     <aura:attribute name="pData" type="List"/>
     <aura:attribute name="settedSequenceType" type="Boolean" default= "false"/>

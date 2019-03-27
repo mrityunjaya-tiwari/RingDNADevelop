@@ -19,7 +19,7 @@
     <aura:attribute name="dbFieldList" type="List"/>
     <aura:attribute name="criteriaList" type="List"/>
     <aura:attribute name="criteriaListCount" type="Integer" default="1"/>
-    
+    <aura:attribute name="spinner" type="boolean"/>
     <aura:attribute name="AllFieldList" type="List"/> 
     <aura:method name="setCriteriaList" description="" action="{!c.getCriteriaList}" access="PUBLIC">
         <aura:attribute name="criteriaSet" type="Object"/>

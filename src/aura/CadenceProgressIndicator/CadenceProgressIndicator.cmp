@@ -14,6 +14,7 @@
     <aura:attribute name="recordId" type="String" description="" />
     <aura:attribute name="AllFieldList" type="List"/>
     <aura:attribute name= "actionWrapper" type="List"/>
+    <aura:attribute name="spinner" type="boolean"/>
     <!--Create or show cadence details -->
     <aura:attribute name= "isEdit" type="Boolean" default= "false"/>
     
@@ -58,14 +59,14 @@
         <div class="slds-box_xx-small slds-m-top_medium"> 
             <div class="slds-form-element slds-form_compound ">
                 <div class="slds-form-element slds-form_compound slds-size_1-of-1">
-                    <c:ProgressBarComponent  aura:id="PBComp"  currentStep="{!v.currentStep}" 
+                    <c:ProgressBarComponent aura:id="PBComp"  currentStep="{!v.currentStep}" 
                                                       currentStepChanged="{!v.currentStepChanged}"
                                                       hasError="{v.hasError}"/>
                 </div>
                 <div class="slds-form-element slds-form_compound slds-p-bottom_large  slds-p-left_xx-small" >
                     <div class="{!v.currentStep == '1' || v.currentStep == 1 ? 'slds-show' : 'slds-hide'}"   >
                         <div style="padding-left:1%; padding-top:5%;padding-right:4%;">
-                            <c:CadenceDetails newCadence = "{!v.newCadence}" 
+                            <c:CadenceDetails newCadence = "{!v.newCadence}" spinner="{!v.spinner}"
                                                         settedSequenceType="{!v.settedSequenceType}" 
                                                         aura:id="compB" />
                         </div>
@@ -76,7 +77,7 @@
                             <aura:if isTrue="{!not( empty(v.AllFieldList))}">
                                 <div style="padding-left:1%; padding-top:5%;padding-right:4%;">
                                     <c:CriterionComponent aura:id="entryCriterionComponent" 
-                                                                    AllFieldList = "{!v.AllFieldList}"
+                                                                    AllFieldList = "{!v.AllFieldList}" spinner="{!v.spinner}"
                                                                     isViewMode = "false" accountFieldList="{!v.accountFieldList}"
                                                                     criteriaType="Entrance Criteria" criteriaSet="{!v.entranceCriteriaSet}" 
                                                                     cadence="{!v.newCadence}" leadFieldList="{!v.leadFieldList}" dbFieldList="{!v.dbFieldList}" 
@@ -91,7 +92,7 @@
                             <aura:if isTrue="{!not(empty(v.AllFieldList))}">
                                 <div style="padding-left:1%; padding-top:5%;padding-right:4%;">
                                     <c:CriterionComponent aura:id="exitCriterionComponent" 
-                                                                    AllFieldList = "{!v.AllFieldList}" 
+                                                                    AllFieldList = "{!v.AllFieldList}" spinner="{!v.spinner}" 
                                                                     isViewMode = "false" accountFieldList="{!v.accountFieldList}"
                                                                     criteriaType="Exit Criteria" criteriaSet="{!v.exitCriteriaSet}" 
                                                                     cadence="{!v.newCadence}" leadFieldList="{!v.leadFieldList}"
@@ -107,7 +108,7 @@
                         <aura:if isTrue="{! (v.currentStep == '4' || v.currentStep == 4)}">
                             <div style="padding-left:1%; padding-top:5%;padding-right:4%;">
                                 <c:CadenceActions aura:id="createCadenceActionComponent" 
-                                                            actionWrapper = "{!v.actionWrapper}"
+                                                            actionWrapper = "{!v.actionWrapper}" spinner="{!v.spinner}"
                                                             entranceCriteriaSet="{!v.entranceCriteriaSet}" 
                                                             newCadence="{!v.newCadence}" 
                                                             cadenceActionList="{!v.cadenceActionList}"
