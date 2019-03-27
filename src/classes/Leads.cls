@@ -23,27 +23,32 @@ public class Leads  extends SObjectDomain {
     }
     
     public override void onBeforeInsert() {
-        Map<Id, SObject> parentMap = CadenceService.getParentObject(leadsWithoutCadence, CadenceConstants.LEAD_DB_OBJECT_FIELD_NAME, CadenceConstants.DB_OBJECT_NAME); 
-        for(Lead leadObj: (List<Lead>) leadsWithoutCadence) {
-            SObject parentObj;
-			
-            if(leadObj.NumberofLocations__c == null){
-                leadObj.NumberofLocations__c=0;
-            }
-            if(leadObj.NumberOfEmployees == null){
-                leadObj.NumberOfEmployees=0;
-            }
-            if(leadObj.AnnualRevenue == null){
-                leadObj.AnnualRevenue=0;
-            }
-            
-			
-            if(!parentMap.isEmpty() && leadObj.get(CadenceConstants.LEAD_DB_OBJECT_FIELD_NAME) != null) {
-	            parentObj = parentMap.get((Id)leadObj.get(CadenceConstants.LEAD_DB_OBJECT_FIELD_NAME));
-            }
-            Cadence__c cad = RuleCriterionMatcher.assignCadenceToNotAssignedParticipant(cadMap, leadObj, parentObj, CadenceConstants.LEAD_OBJECT_NAME);
-        } 
-    }
+	Map<Id, SObject> parentMap = CadenceService.getParentObject(leadsWithoutCadence, CadenceConstants.LEAD_DB_OBJECT_FIELD_NAME, CadenceConstants.DB_OBJECT_NAME); 
+	Schema.DescribeSObjectResult dsc = Lead.sObjectType.getDescribe();           
+	Map<String, Schema.SObjectField> fieldsMap = dsc.fields.getMap();		
+	for(Lead leadObj: (List<Lead>) leadsWithoutCadence) {
+		SObject parentObj;
+		SObject obj =(SObject)leadObj;
+		for (String field : fieldsMap.keySet()) {
+			Schema.sObjectField fieldAPIName = fieldsMap.get(field);
+			Schema.DisplayType fieldDataType = fieldAPIName.getDescribe().getType();
+			String fieldName = fieldAPIName.getDescribe().getName();
+			if((fieldDataType == Schema.DisplayType.Double || fieldDataType == Schema.DisplayType.Integer || fieldDataType == Schema.DisplayType.Currency) &&
+			   (fieldName != 'Latitude' && fieldName != 'Longitude') && fieldAPIName.getDescribe().isUpdateable()){                   
+				   if(fieldAPIName.getDescribe().getDefaultValue() == null){
+					   obj.put(fieldAPIName, 0);                     
+				   }
+				   
+			   } 
+			leadObj=(Lead)obj;                
+		}
+					
+		if(!parentMap.isEmpty() && leadObj.get(CadenceConstants.LEAD_DB_OBJECT_FIELD_NAME) != null) {
+			parentObj = parentMap.get((Id)leadObj.get(CadenceConstants.LEAD_DB_OBJECT_FIELD_NAME));
+		}
+		Cadence__c cad = RuleCriterionMatcher.assignCadenceToNotAssignedParticipant(cadMap, leadObj, parentObj, CadenceConstants.LEAD_OBJECT_NAME);
+	} 
+}
     
     public override void onAfterInsert() {
 		Map<Id, List<CadenceAction__c>> leadIdToAllCadActListMap = new Map<Id, List<CadenceAction__c>>();
