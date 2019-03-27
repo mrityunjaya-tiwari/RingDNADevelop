@@ -1,12 +1,18 @@
 ({
     doInit : function(component, event, helper) {
         var cadenceObj = component.get("v.newCadence");
-        if(cadenceObj.Id !=null){
+        if(cadenceObj.id !=null){
             component.set('v.disableCadenceType' , true);
         }
         helper.createListForInput(component);
     },
     validateForm: function(component, event, helper) {
+		var cadenceObj = component.get("v.newCadence");
+        var name = cadenceObj.name;
+        if (name){
+            cadenceObj.name = name.trim();
+        }
+        component.set("v.newCadence", cadenceObj);
         var isValid = component.find('formValidationId').reduce(function (validSoFar, inputCmp) {
             inputCmp.showHelpMessageIfInvalid();
             return validSoFar && inputCmp.get('v.validity').valid;

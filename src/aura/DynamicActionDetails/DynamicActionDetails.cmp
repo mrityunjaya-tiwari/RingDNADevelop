@@ -1,6 +1,6 @@
-<aura:component controller="RDNACadence2.ActionDetailController" implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction,force:appHostable" access="global">
+<aura:component controller="ActionDetailController" implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction,force:appHostable" access="global">
     <!--aura init handler , call js "loadData" function on component load, and display data on form-->
-    <aura:handler name="cadDynamicRowEvent" event="RDNACadence2:CadDynamicRowEvent" action="{!c.handleCadDynamicRowEvent}"/>
+    <aura:handler name="cadDynamicRowEvent" event="c:CadDynamicRowEvent" action="{!c.handleCadDynamicRowEvent}"/>
     <aura:attribute name="actionList" type = "List" />
     <!-- Disabled property-->
     <aura:attribute name = "isDisabled" type = "Boolean" default = "false"/>
@@ -12,7 +12,7 @@
     
     
     <!--Action Objects -->
-    <aura:attribute name="newAction" type="RDNACadence2__Action__c" default="{ 'sobjectType': 'RDNACadence2__Action__c', 'Name': '','RDNACadence2__Type__c':''}"/>
+    <aura:attribute name="newAction" type="Action" default="{ 'sobjectType': 'Action'}"/>
     <!--Task Objects -->
     <aura:attribute name="taskObj" type="Task" default="{ 'sobjectType': 'Task'}"/>
     <!--Email template list -->
@@ -45,9 +45,10 @@
     <aura:attribute name = "setActionTypeList" type = "Boolean" default = "false"/>
     <aura:attribute name="actionTypeList" type = "List" />  
     <aura:attribute name="spinner" type="boolean" default="false"/>  
-    <RDNACadence2:SpinnerComponent spinnerSync = "{!v.spinner}"/>
+    <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>
     
     <aura:attribute name="activationtypeList" type="List" default="['Automatic', 'Manual']" />
+    <aura:attribute name="UpdateFieldList" type="List"/>
     <!-- PAGE HEADER -->
     <div style="background-color: #fafafa">
         
@@ -64,7 +65,7 @@
                         <div class="slds-form-element__control slds-size_1-of-4">
                             <lightning:input aura:id="formValidationId" label="Name"
                                              name="actionname"
-                                             value="{!v.newAction.Name}"
+                                             value="{!v.newAction.name}"
                                              placeholder = "Enter Action Name"
                                              messageWhenBadInput = "Please Enter Name"
                                              required="true"/> 
@@ -72,7 +73,7 @@
                         <div class="slds-form-element__control slds-size_1-of-4  slds-m-left_medium">
                             <lightning:select class="select-auto-width" 
                                               aura:id="formValidationId" name="selectActionType" 
-                                              label="Type" required="true" value="{!v.newAction.RDNACadence2__Type__c}" 
+                                              label="Type" required="true" value="{!v.newAction.type}" 
                                               messageWhenValueMissing="Please Select Action Type."
                                               onchange="{!c.updateActionType}"
                                               disabled = "{!v.isDisabled || v.disableActionType}">
@@ -84,10 +85,10 @@
                                 <option value="Task" class="option-style">Task</option>
                             </lightning:select>
                         </div>
-                       <aura:if isTrue="{!v.newAction.RDNACadence2__Type__c == 'Email'}">                        
+                       <aura:if isTrue="{!v.newAction.type == 'Email'}">                        
                             <div class="slds-form-element__control slds-size_1-of-4 slds-m-left_medium">
                                 <lightning:select aura:id="formValidationId" name="selectActionType" 
-                                                  label="Activation Type" required="true" value="{!v.newAction.RDNACadence2__Activation_Type__c}" 
+                                                  label="Activation Type" required="true" value="{!v.newAction.activationType}" 
                                                   messageWhenValueMissing="Please Select Activation Type." disabled = "{!v.disableActivationType}">                                         
                                     <option value="" selected ="Select Activation Type">Select Activation Type</option>
                                     <option value="Automatic" class="option-style">Automatic</option>
@@ -102,7 +103,7 @@
                     <div class="slds-form-element__row slds-p-top_small">
                         <div class="slds-form-element__control slds-size_1-of-4" aura:id = "InputSelectTemplate">
                             <lightning:select aura:id="formValidationId" name="selectActionType" 
-                                              label="Type" required="{!v.isActionTypeRequired}" value="{!v.newAction.RDNACadence2__Template_Id__c}" 
+                                              label="Type" required="{!v.isActionTypeRequired}" value="{!v.newAction.templateId}" 
                                               messageWhenValueMissing="Please Select Template Type."
                                               disabled = "{!v.isDisabled}">
                                 <option value="" class="option-style">No Template</option>
@@ -114,7 +115,7 @@
                         <div class = "slds-form-element slds-size_1-of-1 slds-hide" aura:id = "createTaskdiv">
                             <aura:iteration items="{!v.listTask}" var="taskObj" indexVar="index">
                                 <div class = "slds-form-element__row slds-size_1-of-1">
-                                    <RDNACadence2:ActionDetailsDynamicRow aura:id="dynamicROw"  taskObj="{!taskObj}" wrapperTaskFields="{!v.wrapperTaskFields}" currentIndex = "{!index}" listPicklistValues="" dataType = ""/>
+                                    <c:ActionDetailsDynamicRow aura:id="dynamicROw"  taskObj="{!taskObj}" UpdateFieldList="{!v.UpdateFieldList}" currentIndex = "{!index}" listPicklistValues="" dataType = ""/>
                                 </div>
                             </aura:iteration>
                             <div class = "slds-form-element__row slds-size_1-of-1">

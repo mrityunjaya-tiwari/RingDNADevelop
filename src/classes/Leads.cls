@@ -12,7 +12,7 @@ public class Leads  extends SObjectDomain {
         Map<String, List<Lead>> leadList = CadenceService.processObjectList(sObjectList);
         leadsWithCadence = leadList.get('leadListWithCadenceIds');
         leadsWithoutCadence = leadList.get('leadListWithoutCadenceIds');
-        cadMap = CadenceSelector.getActiveCadencesByRecordType(CadenceConstants.LEAD_OBJECT_NAME);
+        cadMap = CadenceSelector.getActiveCadencesByRecordType(new List<String>{CadenceConstants.LEAD_OBJECT_NAME});
         CadenceService.processParticipantActivation(cadMap, leadsWithCadence, CadenceConstants.LEAD_OBJECT_NAME);
     }
     
@@ -26,6 +26,18 @@ public class Leads  extends SObjectDomain {
         Map<Id, SObject> parentMap = CadenceService.getParentObject(leadsWithoutCadence, CadenceConstants.LEAD_DB_OBJECT_FIELD_NAME, CadenceConstants.DB_OBJECT_NAME); 
         for(Lead leadObj: (List<Lead>) leadsWithoutCadence) {
             SObject parentObj;
+			
+            if(leadObj.NumberofLocations__c == null){
+                leadObj.NumberofLocations__c=0;
+            }
+            if(leadObj.NumberOfEmployees == null){
+                leadObj.NumberOfEmployees=0;
+            }
+            if(leadObj.AnnualRevenue == null){
+                leadObj.AnnualRevenue=0;
+            }
+            
+			
             if(!parentMap.isEmpty() && leadObj.get(CadenceConstants.LEAD_DB_OBJECT_FIELD_NAME) != null) {
 	            parentObj = parentMap.get((Id)leadObj.get(CadenceConstants.LEAD_DB_OBJECT_FIELD_NAME));
             }

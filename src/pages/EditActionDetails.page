@@ -1,4 +1,4 @@
-<apex:page standardcontroller="Action__c" sidebar="false" tabStyle="Cadence_Actions_Classic__tab" showHeader="true">
+<apex:page standardcontroller="Action__c" extensions="GetNamespace" sidebar="false" tabStyle="Cadence_Actions_Classic__tab" showHeader="true">
     <script src="/lightning/lightning.out.js"/>
     <apex:slds />
     <div id="myDivId3" />
@@ -6,9 +6,9 @@
     	var myUserContext = "{!$User.UITheme}";
         var recordIds = '{!$CurrentPage.parameters.id}'; 
         var isNewVar = '{!$CurrentPage.parameters.isNew}' != undefined ? '{!$CurrentPage.parameters.isNew}':true;
-        $Lightning.use("RDNACadence2:CadenceActionListApp", function() {
+        $Lightning.use("{!namespace}:CadenceActionListApp", function() {
             $Lightning.createComponent(
-                "RDNACadence2:ActionDetails",
+                "{!namespace}:ActionDetails",
                 {recordId: recordIds,themeName: myUserContext,isNew : isNewVar},
                 "myDivId3",
                 function(cmp) {

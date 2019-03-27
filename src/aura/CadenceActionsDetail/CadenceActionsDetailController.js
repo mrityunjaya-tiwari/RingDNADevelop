@@ -1,11 +1,12 @@
 ({
     doInit: function(component, event, helper) {
         var cadenceAction = component.get("v.cadenceAction");
-        if(!(cadenceAction.Id)){           
+        if(!(cadenceAction.id)){           
             helper.sectionToggle(component, event,'detailDiv');
             
         }
         // To add a row by default
+        
         helper.createRowToFieldsUpdate(component, event, helper);
         // Set contact felds data
         helper.setContactFieldsList(component, event, helper);
@@ -61,7 +62,7 @@
             }
         }else{
             var cadenceAction= component.get("v.cadenceAction");
-            cadenceAction.RDNACadence__Fields_To_Update_Action__c = '';
+            cadenceAction.fieldsToUpdateAction = '';
             component.set("v.cadenceAction", cadenceAction);
         }
         var setCriteriaFields = component.get("v.setCriteriaFields");
@@ -74,7 +75,7 @@
             }
         }else{
             var cadenceAction= component.get("v.cadenceAction");
-            cadenceAction.RDNACadence__Action_Criterion__c = '';
+            cadenceAction.actionCriterion = '';
             component.set("v.cadenceAction", cadenceAction);
         }
         return isValid;
@@ -94,30 +95,30 @@
     
     updatePriorityNumber:function(component, event, helper){        
         var cadenceAction= component.get("v.cadenceAction");             
-        if(cadenceAction.RDNACadence__Priority__c == 'High' ){          
-            component.set("v.cadenceAction.RDNACadence__Priority_number__c", 1);          
+        if(cadenceAction.priority == 'High' ){          
+            component.set("v.cadenceAction.priorityNumber", 1);          
         }
-        else if(cadenceAction.RDNACadence__Priority__c == 'Medium'){
-            component.set("v.cadenceAction.RDNACadence__Priority_number__c", 2);            
+        else if(cadenceAction.priority == 'Medium'){
+            component.set("v.cadenceAction.priorityNumber", 2);            
         }
         else{
-            component.set("v.cadenceAction.RDNACadence__Priority_number__c", 3);            
+            component.set("v.cadenceAction.priorityNumber", 3);            
         }
         component.set("v.cadenceAction",cadenceAction);       
     },
     listUpdated : function(component, event, helper){
         var cadenceActionObj = component.get("v.cadenceAction");
         var currentIndex = component.get('v.currentIndex');
-        cadenceActionObj.RDNACadence__Index__c = currentIndex;
+        cadenceActionObj.index = currentIndex;
     },
     
     deleteActions: function(component, event, helper) {
         var pageIndex = component.get("v.currentIndex");
         var eventObj = component.getEvent("cadDynamicRowEvent");
         var cadenceAction = component.get("v.cadenceAction");
-        if((cadenceAction.Id)){
+        if((cadenceAction.id)){
             var caIdsList = component.get("v.caIdsList");
-            caIdsList.push(cadenceAction.Id);
+            caIdsList.push(cadenceAction.id);
             component.set("v.caIdsList", caIdsList);
         }
         eventObj.setParams({

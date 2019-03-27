@@ -12,7 +12,7 @@
     <!--priority list-->
     <aura:attribute name="pList" type="List"/>
     <!--Cadence Objects -->
-    <aura:attribute name="newCadence" type="RDNACadence2__Cadence__c" default="{ 'sobjectType': 'RDNACadence2__Cadence__c', 'Name': '','RDNACadence2__Record_Type__c':'', 'RDNACadence2__Participent_Activation__c':''}"/>
+    <aura:attribute name="newCadence" type="Sequence" default="{ 'sobjectType': 'Sequence' }"/>
     <!--CadenceAction List object list -Iterated to add multiple row(Multiple cadence actions) -->
     <aura:attribute name="cadenceActionList" type="List"/>
     <aura:attribute name="actionType" type="String"/>
@@ -27,7 +27,7 @@
     <aura:attribute name="isValidationError" type="boolean" default='false' />
     <aura:attribute name="ValidationError" type="String" default='Validation Error' />
     <!-- Handle event-->
-    <aura:handler name="cadDynamicRowEvent" event="RDNACadence2:CadDynamicRowEvent" action="{!c.handleCadDynamicRowEvent}"/>
+    <aura:handler name="cadDynamicRowEvent" event="c:CadDynamicRowEvent" action="{!c.handleCadDynamicRowEvent}"/>
     <aura:attribute name="entranceCriteriaSet" type="Object"/>
     <aura:attribute name="contactFieldList" type="List"/>
     <aura:attribute name="leadFieldList" type="List"/>
@@ -39,9 +39,9 @@
     <aura:attribute name="spinner" type="boolean" default="false"/>
     <aura:attribute name= "createAction" type="boolean" default="false"/>
     <aura:attribute name="ISLoad" type="boolean" default="false"/>
-    <!--<aura:attribute name="UpdateFieldList" type="List"/>-->
+    <aura:attribute name="UpdateFieldList" type="List"/>
     
-    <RDNACadence2:SpinnerComponent spinnerSync = "{!v.spinner}"/>
+    <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>
     <div class = "slds-m-left_large">
         <div class = "slds-form-element slds-size_1-of-1  slds-m-bottom_large slds-m-top_medium " aura:id = "createTaskdiv">
             <p class="slds-page-header__row slds-truncate rdna-sub-header-bold slds-align_absolute-center" >Sequence Actions</p>
@@ -77,7 +77,8 @@
                         <aura:if isTrue="{! not(empty(v.actionList) || empty(v.actionTypeListForCadenceAction) )}">
                             <aura:if isTrue="{! v.ISLoad}">
                                 <aura:iteration items="{!v.cadenceActionList}" var="caObj" indexVar="index">
-                                    <RDNACadence2:CadenceActionsDetail aura:id="cadenceActionsDetailId" 
+                                    <c:CadenceActionsDetail aura:id="cadenceActionsDetailId" 
+                                                                      UpdateFieldList="{!v.UpdateFieldList}" 
                                                                       cadenceAction="{!caObj}" 
                                                                       newCadence="{!v.newCadence}" 
                                                                       allActionsList ="{!v.actionList}" 
@@ -125,7 +126,7 @@
             </div>
         </aura:if>
         <aura:if isTrue="{!v.createAction}">
-            <RDNACadence2:DynamicActionDetails aura:id="dynamicActionId" createAction="{!v.createAction}" actionTypeList="{!v.actionTypeList}" actionList ="{!v.actionList}" />
+            <c:DynamicActionDetails aura:id="dynamicActionId" createAction="{!v.createAction}" actionTypeList="{!v.actionTypeList}" actionList ="{!v.actionList}" UpdateFieldList="{!v.UpdateFieldList}" />
         </aura:if>
     </div>
 </aura:component>

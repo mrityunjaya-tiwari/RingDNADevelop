@@ -1,7 +1,8 @@
 public with sharing class CadenceConstants {
     
     //Namespace for managed package
-    public static final String NAMESPACE = ''; 
+    public static final String orgNamespace = [select NamespacePrefix from ApexClass where Name = 'TargetListController'].NamespacePrefix;
+    public static final String NAMESPACE = orgNamespace == null ? '' : orgNamespace+'__';
     
     // Object names
     public static final String CONTACT_OBJECT_NAME = 'Contact';
@@ -13,6 +14,9 @@ public with sharing class CadenceConstants {
     public static final String OPPORTUNITY_OBJECT_NAME = 'Opportunity';
     public static final String CONTRACT_OBJECT_NAME = 'Contract';
     public static final String PRICE_BOOK_OBJECT_NAME = 'Pricebook2';
+    public static final String CAMPAIGN_OBJECT_NAME = 'Campaign';
+    public static final String PARTNER_ACCOUNT_OBJECT_NAME = 'Partner Account';
+    public static final String OPPORTUNITY_ROLE_OBJECT_NAME = 'OpportunityContactRole';
     
 	//cadence criterion types
     public static final String CRITERION_TYPE_ENTRY = 'Entry';

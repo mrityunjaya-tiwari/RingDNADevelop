@@ -1,7 +1,7 @@
 public class ActionDetailViewCtrl {
-
+    
     public class ActionDetailWrapper {
-        @AuraEnabled public Action__c action;
+        @AuraEnabled public Action action;
         @AuraEnabled public List<ParticipantWrapper> participantList;
         @AuraEnabled public List<SequenceWrapper> cadWrapper; 
     }
@@ -9,11 +9,12 @@ public class ActionDetailViewCtrl {
     @AuraEnabled
     public static ActionDetailWrapper getActionData(Id actionId) {
         
-        Action__c action = [Select Id, Name, Type__c, Template_Id__c, Template_Name__c, Activation_Type__c From Action__c where Id = :actionId]; 
+        Action__c action = [Select Id, Name, Type__c, Task_Description__c, Template_Id__c, Template_Name__c, Activation_Type__c From Action__c where Id = :actionId]; 
         
+        Action actionWrapper = New Action(action.Id, action.Activation_Type__c, action.Name, action.Task_Description__c,
+                                          action.Template_Id__c, action.Template_Name__c, action.Type__c);
         ActionDetailWrapper actDetailWrap = new ActionDetailWrapper();
-        actDetailWrap.action = action;
-        
+        actDetailWrap.action = actionWrapper;
         //Getting Sequences data 
         List<CadenceAction__c> cadenceActions = [Select Id, Cadence_Id__c from CadenceAction__c where Action_ID__c = :action.Id];
         Set<Id> cadenceIds = new Set<Id>();
@@ -27,11 +28,11 @@ public class ActionDetailViewCtrl {
         List<Cadence__c> cadenceList = [Select Id, Name, Status__c, Record_Type__c, Participent_Activation__c From Cadence__c where Id IN : cadenceIds];
         List<SequenceWrapper> cadWrapList = new List<SequenceWrapper>();
         for(Cadence__c cad : cadenceList) {
-        	SequenceWrapper cadWrap = new SequenceWrapper();
+            SequenceWrapper cadWrap = new SequenceWrapper();
             cadWrap.id = cad.Id;
             cadWrap.name = cad.Name;
             if(cad.Status__c) {
-            	cadWrap.status = 'Active';    
+                cadWrap.status = 'Active';    
             } else {
                 cadWrap.status = 'Inactive';
             }
@@ -56,7 +57,7 @@ public class ActionDetailViewCtrl {
             ParticipantWrapper partWrap = new ParticipantWrapper(l.Id ,l.Name, priority, l.Company, '' ,'Lead', l.Email, l.Phone, '', l.isActivated__c);
             partWrapper.add(partWrap);
         }        
-
+        
         for(Contact cont : contactParticipants) {
             Integer priority = 0;
             if(cont.Priority__c != null) {
@@ -70,12 +71,12 @@ public class ActionDetailViewCtrl {
         
         return actDetailWrap;
     }
-     
+    
     @AuraEnabled
     public static List<ParticipantWrapper> getCadenceParticipantsData(Id cadId) {
         
         if(cadId == null) {
-        	return null;
+            return null;
         }
         
         List<ParticipantWrapper> partWrapper = new List<ParticipantWrapper>();
@@ -90,7 +91,7 @@ public class ActionDetailViewCtrl {
             ParticipantWrapper partWrap = new ParticipantWrapper(l.Id ,l.Name, priority, l.Company, '', 'Lead', l.Email, l.Phone, '', l.isActivated__c);
             partWrapper.add(partWrap);
         }        
-
+        
         for(Contact cont : contactParticipants) {
             Integer priority = 0;
             if(cont.Priority__c != null) {
@@ -98,34 +99,31 @@ public class ActionDetailViewCtrl {
             }
             
             ParticipantWrapper partWrap = new ParticipantWrapper(cont.Id, cont.Name, priority, cont.Account.name, cont.Account.Id, 'Contact', cont.Email, cont.Phone, '', cont.isActivated__c);
-           // partWrap.company = cont.Account.Name;
-           // partWrap.companyId = cont.Account.Id;
             partWrapper.add(partWrap);
         }        
-        
         return partWrapper;
     }
     
     @AuraEnabled
     public static void togglePartActivation(String selectedRows) {
-		List<ParticipantWrapper> wrapList = (List<ParticipantWrapper>)JSON.deserialize(selectedRows, List<ParticipantWrapper>.class);
-		List<sObject> participants = new List<sObject>();
-		for(ParticipantWrapper partWrap : wrapList) {
-			if(partWrap.objType.equalsIgnoreCase('Contact')) {
-				Contact cont = new Contact(Id = partWrap.id);	
-				cont.isActivated__c = partWrap.status.equalsIgnoreCase('Disabled');
-				participants.add(cont);
-			} else { 
-				Lead l = new Lead(Id = partWrap.id);
-				l.isActivated__c = partWrap.status.equalsIgnoreCase('Disabled');
-				participants.add(l); 
-			}
-		}
- 		update participants;
+        List<ParticipantWrapper> wrapList = (List<ParticipantWrapper>)JSON.deserialize(selectedRows, List<ParticipantWrapper>.class);
+        List<sObject> participants = new List<sObject>();
+        for(ParticipantWrapper partWrap : wrapList) {
+            if(partWrap.objType.equalsIgnoreCase('Contact')) {
+                Contact cont = new Contact(Id = partWrap.id);	
+                cont.isActivated__c = partWrap.status.equalsIgnoreCase('Disabled');
+                participants.add(cont);
+            } else { 
+                Lead l = new Lead(Id = partWrap.id);
+                l.isActivated__c = partWrap.status.equalsIgnoreCase('Disabled');
+                participants.add(l); 
+            }
+        }
+        update participants;
     }
     
     public class SequenceWrapper {
-    	@AuraEnabled public Id id;
+        @AuraEnabled public Id id;
         @AuraEnabled public String name;
         @AuraEnabled public String activation;
         @AuraEnabled public String recordType;
@@ -134,7 +132,7 @@ public class ActionDetailViewCtrl {
     }
     
     public class ParticipantWrapper {
-    	@AuraEnabled public Id id;
+        @AuraEnabled public Id id;
         @AuraEnabled public String name;
         @AuraEnabled public Integer priority;
         @AuraEnabled public String company;
@@ -146,22 +144,22 @@ public class ActionDetailViewCtrl {
         @AuraEnabled public String status;
         
         public ParticipantWrapper(Id actionId, String name, Integer priority, String company, String companyId, String objType, String email, String phone, String nextAction, Boolean status) {
-			this.id = actionId;
-        	this.name = name;     
+            this.id = actionId;
+            this.name = name;     
             this.priority = priority;
             this.company = company;
             this.companyId = companyId;
             
             this.objType = objType;
             if(status) {
-	            this.status	= 'Active';
+                this.status	= 'Active';
             } else {
-            	this.status = 'Disabled';
+                this.status = 'Disabled';
             }
             this.email = email;
             this.phone = phone;
             this.nextAction = nextAction;
         }
-
+        
     }
 }

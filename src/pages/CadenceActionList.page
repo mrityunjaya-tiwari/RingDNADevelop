@@ -1,13 +1,13 @@
-<apex:page sidebar="false" showHeader="true">
+<apex:page controller="GetNamespace" sidebar="false" showHeader="true">
     <script src="/lightning/lightning.out.js"/>
     <apex:slds />
     <apex:includeLightning />
     <div id="myDivId9" />
     <script>
         var myUserContext = "{!$User.UITheme}";
-        $Lightning.use("RDNACadence2:CadenceActionListApp", function() {
+        $Lightning.use("{!namespace}:CadenceActionListApp", function() {
         $Lightning.createComponent(
-            "RDNACadence2:CadenceActionList",
+            "{!namespace}:CadenceActionList",
             {themeName: myUserContext},
             "myDivId9",
             function(cmp) {

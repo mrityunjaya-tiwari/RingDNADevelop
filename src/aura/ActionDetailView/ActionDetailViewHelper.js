@@ -20,7 +20,8 @@
                 var cadRecords = data.cadWrapper;
                 cadRecords.forEach(function(record) {
                     record.linkName = '/'+record.id;
-                }); 	
+                }); 
+                component.set('v.cadrawDataForFilter', cadRecords);				
                 component.set('v.cadRawData', cadRecords);                
                 
                 var partRecords = data.participantList;
@@ -29,7 +30,8 @@
                     if (record.company){
                         record.linkcompany = '/'+record.companyId;  
                     }
-                }); 	
+                }); 
+				component.set('v.partrawDataForFilter', partRecords);
                 component.set('v.partRawData', partRecords);
                 component.set('v.spinner', false);
                 
@@ -57,11 +59,12 @@
     
     editRecord : function(component, event, id) {
         var myUserContext = component.get("v.themeName");
-        
-        if(myUserContext == 'Theme3') {
+        //if(myUserContext == 'Theme3') {
+        if(myUserContext == 'Theme3'  || myUserContext == 'Theme4t' || myUserContext == 'Theme4d') {
             window.location = '/apex/EditActionDetails?id='+id;
         } 
         else {
+            //var evt = $A.get("e.force:navigateToComponent");
             var evt = $A.get("e.force:navigateToComponent");
             evt.setParams({
                 componentDef  : "c:ActionDetails" ,
@@ -108,7 +111,7 @@
         var phRow = document.getElementsByClassName('ringdna-phone-td');  
         var rawData = component.get('v.data');
         var record = component.get('v.record');
-        var templateId = record.RDNACadence2__Template_Id__c;
+        var templateId = record.templateId;
         for (var index = 0; index < phRow.length ; index++){
             try {
                 var rdpElement = phRow[index];
@@ -120,7 +123,7 @@
                         var smsLink =  '<img class = "Oval" src=' + url + ' />';
                         smsLink = '<div class="slds-float_right slds-col"><a href="tel:'+ rawData[index].phone + '" class="ringdna-sms" data-phone="'+ rawData[index].phone + '"data-sms-template-id="'+ rawData[index].templateId +'">' + smsLink + '</a>';
                         var phoneLinkIcon =  '<img class = "OvalPLIs" src=' + urlicon + ' />';
-                        if(record.RDNACadence2__Type__c == 'Call'){
+                        if(record.type == 'Call'){
                         phoneLinkIcon = '<a href="tel:'+ rawData[index].phone + '" class="ringdna-phone" data-phone="'+ rawData[index].phone + '"data-call-notes-template-id="'+ rawData[index].templateId +'">' + phoneLinkIcon + '</a> </div>';   
                         }else{
                             phoneLinkIcon = '<a href="tel:'+ rawData[index].phone + '" class="ringdna-phone" data-phone="'+ rawData[index].phone + '"data-vm-drop-id="'+ rawData[index].templateId +'">' + phoneLinkIcon + '</a> </div>';   

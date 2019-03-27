@@ -1,5 +1,5 @@
 <aura:component controller="CriteriaController" access="global">
-    <aura:attribute name="cadence" type="RDNACadence__Cadence__c"/>
+    <aura:attribute name="cadence" type="Sequence"/>
     <aura:attribute name="criteriaSet" type="Object" default="
                                                               {
                                                               'criterionPriorityFormula': '',
@@ -28,7 +28,7 @@
     <aura:method name="validateCriterion" action="{!c.validateCriterion}" access="public" />
     
     <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
-    <aura:handler name="DynamicFieldRowEvent" event="RDNACadence:DynamicFieldRowEvent" action="{!c.handleDynamicRowEvent}"/>
+    <aura:handler name="DynamicFieldRowEvent" event="c:DynamicFieldRowEvent" action="{!c.handleDynamicRowEvent}"/>
     <fieldset class="slds-form-element slds-form_compound">
         <form class="slds slds-form slds-m-left_large">
             <div class="slds-size_1-of-1" >
@@ -55,24 +55,14 @@
                             </tr>
                         </thead>
                         <tbody> 
-                            
-                            <aura:if isTrue="{!not(empty(v.accountFieldList) || empty(v.dbFieldList)) || v.isViewMode}">
-                                <aura:if isTrue="{!'Contact'==v.cadence.RDNACadence__Record_Type__c}">
-                                    <aura:if isTrue="{!not(empty(v.criteriaList))}">
+                            <aura:if isTrue="{!not(empty(v.AllFieldList)) || v.isViewMode}">
+                                    <aura:if isTrue="{!not( empty(v.criteriaList))}">
                                         <aura:iteration items="{!v.criteriaList}" var="criteria" indexVar="index">
-                                            <RDNACadence:DynamicFieldRow aura:id="dynamicRow" isViewMode="{!v.isViewMode}" objectInstance="{!criteria}" 
-                                                                         fieldList="{!v.accountFieldList}" rowIndex = "{!index}" listPicklistValues="" fieldDataType = "" recordType="{!v.cadence.RDNACadence__Record_Type__c}"/>
+                                            <c:DynamicFieldRow aura:id="dynamicRow" isViewMode="{!v.isViewMode}" objectInstance="{!criteria}" 
+                                                                         fieldList="{!v.accountFieldList}" rowIndex = "{!index}" listPicklistValues="" fieldDataType = "" recordType="{!v.cadence.recordType}"
+                                                                         AllFieldList = "{!v.AllFieldList}"  />
                                         </aura:iteration>
                                     </aura:if>
-                                </aura:if>
-                                <aura:if isTrue="{!'Lead'==v.cadence.RDNACadence__Record_Type__c}">
-                                    <aura:if isTrue="{!not(empty(v.criteriaList))}">
-                                        <aura:iteration items="{!v.criteriaList}" var="criteria" indexVar="index">
-                                            <RDNACadence:DynamicFieldRow aura:id="dynamicRow" isViewMode="{!v.isViewMode}" objectInstance="{!criteria}" 
-                                                                         fieldList="{!v.dbFieldList}" rowIndex = "{!index}" listPicklistValues="" fieldDataType = "" recordType="{!v.cadence.RDNACadence__Record_Type__c}"/>
-                                        </aura:iteration>
-                                    </aura:if>
-                                </aura:if>
                             </aura:if>
                             <tr><td colspan="6" class="rdna-bgcolor">
                                 <div class = "slds-form-element__row slds-size_1-of-1 rdna-field-values">
@@ -89,7 +79,7 @@
                 <div class="" >
                     <div class="slds-size_1-of-1">
                         <aura:if isTrue="{!v.criteriaSet}">
-                            <RDNACadence:ConditionLogic aura:id="customLogic" isViewMode="{!v.isViewMode}" criteriaType="{!v.criteriaType}" selectedCondition="{!v.criteriaSet.condition}" criterionPriorityFormula="{!v.criteriaSet.criterionPriorityFormula}" criteriaListCount="{!v.criteriaListCount}"/>
+                            <c:ConditionLogic aura:id="customLogic" isViewMode="{!v.isViewMode}" criteriaType="{!v.criteriaType}" selectedCondition="{!v.criteriaSet.condition}" criterionPriorityFormula="{!v.criteriaSet.criterionPriorityFormula}" criteriaListCount="{!v.criteriaListCount}"/>
                         </aura:if>
                     </div>
                 </div>

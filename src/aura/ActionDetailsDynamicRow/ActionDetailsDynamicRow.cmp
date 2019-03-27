@@ -12,7 +12,7 @@
     <!--task field row index -->
     <aura:attribute name="currentIndex" type="string"/>
     <!--Event attribute -->
-    <aura:registerEvent name="cadDynamicRowEvent" type="RDNACadence2:CadDynamicRowEvent"/>
+    <aura:registerEvent name="cadDynamicRowEvent" type="c:CadDynamicRowEvent"/>
     <!--Field header -->
     <aura:attribute name="fieldHeader" type="String" default="Field" />
     <aura:attribute name="valueHeader" type ="String" default="Value"/> 
@@ -25,6 +25,8 @@
     <!-- Disabled proerty-->
     <aura:attribute name = "isDisabled" type = "Boolean" default = "false"/>
     <aura:attribute name="recordType" type="String" default="Contact" />
+     <aura:attribute name="UpdateFieldList" type="List"/>
+    
     <div class="slds-form-element__control slds-size_1-of-3">
         <aura:if isTrue="{!v.currentIndex == 0}">
             <label class="slds-form-element__label" for="input-01">{!v.fieldHeader}</label>
@@ -35,10 +37,11 @@
                           messageWhenValueMissing="Please Select Type."
                           onchange="{!c.updateTaskField}" disabled = "{!v.isDisabled}">
             <option value="">Select Field</option> 
-            
-            <aura:iteration items="{!v.wrapperTaskFields}" var="templateObj">               
-                <option value="{!templateObj.key}">{!templateObj.value}</option>
-            </aura:iteration>
+            <aura:iteration items="{!v.UpdateFieldList}" var="fields">
+                        <aura:iteration items="{!fields.fieldsDetail}" var="field">
+                       		 <option value="{!field.fieldName}">{!field.fieldLabel}</option>
+                    	</aura:iteration> 
+            </aura:iteration> 
         </lightning:select>
         
     </div>
@@ -63,9 +66,6 @@
             
             <aura:set attribute="else">
                 <aura:if isTrue="{!v.dataType == 'Boolean'}">
-                 <!--   <aura:if isTrue="{!v.currentIndex == 0}">
-                        <label class="slds-form-element__label" for="input-01">Values</label>
-                    </aura:if>-->
                     <lightning:select aura:id="formValidationId" name="selectBooleanType" 
                                       variant = "label-hidden" required="true" value="{!v.taskObj.value}" 
                                       messageWhenValueMissing="Please Select Field Value" disabled = "{!v.isDisabled}">
@@ -124,7 +124,7 @@
                                     <aura:set attribute="else">
                                         <aura:if isTrue="{!v.dataType == 'Reference'}">
                                             <div class=" ">
-                                                <RDNACadence2:LookupFieldComponent aura:id="LookupFieldComponentInAD" recordType="{!v.recordType}"  isDisabled="{!v.isDisabled}"
+                                                <c:LookupFieldComponent aura:id="LookupFieldComponentInAD" recordType="{!v.recordType}"  isDisabled="{!v.isDisabled}"
                                                                                   parentId="{!v.taskObj.value}" fieldName="{!v.fieldName}" />
                                             </div>
                                             <aura:set attribute="else">

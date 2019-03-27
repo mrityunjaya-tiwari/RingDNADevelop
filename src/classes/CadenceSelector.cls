@@ -2,19 +2,17 @@ public with sharing class CadenceSelector {
     
     public static String nameSpace = CadenceConstants.NAMESPACE;
   
-    public static Map<Id, Cadence__c> getActiveCadencesByRecordType(String recType) {
-        
+    public static Map<Id, Cadence__c> getActiveCadencesByRecordType(List<String> recType) {
+
         return new Map<Id, Cadence__c>([SELECT Id, Name, Entrance_Criteria__c, Entrance_Criteria_PE__c, Exit_Criteria__c, Exit_Criteria_PE__c,
                                         Participent_Activation__c, Record_Type__c, Status__c, matching_priority__c, CreatedDate,LastModifiedDate,
                                         (SELECT Id, Name, Action_Criterion__c, Action_Criteria_PE__c, Action_Id__c,
                                          Cadence_Id__c, Day__c, Hour__c, Trigger_Type__c, Fields_To_Update_Action__c, Action_Id__r.Activation_Type__c, 
                                          Action_Id__r.Task_Description__c, Action_Id__r.Template_Id__c, Action_Id__r.Type__c  
                                          FROM CadenceActions__r order by Index__c) 
-                                        FROM Cadence__c WHERE Status__c = true AND Record_Type__c = :recType]);
+                                        FROM Cadence__c WHERE Status__c = true AND Record_Type__c IN :recType]);
         
     }
-    
-    
     
     public static List<Sequence_Action__c> getParticipantActions() {
         return [Select Id, Name, CadenceAction_ID__c, Contact_Id__c, Lead_Id__c, isActionPerformed__c From Sequence_Action__c];
@@ -168,6 +166,9 @@ public with sharing class CadenceSelector {
      * @return - String - SOQL query
      */
     public  static String getQueryForObject(String objType){
+        if(objType.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_OBJECT_NAME))
+        	objType = CadenceConstants.CONTACT_OBJECT_NAME;
+        
         Set<String> allowedFields = new Set<String>();
         String query = 'Select ';
         Map<String, Schema.SObjectField> fieldMap = Schema.getGlobalDescribe().get(objType).getDescribe().fields.getMap();
@@ -180,7 +181,7 @@ public with sharing class CadenceSelector {
             allowedFields.add(fieldName);
         }
         
-        if(allowedFields.size() > 0){
+        if(allowedFields.size() > 0 && nameSpace != ''){
             String apiNameWithNamespace;
             for(String fld : allowedFields){
             	apiNameWithNamespace = nameSpace + fld;
@@ -193,7 +194,7 @@ public with sharing class CadenceSelector {
         query += String.join(new List<String>(allowedFields), ',');
         query += ' FROM '+ objType + '';
         return query;
-    } 
+    }  
     
     public static List<User> getUserList(){
         return [select id, Name  from user where ReceivesAdminInfoEmails = true];
@@ -218,58 +219,5 @@ public with sharing class CadenceSelector {
 				 Where Sequence_Action__r.CadenceAction_ID__r.Action_Id__r.Type__c = 'Task'
 				 AND Sequence_Action__r.isActionPerformed__c = False
 				 AND Status = 'Completed' AND Id in:ids];
-    } 
-    
-    
-    
-    /**
-     * @description - Get Action On Participant Ids to update IsPerformed.
-     * @param ids - List of Task Ids.
-     * @return - List<Task> - Action On Participant Ids
-     */
-   /* public  static List<Task> UpdateCallActionIsPerformed(Set<Id> ids){
-       	return	[Select Sequence_Action__c	from Task 
-				Where Sequence_Action__r.CadenceAction_ID__r.Action_Id__r.Type__c = 'Task'
-				 AND Sequence_Action__r.isActionPerformed__c = False
-				 AND Status = 'Completed' AND Id in:ids];
-    }*/
-    
-    /* public static List<SObject> getParticipantsOfCadenceNew(Id cadenceId, String objType){
-        String cId = cadenceId;
-        String query = getQueryForObjectNew(objType);
-        query += ' WHERE '+nameSpace+'Cadence_Id__c=:cId';
-        return Database.query(query); 
     }
-    public  static String getQueryForObjectNew(String objType){
-        if(objType.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_OBJECT_NAME))
-        	objType = CadenceConstants.CONTACT_OBJECT_NAME;
-        
-        Set<String> allowedFields = new Set<String>();
-        String query = 'Select ';
-        Map<String, Schema.SObjectField> fieldMap = Schema.getGlobalDescribe().get(objType).getDescribe().fields.getMap();
-        for (Schema.SObjectField field : fieldMap.values()) {
-            Schema.DescribeFieldResult fieldDescribe = field.getDescribe();
-            if (!fieldDescribe.isAccessible()) {
-                continue; 
-            }
-            String fieldName = fieldDescribe.getName();
-            allowedFields.add(fieldName);
-        }
-        
-        if(allowedFields.size() > 0){
-            String apiNameWithNamespace;
-            for(String fld : allowedFields){
-            	apiNameWithNamespace = nameSpace + fld;
-                if(allowedFields.contains(apiNameWithNamespace)){
-                    allowedFields.remove(fld); 
-                }
-        	}
-        }
-        
-        query += String.join(new List<String>(allowedFields), ',');
-        query += ' FROM '+ objType + '';
-        return query;
-    } */
-    
-    
 }
