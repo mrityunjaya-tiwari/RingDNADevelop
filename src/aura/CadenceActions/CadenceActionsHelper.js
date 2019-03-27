@@ -72,6 +72,7 @@
             var state = response.getState();
             if (state === "SUCCESS") {
                 var actionWrapper = response.getReturnValue();
+                component.set('v.actionWrapper', actionWrapper);
                 component.set('v.actionList', actionWrapper.actionClsList);
                 component.set('v.actionTypeList', actionWrapper.actionTypeList); 
                 //Data Sorting

@@ -49,7 +49,8 @@
                                       label="Type" required="true" value="{!v.newCadence.recordType}" 
                                       messageWhenValueMissing="Please Select Record Type."
                                       disabled = "{!v.isDisabled || v.disableCadenceType || v.settedSequenceType}"
-                                      onchange="{!c.fireRecordTypeChangedEvent}">
+                                      >
+                        			  <!-- onchange="{!c.fireRecordTypeChangedEvent}"> -->
                         <option value="">Record Type</option>
                         <option value="Contact">Contact</option>
                         <option value="Lead">Lead</option>

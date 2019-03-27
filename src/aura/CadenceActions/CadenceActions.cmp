@@ -40,7 +40,7 @@
     <aura:attribute name= "createAction" type="boolean" default="false"/>
     <aura:attribute name="ISLoad" type="boolean" default="false"/>
     <aura:attribute name="UpdateFieldList" type="List"/>
-    
+    <aura:attribute name= "actionWrapper" type="List"/>
     <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>
     <div class = "slds-m-left_large">
         <div class = "slds-form-element slds-size_1-of-1  slds-m-bottom_large slds-m-top_medium " aura:id = "createTaskdiv">

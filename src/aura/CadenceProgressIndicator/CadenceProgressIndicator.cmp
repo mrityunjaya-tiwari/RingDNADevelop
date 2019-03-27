@@ -13,7 +13,7 @@
     <aura:attribute name="dbFieldList" type="List"/>
     <aura:attribute name="recordId" type="String" description="" />
     <aura:attribute name="AllFieldList" type="List"/>
-    
+    <aura:attribute name= "actionWrapper" type="List"/>
     <!--Create or show cadence details -->
     <aura:attribute name= "isEdit" type="Boolean" default= "false"/>
     
@@ -76,7 +76,7 @@
                             <aura:if isTrue="{!not( empty(v.AllFieldList))}">
                                 <div style="padding-left:1%; padding-top:5%;padding-right:4%;">
                                     <c:CriterionComponent aura:id="entryCriterionComponent" 
-                                                                    AllFieldList = "{!v.AllFieldList}" 
+                                                                    AllFieldList = "{!v.AllFieldList}"
                                                                     isViewMode = "false" accountFieldList="{!v.accountFieldList}"
                                                                     criteriaType="Entrance Criteria" criteriaSet="{!v.entranceCriteriaSet}" 
                                                                     cadence="{!v.newCadence}" leadFieldList="{!v.leadFieldList}" dbFieldList="{!v.dbFieldList}" 
@@ -107,6 +107,7 @@
                         <aura:if isTrue="{! (v.currentStep == '4' || v.currentStep == 4)}">
                             <div style="padding-left:1%; padding-top:5%;padding-right:4%;">
                                 <c:CadenceActions aura:id="createCadenceActionComponent" 
+                                                            actionWrapper = "{!v.actionWrapper}"
                                                             entranceCriteriaSet="{!v.entranceCriteriaSet}" 
                                                             newCadence="{!v.newCadence}" 
                                                             cadenceActionList="{!v.cadenceActionList}"
