@@ -48,6 +48,7 @@
     <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>
     
     <aura:attribute name="activationtypeList" type="List" default="['Automatic', 'Manual']" />
+    <aura:attribute name="UpdateFieldList" type="List"/>
     <!-- PAGE HEADER -->
     <div style="background-color: #fafafa">
         
@@ -114,7 +115,7 @@
                         <div class = "slds-form-element slds-size_1-of-1 slds-hide" aura:id = "createTaskdiv">
                             <aura:iteration items="{!v.listTask}" var="taskObj" indexVar="index">
                                 <div class = "slds-form-element__row slds-size_1-of-1">
-                                    <c:ActionDetailsDynamicRow aura:id="dynamicROw"  taskObj="{!taskObj}" wrapperTaskFields="{!v.wrapperTaskFields}" currentIndex = "{!index}" listPicklistValues="" dataType = ""/>
+                                    <c:ActionDetailsDynamicRow aura:id="dynamicROw"  taskObj="{!taskObj}" UpdateFieldList="{!v.UpdateFieldList}" currentIndex = "{!index}" listPicklistValues="" dataType = ""/>
                                 </div>
                             </aura:iteration>
                             <div class = "slds-form-element__row slds-size_1-of-1">

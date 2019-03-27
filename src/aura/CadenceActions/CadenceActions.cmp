@@ -126,7 +126,7 @@
             </div>
         </aura:if>
         <aura:if isTrue="{!v.createAction}">
-            <c:DynamicActionDetails aura:id="dynamicActionId" createAction="{!v.createAction}" actionTypeList="{!v.actionTypeList}" actionList ="{!v.actionList}" />
+            <c:DynamicActionDetails aura:id="dynamicActionId" createAction="{!v.createAction}" actionTypeList="{!v.actionTypeList}" actionList ="{!v.actionList}" UpdateFieldList="{!v.UpdateFieldList}" />
         </aura:if>
     </div>
 </aura:component>
