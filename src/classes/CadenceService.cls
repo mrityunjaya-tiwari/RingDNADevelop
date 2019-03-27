@@ -579,8 +579,9 @@ global  without sharing class CadenceService {
             }
             System.debug('mapOfOppcontact:##'+mapOfOppcontact);
             System.debug('listOfContactids:##'+listOfContactids);
+          
             if(listOfContactids.size() > 0){
-                for(Contact con : [Select id,Cadence_Id__c,isActivated__c,EntranceCriteria_Matched_Date__c,Email from Contact Where Id In :listOfContactids]){
+                for(Contact con : [Select id,Cadence_Id__c,isActivated__c,EntranceCriteria_Matched_Date__c,Email from Contact Where (Cadence_ID__c = null) AND Id In :listOfContactids]){
                     mapOfContacts.put(con.id,(Sobject)con);
                 }
             }     
