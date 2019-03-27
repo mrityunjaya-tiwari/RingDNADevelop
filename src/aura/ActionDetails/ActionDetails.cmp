@@ -45,6 +45,8 @@
     <aura:attribute name="spinner" type="boolean" default="false"/>
     <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>
     <aura:attribute name="activationtypeList" type="List" default="['Automatic', 'Manual']" />
+     <!-- Save Buuton disable-->
+    <aura:attribute name="SaveDisable" type="Boolean" default= "false"/>
     <!-- PAGE HEADER -->
     <div class="slds-page-header" style="background-color: #fafafa">
         <div class="slds-grid">
@@ -61,7 +63,7 @@
                 <lightning:button class="rdna-button rdna-button-text slds-text-align_center slds-m-top_large slds-m-right_medium slds-p-left_large slds-p-right_large" aura:id="cancel" label="Cancel" onclick="{!c.onCancel}"/>
             </div>    
             <div>
-                <lightning:button class="rdna-button rdna-button-text slds-text-align_center slds-m-top_large slds-p-left_large slds-p-right_large" aura:id="deleteActions" label="Save" onclick="{!c.clickCreate}"/>
+                <lightning:button class="rdna-button rdna-button-text slds-text-align_center slds-m-top_large slds-p-left_large slds-p-right_large" aura:id="deleteActions" label="Save" onclick="{!c.clickCreate}" disabled="{!v.SaveDisable}"/>
             </div>
         </div>
         
