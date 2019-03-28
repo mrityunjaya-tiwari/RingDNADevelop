@@ -18,6 +18,9 @@
             return validSoFar && inputCmp.get('v.validity').valid;
         }, true);
         if (isValid){
+            if(!component.get('v.disableCadenceType')){
+                helper.fireRecordTypeChangedEvent(component, event, helper);
+            }
             //helper.fireRecordTypeChangedEvent(component, event, helper);
             component.set('v.disableCadenceType' , true);
         }

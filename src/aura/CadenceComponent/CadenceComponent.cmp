@@ -26,8 +26,8 @@
     <aura:handler name="CadenceComponentSaveEvt" event="c:CadenceComponentEvt" 
                   action="{!c.CadenceComponentSaveEvt}"/>
     <!--create a component attributs -->
-    <aura:attribute name="SpinnerForSync" type="boolean" default="false"/>
-    <c:SpinnerComponent spinnerSync = "{!v.SpinnerForSync}"/>
+    <aura:attribute name="spinner" type="boolean" default="false"/>
+    <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>
     <aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
     <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>
     
@@ -42,7 +42,7 @@
     <aura:if isTrue="{!v.isEdit}"><!-- open in new/edit mode -->        
          <aura:if isTrue="{!not(empty(v.entranceCriteriaSet) || empty(v.exitCriteriaSet)	
                          )}"><!-- open in edit mode -->
-            <c:CadenceProgressIndicator newCadence = "{!v.cadence}" 
+            <c:CadenceProgressIndicator spinner="{!v.spinner}" newCadence = "{!v.cadence}" 
                                         AllFieldList = "{!v.AllFieldList}"   
                                         cadenceName="{!v.cadence.name}" entranceCriteriaSet="{!v.entranceCriteriaSet}"
                                         exitCriteriaSet="{!v.exitCriteriaSet}" currentStep="{!v.currentStep}"
@@ -50,7 +50,7 @@
                                         dbFieldList="{!v.dbFieldList}" themeName="{!v.themeName}"
                                         isEdit = "{!v.isEdit}" />
             <aura:set attribute="else"><!-- open in new mode -->
-                <c:CadenceProgressIndicator newCadence = "{!v.cadence}" 
+                <c:CadenceProgressIndicator spinner="{!v.spinner}" newCadence = "{!v.cadence}" 
                                                       AllFieldList = "{!v.AllFieldList}"   
                                                       newSequence = "{!v.newSequence}"
                                                       settedSequenceType="{!v.settedSequenceType}"
@@ -64,7 +64,7 @@
             
             <aura:if isTrue="{!not(empty(v.entranceCriteriaSet) || empty(v.exitCriteriaSet) 
                              || empty(v.cadence) )}">
-                <c:CadenceTabset aura:id ='tabset' newCadence = "{!v.cadence}"  
+                <c:CadenceTabset spinner="{!v.spinner}" aura:id ='tabset' newCadence = "{!v.cadence}"  
                                  AllFieldList = "{!v.AllFieldList}"  
                                  contactFieldList="{!v.contactFieldListCA}" leadFieldList="{!v.leadFieldListCA}"
                                  entranceCriteriaSet="{!v.entranceCriteriaSet}" exitCriteriaSet="{!v.exitCriteriaSet}" 

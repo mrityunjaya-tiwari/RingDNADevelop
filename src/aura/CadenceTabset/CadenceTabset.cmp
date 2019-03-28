@@ -28,7 +28,7 @@
     <aura:attribute name="isActive" type="Boolean" default="true" />
     <aura:attribute name="AllFieldList" type="List"/>
     <aura:attribute name="pData" type="List"/>
-    
+    <aura:attribute name="spinner" type="boolean"/>
     <!-- Header Start-->
     <div class="slds-page-header" style="background-color: #fafafa">
         <div class="slds-grid">
@@ -74,25 +74,25 @@
         <div class="slds-m-top_medium">
             <lightning:tabset class="slds-p-top_x-large slds-p-left_xx-large rdna-backgroud" selectedTabId="{!v.tabToVisible}"> 
                 <lightning:tab class="slds topHeaderSmall" label="Sequence Details" id="1">
-                    <c:CadenceDetails aura:id="cadDetails" pData="{!v.pData}" newCadence = "{!v.newCadence}" isDisabled = "{!v.isDisabled}" isShowParticipantsTable="true" toggleRows="{!v.toggleRows}" refreshParticipant="{!v.refreshParticipant}"/>
+                    <c:CadenceDetails spinner="{!v.spinner}" aura:id="cadDetails" pData="{!v.pData}" newCadence = "{!v.newCadence}" isDisabled = "{!v.isDisabled}" isShowParticipantsTable="true" toggleRows="{!v.toggleRows}" refreshParticipant="{!v.refreshParticipant}"/>
                 </lightning:tab> 
                 <lightning:tab class="slds topHeaderSmall" label="Entrance Criteria" id="2">
                     <aura:if isTrue="{!not(empty(v.entranceCriteriaSet))}">
-                        <c:CriterionComponent contactFieldList="{!v.contactFieldList}" leadFieldList="{!v.leadFieldList}"  aura:id="entryCriterionComponent" 
+                        <c:CriterionComponent spinner="{!v.spinner}" contactFieldList="{!v.contactFieldList}" leadFieldList="{!v.leadFieldList}"  aura:id="entryCriterionComponent" 
                                               criteriaType="Entrance Criteria" criteriaSet="{!v.entranceCriteriaSet}" accountFieldList="{!v.accountFieldList}" 
                                               cadence="{!v.newCadence}" isViewMode="true" dbFieldList="{!v.dbFieldList}" 
                                                AllFieldList = "{!v.AllFieldList}" />
                     </aura:if>
                 </lightning:tab>
                 <lightning:tab class="slds topHeaderSmall" label="Exit Criteria" id="3">
-                    <c:CriterionComponent aura:id="exitCriterionComponent" contactFieldList="{!v.contactFieldList}" leadFieldList="{!v.leadFieldList}"
+                    <c:CriterionComponent spinner="{!v.spinner}" aura:id="exitCriterionComponent" contactFieldList="{!v.contactFieldList}" leadFieldList="{!v.leadFieldList}"
                                           criteriaType="Exit Criteria" criteriaSet="{!v.exitCriteriaSet}" accountFieldList="{!v.accountFieldList}"
                                           cadence="{!v.newCadence}" isViewMode="true" dbFieldList="{!v.dbFieldList}"
                                           AllFieldList = "{!v.AllFieldList}" />
                 </lightning:tab> 
                 <lightning:tab class="slds topHeaderSmall" label="Sequence Actions" id="4">
                      <aura:if isTrue="{!not(empty(v.cadenceActionList) )}"> 
-                        <c:CadenceActions aura:id="createCadenceActionComponent" 
+                        <c:CadenceActions spinner="{!v.spinner}" aura:id="createCadenceActionComponent" 
                                                     entranceCriteriaSet="{!v.entranceCriteriaSet}" 
                                                     newCadence="{!v.newCadence}" 
                                                     cadenceActionList="{!v.cadenceActionList}"

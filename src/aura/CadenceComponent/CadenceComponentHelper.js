@@ -4,7 +4,7 @@
     },
     
     getCadenceData: function(component,helper){
-        component.set("v.SpinnerForSync",true);
+        component.set("v.spinner",true);
         var cadenceId = component.get("v.recordId");
         
         if(cadenceId){
@@ -36,7 +36,7 @@
                     var exitCriterion = JSON.parse(wrapperResult.sObj.exitCriteria);
                     component.set("v.entranceCriteriaSet",entryCriterion);
                     component.set("v.exitCriteriaSet",exitCriterion);
-                    component.set("v.SpinnerForSync",false);
+                    component.set("v.spinner",false);
                 }else if(state === "ERROR"){
                     var myUserContext = component.get("v.themeName");
                     if(myUserContext == 'Theme3') {
@@ -50,7 +50,7 @@
                         });
                         evt.fire();
                     }}else{
-                        component.set("v.SpinnerForSync",false);
+                        component.set("v.spinner",false);
                     }
             });
             $A.enqueueAction(cadence);
@@ -162,7 +162,7 @@
     getObjectFieldsList: function(component, event, helper){
         var cadenceObj = component.get("v.cadence");
         var cadence = component.get("c.getObjCriList");
-        component.set("v.SpinnerForSync",true);
+        component.set("v.spinner",true);
         cadence.setParams({objectType: cadenceObj.recordType});
         cadence.setCallback(this, function(response){
             var state = response.getState();
@@ -178,9 +178,9 @@
                     
                 
                 component.set('v.AllFieldList', fieldList);
-                component.set("v.SpinnerForSync",false);
+                component.set("v.spinner",false);
             }else {
-                component.set("v.SpinnerForSync",false);
+                component.set("v.spinner",false);
             }
             component.set("v.settedSequenceType",false);
         });
