@@ -25,7 +25,7 @@
     <aura:attribute name="accountFieldList" type="List"/>
     <aura:attribute name="dbFieldList" type="List"/>
     <aura:attribute name="refreshParticipant" type="Boolean" />
-    <aura:attribute name="isActive" type="Boolean" default="false" />
+    <aura:attribute name="isActive" type="Boolean" default="true" />
     <aura:attribute name="AllFieldList" type="List"/>
     <aura:attribute name="pData" type="List"/>
     
@@ -39,16 +39,25 @@
                 <p class="slds-line-height_reset rdna-header-small">Sequences</p>
                 <h1 class="slds-page-header__title slds-m-right_small slds-align-middle slds-truncate rdna-header-large">{!v.newCadence.name}</h1>
             </div>
-            <aura:if isTrue="{!v.isActive}">
-                <div  class="slds-col slds-line-height_reset" style="color:red;">Activating</div>
-            </aura:if>
             <aura:if isTrue="{!v.newCadence.status}">
                 <div >
-                    <button class="slds-button slds-button_neutral slds-m-top_medium slds-m-right_medium rdna-button rdna-button-text" onclick="{!c.deactivateCad}" >Deactivate</button>
+                    <aura:if isTrue="{!v.isActive}">
+                        <button class="slds-button slds-button_neutral slds-m-top_medium slds-m-right_medium rdna-button rdna-button-text" onclick="{!c.deactivateCad}" >Deactivate</button>
+                        <aura:set attribute="else">  
+                            <button class="slds-button slds-button_neutral slds-m-top_medium slds-m-right_medium rdna-button rdna-button-text" disabled="true" >Wait...</button>
+                        </aura:set>
+                    </aura:if>                    
+                    
                 </div>
                 <aura:set attribute="else"> 
                     <div>
-                        <button class="slds-button slds-button_neutral slds-m-top_medium slds-m-right_medium rdna-button rdna-button-text" onclick="{!c.cadActivation}" >Activate</button>
+                        <aura:if isTrue="{!v.isActive}">
+                            <button class="slds-button slds-button_neutral slds-m-top_medium slds-m-right_medium rdna-button rdna-button-text" onclick="{!c.cadActivation}" >Activate</button>
+                            <aura:set attribute="else">  
+                                <button class="slds-button slds-button_neutral slds-m-top_medium slds-m-right_medium rdna-button rdna-button-text" disabled="true" >Wait...</button>
+                            </aura:set>
+                        </aura:if>
+                        
                     </div>
                 </aura:set>
             </aura:if>
