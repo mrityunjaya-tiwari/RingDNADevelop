@@ -22,7 +22,7 @@
             var state = response.getState();
             if (state === "SUCCESS") { 
                 var actionId  = response.getReturnValue();
-
+				component.set("v.SaveDisable", true);
                 helper.viewDetails(component, event, actionId);	
             }else{ 
             }
