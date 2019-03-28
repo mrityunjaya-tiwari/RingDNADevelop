@@ -1,98 +1,125 @@
 @isTest
 public class ActionDetailViewCtrlTest {
-
+    
     public static Lead testLead;
-    public static Contact cont;
-    public static Cadence__c cad1;
-    public static Cadence__c contactCad;
+    public static Contact testContact;
+    public static Cadence__c cadenceLead;
+    public static Cadence__c cadenceContact;
     public static Action__c action1;
-    public static CadenceAction__c cadAction;
-    public static Account act;
-
-	//Constants 
-	Public static Final String ACTION_TYPE_CALL = 'Call';
-	Public static Final String RECORD_TYPE_CONTACT = 'Contact';
-	Public static Final String RECORD_TYPE_LEAD = 'Lead';
+    public static Action__c action2;
+    public static CadenceAction__c cadenceActionLead;
+    public static CadenceAction__c cadenceActionContact;
+    public static Account testAccount;
+    
+    //Constants 
+    Public static Final String ACTION_TYPE_CALL = 'Call';
+    Public static Final String ACTION_TYPE_SMS = 'SMS';
+    Public static Final String RECORD_TYPE_CONTACT = 'Contact';
+    Public static Final String RECORD_TYPE_LEAD = 'Lead';
     
     static {
-        act = TestDataFactory.createAccount();
-        insert act;
+        
+        //for cadence on object type Lead
         action1 = TestDataFactory.createAction(ACTION_TYPE_CALL);
         insert action1;
-        cad1 = TestDataFactory.createCadence(RECORD_TYPE_LEAD);
-        insert cad1;
-        cadAction = TestDataFactory.createCadenceAction(cad1.Id, action1.Id);
-        insert cadAction;
-        testLead = TestDataFactory.createLead(cad1.Id);
+        cadenceLead = TestDataFactory.createCadence(RECORD_TYPE_LEAD);
+        insert cadenceLead;
+        cadenceActionLead = TestDataFactory.createCadenceAction(cadenceLead.Id, action1.Id);
+        insert cadenceActionLead;
+        testLead = TestDataFactory.createLead(cadenceLead.Id);
+        testLead.isActivated__c=true; //to test toggle participant activation
         insert testLead;
-        contactCad = TestDataFactory.createCadence(RECORD_TYPE_CONTACT);
-        insert contactCad; 
+        
+        //for cadence on object type contact        
+        cadenceContact = TestDataFactory.createCadence(RECORD_TYPE_CONTACT);
+        insert cadenceContact;
+        testAccount = TestDataFactory.createAccount();
+        insert testAccount;
+        testContact = TestDataFactory.createContact(testAccount.Id, cadenceContact.Id);
+        testContact.Priority__c=5;
+        insert testContact; 
+        testContact.isActivated__c=false; //to test toggle participant activation
+        action2 = TestDataFactory.createAction(ACTION_TYPE_SMS);
+        insert action2;
+        cadenceActionContact = TestDataFactory.createCadenceAction(cadenceContact.Id, action2.Id);
+        insert cadenceActionContact; 
+        
     }
     
     @isTest
     static void fetchCadenceActionsTest() {
         
-        Lead testLead1 = TestDataFactory.createLead(cad1.Id);
-        insert testLead1;
-		Cadence__c cad2 = TestDataFactory.createCadence(RECORD_TYPE_CONTACT);
-        insert cad2;
-        CadenceAction__C cadAction1 = TestDataFactory.createCadenceAction(cad2.Id, action1.Id);
-        insert cadAction1;
-        Contact cont1 = TestDataFactory.createContact(act.Id, cad2.Id);
-        insert cont1; 
-        Action__c action2 = TestDataFactory.createAction(ACTION_TYPE_CALL);
-        insert action2;
+        ActionDetailViewCtrl.ActionDetailWrapper actionWrapperLead, actionWrapperContact, actionWrapperInactive;
         
-        ActionDetailViewCtrl.ActionDetailWrapper actionWrapper;
+        //fetch action wrapper which will include action, its associated participants and cadence
         Test.startTest();
         
-        actionWrapper = ActionDetailViewCtrl.getActionData(action1.Id);
+        actionWrapperLead = ActionDetailViewCtrl.getActionData(action1.Id);
+        actionWrapperContact = ActionDetailViewCtrl.getActionData(action2.Id);
+        
         Test.stopTest();    
         
-        System.assertEquals(action1.Id, actionWrapper.action.Id);
+        System.assertEquals(action1.Id, actionWrapperLead.action.Id);
+        System.assertNotEquals(null, actionWrapperLead.participantList);
+        System.assertEquals(1, actionWrapperLead.participantList.size());
+        System.assertEquals(1, actionWrapperLead.cadWrapper.size());
+        
+        System.assertEquals(action2.Id, actionWrapperContact.action.Id);
+        System.assertNotEquals(null, actionWrapperContact.participantList);
+        System.assertEquals(1, actionWrapperContact.participantList.size());
+        System.assertEquals(1, actionWrapperContact.cadWrapper.size());
+        
     }
     
-    @isTest
-    static void deleteActionsTest() {
-        Test.startTest();
-        CadenceActionListController.deleteActions(new List<Id>{action1.Id});
-        Test.stopTest();
-        List<Action__c> actionList = [Select Id from Action__c where Id = : action1.Id];
-        System.assertEquals(0, actionList.size());
-    }
     
     
     @isTest
     static void getCadenceParticipantsDataTest() {
-
-    	Lead testLead1 = TestDataFactory.createLead(cad1.Id);
-        testLead1.EntranceCriteria_Matched_Date__c = system.now();
-    	testLead1.isActivated__c = true;
-        insert testLead1;
-        Contact cont1 = TestDataFactory.createContact(act.Id, contactCad.Id);
-        cont1.isActivated__c = false;
-        cont1.EntranceCriteria_Matched_Date__c = system.now();
-        insert cont1; 
+        
+        //create new contact for cadenceContact to increase particiapnts
+        Contact contact2 = TestDataFactory.createContact(testAccount.Id, cadenceContact.Id);
+        insert contact2;
+        List<ActionDetailViewCtrl.ParticipantWrapper> leadWrapper = new List<ActionDetailViewCtrl.ParticipantWrapper>();
+        List<ActionDetailViewCtrl.ParticipantWrapper> contactWrapper = new List<ActionDetailViewCtrl.ParticipantWrapper>();
+        List<ActionDetailViewCtrl.ParticipantWrapper> nullWrapper = new List<ActionDetailViewCtrl.ParticipantWrapper>();
+        
+        Test.startTest();
+        //fetch participants for cadenceLead
+        leadWrapper = ActionDetailViewCtrl.getCadenceParticipantsData(cadenceLead.Id);
+        //fetch participants for cadenceContact
+        contactWrapper = ActionDetailViewCtrl.getCadenceParticipantsData(cadenceContact.Id);
+        //check for null cadence Id
+        nullWrapper=ActionDetailViewCtrl.getCadenceParticipantsData(null);
+        Test.stopTest();
+        
+        System.assertEquals(1, leadWrapper.size());
+        System.assertEquals(2, contactWrapper.size());
+        System.assertEquals(true,nullWrapper==null);
+        
+    }
+    
+    @isTest
+    static void togglePartActivationTest() {
         
         List<ActionDetailViewCtrl.ParticipantWrapper> leadWrapper = new List<ActionDetailViewCtrl.ParticipantWrapper>();
         List<ActionDetailViewCtrl.ParticipantWrapper> contactWrapper = new List<ActionDetailViewCtrl.ParticipantWrapper>();
         
         Test.startTest();
-
-        leadWrapper = ActionDetailViewCtrl.getCadenceParticipantsData(cad1.Id);
-		contactWrapper = ActionDetailViewCtrl.getCadenceParticipantsData(contactCad.Id);
-		ActionDetailViewCtrl.togglePartActivation(JSON.serialize(leadWrapper));
-		ActionDetailViewCtrl.togglePartActivation(JSON.serialize(contactWrapper));
+        //fetch participants wrapper
+        leadWrapper = ActionDetailViewCtrl.getCadenceParticipantsData(cadenceLead.Id);
+        contactWrapper = ActionDetailViewCtrl.getCadenceParticipantsData(cadenceContact.Id);
+        //toggle participants activation 
+        ActionDetailViewCtrl.togglePartActivation(JSON.serialize(leadWrapper));
+        ActionDetailViewCtrl.togglePartActivation(JSON.serialize(contactWrapper));
+        
         Test.stopTest();
         
-        testLead1 = [Select Id, isActivated__c from Lead where Id = :testLead1.Id];
-        cont1 = [Select Id, isActivated__c from Contact where Id = :cont1.Id];
+        //fetch updated data
+        testLead=[SELECT isActivated__c FROM Lead WHERE Id = :testLead.Id];
+        testContact=[SELECT isActivated__c FROM Contact WHERE Id = :testContact.Id];
         
-        System.assertEquals(2, leadWrapper.size());
-        System.assertEquals(1, contactWrapper.size());
-        System.assertEquals(false, testLead1.isActivated__c);
-        System.assertEquals(true, cont1.isActivated__c);
-    	
+        System.assertEquals(false, testLead.isActivated__c);
+        System.assertEquals(true, testContact.isActivated__c);
     }
     
     
