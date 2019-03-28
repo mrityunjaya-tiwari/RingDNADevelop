@@ -15,12 +15,14 @@
     <aura:attribute name="AllFieldList" type="List"/>
     <aura:attribute name= "actionWrapper" type="List"/>
     <aura:attribute name="spinner" type="boolean"/>
+    
     <!--Create or show cadence details -->
     <aura:attribute name= "isEdit" type="Boolean" default= "false"/>
-    
     <!--Regenter event -->
     <aura:registerEvent name="CadenceComponentSaveEvt" type="c:CadenceComponentEvt"/> 
     <!--Cadence Objects -->
+    <!-- Save Buuton disable-->
+    <aura:attribute name="SaveDisable" type="Boolean" default= "false"/>
     <aura:attribute name="newCadence" type="Sequence" />
     <!-- CadenceAction Id list to delete cadenceActions -->
     <aura:attribute name="caIdsList" type="List"/>
@@ -50,7 +52,10 @@
             </aura:if>
             <aura:if isTrue="{!v.currentStep == '4'}">
                 <div>
-                    <button class="slds-button slds-button_neutral rdna-button rdna-button-text slds-m-top_large slds-m-right_medium slds-p-right_large" onclick="{!c.save}" >Save</button>
+                    <button class="slds-button slds-button_neutral rdna-button rdna-button-text slds-m-top_large slds-m-right_medium slds-p-right_large" onclick="{!c.save}" disabled="{!v.SaveDisable}"  aura:id="saveButton">Save</button>
+                     
+                    
+                       
                 </div>
             </aura:if>
         </div>
@@ -114,6 +119,7 @@
                                                             cadenceActionList="{!v.cadenceActionList}"
                                                             leadFieldList="{!v.leadFieldList}"  
                                                             caIdsList="{!v.caIdsList}"
+                                                  			    SaveDisable = "{!v.SaveDisable}"
                                                             dbFieldList="{!v.dbFieldList}"
                                                             accountFieldList="{!v.accountFieldList}"
                                                             contactFieldList="{!v.contactFieldList}"/>

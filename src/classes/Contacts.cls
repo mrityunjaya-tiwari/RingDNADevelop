@@ -22,11 +22,26 @@ public class Contacts  extends SObjectDomain {
         }
     }
     
-    public override void onBeforeInsert() {
         
+    public override void onBeforeInsert() {        
         Set<Id> accountIds = new Set<Id>();
+		Schema.DescribeSObjectResult dsc = Contact.sObjectType.getDescribe();           
+        Map<String, Schema.SObjectField> fieldsMap = dsc.fields.getMap();
         for(Contact contObj : (List<Contact>)contsWithoutCadence) {
 		
+		    SObject obj =(SObject)contObj;
+            for (String field : fieldsMap.keySet()) {
+                Schema.sObjectField fieldAPIName = fieldsMap.get(field);
+                Schema.DisplayType fieldDataType = fieldAPIName.getDescribe().getType();
+                String fieldName = fieldAPIName.getDescribe().getName();
+                if(fieldDataType == Schema.DisplayType.Double && fieldAPIName.getDescribe().isUpdateable() && (fieldName != 'OtherLatitude' && fieldName != 'OtherLongitude' && fieldName != 'MailingLatitude' && fieldName != 'MailingLongitude')){
+                    if(fieldAPIName.getDescribe().getDefaultValue() == null){
+                        obj.put(fieldAPIName, 0);                    
+                    }
+                    
+                } 
+                contObj=(contact)obj;                
+            }
             if(contObj.AccountId != null) {
                 accountIds.add(contObj.AccountId);
             }

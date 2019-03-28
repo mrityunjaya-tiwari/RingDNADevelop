@@ -39,6 +39,7 @@
     <aura:attribute name="spinner" type="boolean"/>
     <aura:attribute name= "createAction" type="boolean" default="false"/>
     <aura:attribute name="ISLoad" type="boolean" default="false"/>
+    <aura:attribute name="SaveDisable" type="Boolean" default= "false"/>
     <aura:attribute name="UpdateFieldList" type="List"/>
     <aura:attribute name= "actionWrapper" type="List"/>
     
@@ -126,7 +127,7 @@
             </div>
         </aura:if>
         <aura:if isTrue="{!v.createAction}">
-            <c:DynamicActionDetails aura:id="dynamicActionId" createAction="{!v.createAction}" actionTypeList="{!v.actionTypeList}" actionList ="{!v.actionList}" UpdateFieldList="{!v.UpdateFieldList}" />
+            <c:DynamicActionDetails aura:id="dynamicActionId" createAction="{!v.createAction}" actionTypeList="{!v.actionTypeList}" actionList ="{!v.actionList}" />
         </aura:if>
     </div>
 </aura:component>

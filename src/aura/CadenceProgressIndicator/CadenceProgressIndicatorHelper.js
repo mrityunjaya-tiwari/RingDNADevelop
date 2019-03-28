@@ -77,6 +77,7 @@
             if (state === "SUCCESS") {
                var recordId = response.getReturnValue();
                var myUserContext =component.get("v.themeName");
+               component.set("v.SaveDisable", true);
                 
                  if(myUserContext == 'Theme3' || myUserContext == 'Theme4t' || myUserContext == 'Theme4d') {
                     window.location = '/apex/Cadence?isedit=false&id='+recordId;
@@ -96,6 +97,7 @@
             }else{   
             }
         });
+        component.set("v.SaveDisable",false);
         $A.enqueueAction(action)
     },
     
