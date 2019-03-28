@@ -50,9 +50,6 @@
             <label class="slds-form-element__label" for="input-01" >Values</label>
         </aura:if>
         <aura:if isTrue="{!v.dataType == 'Picklist'}">
-            <aura:if isTrue="{!v.currentIndex == 0}">
-                <label class="slds-form-element__label" for="input-01">{!v.valueHeader}</label>
-            </aura:if>          
             <lightning:select aura:id="formValidationId" name="selectPicklistType" 
                               variant = "label-hidden"  required="true" value="{!v.taskObj.value}" 
                               messageWhenValueMissing="Please Select Field Value" disabled = "{!v.isDisabled}">
