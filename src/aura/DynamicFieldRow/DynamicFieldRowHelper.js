@@ -64,4 +64,16 @@
         $A.enqueueAction(action);
         
     },
+	getDandBCompanyWrapperList : function(component, event, helper) {
+        var action = component.get("c.getDandBCompanyWrapper");
+        action.setCallback(this, function(response){
+            var status =  response.getState(); 
+            if (status == 'SUCCESS'){
+                var dandBCompanyWrapperList = response.getReturnValue();
+                component.set('v.dandBCompanyWrapperList', dandBCompanyWrapperList);
+            }
+        });
+        $A.enqueueAction(action); 
+        
+    },
 })

@@ -199,6 +199,10 @@ public with sharing class CadenceSelector {
     public static List<User> getUserList(){
         return [select id, Name  from user where ReceivesAdminInfoEmails = true];
     }
+	
+	public static List<DandBCompany> getDandBCompanyList(){
+        return [select id, Name  from DandBCompany];
+    }
     
      /**
      * @description - Get Task List with Action On Participant.

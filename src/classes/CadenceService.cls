@@ -28,6 +28,18 @@ global  without sharing class CadenceService {
         }
         return userListWrapperList;
     }
+	
+	public static List<LookupFieldController.DandBCompanyListWrapper> getDandBCompanyWrapperList(){
+        List<DandBCompany> dandBList = CadenceSelector.getDandBCompanyList();
+        List<LookupFieldController.DandBCompanyListWrapper> dandBCompanyListWrapperList = New List<LookupFieldController.DandBCompanyListWrapper>();
+        for (DandBCompany dnBCompany : dandBList){
+            LookupFieldController.DandBCompanyListWrapper dnBCompanyListWrapper = New LookupFieldController.DandBCompanyListWrapper();
+            dnBCompanyListWrapper.Name  = dnBCompany.Name;
+            dnBCompanyListWrapper.Id = dnBCompany.Id;
+            dandBCompanyListWrapperList.add(dnBCompanyListWrapper);
+        }
+        return dandBCompanyListWrapperList;
+    }
     
     public static List<ActionDetailController.WrapperTemplateObj> getCallTemplates(){
         RingDNAApiCallouts ringdnaAPI = new RingDNAApiCallouts();

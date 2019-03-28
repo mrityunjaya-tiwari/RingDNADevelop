@@ -5,6 +5,7 @@
     <!-- Disabled proerty-->
     <aura:attribute name = "isDisabled" type = "Boolean" default = "false"/>
     <aura:attribute name = "isLookup" type = "Boolean" default = "true"/>
+	<aura:attribute name = "isDnBCompanyId" type = "Boolean" default = "false"/>
     <!--validateDynamicRowForm -->
     <aura:method name="resetLookUpField" action="{!c.resetLookUpField}">
         <aura:attribute name="fieldName" type="String" /> 
@@ -12,6 +13,7 @@
     <aura:method name="validateLookUpField" action="{!c.validateLookUpField}"/>
     <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
     <aura:attribute name = "userWrapperList" type = "List" />
+	<aura:attribute name = "dandBCompanyWrapperList" type = "List" />
     <lightning:recordEditForm aura:id="form"
                               onload = "{!c.handleOnload}"
                               objectApiName="{!v.recordType}"
@@ -27,15 +29,28 @@
                 </aura:set>
             </aura:if>
             <aura:set attribute="else">
-                <lightning:select aura:id="validateLookups" name="selectUser"  class="customRequired"
-                                  label="Type" required="true" value="{!v.fieldName}" 
-                                  messageWhenValueMissing="Please Select User" onchange="{!c.handleOnSelect}"
-                                  disabled = "{!v.isDisabled}">
-                    <option value="" >Please select User</option>
-                    <aura:iteration items="{!v.userWrapperList}" var="user" indexVar="selectedIndex">
-                        <option value="{!user.userId}" >{!user.userName}</option>
-                    </aura:iteration>
-                </lightning:select>
+                     <aura:if isTrue="{!v.isDnBCompanyId}" >
+                    <lightning:select aura:id="validateLookups" name="selectDandCompany"  class="customRequired"
+                                      label="Type" required="true" value="{!v.fieldName}" 
+                                      messageWhenValueMissing="Please Select DandBCompany" onchange="{!c.handleOnSelect}"
+                                      disabled = "{!v.isDisabled}">
+                        <option value="" >Please select DandBCompany</option>
+                        <aura:iteration items="{!v.dandBCompanyWrapperList}" var="dnBCompany" indexVar="selectedIndex">
+                            <option value="{!dnBCompany.Id}" >{!dnBCompany.Name}</option>
+                        </aura:iteration>
+                    </lightning:select>
+                    <aura:set attribute="else">
+                        <lightning:select aura:id="validateLookups" name="selectUser"  class="customRequired"
+                                          label="Type" required="true" value="{!v.fieldName}" 
+                                          messageWhenValueMissing="Please Select User" onchange="{!c.handleOnSelect}"
+                                          disabled = "{!v.isDisabled}">
+                            <option value="" >Please select User</option>
+                            <aura:iteration items="{!v.userWrapperList}" var="user" indexVar="selectedIndex">
+                                <option value="{!user.userId}" >{!user.userName}</option>
+                            </aura:iteration>
+                        </lightning:select>
+                    </aura:set>
+                </aura:if> 
             </aura:set>
         </aura:if>
     </lightning:recordEditForm>
