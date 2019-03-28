@@ -44,7 +44,7 @@
                     <aura:if isTrue="{!v.isActive}">
                         <button class="slds-button slds-button_neutral slds-m-top_medium slds-m-right_medium rdna-button rdna-button-text" onclick="{!c.deactivateCad}" >Deactivate</button>
                         <aura:set attribute="else">  
-                            <button class="slds-button slds-button_neutral slds-m-top_medium slds-m-right_medium rdna-button rdna-button-text" disabled="true" >Wait...</button>
+                            <button class="slds-button slds-button_neutral slds-m-top_medium slds-m-right_medium rdna-button rdna-button-text" disabled="true" >Deactivating..</button>
                         </aura:set>
                     </aura:if>                    
                     
@@ -54,7 +54,7 @@
                         <aura:if isTrue="{!v.isActive}">
                             <button class="slds-button slds-button_neutral slds-m-top_medium slds-m-right_medium rdna-button rdna-button-text" onclick="{!c.cadActivation}" >Activate</button>
                             <aura:set attribute="else">  
-                                <button class="slds-button slds-button_neutral slds-m-top_medium slds-m-right_medium rdna-button rdna-button-text" disabled="true" >Wait...</button>
+                                <button class="slds-button slds-button_neutral slds-m-top_medium slds-m-right_medium rdna-button rdna-button-text" disabled="true" >Activating..</button>
                             </aura:set>
                         </aura:if>
                         
