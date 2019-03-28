@@ -1049,6 +1049,7 @@ global  without sharing class CadenceService {
                 }
             }catch(exception e){ 
                 
+            Contacts.flag =false;
             }
             
         }

@@ -120,6 +120,7 @@ public with sharing class CadenceController {
                 List<Sequence_Action__c> testcreateActionParticipants =CadenceService.createActionParticipants(objIdToAllCadActListMap, new Map<Id, SObject>(sObjectListToUpdate), objName);
             }
             if(sObjectListToUpdate !=  null && sObjectListToUpdate.size() > 0) {
+                contacts.flag=false;
                 update sObjectListToUpdate; 
             }
         }
@@ -150,18 +151,18 @@ public with sharing class CadenceController {
             
             // Filter condition for entry criteria 
             if(mapofCadenceWiseEntryCriterions.keyset().size() > 0)
-                query = query+ '(('+criteriaFilters(mapofCadenceWiseEntryCriterions,cadence)+')';
+                query = query+ '(('+criteriaFilters(mapofCadenceWiseEntryCriterions,cadence,true)+')';
             
             // Filter condition for exit criteria  
             if(mapofCadenceWiseExitCriterions.keyset().size() > 0)
-                query = query+ +' AND (NOT('+criteriaFilters(mapofCadenceWiseExitCriterions,cadence) +')))';
+                query = query+ +' AND (NOT('+criteriaFilters(mapofCadenceWiseExitCriterions,cadence,false) +')))';
             
         }
         System.debug('Query = '+ query);
         return query;
     }
     
-    public static String criteriaFilters( Map<Id, CriterionSet> mapofCadenceWiseEntryCriterions,Cadence__c cadence){
+    public static String criteriaFilters( Map<Id, CriterionSet> mapofCadenceWiseEntryCriterions,Cadence__c cadence,Boolean isEntry){
         DateTimeCriterionEvaluator dt = new DateTimeCriterionEvaluator();
         string query ='';
         if(mapofCadenceWiseEntryCriterions.keySet().size() > 0){
@@ -191,7 +192,8 @@ public with sharing class CadenceController {
                                  query = query.removeEndIgnoreCase(' AND ');
                                  else if(query.endsWithIgnoreCase(' OR '))
                                  query = query.removeEndIgnoreCase(' OR ');
-                            contactRole = mapofCriterion.get(num).value;
+                             	if(isEntry)
+                            	contactRole = mapofCriterion.get(num).value;
                         }else{
                              query = query + mapofCriterion.get(num).fieldName;
                         
@@ -389,11 +391,11 @@ public with sharing class CadenceController {
                 
                 // Filter condition for entry criteria 
                 if(mapofCadenceWiseEntryCriterions.keyset().size() > 0)
-                    query = query+ '(('+criteriaFilters(mapofCadenceWiseEntryCriterions,cadence)+')';
+                    query = query+ '(('+criteriaFilters(mapofCadenceWiseEntryCriterions,cadence,true)+')';
                 
                 // Filter condition for exit criteria  
                 if(mapofCadenceWiseExitCriterions.keyset().size() > 0)
-                    query = query+ +' AND (NOT('+criteriaFilters(mapofCadenceWiseExitCriterions,cadence) +')))';
+                    query = query+ +' AND (NOT('+criteriaFilters(mapofCadenceWiseExitCriterions,cadence,false) +')))';
             }
         }
         
@@ -421,13 +423,30 @@ public with sharing class CadenceController {
                 mapofCadenceActionCriterions = RuleCriterionMatcherHelper.getActionWiseCriterions(cadence.CadenceActions__r);	
             
             // Filter condition for entry criteria 
-            if(mapofCadenceWiseEntryCriterions.keyset().size() > 0)
-                query = query+ '(('+criteriaFilters(mapofCadenceWiseEntryCriterions,cadence)+')';
+            if(mapofCadenceWiseEntryCriterions.keyset().size() > 0){
+                 String isCriteriaChecked= criteriaFilters(mapofCadenceWiseEntryCriterions,cadence,true);
+                 if(isCriteriaChecked != null && isCriteriaChecked !=''){
+                    query = query+ '(('+isCriteriaChecked+')';
+                }
+            }
 
             // Filter condition for exit criteria  
-            if(mapofCadenceWiseExitCriterions.keyset().size() > 0)
-                query = query+ +' AND (NOT('+criteriaFilters(mapofCadenceWiseExitCriterions,cadence) +')))';
-            
+            if(mapofCadenceWiseExitCriterions.keyset().size() > 0){
+                String isCriteriaChecked= criteriaFilters(mapofCadenceWiseExitCriterions,cadence,false);
+                if(isCriteriaChecked != null && isCriteriaChecked !=''){
+                    if(query.endsWithIgnoreCase('Where ')){
+                        query = query+'NOT('+isCriteriaChecked +')';
+                    }
+                    else
+                    	query = query+' AND (NOT('+isCriteriaChecked +')))';    
+                }
+                else if(query.endsWithIgnoreCase('Where ')){
+                     query = query.removeEndIgnoreCase('Where ');
+                }
+                else{
+                    query =Query+')';
+                }
+            }
         }
 
         return query;
