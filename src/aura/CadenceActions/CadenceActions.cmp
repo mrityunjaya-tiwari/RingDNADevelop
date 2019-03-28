@@ -39,6 +39,7 @@
     <aura:attribute name="spinner" type="boolean" default="false"/>
     <aura:attribute name= "createAction" type="boolean" default="false"/>
     <aura:attribute name="ISLoad" type="boolean" default="false"/>
+    <aura:attribute name="SaveDisable" type="Boolean" default= "false"/>
     <aura:attribute name="UpdateFieldList" type="List"/>
     
     <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>
