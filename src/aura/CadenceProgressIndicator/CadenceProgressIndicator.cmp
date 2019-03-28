@@ -115,6 +115,7 @@
                                                             cadenceActionList="{!v.cadenceActionList}"
                                                             leadFieldList="{!v.leadFieldList}"  
                                                             caIdsList="{!v.caIdsList}"
+                                                  			SaveDisable = "{!v.SaveDisable}"
                                                             dbFieldList="{!v.dbFieldList}"
                                                             accountFieldList="{!v.accountFieldList}"
                                                             contactFieldList="{!v.contactFieldList}"/>
