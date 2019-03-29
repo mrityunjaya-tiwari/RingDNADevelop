@@ -51,29 +51,18 @@
         
         return dataTypeOperatorsMap[datatype];
     },
-    getuserWrapperList : function(component, event, helper) {
-        
-        var action = component.get("c.getUserWrapper");
+    getuserAndDnBWrapperList : function(component, event, helper) { 
+        var action = component.get("c.getUserAndDandBWrappers");
         action.setCallback(this, function(response){
             var status =  response.getState(); 
             if (status == 'SUCCESS'){
-                var userWrapperList = response.getReturnValue();
-                component.set('v.userWrapperList', userWrapperList);
+                var userAndDnBWrapperList = response.getReturnValue();                
+                component.set('v.dandBCompanyWrapperList', userAndDnBWrapperList.dandbWrapper);
+                component.set('v.userWrapperList', userAndDnBWrapperList.userWrapper);
+                
             }
         });
         $A.enqueueAction(action);
-        
-    },
-	getDandBCompanyWrapperList : function(component, event, helper) {
-        var action = component.get("c.getDandBCompanyWrapper");
-        action.setCallback(this, function(response){
-            var status =  response.getState(); 
-            if (status == 'SUCCESS'){
-                var dandBCompanyWrapperList = response.getReturnValue();
-                component.set('v.dandBCompanyWrapperList', dandBCompanyWrapperList);
-            }
-        });
-        $A.enqueueAction(action); 
         
     },
 })

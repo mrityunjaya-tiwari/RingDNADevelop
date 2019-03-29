@@ -11,13 +11,16 @@ public class LookupFieldController {
         @AuraEnabled public String Id;
     } 
 	
+    public class UserAndDandBWrappers{
+        @AuraEnabled public List<LookupFieldController.UserListWrapper> userWrapper;
+        @AuraEnabled public List<LookupFieldController.DandBCompanyListWrapper> dandbWrapper;
+    } 
+    
     @AuraEnabled
-    public static List<LookupFieldController.UserListWrapper> getUserWrapper(){
-        return CadenceService.getUserWrapperList();
-    }
-	
-	@AuraEnabled
-    public static List<LookupFieldController.DandBCompanyListWrapper> getDandBCompanyWrapper(){
-        return CadenceService.getDandBCompanyWrapperList();        
+    public static UserAndDandBWrappers getUserAndDandBWrappers(){
+        UserAndDandBWrappers userAndDandBList = New UserAndDandBWrappers();
+        userAndDandBList.userWrapper = CadenceService.getUserWrapperList();
+        userAndDandBList.dandbWrapper = CadenceService.getDandBCompanyWrapperList();
+        return userAndDandBList;
     }
 }
