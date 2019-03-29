@@ -30,12 +30,12 @@ global  without sharing class CadenceService {
     }
 	
 	public static List<LookupFieldController.DandBCompanyListWrapper> getDandBCompanyWrapperList(){
-        List<DandBCompany> dandBList = CadenceSelector.getDandBCompanyList();
+        List<SObject> dandBList = CadenceSelector.getDandBCompanyList();
         List<LookupFieldController.DandBCompanyListWrapper> dandBCompanyListWrapperList = New List<LookupFieldController.DandBCompanyListWrapper>();
-        for (DandBCompany dnBCompany : dandBList){
+        for (SObject dnBCompany : dandBList){
             LookupFieldController.DandBCompanyListWrapper dnBCompanyListWrapper = New LookupFieldController.DandBCompanyListWrapper();
-            dnBCompanyListWrapper.Name  = dnBCompany.Name;
-            dnBCompanyListWrapper.Id = dnBCompany.Id;
+            dnBCompanyListWrapper.Name  = String.valueof(dnBCompany.get('Name'));
+            dnBCompanyListWrapper.Id = String.valueof(dnBCompany.get('Id'));
             dandBCompanyListWrapperList.add(dnBCompanyListWrapper);
         }
         return dandBCompanyListWrapperList;
