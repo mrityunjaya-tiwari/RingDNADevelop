@@ -1,8 +1,7 @@
 ({
     createAction : function(component, event,helper) {
+        component.set('v.spinner', true);
         var newAct = helper.selectTemplateName(component, event,helper); 
-        //newAct.sobjectType = 'ActionWrapper';
-        
         var action = component.get("c.saveAction");
         var listTask = component.get("v.listTask");
         var wrapperTaskFields = component.get("v.wrapperTaskFields");
@@ -22,13 +21,10 @@
             var state = response.getState();
             if (state === "SUCCESS") { 
                 var actionId  = response.getReturnValue();
-				component.set("v.SaveDisable", true);
                 helper.viewDetails(component, event, actionId);	
-            }else{ 
             }
+            component.set('v.spinner', false);
         });
-        
-        //helper.validateActionForm(component, event);
         if (component.get('v.isValid') == true){
             $A.enqueueAction(action)
         }
@@ -79,9 +75,6 @@
             component.set('v.isActionTypeRequired',false);
         }      
     },
-    
-    
-    
     createObjectData: function(component, event) {
         var rowList = component.get("v.listTask");
         rowList.push({
@@ -97,7 +90,6 @@
         rowList.splice([listSize-1], 1);
         component.set("v.listTask", rowList);
     },
-    
     getData : function(component, event, helper, id) {
         component.set('v.spinner', true);
         var action = component.get('c.getActionData');
@@ -108,11 +100,8 @@
             var state = response.getState();
             if (state === "SUCCESS") {
                 var obj = response.getReturnValue();
-               
-                //component.set('v.newAction', obj.actionWrapper);
                 var object = obj.actionCls;
                 object.sobjectType = 'ActionWrapper';
-
                 if (object.type != 'Task' ){
                     var listOfTemplate = component.get("v.listEmailTemplate");
                     if (object.type == 'SMS'){
@@ -129,7 +118,6 @@
                         }
                     }
                 }
-                
                 component.set('v.newAction', object); 
                 component.set('v.recordName', object.name);
                 helper.updateActionType(component, event, helper);
@@ -147,7 +135,6 @@
                         component.set('v.spinner', false);
                     }), 500
                 );
-                
             }else{
                 component.set('v.spinner', false);
             }
