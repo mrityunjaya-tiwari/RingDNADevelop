@@ -101,7 +101,7 @@
                                             <aura:if isTrue="{!v.fieldDataType == 'Reference'}">
                                                 <div class="">
                                                     <aura:if isTrue="{!not(empty(v.userWrapperList))}">
-                                                    <aura:if isTrue="{!not(and(empty(v.userWrapperList),(empty(v.dandBCompanyWrapperList)) ))}">
+                                                    <aura:if isTrue="{!not(or(empty(v.userWrapperList),(empty(v.dandBCompanyWrapperList)) ))}">
                                                         <c:LookupFieldComponent aura:id="LookupFieldComponent" recordType="{#v.recordType}" isDisabled="{!v.isViewMode}" 
                                                                                           userWrapperList="{!v.userWrapperList}"
 																						  dandBCompanyWrapperList="{!v.dandBCompanyWrapperList}"
