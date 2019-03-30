@@ -4,7 +4,7 @@ public class LookupFieldControllerTest {
     public static void getUserWrapperTest(){
         LookupFieldController.UserListWrapper userwrap;
         Test.startTest();
-        LookupFieldController.getUserWrapper();
+        LookupFieldController.getUserAndDandBWrappers();
         Test.stopTest();
     }
 }
