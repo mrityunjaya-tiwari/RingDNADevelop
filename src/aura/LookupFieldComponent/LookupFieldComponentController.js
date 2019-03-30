@@ -11,8 +11,13 @@
         }
         var updatedFieldName = component.get("v.fieldName");
         if (updatedFieldName == 'CreatedById' || updatedFieldName == 'LastModifiedById' || updatedFieldName == 'OwnerId'){
+        if (updatedFieldName == 'CreatedById' || updatedFieldName == 'LastModifiedById' || updatedFieldName == 'OwnerId' || updatedFieldName == 'DandbCompanyId'){
             component.set('v.isLookup', "false");
+            component.set('v.isDnBCompanyId', "false");
             component.set("v.fieldName", parentId);
+            if(updatedFieldName == 'DandbCompanyId'){
+                component.set('v.isDnBCompanyId', "true");
+            }
         }else{
             component.set('v.isLookup', "true");
         }

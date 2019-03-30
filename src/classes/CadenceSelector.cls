@@ -199,6 +199,16 @@ public with sharing class CadenceSelector {
     public static List<User> getUserList(){
         return [select id, Name  from user where ReceivesAdminInfoEmails = true];
     }
+	
+	public static List<SObject> getDandBCompanyList(){ 
+        Schema.sObjectType sObjectName = Schema.getGlobalDescribe().get(CadenceConstants.DB_OBJECT_NAME);
+        if (sObjectName != null){
+            String query = 'Select id, Name  from ' + CadenceConstants.DB_OBJECT_NAME ;
+            return Database.query(query); 
+        }else{
+            return new List<SObject>();
+        }
+    }
     
      /**
      * @description - Get Task List with Action On Participant.
