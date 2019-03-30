@@ -15,7 +15,9 @@ public with sharing class CadenceConstants {
     public static final String CONTRACT_OBJECT_NAME = 'Contract';
     public static final String PRICE_BOOK_OBJECT_NAME = 'Pricebook2';
     public static final String CAMPAIGN_OBJECT_NAME = 'Campaign';
-    public static final String PARTNER_ACCOUNT_OBJECT_NAME = 'Partner Account';
+    public static final String PARTNER_ACCOUNT_OBJECT_DISPLAY_NAME = 'Partner Account';
+    public static final String PARTNER_ACCOUNT_OBJECT_NAME = 'PartnerAccount';
+    
     public static final String OPPORTUNITY_ROLE_OBJECT_NAME = 'OpportunityContactRole';
     
 	//cadence criterion types
