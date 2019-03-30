@@ -128,7 +128,7 @@ global  without sharing class CadenceService {
                         if(objectlist[0] == CadenceConstants.OPPORTUNITY_OBJECT_NAME && objectStr == CadenceConstants.ACCOUNT_OBJECT_NAME){
                             IsPartnerAccount = true;
                             criterionWrapperPartnerAccount = new CriterionWrapper();
-                            criterionWrapperPartnerAccount.GroupName = CadenceConstants.PARTNER_ACCOUNT_OBJECT_NAME;
+                            criterionWrapperPartnerAccount.GroupName = CadenceConstants.PARTNER_ACCOUNT_OBJECT_DISPLAY_NAME;
                         }
                         
                         SObjectType r = dsc.getSobjectType(); 
@@ -186,13 +186,13 @@ global  without sharing class CadenceService {
                 criterionWrapper.fieldsDetail = fieldsWithLabels;
                 fieldList.add(criterionWrapper);
                 
-                if(IsPartnerAccount && Schema.getGlobalDescribe().get('Opportunity').getDescribe().fields.getMap().get('PartnerAccountId') != null){
+                if(IsPartnerAccount && Schema.getGlobalDescribe().get(CadenceConstants.OPPORTUNITY_OBJECT_NAME).getDescribe().fields.getMap().get('PartnerAccountId') != null){
                     for(Criterion c : fieldsWithLabels){
                         String[] fields = c.fieldName.split('\\.');
                         if(fields.size() > 0){
                             Criterion criterion  = new Criterion();
                             criterion.id=c.id;
-                            criterion.fieldName='PartnerAccount.' + fields[1];
+                            criterion.fieldName= CadenceConstants.PARTNER_ACCOUNT_OBJECT_NAME + '.' + fields[1];
                             criterion.fieldLabel=c.fieldLabel;
                             criterion.fieldDataType=c.fieldDataType;
                             criterion.operation=c.operation;
@@ -578,6 +578,7 @@ global  without sharing class CadenceService {
         List<Participant_Sequence_History__c> newSequenceHistory = new List<Participant_Sequence_History__c>(); 
         map<string,List<String>> mapOfOppcontact =  new map<string,List<String>>();
         map<String,Sobject> mapOfContacts= new Map<String,Sobject>();
+        map<String,Sobject> mapOfContactsWithSequenceIsNull = new Map<String,Sobject>();
         List<Contact> oppContactList= new List<Contact>();
         
         if(objName.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_OBJECT_NAME)){
@@ -593,10 +594,14 @@ global  without sharing class CadenceService {
             System.debug('listOfContactids:##'+listOfContactids);
           
             if(listOfContactids.size() > 0){
-                for(Contact con : [Select id,Cadence_Id__c,isActivated__c,EntranceCriteria_Matched_Date__c,Email from Contact Where (Cadence_ID__c = null) AND Id In :listOfContactids]){
+                //for(Contact con : [Select id,Cadence_Id__c,isActivated__c,EntranceCriteria_Matched_Date__c,Email from Contact Where (Cadence_ID__c = null) AND Id In :listOfContactids]){
+                for(Contact con : [Select id,Cadence_Id__c,isActivated__c,EntranceCriteria_Matched_Date__c,Email from Contact Where Id In :listOfContactids]){
                     mapOfContacts.put(con.id,(Sobject)con);
+                    if(con.Cadence_ID__c == null){
+                        mapOfContactsWithSequenceIsNull.put(con.id,(Sobject)con);
+                    }
                 }
-            }     
+            }
         }
         
         //Updating the obj list with cadences 
@@ -619,8 +624,8 @@ global  without sharing class CadenceService {
                                 if(CadenceService.mapOfOpportunityRole.containskey(oppIds)){
                                     if(setOfMatchRole.contains(associateContactofOpp)){
                                         Contact contSobj = new Contact();
-                                        if(mapOfContacts.containskey(associateContactofOpp)){
-                                             contSobj =(Contact)UpdateSequenceOnParticipant(mapOfContacts.get(associateContactofOpp),cad);
+                                        if(mapOfContactsWithSequenceIsNull.containskey(associateContactofOpp)){
+                                             contSobj =(Contact)UpdateSequenceOnParticipant(mapOfContactsWithSequenceIsNull.get(associateContactofOpp),cad);
                                         }
                                         if(contSobj != null && contSobj.isActivated__c) {
                                             sObjectsToProcess.add(contSobj);
@@ -630,8 +635,8 @@ global  without sharing class CadenceService {
                                 }
                                 else{
                                     Contact contSobj = new Contact();
-                                    if(mapOfContacts.containskey(associateContactofOpp)){
-                                         contSobj =(Contact)UpdateSequenceOnParticipant(mapOfContacts.get(associateContactofOpp),cad);
+                                    if(mapOfContactsWithSequenceIsNull.containskey(associateContactofOpp)){
+                                         contSobj =(Contact)UpdateSequenceOnParticipant(mapOfContactsWithSequenceIsNull.get(associateContactofOpp),cad);
                                     }
                                     if(contSobj != null && contSobj.isActivated__c) {
                                         sObjectsToProcess.add(contSobj);
@@ -696,8 +701,8 @@ global  without sharing class CadenceService {
                                     if(CadenceService.mapOfOpportunityRole.containskey(oppIds) ){
                                         if(setOfMatchRole.contains(associateContactofOpp)){
                                             Sobject contSobj;
-                                            if(mapOfContacts.containskey(associateContactofOpp)){
-                                                contSobj =UpdateSequenceOnParticipant(mapOfContacts.get(associateContactofOpp),cad);
+                                            if(mapOfContactsWithSequenceIsNull.containskey(associateContactofOpp)){
+                                                contSobj =UpdateSequenceOnParticipant(mapOfContactsWithSequenceIsNull.get(associateContactofOpp),cad);
                                             }
                                             if(contSobj != null && (Boolean)contSobj.get(nameSpace + 'isActivated__c')) {
                                                 sObjectsToProcess.add((Contact)contSobj);
@@ -706,8 +711,8 @@ global  without sharing class CadenceService {
                                         }
                                     }else{
                                         Sobject contSobj;
-                                        if(mapOfContacts.containskey(associateContactofOpp)){
-                                            contSobj =UpdateSequenceOnParticipant(mapOfContacts.get(associateContactofOpp),cad);
+                                        if(mapOfContactsWithSequenceIsNull.containskey(associateContactofOpp)){
+                                            contSobj =UpdateSequenceOnParticipant(mapOfContactsWithSequenceIsNull.get(associateContactofOpp),cad);
                                         }
                                         if(contSobj != null && (Boolean)contSobj.get(nameSpace + 'isActivated__c')) {
                                             sObjectsToProcess.add((Contact)contSobj);
@@ -737,8 +742,8 @@ global  without sharing class CadenceService {
                                     setOfMatchRole = CadenceService.mapOfOpportunityRole.get(oppIds);
                                     if(CadenceService.mapOfOpportunityRole.containskey(oppIds)){
                                         if(setOfMatchRole.contains(associateContactofOpp)){
-                                            if(mapOfContacts.containskey(associateContactofOpp)){
-                                            contSobj =(Contact)UpdateSequenceOnParticipant(mapOfContacts.get(associateContactofOpp),cad);
+                                            if(mapOfContactsWithSequenceIsNull.containskey(associateContactofOpp)){
+                                                contSobj =(Contact)UpdateSequenceOnParticipant(mapOfContactsWithSequenceIsNull.get(associateContactofOpp),cad);
                                             }
                                             if(contSobj != null && contSobj.isActivated__c) {
                                                 sObjectsToProcess.add(contSobj);
@@ -747,8 +752,8 @@ global  without sharing class CadenceService {
                                         }
                                     }
                                     else{
-                                        if(mapOfContacts.containskey(associateContactofOpp)){
-                                            contSobj =(Contact)UpdateSequenceOnParticipant(mapOfContacts.get(associateContactofOpp),cad);
+                                        if(mapOfContactsWithSequenceIsNull.containskey(associateContactofOpp)){
+                                            contSobj =(Contact)UpdateSequenceOnParticipant(mapOfContactsWithSequenceIsNull.get(associateContactofOpp),cad);
                                         }
                                         if(contSobj != null && contSobj.isActivated__c) {
                                             sObjectsToProcess.add(contSobj);
@@ -1303,7 +1308,7 @@ global  without sharing class CadenceService {
                         if(objectlist[0] == CadenceConstants.OPPORTUNITY_OBJECT_NAME && objectStr == CadenceConstants.ACCOUNT_OBJECT_NAME){
                             IsPartnerAccount = true;
                             criterionWrapperPartnerAccount = new CriterionWrapper();
-                            criterionWrapperPartnerAccount.GroupName = CadenceConstants.PARTNER_ACCOUNT_OBJECT_NAME;
+                            criterionWrapperPartnerAccount.GroupName = CadenceConstants.PARTNER_ACCOUNT_OBJECT_DISPLAY_NAME;
                         }
                         
                         SObjectType r = dsc.getSobjectType(); 
