@@ -31,8 +31,8 @@
     handleOnSelect:function(component, event, helper){
         try{
             var ddElement  = component.find("validateLookups");
-            var value = ddElement.get("v.value");
-            if (value == 'CreatedById' || value == 'LastModifiedById' || value == 'OwnerId' ){
+            var value = ddElement.get("v.value"); 
+            if (value == 'CreatedById' || value == 'LastModifiedById' || value == 'OwnerId' || value == ""){
                 $A.util.removeClass(ddElement, "customRequired");
                 $A.util.addClass(ddElement, "customRequiredMessage");
                 $A.util.addClass(ddElement, "slds-has-error slds-input:active");
