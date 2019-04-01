@@ -198,6 +198,7 @@ global  without sharing class CadenceService {
                             criterion.operation=c.operation;
                             criterion.value=c.value;
                             criterion.listPicklistValues=c.listPicklistValues;
+                            criterion.picklistApiNameAndValues=c.picklistApiNameAndValues;
                             criterionWrapperPartnerAccount.fieldsDetail.add(criterion);
                         }
                     }
@@ -1371,6 +1372,7 @@ global  without sharing class CadenceService {
                             criterion.operation=c.operation;
                             criterion.value=c.value;
                             criterion.listPicklistValues=c.listPicklistValues;
+                            criterion.picklistApiNameAndValues=c.picklistApiNameAndValues;
                             criterionWrapperPartnerAccount.fieldsDetail.add(criterion);
                         }
                     }
