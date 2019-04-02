@@ -76,6 +76,17 @@ public class RingDNAApiCallouts {
         }
         return smsTemplatesData;
     } 
+    public List<Object> getSMSTemplatesUpdated() {
+        String uri = host + '/' + BASE_URL + '/' + SMS_TEMPLATES_PATH;
+        String endpoint = uri + '?' + 'sessionId='+ sessionid + '&' +'accountId=' + accountId;
+        system.debug('endpoint ' + endpoint);
+        if(sessionId == null || host == '') {
+            return New List<Object>();
+        }
+		HTTPResponse httpResponse = getResponse(HTTP_METHOD, endpoint, sessionId);
+        List<Object> jsonList = (List<Object>)JSON.deserializeUntyped(httpResponse.getBody());
+        return jsonList;
+    } 
     
     public Map<String, String> getVoicemailDrops() {
         
