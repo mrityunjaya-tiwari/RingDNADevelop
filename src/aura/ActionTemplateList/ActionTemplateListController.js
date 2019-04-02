@@ -32,8 +32,11 @@
             // ----------------------------
             
         } else if ( actionName == 'View') {
-            alert('view');
-            
+            component.set('v.isModal', true);
+            var newAction = component.get('v.newAction');
+            component.set('v.actionType', newAction.type);
+            component.set('v.actionName', row.name);
+            component.set('v.actionDesc', row.template);
         }
     },
     
