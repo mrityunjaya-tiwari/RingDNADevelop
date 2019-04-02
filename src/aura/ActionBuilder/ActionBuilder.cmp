@@ -1,0 +1,134 @@
+<aura:component controller="ActionDetailController" implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction,force:appHostable" access="global">
+    
+    <!-- Disabled property for action type--> 
+    <aura:attribute name = "disableActionType" type = "Boolean" default = "false"/>
+    <!-- Disabled property for activationType type-->
+    <aura:attribute name = "disableActivationType" type = "Boolean" default = 'true'/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <aura:attribute name="UpdateFieldList" type="List"/>
+    
+    <!--Action Objects -->
+    <aura:attribute name="newAction" type="Action" default="{ 'sobjectType': 'ActionWrapper'}"/>
+    <!--Task Objects -->
+    <aura:attribute name="taskObj" type="Task" default="{ 'sobjectType': 'Task'}"/> 
+    <!--Wrapper class having Task fields detail -->
+    <aura:attribute name="wrapperTaskFields" type="object"/>
+    <!--Task object list -Iterated to add multiple row(Multiple Task fields) -->
+    <aura:attribute name="listTask" type="List"/>
+    <!--Validation attribute -->
+    <aura:attribute name="isActionTypeRequired" type="boolean" default='true' />
+    <aura:attribute name="isValid" type="boolean" default='true' />
+    <aura:attribute name="isValidationError" type="boolean" default='false' />
+    <aura:attribute name="ValidationError" type="String" default='Validation Error' />
+    <!--For edit page-->
+    <aura:attribute name="recordId" type="Id"/>
+    <aura:attribute name="recordName" type="String" default='New Sequence Action'/>
+    <aura:attribute name="isNew" type="Boolean" default='false'/>
+    <aura:attribute name="themeName" type="String"/>
+    <!--create a component attributs -->
+    <aura:attribute name="spinner" type="boolean" default="false"/>
+    <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>
+    <aura:attribute name="activationtypeList" type="List" default="['Automatic', 'Manual']" />
+    
+    <aura:attribute name="currentStep" type="string" default="1"/>
+    <aura:attribute type="List" name="rowActionTemplateList"/>
+    
+    <!-- PAGE HEADER -->
+    <div class="slds-page-header" style="height:550px;background-color: #ffffff">
+        <div class="slds-grid">
+            <div>
+                <img class = "rdna-logo" src="{!$Resource.cadence_icons + '/rdna-logo/rdna-logo@2x.png'}"/>
+            </div>
+            <div class="slds-col slds-has-flexi-truncate slds-m-left_small">
+                <!-- HEADING AREA -->
+                <p class="slds-line-height_reset rdna-header-small slds-p-left_xx-small">Sequence Actions</p>
+                <h1 class="slds-page-header__title slds-m-right_small slds-align-middle slds-truncate rdna-header-large"  title="New Action">{!v.recordName}</h1>
+                <!-- / HEADING AREA -->
+            </div>
+            <div>
+                <a href="javascript:void(0)" onclick="{!c.clickBack}" class="rdna-button-text slds-text-align_center slds-m-top_large slds-p-left_large slds-p-right_large">back</a>               
+            </div>    
+            <div>
+                <lightning:button class="rdna-button rdna-button-text slds-text-align_center slds-m-top_large slds-p-left_large slds-p-right_large" aura:id="cancel" label="Cancel" onclick="{!c.onCancel}"/>
+            </div>
+            <div>
+                <lightning:button class="rdna-button rdna-button-text slds-text-align_center slds-m-top_large slds-p-left_large slds-p-right_large" aura:id="deleteActions" label="Save" onclick="{!c.createAction}"/>
+            </div>
+        </div>
+        
+        <!-- Body Start -->
+        <div class="slds-box_xx-small">
+            <fieldset class="slds-form-element slds-form_compound">
+                <!-- CREATE NEW ACTION FORM -->
+                <aura:if isTrue = "{!v.currentStep == '1' || v.currentStep == 1}" >
+                    <form class="slds slds-form slds-m-left_large">
+                        
+                        <p class="slds-page-header__row slds-m-top_large slds-truncate slds-align_absolute-center rdna-sub-header-bold" >Action Details</p>
+                        <p class="slds-align_absolute-center slds-m-bottom_large rdna-sub-header" style="padding-top:15px;">Enter the details of your new action which can be added to any sequence list.</p>
+                        
+                        <div class="slds-form-element__row slds-p-top_small slds-align_absolute-center">
+                            <div class="slds-form-element__control slds-size_1-of-4 ">
+                                <lightning:input aura:id="formValidationId" label="Name"
+                                                 name="actionname"
+                                                 value="{!v.newAction.name}"
+                                                 placeholder = "Enter Action Name"
+                                                 messageWhenBadInput = "Please Enter Name"
+                                                 required="true"/> 
+                            </div>                                                
+                        </div>                    
+                        <span class="rdna-template-bold slds-p-top_medium slds-page-header__row slds-text-title_bold slds-truncate slds-align_absolute-center">Action Types</span>
+                        <span class="rdna-styling slds-align_absolute-center">Choose the type of action you want to build.</span>
+                        <div class="slds-form-element__row slds-p-top_small">
+                            
+                            <div class="rdna-div slds-align_absolute-center" required="true" messageWhenValueMissing="Please Select Action Type." disabled = "{!v.disableActionType}">
+                                <a onclick="{!c.createCallAction}" disabled = "{!v.disableActionType}">              
+                                    <aura:if isTrue="{!v.newAction.type == 'Call'}">
+                                        <img class = "actions-icon" src="{!$Resource.cadence_icons + '/action-icons/select/call.png'}"/> 
+                                        <aura:set attribute="else">
+                                            <img class = "actions-icon" src="{!$Resource.cadence_icons + '/action-icons/default/call.png'}"/>
+                                        </aura:set>
+                                    </aura:if>
+                                </a>
+                                <a onclick="{!c.createEmailAction}" disabled = "{!v.disableActionType}">
+                                    <aura:if isTrue="{!v.newAction.type == 'Email'}">
+                                        <img class = "actions-icon rdna-icon" src="{!$Resource.cadence_icons + '/action-icons/select/email.png'}"/> 
+                                        <aura:set attribute="else">
+                                            <img class = "actions-icon rdna-icon" src="{!$Resource.cadence_icons + '/action-icons/default/email.png'}"/>
+                                        </aura:set>
+                                    </aura:if>
+                                </a>                             
+                                <a onclick="{!c.createSMSAction}" disabled = "{!v.disableActionType}">
+                                    <aura:if isTrue="{!v.newAction.type == 'SMS'}">
+                                        <img class = "actions-icon rdna-icon" src="{!$Resource.cadence_icons + '/action-icons/select/sms.png'}"/> 
+                                        <aura:set attribute="else">
+                                            <img class = "actions-icon rdna-icon" src="{!$Resource.cadence_icons + '/action-icons/default/sms.png'}"/>
+                                        </aura:set>
+                                    </aura:if>
+                                </a>                               
+                                <a onclick="{!c.createTaskAction}" disabled = "{!v.disableActionType}">
+                                    <aura:if isTrue="{!v.newAction.type == 'Task'}">
+                                        <img class = "actions-icon rdna-icon" src="{!$Resource.cadence_icons + '/action-icons/select/task.png'}"/> 
+                                        <aura:set attribute="else">
+                                            <img class = "actions-icon rdna-icon" src="{!$Resource.cadence_icons + '/action-icons/default/task.png'}"/>
+                                        </aura:set>
+                                    </aura:if>
+                                </a>                                                      
+                            </div>                    
+                        </div>
+                    </form>
+                </aura:if>
+                <aura:if isTrue = "{!v.currentStep == '2' || v.currentStep == 2}" >
+                    <div>
+                        <p class="slds-page-header__row slds-m-top_large slds-truncate slds-align_absolute-center rdna-sub-header-bold" >SMS Templates</p>
+                        <p class="slds-align_absolute-center  rdna-sub-header" style="padding-top:15px;">Create pre-configured SMS Templates.</p>
+                        <p class="slds-align_absolute-center slds-m-bottom_large rdna-sub-header-small" style="padding-top:5px;">There are currently no pre-configured SMS Templates associated to this account. (Optional) </p>
+                        <c:ActionTemplateList newAction="{!v.newAction}" spinner="{!v.spinner}"
+                                              rowActionTemplateList="{!v.rowActionTemplateList}"/>
+                    </div>
+                </aura:if>
+            </fieldset>
+        </div>
+    </div>
+    
+</aura:component>

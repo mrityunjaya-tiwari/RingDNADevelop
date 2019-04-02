@@ -1,0 +1,229 @@
+.THIS .slds-icon-text-default {
+    fill: rgb(37, 122, 249); 
+}
+
+.THIS .rdna-logo{
+    padding-top : 8px;
+    width : 32px;
+    height :40px;
+}
+
+/* Sub Header*/
+.THIS .rdna-sub-header-bold{
+    font-family: Logical;
+    font-weight: bold;
+    font-size: 24px;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.33;
+    letter-spacing: normal;
+    text-align: center;
+    color: #000000;
+}
+.THIS .rdna-sub-header{
+    font-family: Logical;
+    font-size: 24px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.33;
+    letter-spacing: normal;
+    text-align: center;
+    color: #000000;
+}
+
+/*Header css */
+.THIS .rdna-header-small {
+    height: 14px;
+    font-family: Logical;
+    font-size: 12px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    color: #000000;
+}
+.THIS .rdna-header-large { 
+    width: 353px;
+    height: 46px;
+    font-family: Logical;
+    font-size: 38px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    color: #000000;
+}
+/*Header css */
+
+/*-----table css---------------------------------*/
+.THIS .cols-table table thead tr th {
+    font-family: Logical !important;
+    font-size: 11px !important;
+    font-weight: normal !important;
+    font-style: normal !important;
+    font-stretch: normal !important;
+    line-height: 1.82 !important;
+    letter-spacing: normal !important;
+    color: #000000 !important;
+}
+.THIS .cols-table table tbody tr td {
+    border: none !important;
+    font-family: Logical !important;
+    font-size: 14px !important;
+    line-height: 1.43 !important;
+}
+
+.THIS .cols-table table tbody tr th {
+    border: none  !important;  
+    font-family: Logical !important;
+    font-size: 14px !important;
+    color: #0066ff !important;
+    line-height: 1.43 !important;
+}
+
+.THIS .rdna-table-row{
+    font-family: Logical;
+    font-size: 14px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.43;
+    letter-spacing: normal;
+    color: #0066ff;
+}
+/*-----table css---------------------------------*/
+
+/*Button*/
+.THIS .rdna-button{
+    width: 93.8px;
+    height: 30px;
+    border-radius: 6px;
+    border: solid 1px #979797;
+    
+    /*border: 1.4px solid #0066ff !important;
+    border-color: #0066ff  !important;
+    border-radius: 6px 6px 6px 6px  !important;
+    background: #fafafa !important;*/
+}
+.THIS .rdna-button-text{
+    font-family: Logical;
+    font-size: 14px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    text-align: center;
+    color: #979797;
+}
+
+/*Updated all input box(Default class is updated)*/
+.THIS .slds-input {
+    width: 300px !important;
+    height: 30px !important;    
+    border: solid 1px #979797 !important;
+    font-family: Logical !important;
+    font-size: 14px !important;
+    font-weight: normal !important;
+    font-style: normal !important;
+    font-stretch: normal !important;
+    line-height: normal !important;
+    letter-spacing: normal !important;
+    color: #000000 !important;
+    background-color: #ffffff !important;
+    border-radius: 6px !important;
+}
+
+/*Updated all input dropdown(Default class is updated)*/
+.THIS .slds-select {
+    width: 300px !important;
+    height: 30px !important;    
+    border: solid 1px #979797 !important;
+    font-family: Logical !important;
+    font-size: 14px !important;
+    font-weight: normal !important;
+    font-style: normal !important;
+    font-stretch: normal !important;
+    line-height: normal !important;
+    letter-spacing: normal !important;
+    color: #000000 !important;   
+    border-radius: 6px !important;
+}
+
+@font-face {
+    font-family: 'Logical';
+    src: url(/resource/RDNACadence5__LogicalFontRegular) format('woff');
+}
+
+.THIS .Oval {
+    width: 20px;
+    height: 29px;
+    margin-top: 14px;
+    margin-left: 16px;
+}
+/* Action template styling */
+.THIS .rdna-template-bold{
+    width: 267px;
+    height: 44px;
+    font-family: Logical;
+    font-size: 14px;
+    font-weight: bold;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.57;
+    letter-spacing: normal;
+    text-align: center;
+    color: #000000;
+}
+/*Action template*/
+.THIS .rdna-styling {
+    width: 267px;
+    height: 44px;
+    font-family: Logical;
+    font-size: 14px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.57;
+    letter-spacing: normal;
+    text-align: center;
+    color: #000000;
+}
+
+.THIS .option-style{
+    border-radius: 10px;
+    background-color: #ffffff;
+}
+.THIS .actions-icon{
+    width: 86px;
+    height: 86px;   
+    object-fit: contain;
+}
+.THIS .rdna-icon{
+    margin-left: 36px;
+}
+/*.THIS .slds-dropdown-trigger.slds-is-open .slds-listbox__option.slds-has-focus {
+background-color: blue;
+}
+
+.THIS .slds-input:focus, .THIS .slds-input:active {
+border-color: cyan;
+box-shadow: 0 0 3px green;
+}
+
+.THIS .select-auto-width {
+border-radius: 3px;
+background-color: red;
+}
+
+.THIS .select-auto-width > .slds-form-element__control {
+border-radius: 3px;
+background-color: red;
+}
+.THIS .select-auto-width > .slds-form-element__control > .slds-select_container{
+border-radius: 3px;
+background-color: red;
+} */
