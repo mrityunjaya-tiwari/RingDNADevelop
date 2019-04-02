@@ -6,12 +6,12 @@ public with sharing class ActionDetailController {
     @AuraEnabled
     public static ActionDetailController.ActionWrapper getActionWrapper() {
         ActionDetailController.ActionWrapper initActionObj = new ActionDetailController.ActionWrapper();
-        initActionObj.listEmailTemplate = CadenceService.getEmailTemplates();
+        /*initActionObj.listEmailTemplate = CadenceService.getEmailTemplates();
         if(!test.isRunningTest()){
             initActionObj.listSmsTemplate = CadenceService.getSMSTemplates();
             initActionObj.listCallTemplate = CadenceService.getCallTemplates();
             initActionObj.listVMTemplate = CadenceService.getVMTemplates();
-        }
+        }*/
         initActionObj.wrapperTaskFields = CadenceService.getFields(TASK_OBJECT_STRING);
         initActionObj.action = new Action();
         return initActionObj; 
