@@ -127,3 +127,29 @@
     border-top-right-radius: 6px;
     border-top-left-radius: 6px;
 }
+.THIS .slds-button{
+    font-family: Logical;
+    font-size: 14px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    text-align: center;
+    color: #979797;
+}
+.THIS .slds-button_neutral{
+    width: 88px;
+    height: 30px;
+    border-radius: 6px;
+    border: solid 1px #0066ff;
+    font-family: Logical;
+    font-size: 14px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    text-align: center;
+    color: #0066ff;
+}

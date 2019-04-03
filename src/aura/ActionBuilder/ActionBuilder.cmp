@@ -56,7 +56,7 @@
             </div>
             <aura:if isTrue = "{!v.currentStep == '2' || v.currentStep == 2}" >
             <div>
-                <lightning:button class="rdna-button rdna-button-text slds-text-align_center slds-m-top_large slds-p-left_large slds-p-right_large" aura:id="deleteActions" label="Save" onclick="{!c.createAction}"/>
+                <lightning:button class="rdna-button-save rdna-button-text-save slds-text-align_center slds-m-top_large slds-p-left_large slds-p-right_large slds-m-right_large" aura:id="deleteActions" label="Save" onclick="{!c.createAction}"/>
             </div>
             </aura:if>    
         </div>
