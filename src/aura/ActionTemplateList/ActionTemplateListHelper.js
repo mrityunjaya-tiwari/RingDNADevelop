@@ -4,7 +4,7 @@
             {label: 'SMS Template Name', fieldName: 'name', type: 'text' ,sortable:'true'},
             {label: 'Team', fieldName: 'teams', type: 'text',sortable:'true'}, 
             {type: "button", typeAttributes: {
-                label: 'View',
+                label: 'Preview',
                 name: 'View',
                 variant:'base',
                 title: 'View',

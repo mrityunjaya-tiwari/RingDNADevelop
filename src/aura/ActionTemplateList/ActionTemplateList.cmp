@@ -20,12 +20,12 @@
     
     <aura:handler name="init" value="{!this}" action="{!c.initActionTemplateTable}"/>
     <aura:handler name="cadencePagination" event="c:CadPagination" action="{!c.handleComponentEvent}"/>
-    <div class="slds-grid">
+    <div class="slds-grid slds-m-left_large">
         <div class="slds-m-top_medium slds-col">
             <span class="rdna-header-small">{!v.totalNumberOfRows} Items • Sorted by {!v.sortedBy} </span>
         </div>
     </div>
-    <div class="slds-grid">
+    <div class="slds-grid slds-m-left_large slds-m-right_large">
         <lightning:datatable 
                              class= "cols-table"
                              data="{! v.actionTemplateList }" 
@@ -38,7 +38,7 @@
                              sortedDirection="{!v.sortedDirection}"
                              />
     </div>
-    <div class="rdna-bottom-padding">
+    <div class="rdna-bottom-padding  slds-m-left_medium">
         <c:Pagination total="{!v.totalNumberOfRows}" pageOffset="{!v.rowsToLoad}"/>
     </div>
     <aura:if isTrue="{!v.isModal}">
