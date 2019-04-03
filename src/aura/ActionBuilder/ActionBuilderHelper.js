@@ -1,6 +1,5 @@
 ({
-    createAction : function(component, event,helper) {
-        
+    createAction : function(component, event,helper) {       
         var newAct = component.get("v.newAction");
         newAct.sobjectType = 'ActionWrapper';
         var action = component.get("c.saveAction");
@@ -67,54 +66,6 @@
         });
         $A.enqueueAction(action);
     },
-    
-    createCallAction : function(component, event, helper){
-        helper.validateActionName(component, event,helper);
-        component.set('v.newAction.type','Call'); 
-        component.set('v.newAction.activationType','Manual');
-        component.set('v.disableActivationType', true);
-        component.set("v.isActionTypeRequired", false);
-        
-        var myUserContext = component.get("v.themeName");
-        if(myUserContext == 'Theme3' || myUserContext == 'Theme4t' || myUserContext == 'Theme4d') {
-            window.location = '/apex/CadenceActionList';
-        } 
-        else if(myUserContext == undefined) {
-            var evt = $A.get("e.force:navigateToComponent");
-            evt.setParams({
-                componentDef : "c:CadenceActionList" ,
-                componentAttributes : {
-                    "recordId" : id
-                }
-            });
-            evt.fire()  
-        }
-    },
-    createEmailAction : function(component, event, helper){
-        helper.validateActionName(component, event,helper);
-        component.set('v.newAction.type', 'Email');
-        component.set("v.isActionTypeRequired", true);
-        component.set('v.disableActivationType', false);
-        
-    },
-    createSMSAction : function(component, event, helper){
-        helper.validateActionName(component, event,helper);
-        component.set('v.newAction.type', 'SMS');
-        component.set('v.newAction.activationType','Manual');
-        component.set('v.currentStep','2');
-        // we don't add any thing to select activation type , its always manual type
-        component.set('v.disableActivationType', true);
-        // use to validate that template is required or not
-        component.set("v.isActionTypeRequired", false);
-    },
-    createTaskAction : function(component, event, helper){
-        helper.validateActionName(component, event,helper);
-        component.set('v.newAction.type', 'Task');
-        component.set('v.newAction.activationType','Manual');
-        component.set('v.disableActivationType', true);
-        component.set("v.isActionTypeRequired", false);
-    },
-    
     viewDetails : function(cmp, event, id) {        
         var myUserContext = cmp.get("v.themeName");
         if(myUserContext == 'Theme3' || myUserContext == 'Theme4t' || myUserContext == 'Theme4d') {
@@ -132,12 +83,17 @@
         }
     },
     onCancel: function(component, event){
-        var myUserContext = component.get("v.themeName"); 
-        
+        var myUserContext = component.get("v.themeName");        
         if(myUserContext == 'Theme3' || myUserContext == 'Theme4t' || myUserContext == 'Theme4d') {
-            window.history.go(-1);
+            window.location = '/apex/CadenceActionList';
         } else if(myUserContext == undefined) {
-            window.history.go(-1);
+             var evt = $A.get("e.force:navigateToComponent");
+            evt.setParams({
+                componentDef : "c:CadenceActionList" ,
+                componentAttributes : {
+                }
+            });
+            evt.fire();
         }
     },
     validateActionName: function(component, event, helper){

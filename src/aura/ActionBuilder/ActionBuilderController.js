@@ -24,18 +24,6 @@
         });
         $A.enqueueAction(action)
     },
-    createCallAction : function(component, event,helper) {
-        helper.createCallAction(component, event,helper);
-    },
-    createEmailAction : function(component, event,helper) {
-        helper.createEmailAction(component, event,helper);
-    },
-    createSMSAction : function(component, event,helper) {
-        helper.createSMSAction(component, event,helper);
-    },
-    createTaskAction : function(component, event,helper) {
-        helper.createTaskAction(component, event,helper);
-    },
     onCancel: function(component, event, helper){
         helper.onCancel(component, event);
     },
@@ -48,11 +36,8 @@
         if (name){
             newAct.name = name.trim();
         }
-        console.log('name', name);
         component.set("v.newAction", newAct);
-        console.log('act1',component.get('v.newAction'));
         if(true){
-            console.log('create999');
             helper.createAction(component, event,helper);
         }
     },
