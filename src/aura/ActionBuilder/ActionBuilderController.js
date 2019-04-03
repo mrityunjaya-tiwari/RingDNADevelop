@@ -32,13 +32,9 @@
     },
     createAction: function(component, event, helper) {
         var newAct = component.get("v.newAction");
-        var name = newAct.name;
-        if (name){
-            newAct.name = name.trim();
-        }
-        component.set("v.newAction", newAct);
-        if(true){
+        // We can use it for validate if action type is email.
+        //if(newAct.type == 'Email' && newAct.templateId == null ){
             helper.createAction(component, event,helper);
-        }
+        //}
     },
 })
