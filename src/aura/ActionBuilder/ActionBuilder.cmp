@@ -9,7 +9,7 @@
     <aura:attribute name="UpdateFieldList" type="List"/>
     
     <!--Action Objects -->
-    <aura:attribute name="newAction" type="Action" default="{ 'sobjectType': 'ActionWrapper'}"/>
+    <aura:attribute name="newAction" type="Action" default="{ 'sobjectType': 'Action'}"/>
     <!--Task Objects -->
     <aura:attribute name="taskObj" type="Task" default="{ 'sobjectType': 'Task'}"/> 
     <!--Wrapper class having Task fields detail -->
