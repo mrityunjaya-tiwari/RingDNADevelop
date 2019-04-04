@@ -28,7 +28,7 @@
             component.set('v.disableActivationType', true);
             component.set("v.isActionTypeRequired", false);
         }
-        if (isValid || newAct.type == 'SMS'){
+        if (isValid && newAct.type == 'SMS'){
             component.set('v.currentStep' , '2');
         }
     },
