@@ -1,5 +1,5 @@
 @isTest
-public class ActionDetailControllerTest {
+public class DynamicActionDetailsControllerTest {
     public static Action__C act; 
     public static List<Task> listTask;
     Public static Final String ACTION_TYPE_Email = 'Email';
@@ -41,44 +41,18 @@ public class ActionDetailControllerTest {
         vmAction.Activation_Type__c = 'Manual';
         vmAction.Task_Description__c = '{"attributes":{"type":"Task"},"Status":"Deferred","CallDisposition":"Working","CallDurationInSeconds":2,"RecurrenceRegeneratedType":"After due date"}})';
         insert vmAction;
-        /*Action__c action = new Action__c();
-        action.Name = 'Test Action';
-        action.Type__c = 'Call';
-        action.Activation_Type__c = 'Manual';
-        action.Task_Description__c = '{"attributes":{"type":"Task"},"Status":"Deferred","CallDisposition":"Working","CallDurationInSeconds":2,"RecurrenceRegeneratedType":"After due date"}})';
-        insert action;*/
         Test.startTest();
-        //insert emailTemplateObj;
-        ActionDetailController.ActionWrapper initActionObj = ActionDetailController.getActionWrapper();
-        //system.assert(numberValidate(initActionObj.listEmailTemplate.size(), 1), 'List of email template size must be 1');
-        //system.assert(numberValidate(initActionObj.listSmsTemplate.size(), 1), 'List of sms template size must be 1');
-        //system.assert(numberValidate(initActionObj.listCallTemplate.size(), 1), 'List of csll template size must be 1');
-        //system.assert(numberValidate(initActionObj.listVMTemplate.size(), 1), 'List of vm template size must be 1');
-        
+        ActionDetailController.ActionWrapper initActionObj = DynamicActionDetailsController.getActionWrapper();
         system.assertEquals(true, initActionObj.wrapperTaskFields.size()>0);
         Test.stopTest();
     }
     @isTest
     public static void testsaveAction(){
         Test.startTest();        
-        Id actionId = ActionDetailController.saveAction(system.JSON.serialize(act), listTask.get(0));
-        ActionDetailController.getActionById(actionId);        
+        Id actionId = DynamicActionDetailsController.saveAction(system.JSON.serialize(act), listTask.get(0));        
         system.assertNotEquals(null, actionId);
         Test.stopTest();
     }
-    
-    @isTest
-    public static void getFieldsWithLabelsTest() {
-        List<CriterionWrapper> fieldsWithLabels;
-        List<String> objectList = new List<String>();
-        objectList =new List<String>{CadenceConstants.LEAD_OBJECT_NAME,CadenceConstants.DB_OBJECT_NAME };
-    	Test.startTest();
-		fieldsWithLabels = CadenceService.getFieldsWithLabels(objectList);
-    	Test.stopTest();
-    	
-    	System.assertEquals(true, fieldsWithLabels!=null);
-    	System.assertEquals(true, fieldsWithLabels.size()>0);
-    } 
     
     @isTest
     static void getActionDataTest() {
@@ -91,44 +65,10 @@ public class ActionDetailControllerTest {
         insert action;
     	ActionDetailController.ActionDataWrapper actionWrap;
     	Test.startTest();
-    	actionWrap = ActionDetailController.getActionData(action.Id);
+    	actionWrap = DynamicActionDetailsController.getActionData(action.Id);
     	Test.stopTest();
     	
     	System.assertEquals(true, actionWrap!=null);
     }
-    
-    @isTest
-    static void updateFieldValueTest() {
-		
-		Account act = new Account();  
-        Contact con= new Contact();
-      
-        
-    	Test.startTest();
-
-    	ActionDetailController.updateFieldValue(act, 'Name', 'Test', '');
-    	ActionDetailController.updateFieldValue(act,'AnnualRevenue','1500', 'currency');
-    	ActionDetailController.updateFieldValue(act, 'SLAExpirationDate__c', '2018-08-13', 'Date');
-        ActionDetailController.updateFieldValue(act, 'NumberOfEmployees', '20', 'Number');
-        ActionDetailController.updateFieldValue(con, 'EntranceCriteria_Matched_Date__c', '2018-08-13 02:22:26' ,'datetime');
-        ActionDetailController.updateFieldValue(con, 'AccountId', 'act.Id', 'ID');
-       
-    	Test.stopTest();
-    	System.assertEquals(true, act.AnnualRevenue != null);
-    	System.assertEquals('Test', act.Name);
-    }
-    
-    
-    
-    public static boolean numberValidate(Integer int1, Integer int2) {
-        if (int1 >=  int2){
-            return true;
-        } else {
-            return false;
-        }
-    }
-    
-    
-    
     
 }

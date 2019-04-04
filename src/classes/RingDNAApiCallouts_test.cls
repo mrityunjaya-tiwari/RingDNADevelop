@@ -40,9 +40,10 @@ public class RingDNAApiCallouts_test {
     
      static testMethod void SMSTemplatesTest(){
          
-         test.startTest();
+        test.startTest();
             RingDNAApiCallouts testRingDNAApiCallout = new RingDNAApiCallouts();
             Test.setMock(HttpCalloutMock.class, new SMSTemplatesMockCallout());
+         	testRingDNAApiCallout.getSMSTemplatesUpdated();
             testRingDNAApiCallout.getSMSTemplates();
         test.stopTest();
     }

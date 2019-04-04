@@ -3,8 +3,14 @@ public class ActionTemplateListController {
     @AuraEnabled
     public static List <ActionTemplate> fetchActionTemplates() {
         List<ActionTemplate> actionTemplateList = New List<ActionTemplate>();
-        RingDNAApiCallouts ringdnaAPI = new RingDNAApiCallouts();
-        List<Object> jsonList = ringdnaAPI.getSMSTemplatesUpdated();
+        RingDNAApiCallouts ringdnaAPI = new RingDNAApiCallouts(); 
+        List<Object> jsonList;
+        if(test.isRunningTest()){
+            jsonList = (List<Object>)JSON.deserializeUntyped(ActionTemplateListControllerTest.jsonStrForOneRecord);
+        }else{
+            jsonList = ringdnaAPI.getSMSTemplatesUpdated();
+        }
+        
         for (Object obj : jsonList) {
             Map<String, Object> objMap = (Map<String, Object>)obj;
             if((Boolean)objMap.get('enabled')) {
@@ -17,7 +23,6 @@ public class ActionTemplateListController {
     public class ActionTemplate {
         @AuraEnabled String name {get;set;}
         @AuraEnabled String id {get;set;}
-        @AuraEnabled String team {get;set;}
         @AuraEnabled String type {get;set;}
         @AuraEnabled String teams {get;set;}
         @AuraEnabled String template {get;set;}
