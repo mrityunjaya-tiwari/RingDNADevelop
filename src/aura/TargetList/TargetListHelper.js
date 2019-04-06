@@ -1,421 +1,162 @@
-({
-    getData : function(component, event, helper) {
-        component.set('v.spinner', true);
-        var action = component.get('c.getTargetListInitData');
-        var gId = '';
-        var stdGrp = component.get('v.selectedGroup');
-        if (stdGrp){
-            gId = stdGrp;
-        }
-        action.setParams({
-            pgId :  gId
-        });
-        action.setCallback(this, function(response) {
-            var state = response.getState();
-            if(state === "SUCCESS") {
-                var records = response.getReturnValue();
-                records.tlWList.forEach(function(record){
-                    record.linkName = '/'+record.participantId; 
-                    record.linknextAction = '/'+record.nextAction;
-                    if(record.actionType == 'Call' || record.actionType == 'Call+Voicemail') {
-                        record.actionIcon = 'action:call';
-                        record.actionClass = 'ringdna-phone-td';
-                    } else if(record.actionType == 'Email') {
-                        record.actionIcon = 'action:email';
-                        record.actionClass = 'ringdna-email-td';
-                    } else if(record.actionType == 'SMS') {
-                        record.actionIcon = 'action:sms';	
-                        record.actionClass = 'ringdna-sms-td';  
-                    } else if(record.actionType == 'Task') {
-                        record.actionIcon = 'action:email';	
-                        record.actionClass = 'ringdna-task-td';  
-                    }
-                    
-                    
-                    if(record.type == 'Contact') {
-                        if(record.companyId != undefined) {
-                            record.companyLink = '/'+record.companyId;
-                        } 
-                    } else {
-                        record.companyLink = record.company;
-                    }
-                    
-                    
-                });
-                component.set('v.rawDataForFilter', records.tlWList);
-                component.set('v.rawData', records.tlWList);
-                if (records.tlWList.length > 8 || records.tlWList.length == 0){
-                    component.set('v.listViewCondition', false);
-                } else{
-                    component.set('v.listViewCondition', true);
-                }
-                if (records.tlWList.length == 0){
-                    component.set('v.data', records.tlWList);
-                }
-                component.set('v.totalNumberOfRows', records.tlWList.length);
-//                var setPL = component.get('v.setPhoneLink');
-                component.set('v.setPhoneLink', true);
-                
-                component.set('v.selectedGroup', records.selectedGroup);
-                if (! records.selectedGroup){
-                    component.set('v.groupList', records.pgList);
-                }
-                
-                helper.clearFilter(component);
-                helper.setFilterData(component, event, helper);
-                component.set('v.spinner', false);
-            } else {
-                console.log('got an error in fething data');
-                component.set('v.spinner', false);
-            }
-        });
-        $A.enqueueAction(action);
-    },
+<aura:component controller="TargetListController" implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction,force:appHostable" access="global">
     
+    <ltng:require scripts="{!join(',',
+            $Resource.StreamingAPI + '/cometd.js',
+            $Resource.StreamingAPI + '/jquery-1.5.1.js',
+            $Resource.StreamingAPI + '/json2.js',
+            $Resource.StreamingAPI + '/jquery.cometd.js')}"
+                  afterScriptsLoaded="{!c.refreshData}"
+    />
+    <aura:attribute name="sessionId" type="String"/>
     
+    <!--  HANDLERS -->
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+    <aura:handler name="datatableEvt" event="c:DatatableEvent" action="{!c.handleDatatableEvent}"/>
     
-    getRowActions : function (component, row, doneCallback) {
-        var actions = [{
-            'label': 'Remove',
-            'name': 'delete'
-        }];
-        actions.push({
-            'label': 'View',
-            'name': 'view'
-        });
-        // simulate a trip to the server
-        setTimeout($A.getCallback(function () {
-            doneCallback(actions);
-        }), 200);
-    },
+    <aura:attribute name="totalNumberOfRows" type="Integer" default="0" description="Contains the data of total no of records present on table" />
+    <aura:attribute name="sortBy" type="String" default="Type"/>
+    <aura:attribute name="showModal" type="Boolean" default="false"/>
+    <aura:attribute name="rowsToDelete" type="List"/>
+    <aura:attribute name="pushTopic" type="boolean" default="false"/>
+    <aura:handler name="change" value="{!v.pushTopic}" action="{!c.callRefresh}"/>
     
-    performActions : function(component, event, helper, actionName, row) {
+    <!-- DATATABLE ATTRIBUTES -->
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="rawData" type="List"/>
+    <aura:attribute name="rawDataForFilter" type="List"/>
+    <aura:attribute name="selectedRows" type="List"/> 
+    <aura:attribute name="hideCheckboxes" type="boolean"/>
+    <aura:attribute name="recordsPerPage" type="Integer" default="25"/>
+    <!--  / DATATABLE ATTRIBUTES -->
+    <aura:attribute name="setPhoneLink" type="boolean" default = "false"/>
+    <aura:handler name="change" value="{!v.setPhoneLink}" action="{!c.setPhoneLink}"/> 
+    <aura:handler event="force:refreshView" action="{!c.init}" />
+    <aura:handler name="cadencePagination" event="c:CadPagination" action="{!c.handlePagination}"/>
+    <aura:attribute name="data" type="List" />
+    <aura:handler name="change" value="{!v.data}" action="{!c.pageUpdated}"/> 
+    <!--create a component attributs -->
+    <aura:attribute name="spinner" type="boolean" default="false"/>
+    <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>
+    <aura:attribute name="selectedGroup" type="String" default=""/>
+    <aura:attribute name="groupList" type="List"/>
+    <aura:attribute name="currentUserId" type="String"/>
+    <aura:attribute name="themeName" type="String"/>
+    <aura:attribute name="listViewCondition" type="boolean" default="true"/>
+    
+    <!-- Search -->
+    <aura:attribute name="sStr" type="String"/>
+    <aura:attribute name="otFilter" type="String"/>
+    <aura:attribute name="ctFilter" type="String"/>
+    <aura:attribute name="atFilter" type="String"/>
+    
+    <aura:attribute name="otList" type = "List"/>
+    <aura:attribute name="cList" type = "List"/>
+    <aura:attribute name="atList" type = "List"/>
+    <!-- PAGE HEADER -->
+    <div class="slds-page-header slds-p-left_medium" style="background-color: #fafafa">
         
-        var rows = [];
-        rows.push(row);
-        switch (actionName) {
-            case 'view':
-                helper.viewParticipant(component, event, helper, row.participantId);
-                break;
-            case 'delete':
-                component.set('v.rowsToDelete', rows);
-                component.set('v.showModal', true);
-                break;
-        }
-    }, 
-    
-    deleteParticipantActions : function(component, event, helper, ids) {
-        component.set('v.showModal', false);
-        var action = component.get('c.deletePA');
-        action.setParams({
-            "ids" : ids
-        });
-        console.log('Hello');
-        action.setCallback(this, function(response) {
-            console.log('Deletion performed');
-            var state = response.getState();
-            if(state === "SUCCESS") {
-                
-                //helper.getData(component, event, helper);
-                console.log('Deletion performed');
-                $A.get('e.force:refreshView').fire();
-            } else {
-                console.log('Deletion not done');
-            }
-        });
-        $A.enqueueAction(action);
-    },
-    
-    removeCss : function(component, event, helper){
-        var cmpTarget = component.find('datatable');
-        $A.util.removeClass(cmpTarget, 'slds-table_bordered');
-        $A.util.removeClass(cmpTarget, 'slds-table--bordered');
-    },
-    
-    viewParticipant : function(component, event, helper, id) {
-        var myUserContext = component.get("v.themeName");
-        console.log('viewParticipant',myUserContext);
-        if(myUserContext == 'Theme3' ) {
-            window.location = '/'+id;
-        } 
-        else {
-            var sObectEvent = $A.get("e.force:navigateToSObject");
-            sObectEvent.setParams({
-                "recordId": id,
-                "slideDevName": "detail"
-            });
-            sObectEvent.fire();
-        }
-    },
-    setPhoneLink : function(component, event, helper){
-        helper.setPhoneRow(component, event, helper); 
-        helper.setCompanyRow(component, event, helper);
-        var elList = document.getElementsByClassName('ringdna-phone-td');     
-        var rawData = component.get('v.data');
-       
-        for (var index = 0; index < elList.length ; index++){ 
-            var rdpElement = elList[index];
-            if (rdpElement){
-                try {
-                    if(rawData[index].actionClass == 'ringdna-phone-td'){
-                        var url = $A.get('$Resource.cadence_icons') + '/call/call-icon@3x.png' ;
-                        if (rawData[index].actionPerformDay == 'Previous'){
-                            url = $A.get('$Resource.cadence_icons') + '/call/FF4545/call-icon-FF4545@3x.png' ;
-                        }
-                        var innerHtml =  '<img class = "Oval" src=' + url + ' />';
-                         
-                        if( rawData[index].actionType == 'Call'){
-                        innerHtml = '<a href="tel:'+ rawData[index].phone + '" class="ringdna-phone" data-phone="'+ rawData[index].phone + '" data-call-notes-template-id="'+ rawData[index].tempId +'">' + innerHtml + '</a>';
-                        }else{innerHtml = '<a href="tel:'+ rawData[index].phone + '" class="ringdna-phone" data-phone="'+ rawData[index].phone + '" data-vm-drop-id="'+ rawData[index].tempId +'">' + innerHtml + '</a>';}
-                        
-                        var div = '<div>' + rawData[index].nextAction + '</div>';
-                        var ActionLink = '<a href="/' + rawData[index].nextAction  +'" target="_self" tabindex="-1">'+ rawData[index].linkActionName + '</a>';
-                        rdpElement.innerHTML = '<div class="slds-truncate">' + innerHtml + ' ' + ActionLink + '</div>';
-                    }
-                    if(rawData[index].actionClass == 'ringdna-email-td'){
-                        var url = $A.get('$Resource.cadence_icons')+ '/email/email-icon@3x.png';
-                        if (rawData[index].actionPerformDay == 'Previous'){
-                            url = $A.get('$Resource.cadence_icons') + '/email/FF4545/email-icon-FF4545@3x.png' ;
-                        }
-                        var innerHtml =  '<img class = "Oval" src=' + url + ' />';
-                        var hostName = window.location.hostname;
-                        if(rawData[index].type == 'Contact') {
-                            innerHtml = '<a href="https://' + hostName + '/_ui/core/email/author/EmailAuthor?p2_lkid='+ rawData[index].participantId + '&rtype=003&template_id=' + rawData[index].emailTempId + '"'+ ' target="_blank" ' + '>' + innerHtml + '</a>';
-                        } else {
-                            innerHtml = '<a href="https://' + hostName + '/_ui/core/email/author/EmailAuthor?p2_lkid='+ rawData[index].participantId + '&rtype=00Q&template_id=' + rawData[index].emailTempId + '"'+ ' target="_blank" ' + '>' + innerHtml + '</a>';	
-                        }
-                        var ActionLink = '<a href="/' + rawData[index].nextAction + '" target="_self" tabindex="-1">'+ rawData[index].linkActionName + '</a>';
-                        rdpElement.innerHTML = '<div class="slds-truncate">' + innerHtml + ' ' + ActionLink + '</div>';
-                    }
-                    if(rawData[index].actionClass == 'ringdna-sms-td'){
-                        var url = $A.get('$Resource.cadence_icons') + '/message/msg-icon@3x.png' ;
-                        if (rawData[index].actionPerformDay == 'Previous'){
-                            url = $A.get('$Resource.cadence_icons') + '/message/FF4545/msg-icon-FF4545@3x.png' ;
-                        }
-                        var innerHtml =  '<img class = "Oval" src=' + url + ' />';
-                        innerHtml = '<a href="tel:'+ rawData[index].phone + '" class="ringdna-sms" data-phone="'+ rawData[index].phone + '" data-sms-template-id="'+ rawData[index].tempId + '">' + innerHtml + '</a>';
-                        var ActionLink = '<a href="/' + rawData[index].nextAction + '" target="_self" tabindex="-1">'+ rawData[index].linkActionName + '</a>';
-                        rdpElement.innerHTML =  '<div class="slds-truncate">' + innerHtml + ' ' + ActionLink + '</div>';
-                    }
-                    if(rawData[index].actionClass == 'ringdna-task-td'){
-                        var url = $A.get('$Resource.cadence_icons') + '/task-icon/task-icon@3x.png' ;
-                        if (rawData[index].actionPerformDay == 'Previous'){
-                            url = $A.get('$Resource.cadence_icons') + '/task-icon/task-icon@3x.png' ;
-                        }
-                        var innerHtml =  '<img class = "Oval" src=' + url + ' />';
-                        innerHtml = '<a href="/'+rawData[index].taskId+'" target="_blank"  >' + innerHtml + '</a>';
-                        var ActionLink = '<a href="/' + rawData[index].nextAction + '" target="_self" tabindex="-1">'+ rawData[index].linkActionName + '</a>';
-                        rdpElement.innerHTML =  '<div class="slds-truncate">' + innerHtml + ' ' + ActionLink + '</div>';
-                    }
-                }
-                catch(err){
-                }
-            }
-        }
-    },
-    setPhoneRow : function(component, event, helper){
-        var phRow = document.getElementsByClassName('ringdna-phone-row');    
-        var rawData = component.get('v.data');
-        for (var index = 0; index < phRow.length ; index++){
-            try {      
-                
-                var rdpElement = phRow[index];
-                if (rdpElement){
-                    if (rawData[index].phone){
-                        var phoneLink = '<div class="slds-col"><a href="tel:' + rawData[index].phone + '" tabindex="-1" class="ringdna-phone" data-phone="'+ rawData[index].phone + '">'+ rawData[index].phone + '</a></div>' ;
-                        var url = $A.get('$Resource.cadence_icons') + '/message/msg-icon@3x.png' ;
-                        var urlicon = $A.get('$Resource.cadence_icons') + '/rdna-icon/default/rdna-logo@3x.png' ;
-                        var smsLink =  '<img class = "Oval" src=' + url + ' />';
-                        smsLink = '<div class="slds-float_right slds-col"><a href="tel:'+ rawData[index].phone + '" class="ringdna-sms" data-phone="'+ rawData[index].phone + '" data-sms-template-id="'+ rawData[index].tempId +'">' + smsLink + '</a>';
-                        var phoneLinkIcon =  '<img class = "OvalPLIs" src=' + urlicon + ' />';
-                        if( rawData[index].actionType == 'Call'){
-                           phoneLinkIcon = '<a href="tel:'+ rawData[index].phone + '" class="ringdna-phone" data-phone="'+ rawData[index].phone + '" data-call-notes-template-id="'+ rawData[index].tempId + '">' + phoneLinkIcon + '</a> </div>'; 
-                        }else{
-                        phoneLinkIcon = '<a href="tel:'+ rawData[index].phone + '" class="ringdna-phone" data-phone="'+ rawData[index].phone + '" data-vm-drop-id="'+ rawData[index].tempId + '">' + phoneLinkIcon + '</a> </div>';
-                        }
-                        rdpElement.innerHTML =   '<div class="slds-grid slds-truncate">' + phoneLink  + smsLink + phoneLinkIcon  + '</div>';
-                    }else{
-                        rdpElement.innerHTML = '';
-                    }
-                }
-            }catch(err){
-            }
-        }
-    },
-    setCompanyRow : function(component, event, helper){
-        var phRow = document.getElementsByClassName('ringdna-company-td');  
-        var rawData = component.get('v.data');
-        for (var index = 0; index < phRow.length ; index++){
-            try {
-                var rdpElement = phRow[index];
-                if (rdpElement){
-                    if (rawData[index].type == 'Lead' && rawData[index].company){
-                            var companyName = rawData[index].company;
-                            rdpElement.innerHTML =   '<div class=" slds-truncate">' + companyName +  '</div>';
-                    }else if(rawData[index].company) { 
-                        var cLink = '<a href="/' + rawData[index].companyId + '" title="' + rawData[index].company + '" target="_self" tabindex="-1">'+ rawData[index].company + '</a>';
-                        rdpElement.innerHTML = '<div class=" slds-truncate">' + cLink +  '</div>';
-                    }else {
-                        rdpElement.innerHTML = '';
-                    }
-                }
-            }catch(err){
-            }
-        }
-        //helper.removeRingDNAIcons(component, event, helper);
-    },
-    removeRingDNAIcons:function(component, event, helper){
-        window.setTimeout(
-            $A.getCallback(function() {
-                var elements = document.getElementsByClassName('ringdna-company-td');
-                while(elements.length > 0){
-                    elements[0].parentNode.removeChild(elements[0]);
-                }
-            }), 500
-        );
-    },
-    /*Filters*/
-    applyMultipleFilters : function(component, event, helper){
-        helper.getInputResult(component, event, helper);
-        helper.filterObjectType(component, event, helper);
-        helper.filterCadenceType(component, event, helper);
-        helper.filterActionType(component, event, helper);
-        var records = component.get("v.rawData");
-        component.set('v.totalNumberOfRows', records.length);
-    },
-    getInputResult:function(component, event, helper){
-        var tData = component.get('v.rawDataForFilter');
-        var data = component.get("v.rawDataForFilter");
-        var term = component.get("v.sStr");
-        var results = data, regex;
-        try {
-            regex = new RegExp(term, "ig");
-            results = data.filter(row=>helper.serchResult(row, regex));
-        } catch(e) {
-        }
-        component.set("v.rawData", results);
-        
-    },
-    serchResult:function(row, regex){
-        var strPriproty = (row.priority ? row.priority.toString() : "");
-        var strCompany = (row.company ? row.company.toString() : "");
-        var strType = (row.type ? row.type.toString() : "");
-        var strEmail = (row.email ? row.email.toString() : "");
-        var strPhone = (row.phone ? row.phone.toString() : "");
-        var strLinkActionName = (row.linkActionName ? row.linkActionName.toString() : "");
-        return ( (row.name.search(regex) == -1 ? false : true) 
-               // || (strPriproty.search(regex) == -1 ? false : true) 
-               // || (strCompany.search(regex) == -1 ? false : true) 
-               // || (strType.search(regex) == -1 ? false : true) 
-              //  || (strEmail.search(regex) == -1 ? false : true) 
-              //  || (strPhone.search(regex) == -1 ? false : true) 
-              //  || (strLinkActionName.search(regex) == -1 ? false : true) 
-               ) ;
-    },
-    filterObjectType:function(component, event, helper){
-        var data = component.get("v.rawData");
-        var term = component.get("v.otFilter");
-        var results = data, regex;
-        try {
-            regex = new RegExp(term, "ig");
-            results = data.filter(row=>! row.type.search(regex) );
-        } catch(e) {
-        }
-        component.set("v.rawData", results);
-        
-    },
-    filterCadenceType:function(component, event, helper){
-        var data = component.get("v.rawData");
-        var term = component.get("v.ctFilter");
-        var results = data, regex;
-        try {
-            regex = new RegExp(term, "ig");
-            results = data.filter(row=> (row.cadenceName == term || term =='') );
-        } catch(e) {
-        }
-        component.set("v.rawData", results);
-        
-    },
-    filterActionType:function(component, event, helper){
-        var data = component.get("v.rawData");
-        var term = component.get("v.atFilter");
-        var results = data, regex;
-        try {
-            regex = new RegExp(term, "ig");
-            results = data.filter(row=> (row.actionType == term || term ==''));
-        } catch(e) {
-        }
-        component.set("v.rawData", results);
-    },
-    setFilterData:function(component, event, helper){
-        var rawData = component.get('v.rawData');
-        var otList = component.get('v.otList');
-        var cList = component.get('v.cList');
-        var atList = component.get('v.atList');
-        for(var i = 0; i < rawData.length ; i++){
-            var wObj = rawData[i];
-            if (otList.indexOf(wObj.type) == -1){
-                otList.push(wObj.type);
-            }
-            if (cList.indexOf(wObj.cadenceName) == -1){
-                cList.push(wObj.cadenceName);
-            }
-            if (atList.indexOf(wObj.actionType) == -1){
-                atList.push(wObj.actionType);
-            }
-        }
-        component.set('v.otList', otList);
-        component.set('v.cList', cList);
-        component.set('v.atList', atList);
-    },
-    clearFilter:function (component){
-        component.set('v.sStr', '');
-        component.set('v.otFilter', '');
-        component.set('v.ctFilter', '');
-        component.set('v.atFilter', '');
-    },
-    
-    refresh : function(component, event, helper) {
-        		
-        var action = component.get("c.retrieveSesstionId");
-        action.setCallback(this, function(response){
-            var state = response.getState();
+        <div class="slds-grid">
+            <div>
+                <img class = "rdna-logo" src="{!$Resource.cadence_icons + '/rdna-logo/rdna-logo@2x.png'}"/>
+            </div>
+            <div class="slds-col slds-has-flexi-truncate slds-m-left_small">
+                <p class="slds-line-height_reset topHeaderSmall slds-p-left_xx-small">Today</p>
+                <h1 class="slds-page-header__title slds-m-right_small slds-align-middle slds-truncate headerLarge"  title="All Cadence">ringDNA Today</h1>
+            </div>
             
-            if(state === "SUCCESS") {
-                console.log(response.getReturnValue());
-                component.set("v.sessionId", response.getReturnValue());
-                // Connect to the CometD endpoint
-		        $.cometd.init({
-		           url: '/cometd/39.0',
-		           requestHeaders: { Authorization: component.get("v.sessionId")}
-		       });
-
-		       // Subscribe to a topic. JSON-encoded update will be returned
-		       // in the callback
-		       $.cometd.subscribe('/topic/actionperform', function(message) {
-				   console.log('Hello This is fine');
-                   console.log(message);
-                   console.log('Hello This is fine', message.data.sobject);
-		           var pt = component.get('v.pushTopic');
-                   component.set('v.pushTopic', !pt);
-                   //helper.getData(component, event, helper);
-                   
-		        });
-            }
-        });
-        $A.enqueueAction(action);
-    }, 
-    
-    startPushTopic : function(component, event, helper) {
-        console.log('IN start pushh');
-    	var action = component.get('c.createPushTopic'); 
-        action.setCallback(this, function(response){
-            var state = response.getState();
-            if(state === "SUCCESS") {
-                console.log('Created PushTopic');        
-            }
-        });
-        $A.enqueueAction(action);
-    }
-    
-})
+            <aura:if isTrue="{!v.selectedRows.length > 0}">
+                <div>
+                    <lightning:button class = "rdna-remove-button rdna-remove-button-text" aura:id="remove" label="Remove" onclick="{!c.removeActions}"/> 
+                </div>
+            </aura:if>
+        </div>
+              
+        <div class="slds-grid slds-m-top_small">
+            <div class= "slds-col slds-size_1-of-8 topHeaderSmall slds-m-top_large">
+                <span>{!v.totalNumberOfRows} Items • Sorted by {!v.sortBy} 
+                </span>
+            </div>
+            
+            <div class= "slds-col slds-size_1-of-6 topHeaderSmall slds-m-top_small slds-p-left_x-small rdna-classic-search">
+                <lightning:input type="search" 
+                                 variant = "label-hidden"  
+                                 label="Search" 
+                                 placeholder="Search"
+                                 value="{!v.sStr}"
+                                 onchange="{!c.searchInputText}" 
+                                 name="search" />
+            </div>
+            
+            <div class= "slds-col slds-size_1-of-8 topHeaderSmall slds-m-right_medium">
+                <lightning:select variant = "label-hidden" name="select" label='' value="{!v.otFilter}" onchange="{!c.filterObjectType}">
+                    <option value="">Type</option>
+                     <aura:iteration var="ot" items="{!v.otList}">
+                        <option value="{!ot}">{! ot }</option>
+                    </aura:iteration>
+                </lightning:select>
+            </div>
+            
+            <div class= "slds-col slds-size_1-of-8 topHeaderSmall slds-m-right_medium">
+                <lightning:select variant = "label-hidden" name="select1" label='' value="{!v.ctFilter}" onchange="{!c.filterCadenceType}">
+                    <option value="">Sequence</option>
+                    <aura:iteration var="cad" items="{!v.cList}">
+                        <option value="{!cad}">{! cad }</option>
+                    </aura:iteration>
+                </lightning:select>
+            </div> 
+            <div class= "slds-col slds-size_1-of-8 topHeaderSmall slds-m-right_medium">
+                <lightning:select variant = "label-hidden" name="select1" label='' value="{!v.atFilter}" onchange="{!c.filterActionType}">
+                    <option value="">Action Type</option>
+                     <aura:iteration var="at" items="{!v.atList}">
+                        <option value="{!at}">{! at }</option>
+                    </aura:iteration>
+                </lightning:select>
+            </div> 
+            <div class= "slds-col topHeaderSmall slds-m-top_large slds-m-left_x-large slds-p-left_large slds-float_right rdna-text-align">Select group</div>
+            <div class= "slds-col slds-size_1-of-8 topHeaderSmall">
+                <lightning:select  variant = "label-hidden" aura:id="grp-opt" label="select" value="{!v.selectedGroup}" onchange="{!c.updateTargetList}">
+                    <aura:iteration var="group" items="{!v.groupList}">
+                        <option value="{!group.Id}">{! group.Name }</option>
+                    </aura:iteration>
+                </lightning:select>
+            </div>
+            
+        </div> 
+        
+        <!-- RECORD TABLE -->
+        <div >
+            <div class="slds-m-top_medium rdna-classic-datatableStyling">
+                <c:Datatable columns = "{!v.columns}" rawData = "{!v.rawData}" aura:id = "datatable" hideCheckboxColumn = "{!v.hideCheckboxes}" 
+                                       sortBy = "{!v.sortBy}" rowsToLoad = "{!v.recordsPerPage}" 
+                                       isListView="{!v.listViewCondition}" 
+                                       rawDataForFilter = "{!v.rawDataForFilter}"
+                                       data="{!v.data}"
+									   isTodayListView = "true"
+                                       selectedNoOfRecords="true"/> 
+            </div>
+        </div> 
+    </div>
+    <!-- / PAGE HEADER -->   
+    <!-- / RECORD TABLE -->
+    <!-- DELETE CONFIRMATION MODAL -->
+    <aura:if isTrue="{!v.showModal}">
+        <div class="demo-only" style="height: 640px;">
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Remove Action</h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <p>Are you sure you want to remove this action? The action will be completed and removed from the target list.</p>
+                    </div>
+                    <footer class="slds-modal__footer">
+                        <lightning:button label="Delete" variant="brand" onclick="{!c.deletePartActions}"/>   
+                        <lightning:button label="Cancel" onclick="{!c.cancel}"/>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </div>
+    </aura:if>    
+    <!-- / DELETE CONFIRMATION MODAL -->
+</aura:component>
