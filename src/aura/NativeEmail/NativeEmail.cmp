@@ -1,4 +1,4 @@
-<aura:component Controller="NativeEmailController" implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction,force:appHostable, lightning:isUrlAddressable" access="global"> 
+<aura:component Controller="NativeEmailController" implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction,force:appHostable,lightning:isUrlAddressable" access="global"> 
     
     <aura:attribute name="cadenceAction" type = "SequenceAction" default="{ 'sobjectType': 'SequenceAction'" />
     <aura:attribute name="accessToken" type="string"/>
@@ -15,7 +15,8 @@
     <aura:attribute name="spinner" type="boolean" default="false"/>
     <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>
     <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
-    <aura:attribute name="EmailWrappercls" type="Sobject"/> 
+    <aura:attribute name="EmailWrappercls" type="Sobject"/>
+    <aura:attribute name="themeName" type="String"/>
     <!-- PAGE HEADER -->
     <div class="slds-page-header" style="background-color: #fafafa">
         

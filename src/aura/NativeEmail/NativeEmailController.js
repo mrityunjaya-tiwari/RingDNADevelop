@@ -38,13 +38,18 @@
                 if (state == "SUCCESS") { 
                     var isredirect = response.getReturnValue();
                     if(isredirect ==true){
-                        var evt = $A.get("e.force:navigateToComponent");
-                        evt.setParams({
-                            componentDef  : "RDNACadence2:TargetList" ,
-                            componentAttributes : {
-                            }
-                        });
-                        evt.fire();
+                         var myUserContext = component.get("v.themeName");
+                         if(myUserContext == 'Theme3'  || myUserContext == 'Theme4t' || myUserContext == 'Theme4d') {
+                             window.location = '/apex/TargetList';
+                         }else{
+                            var evt = $A.get("e.force:navigateToComponent");
+                            evt.setParams({
+                                componentDef  : "RDNACadence2:TargetList" ,
+                                componentAttributes : {
+                                }
+                            });
+                            evt.fire();
+                        }
                     }
                 }
                 else{
@@ -68,13 +73,18 @@
             if (state == "SUCCESS") { 
                 var isredirect = response.getReturnValue();
                 if(isredirect ==true){
-                    var evt = $A.get("e.force:navigateToComponent");
-                    evt.setParams({
-                        componentDef  : "RDNACadence2:TargetList" ,
-                        componentAttributes : {
-                        }
-                    });
-                    evt.fire();
+                    var myUserContext = component.get("v.themeName");
+                    if(myUserContext == 'Theme3'  || myUserContext == 'Theme4t' || myUserContext == 'Theme4d') {
+                        window.location = '/apex/TargetList';
+                    }else{
+                        var evt = $A.get("e.force:navigateToComponent");
+                        evt.setParams({
+                            componentDef  : "RDNACadence2:TargetList" ,
+                            componentAttributes : {
+                            }
+                        });
+                        evt.fire();
+                    }
                 }
             }
         });
