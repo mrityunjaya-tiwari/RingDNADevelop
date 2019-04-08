@@ -1,4 +1,4 @@
-<aura:component controller="ActionDetailController" implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction,force:appHostable" access="global">
+<aura:component controller="DynamicActionDetailsController" implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction,force:appHostable" access="global">
     <!--aura init handler , call js "loadData" function on component load, and display data on form-->
     <aura:handler name="cadDynamicRowEvent" event="c:CadDynamicRowEvent" action="{!c.handleCadDynamicRowEvent}"/>
     <aura:attribute name="actionList" type = "List" />

@@ -40,7 +40,6 @@
         }
     },
     createTaskAction : function(component, event, helper){
-        var isValid = helper.validateActionName(component, event,helper);
         var newAct = component.get("v.newAction");
         if(newAct.id == '' || newAct.id == null){
             helper.validateActionName(component, event,helper);
@@ -52,7 +51,7 @@
         if (isValid && newAct.type == 'Task'){
             component.set('v.currentStep' , '2');
             component.set('v.isTaskAction' , true);            
-        }
+        }      
     },
     validateActionName: function(component, event, helper){ 
         var newAct = component.get("v.newAction");

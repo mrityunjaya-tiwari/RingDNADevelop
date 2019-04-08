@@ -36,6 +36,6 @@
         // We can use it for validate if action type is email.
         //if(newAct.type == 'Email' && newAct.templateId == null ){
             helper.createAction(component, event,helper);
-        //}        
+        //} 
     },
 })

@@ -8,7 +8,7 @@
         var isNewVar = '{!$CurrentPage.parameters.isNew}' != undefined ? '{!$CurrentPage.parameters.isNew}':true;
         $Lightning.use("{!namespace}:CadenceActionListApp", function() {
             $Lightning.createComponent(
-                "{!namespace}:ActionDetails",
+                "{!namespace}:ActionBuilder",
                 {recordId: recordIds,themeName: myUserContext,isNew : isNewVar},
                 "myDivId3",
                 function(cmp) {
