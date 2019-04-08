@@ -3,6 +3,10 @@
         var isValid = helper.validateActionName(component, event,helper);
         var newAct = component.get("v.newAction");
         if(newAct.id == '' || newAct.id == null){
+			if (newAct.type != 'Call'){
+                var emptyList = [];
+                component.set('v.rowActionTemplateList', emptyList);
+            }
             helper.validateActionName(component, event,helper);
             component.set('v.newAction.type','Call');
             component.set('v.newAction.activationType','Manual');
@@ -28,6 +32,10 @@
         var isValid = helper.validateActionName(component, event,helper);
         var newAct = component.get("v.newAction");
         if(newAct.id == '' || newAct.id == null){
+			if (newAct.type != 'SMS'){
+                var emptyList = [];
+                component.set('v.rowActionTemplateList', emptyList);
+            }
             component.set('v.newAction.type', 'SMS');
             component.set('v.newAction.activationType','Manual');
             component.set('v.disableActivationType', true);
