@@ -12,10 +12,6 @@
     background: #fafafa !important;
 }
 
-
-
-
-
 /*-----table css---------------------------------*/
 .THIS .cols-table table thead tr th {
     font-family: Logical !important;
@@ -152,4 +148,43 @@
     letter-spacing: normal;
     text-align: center;
     color: #0066ff;
+}
+.THIS .slds-scope .slds-button:active{
+    color: #0066ff !important;
+}
+.THIS .slds-button:active {
+    color: #0066ff !important;
+}
+.THIS .slds-button:hover {
+    color: #0066ff !important;
+}
+.THIS .rdna-style{
+    width: 638px;
+    height: 26px;
+    font-family: Logical;
+    font-size: 18px;
+    font-weight: bold;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.44;
+    letter-spacing: normal;
+    text-align: center;
+    color: #000000;
+    margin-top: 142px;
+    margin-bottom: 123px;
+}
+.THIS .rdna-style-call{
+    width: 683px;
+    height: 26px;
+    font-family: Logical;
+    font-size: 18px;
+    font-weight: bold;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.44;
+    letter-spacing: normal;
+    text-align: center;
+    color: #000000;
+    margin-top: 142px;
+    margin-bottom: 123px;
 }

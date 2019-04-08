@@ -1,5 +1,6 @@
 ({
     createCallAction : function(component, event, helper){
+        var isValid = helper.validateActionName(component, event,helper);
         var newAct = component.get("v.newAction");
         if(newAct.id == '' || newAct.id == null){
             helper.validateActionName(component, event,helper);
@@ -8,7 +9,11 @@
             component.set('v.disableActivationType', true);
             component.set("v.isActionTypeRequired", false);
         }
-        
+        if (isValid && newAct.type == 'Call'){
+            component.set('v.currentStep' , '2');
+            component.set('v.isSMSAction' , false);
+            component.set('v.isTaskAction' , false);
+        }        
     },
     createEmailAction : function(component, event, helper){
         var newAct = component.get("v.newAction");
@@ -29,7 +34,9 @@
             component.set("v.isActionTypeRequired", false);
         }
         if (isValid && newAct.type == 'SMS'){
-            component.set('v.currentStep' , '2');
+            component.set('v.currentStep' , '2');            
+            component.set('v.isTaskAction' , false);
+            component.set('v.isSMSAction' , true);
         }
     },
     createTaskAction : function(component, event, helper){
@@ -40,7 +47,11 @@
             component.set('v.newAction.activationType','Manual');
             component.set('v.disableActivationType', true);
             component.set("v.isActionTypeRequired", false);
-        }        
+        }
+        if (isValid && newAct.type == 'Task'){
+            component.set('v.currentStep' , '2');
+            component.set('v.isTaskAction' , true);            
+        }      
     },
     validateActionName: function(component, event, helper){ 
         var newAct = component.get("v.newAction");
@@ -55,5 +66,5 @@
         }else{
             return true;
         }
-    },
+    },  
 })

@@ -5,7 +5,7 @@ public class ActionTemplateListControllerTest {
             
     static testMethod void fetchActionTemplatesTest(){
         test.startTest();
-            ActionTemplateListController.fetchActionTemplates();
+            ActionTemplateListController.fetchActionTemplates('Call');
         test.stopTest();
     }
 

@@ -1,5 +1,7 @@
 ({
-    setTableColunm :function(component, evevt, helper) {
+    setTableColunm :function(component, event, helper) {
+        var SMSaction = component.get('v.isSMSAction');
+        if(SMSaction ==  true){
         component.set('v.columns', [
             {label: 'SMS Template Name', fieldName: 'name', type: 'text' ,sortable:'true'},
             {label: 'Team', fieldName: 'teams', type: 'text',sortable:'true'}, 
@@ -20,19 +22,45 @@
                 value: 'edit',
                 iconPosition: 'left'
             }}
-        ]); 
+        ]);
+        }        
+        else{
+         component.set('v.columns', [
+            {label: 'Call Notes Template Name', fieldName: 'name', type: 'text' ,sortable:'true'},
+            {label: 'Team', fieldName: 'teams', type: 'text',sortable:'true'}, 
+            {type: "button", typeAttributes: {
+                label: 'Preview',
+                name: 'View',
+                variant:'base',
+                title: 'View',
+                disabled: false,
+                value: 'view',
+                iconPosition: 'right'
+            } , cellAttributes: { alignment: 'right' }},
+            {type: "button", typeAttributes: {
+                label: { fieldName: 'selectButtonLabel'},
+                disabled: {fieldName: 'disableselectButton'},
+                name: 'Edit',
+                title: 'Edit',
+                value: 'edit',
+                iconPosition: 'left'
+            }}
+        ]);            
+        }
     },
     getData : function(component, event, helper) {
         component.set('v.spinner', true);
+        var newAction  = component.get('v.newAction');
+        var actionType = newAction.type;
         var action = component.get("c.fetchActionTemplates");
         action.setParams({
+            type : actionType
         }); 
         action.setCallback(this, function(response){
             var state = response.getState();
             if (state === "SUCCESS") { 
-                component.set("v.rowActionTemplateList", response.getReturnValue());
+                component.set("v.rowActionTemplateList", response.getReturnValue());            
                 helper.setData(component, event, helper);
-                // --------------------
                 var newAction = component.get('v.newAction'); 
                 var data = component.get('v.actionTemplateList');
                 data = data.map(function(rowData) { 
@@ -46,10 +74,8 @@
                     return rowData;
                 });
                 component.set("v.actionTemplateList", data);
-                // ----------------------------
             }
-            component.set('v.spinner', false);
-            
+            component.set('v.spinner', false);           
         });
         $A.enqueueAction(action);
     },
@@ -74,8 +100,7 @@
         data.sort(this.sortBy(fieldName, reverse))
         cmp.set("v.rowActionTemplateList", data);
         helper.setData(cmp);
-    },
-    
+    },   
     sortBy: function (field, reverse, primer) {
         var key = primer ?
             function(x) {return primer(x.hasOwnProperty(field) ? (typeof x[field] === 'string' ? x[field].toLowerCase() : x[field]) : 'aaa')} :

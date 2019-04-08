@@ -170,27 +170,3 @@
     border-radius: 10px;
     background-color: #ffffff;
 }
-
-
-/*.THIS .slds-dropdown-trigger.slds-is-open .slds-listbox__option.slds-has-focus {
-    background-color: blue;
-}
-
-.THIS .slds-input:focus, .THIS .slds-input:active {
-    border-color: cyan;
-    box-shadow: 0 0 3px green;
-}
-
-.THIS .select-auto-width {
-    border-radius: 3px;
-    background-color: red;
-}
-
-.THIS .select-auto-width > .slds-form-element__control {
-    border-radius: 3px;
-    background-color: red;
-}
-.THIS .select-auto-width > .slds-form-element__control > .slds-select_container{
-    border-radius: 3px;
-    background-color: red;
-} */

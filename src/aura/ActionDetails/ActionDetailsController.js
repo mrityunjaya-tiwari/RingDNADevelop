@@ -1,6 +1,6 @@
 ({
     doInit: function(component, event, helper) {
-       console.log('disableactiontype-AB', component.get('v.disableActionType'));
+        component.get('v.disableActionType');
     },
     createCallAction : function(component, event,helper) {
         helper.createCallAction(component, event,helper);

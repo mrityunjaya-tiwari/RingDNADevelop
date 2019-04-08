@@ -56,6 +56,17 @@ public class RingDNAApiCallouts {
         }
         return callTemplatesData;
     }
+     public List<Object> getCallNoteTemplatesUpdated() {
+        String uri = host + '/' + BASE_URL + '/' + CALL_NOTE_TEMPLATES_PATH;
+        String endpoint = uri + '?' + 'accountId=' + accountId;
+        system.debug('endpoint ' + endpoint);
+        if(sessionId == null || host == '') {
+            return New List<Object>();
+        }
+		HTTPResponse httpResponse = getResponse(HTTP_METHOD, endpoint, sessionId);
+        List<Object> jsonList = (List<Object>)JSON.deserializeUntyped(httpResponse.getBody());
+        return jsonList;
+    } 
     
     public Map<String, String> getSMSTemplates() {
         String uri = host + '/' + BASE_URL + '/' + SMS_TEMPLATES_PATH;

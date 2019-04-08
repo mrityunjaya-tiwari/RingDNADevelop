@@ -1,5 +1,6 @@
 ({
     initActionTemplateTable : function(component, event, helper) {
+        var isSMSaction = component.get('v.isSMSAction');
         var newAction  = component.get('v.newAction');
         helper.setTableColunm(component, event , helper);
         var rowActionTemplateList = component.get("v.rowActionTemplateList");
@@ -14,7 +15,6 @@
         var recordId = row.id;
         var actionName = event.getParam('action').name;
         if ( actionName == 'Edit' ) {
-            // --------------------
             var data = component.get('v.actionTemplateList');
             data = data.map(function(rowData) {
                 if (rowData.id === row.id) {
@@ -29,8 +29,6 @@
                 return rowData;
             });
             component.set("v.actionTemplateList", data);
-            // ----------------------------
-            
         } else if ( actionName == 'View') {
             component.set('v.isModal', true);
             var newAction = component.get('v.newAction');
@@ -38,14 +36,12 @@
             component.set('v.actionName', row.name);
             component.set('v.actionDesc', row.template);
         }
-    },
-    
+    },    
     handleComponentEvent: function(cmp, event, helper) {
         var curPage = event.getParam("currentPage");
         cmp.set('v.currentPage', curPage);
         helper.setData(cmp);
-    },
-    
+    },   
     updateColumnSorting: function(cmp, event, helper) {
         var columns = cmp.get('v.columns');
         var fieldName = event.getParam('fieldName');
@@ -58,6 +54,5 @@
         cmp.set("v.sortedBy", fieldName);
         cmp.set("v.sortedDirection", sortDirection);
         helper.sortData(cmp, fieldName, sortDirection, helper);    
-    },
-    
+    },    
 })
