@@ -1,5 +1,7 @@
 ({
     doInit: function(component, event, helper) {
+       var UpdateFieldList = component.get("v.UpdateFieldList");
+        var FieldList = component.get("v.FieldList");
         helper.updateTaskField(component, event, helper);
     },
     updateTaskField : function(component, event, helper){
