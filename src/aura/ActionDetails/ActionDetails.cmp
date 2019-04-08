@@ -31,7 +31,8 @@
 <aura:attribute name="activationtypeList" type="List" default="['Automatic', 'Manual']" />
 <aura:attribute name="currentStep" type="string" default="1"/>
 <aura:attribute name="isTaskAction" type="boolean" default="false"/>
-<aura:attribute name="isSMSAction" type="boolean" default="false"/>    
+<aura:attribute name="isSMSAction" type="boolean" default="false"/>
+<aura:attribute type="List" name="rowActionTemplateList"/>      
 	<!-- Body Start -->
 	<div class="slds-box_xx-small">
 		<fieldset class="slds-form-element slds-form_compound">

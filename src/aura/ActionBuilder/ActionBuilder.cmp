@@ -67,7 +67,7 @@
         <!-- Body Start -->
        <!-- CREATE NEW ACTION FORM -->
         <aura:if isTrue = "{!v.currentStep == '1' || v.currentStep == 1}" >          
-            <c:ActionDetails aura:id="newActionDetail" newAction = "{!v.newAction}" disableActionType = "{!v.disableActionType}" currentStep ="{!v.currentStep}" isTaskAction="{!v.isTaskAction}" isSMSAction="{!v.isSMSAction}"/>       
+            <c:ActionDetails aura:id="newActionDetail" newAction = "{!v.newAction}" disableActionType = "{!v.disableActionType}" currentStep ="{!v.currentStep}" isTaskAction="{!v.isTaskAction}" isSMSAction="{!v.isSMSAction}" rowActionTemplateList="{!v.rowActionTemplateList}"/>       
         </aura:if>
         <aura:if isTrue = "{!v.currentStep == '2' || v.currentStep == 2}" >
             <aura:if isTrue = "{!v.isTaskAction}">
