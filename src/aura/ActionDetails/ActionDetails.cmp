@@ -25,12 +25,13 @@
 <aura:attribute name="defaultValue" type="Boolean" default='false'/>
 <aura:attribute name="isNew" type="Boolean" default='false'/>
 <aura:attribute name="themeName" type="String"/>
-<!--create a component attributs -->
+<!--create a component attributes -->
 <aura:attribute name="spinner" type="boolean" default="false"/>
 <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>
 <aura:attribute name="activationtypeList" type="List" default="['Automatic', 'Manual']" />
 <aura:attribute name="currentStep" type="string" default="1"/>
- 
+<aura:attribute name="isTaskAction" type="boolean" default="false"/>
+<aura:attribute name="isSMSAction" type="boolean" default="false"/>    
 	<!-- Body Start -->
 	<div class="slds-box_xx-small">
 		<fieldset class="slds-form-element slds-form_compound">
@@ -92,5 +93,4 @@
 			</form>
 		</fieldset>
 	</div>
-
 </aura:component>

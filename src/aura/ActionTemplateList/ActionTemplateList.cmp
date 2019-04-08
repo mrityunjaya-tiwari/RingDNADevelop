@@ -14,10 +14,9 @@
     <aura:attribute name="actionType" type="string" default="Action Type"/>
     <aura:attribute name="actionName" type="string" default="Action Name"/>
     <aura:attribute name="actionDesc" type="string" default="Action Description"/>
-    
+    <aura:attribute name="isSMSAction" type="boolean" default="false"/>
     <!--Action Objects -->
-    <aura:attribute name="newAction" type="Action" default="{ 'sobjectType': 'Action'}"/>
-    
+    <aura:attribute name="newAction" type="Action" default="{ 'sobjectType': 'Action'}"/>    
     <aura:handler name="init" value="{!this}" action="{!c.initActionTemplateTable}"/>
     <aura:handler name="cadencePagination" event="c:CadPagination" action="{!c.handleComponentEvent}"/>
     <div class="slds-grid slds-m-left_large">
@@ -38,13 +37,24 @@
                              sortedDirection="{!v.sortedDirection}"
                              />
     </div>
-    <div class="rdna-bottom-padding  slds-m-left_medium">
+    <aura:if isTrue="{!and(empty(v.rowActionTemplateList), v.isSMSAction)}">
+    <div class="slds-align_absolute-center">
+        <p class="rdna-style">There are currently no pre-configured SMS Templates associated to this account.</p></div>
+        <aura:set attribute="else">
+            <aura:if isTrue="{!(empty(v.rowActionTemplateList))}">
+            <div class="slds-align_absolute-center">
+                <p class="rdna-style-call">There are currently no pre-configured Call Notes Templates associated to this account.</p></div>
+            </aura:if>
+            </aura:set>
+    </aura:if>
+        <div class="rdna-bottom-padding  slds-m-left_medium">
         <c:Pagination total="{!v.totalNumberOfRows}" pageOffset="{!v.rowsToLoad}"/>
     </div>
     <aura:if isTrue="{!v.isModal}">
-        <div class = "slds-form-element__row slds-size_1-of-1">
+        <div class = "slds-form-element__row slds-size_1-of-1 slds-modal slds-fade-in-open">
             <c:ActionModal aura:id="actionModal" isModal="{!v.isModal}" actionType="{!v.actionType}"
                            actionName="{!v.actionName}" actionDesc="{!v.actionDesc}"/>
         </div>
+        <div class="slds-backdrop slds-backdrop_open"></div>
     </aura:if>
 </aura:component>
