@@ -25,14 +25,17 @@
     <!-- Disabled proerty-->
     <aura:attribute name = "isDisabled" type = "Boolean" default = "false"/>
     <aura:attribute name="recordType" type="String" default="Contact" />
-     <aura:attribute name="UpdateFieldList" type="List"/>
+    <aura:attribute name="UpdateFieldList" type="List"/>
+    <aura:attribute name="FieldList" type="List"/>
     
-    <div class="slds-form-element__control slds-size_1-of-3">
-        <aura:if isTrue="{!v.currentIndex == 0}">
-            <label class="slds-form-element__label" for="input-01">{!v.fieldHeader}</label>
-        </aura:if>
-        
-        <lightning:select aura:id="formValidationId" name="selectTemplateType" 
+    
+    
+    <div class="slds-form-element__control slds-size_1-of-4">
+        <aura:if isTrue="{!v.currentIndex == 0}">        
+            <label class="slds-form-element__label rdna-field-margin" for="input-01">{!v.fieldHeader}</label>          
+            </aura:if>
+        <div class="rdna-select">
+        <lightning:select aura:id="formValidationId" name="selectTemplateType" class="rdna-field-margin"
                           label="Field Type" required="true" variant = "label-hidden" value="{!v.taskObj.key}" 
                           messageWhenValueMissing="Please Select Type."
                           onchange="{!c.updateTaskField}" disabled = "{!v.isDisabled}">
@@ -43,13 +46,16 @@
                     	</aura:iteration> 
             </aura:iteration> 
         </lightning:select>
-        
+        </div>
     </div>
-    <div class="slds-form-element__control slds-size_1-of-3">
+    <div class="slds-form-element__control slds-size_1-of-4">
         <aura:if isTrue="{!v.currentIndex == 0}">
+             <div class="rdna-value-padding">
             <label class="slds-form-element__label" for="input-01" >Values</label>
+            </div>     
         </aura:if>
         <aura:if isTrue="{!v.dataType == 'Picklist'}">
+            <div class="rdna-value-padding">
             <lightning:select aura:id="formValidationId" name="selectPicklistType" 
                               variant = "label-hidden"  required="true" value="{!v.taskObj.value}" 
                               messageWhenValueMissing="Please Select Field Value" disabled = "{!v.isDisabled}">
@@ -59,10 +65,11 @@
                     <option value="{!pickListValue}">{!pickListValue}</option>
                 </aura:iteration>
             </lightning:select>
-            
+            </div>
             
             <aura:set attribute="else">
                 <aura:if isTrue="{!v.dataType == 'Boolean'}">
+                    <div class="rdna-value-padding">
                     <lightning:select aura:id="formValidationId" name="selectBooleanType" 
                                       variant = "label-hidden" required="true" value="{!v.taskObj.value}" 
                                       messageWhenValueMissing="Please Select Field Value" disabled = "{!v.isDisabled}">
@@ -70,11 +77,13 @@
                         <option value="true">True</option>
                         <option value="false">False</option>
                     </lightning:select>
-                    
+                    </div>
                     <aura:set attribute="else">
                         <aura:if isTrue="{!v.dataType == 'Number'}">
+                            
                             <!--Added condition for priority field in numbers-->
                             <aura:if isTrue="{!v.taskObj.key == 'Priority'}">
+                                <div class="rdna-value-padding">
                                 <lightning:input type="number" aura:id="formValidationId" 
                                                  name="numbers"
                                                  value="{!v.taskObj.value}" required="true"
@@ -84,9 +93,11 @@
                                                  messageWhenRangeOverflow="Priority Can't be above 100"
                                                  messageWhenRangeUnderflow="Priority Can't be less than 0" 
                                                  disabled = "{!v.isDisabled}"/>
+                                </div>
                                 <!--Other fields(Not priority) in numbers -->
                                 <aura:set attribute="else">
                                     <aura:if isTrue="{!v.taskObj.key == 'ringdna__Queue_Hold_Time__c'}">
+                                         <div class="rdna-value-padding">
                                         <lightning:input type="number" aura:id="formValidationId" 
                                                          name="numbers"
                                                          placeholder="Enter Numbers"
@@ -94,22 +105,28 @@
                                                          min="0"
                                                          value="{!v.taskObj.value}"
                                                          messageWhenRangeUnderflow="Enter a Valid Number (Greater than 0)"
-                                                         disabled = "{!v.isDisabled}"/> 
+                                                         disabled = "{!v.isDisabled}"/>
+                                        </div>
                                         <aura:set attribute="else">
+                                             <div class="rdna-value-padding">
                                             <lightning:input type="number" aura:id="formValidationId" 
                                                              name="numbers"
                                                              placeholder="Enter Numbers"
                                                              required="true"
                                                              value="{!v.taskObj.value}"
                                                              messageWhenRangeUnderflow="Enter Valid Number"
-                                                             disabled = "{!v.isDisabled}"/> 
+                                                             disabled = "{!v.isDisabled}"/>
+                                            </div>
                                         </aura:set>
+                                        
                                     </aura:if>
                                 </aura:set>
+                             
                             </aura:if>                             
                             
                             <aura:set attribute="else">
                                 <aura:if isTrue="{!v.dataType == 'Email'}">
+                                    <div class="rdna-value-padding">
                                     <lightning:input aura:id="formValidationId" 
                                                      name="Email"
                                                      type ="email"
@@ -117,15 +134,17 @@
                                                      value="{!v.taskObj.value}"
                                                      placeholder = "Enter Email Address"
                                                      messageWhenBadInput = "Please Enter Valid Email Address"                                                 
-                                                     disabled = "{!v.isDisabled}"/> 
+                                                     disabled = "{!v.isDisabled}"/>
+                                        </div>
                                     <aura:set attribute="else">
                                         <aura:if isTrue="{!v.dataType == 'Reference'}">
-                                            <div class=" ">
+                                            <div class="rdna-value-padding">
                                                 <c:LookupFieldComponent aura:id="LookupFieldComponentInAD" recordType="{!v.recordType}"  isDisabled="{!v.isDisabled}"
                                                                                   parentId="{!v.taskObj.value}" fieldName="{!v.fieldName}" />
                                             </div>
                                             <aura:set attribute="else">
                                                 <aura:if isTrue="{!v.dataType == 'Phone'}">
+                                                    <div class="rdna-value-padding">
                                                     <lightning:input aura:id="formValidationId" 
                                                                      name="Phone"
                                                                      type ="tel"
@@ -134,8 +153,10 @@
                                                                      placeholder = "Enter Phone no."
                                                                      messageWhenBadInput = "Please Enter Phone no."                                                 
                                                                      disabled = "{!v.isDisabled}"/>
+                                                        </div>
                                                     <aura:set attribute="else">
                                                         <aura:if isTrue="{!v.dataType == 'Date'}">
+                                                            <div class="rdna-value-padding">
                                                             <lightning:input aura:id="formValidationId" 
                                                                              name="Date"
                                                                              type ="date"
@@ -144,8 +165,10 @@
                                                                              placeholder = "Select Date"
                                                                              messageWhenBadInput = "Please Select Date"                                                 
                                                                              disabled = "{!v.isDisabled}"/>
+                                                                </div>
                                                             <aura:set attribute="else">
                                                                 <aura:if isTrue="{!v.dataType == 'DateTime'}">
+                                                                    <div class="rdna-value-padding">
                                                                     <lightning:input aura:id="formValidationId" 
                                                                                      name="DateTime"
                                                                                      type ="datetime"
@@ -154,14 +177,17 @@
                                                                                      placeholder = "Select Date Time"
                                                                                      messageWhenBadInput = "Please Select Date Time"                                                 
                                                                                      disabled = "{!v.isDisabled}"/>
+                                                                        </div>
                                                                     <aura:set attribute="else">
+                                                                        <div class="rdna-value-padding">
                                                                         <lightning:input aura:id="formValidationId" 
                                                                                          name="inputString" 
                                                                                          required="true"
                                                                                          value="{!v.taskObj.value}"
                                                                                          placeholder = "Please Enter Details"
                                                                                          messageWhenBadInput = "Please Enter Detail"                                                 
-                                                                                         disabled = "{!v.isDisabled}"/>   
+                                                                                         disabled = "{!v.isDisabled}"/> 
+                                                                       </div>     
                                                                     </aura:set>
                                                                 </aura:if>
                                                             </aura:set>
@@ -185,7 +211,7 @@
         <aura:if isTrue="{!v.currentIndex > 0}">
             <aura:if isTrue="{!not(v.isDisabled)}">
                 <a onclick="{!c.removeRow}">
-                    <img class = "Oval" src="{!$Resource.cadence_icons + '/delete/delete@3x.png'}"/>
+                    <img class = "Oval rdna-icon" src="{!$Resource.cadence_icons + '/delete/delete@3x.png'}"/>
                 </a>
             </aura:if>
         </aura:if>

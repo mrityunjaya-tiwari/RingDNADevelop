@@ -4,6 +4,7 @@
         newAct.sobjectType = 'ActionWrapper';
         var action = component.get("c.saveAction");
         var listTask = component.get("v.listTask");
+       // var wrapperTaskFields = component.get("v.wrapperTaskFields");
         var newTask = component.get("v.taskObj");
         for(var index in listTask){
             var wrapperTOCreateTask = listTask[index];
@@ -24,13 +25,10 @@
             }else{ 
             }
         });
-        
-        //helper.validateActionForm(component, event);
         if (component.get('v.isValid') == true){
             $A.enqueueAction(action)
         }
-    },
-    
+    },    
     getData : function(component, event, helper, id) {
         component.set('v.spinner', true);
         var action = component.get('c.getActionData');
@@ -50,16 +48,15 @@
                     for(var i=0; i<obj.taskList.length; i++) {
                         obj.taskList[i].sobjectType = 'wrapperTaskField';
                         taskList.push(obj.taskList[i]);
-                    }
-                    component.set('v.listTask', taskList);    
+                    }                    
+                    component.set('v.listTask', taskList);
                 }
                 window.setTimeout(
                     $A.getCallback(function() {
                         component.set('v.newAction', component.get('v.newAction'));
                         component.set('v.spinner', false);
                     }), 500
-                );
-                
+                );                
             }else{
                 component.set('v.spinner', false);
             }
@@ -96,13 +93,13 @@
             evt.fire();
         }
     },
-    validateActionName: function(component, event, helper){
-        var newAct = component.get("v.newAction");
-        var name = newAct.name;
-        if (name){
-            newAct.name = name.trim();
-        }
-        component.set("v.newAction", newAct);
+    createObjectData: function(component, event) {
+        var rowList = component.get("v.listTask");
+        rowList.push({
+            'sobjectType': 'wrapperTaskField',
+            'key': '',
+            'value': ''
+        });
+        component.set("v.listTask", rowList);
     },
-    
 })
