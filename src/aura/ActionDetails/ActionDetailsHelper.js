@@ -48,7 +48,8 @@
         }
     },
     createTaskAction : function(component, event, helper){
-        var newAct = component.get("v.newAction");
+        var newAct = component.get("v.newAction");	
+		var isValid = helper.validateActionName(component, event,helper);
         if(newAct.id == '' || newAct.id == null){
             helper.validateActionName(component, event,helper);
             component.set('v.newAction.type', 'Task');

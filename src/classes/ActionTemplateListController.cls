@@ -19,15 +19,18 @@ public class ActionTemplateListController {
             if((Boolean)objMap.get('enabled')) {                                               
                 String teamName = '';
                 List<Object> teams = (List<Object>)objMap.get('teams');
-                for(Object team : teams){
-                    Map<String, Object> teamMap = (Map<String, Object>)team;
-                    Object teamObj = teamMap.get('team');                    
-                    Map<String, Object> teamObjMap = (Map<String, Object>)teamObj;                    
-                    teamName = teamName + String.valueOf(teamObjMap.get('name')) + ', ';
-                }                  
-                if(teamName == '' || teamName == null){
-                    teamName = 'All';
+                if (teams != null){
+                    for(Object team : teams){
+                        Map<String, Object> teamMap = (Map<String, Object>)team;
+                        Object teamObj = teamMap.get('team');                    
+                        Map<String, Object> teamObjMap = (Map<String, Object>)teamObj;                    
+                        teamName = teamName + String.valueOf(teamObjMap.get('name')) + ', ';
+                    }                  
+                    if(teamName == '' || teamName == null){
+                        teamName = 'All';
+                    }
                 }
+                
                 actionTemplateList.add(New ActionTemplate(String.valueOf(objMap.get('name')),String.valueOf(objMap.get('id')), teamName.removeEnd(', '), String.valueOf(objMap.get('template'))));
             } 
         }
