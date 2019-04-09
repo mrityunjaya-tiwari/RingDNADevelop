@@ -105,7 +105,6 @@ public with sharing class CadenceController {
         List<SObject> sObjectListToUpdate = new List<SObject>();
         if(query2 != null && query2 != ''){
             for(Sobject obj : Database.query(query2 + ' order by lastmodifieddate limit 100')){
-                System.debug('formQueryOpportunity:obj:'+obj);
                 obj.put(nameSpace+'Cadence_Id__c', cadence.Id);
                 if(cadence.Participent_Activation__c.equalsIgnoreCase(CadenceConstants.PARTICIPANT_ACTIVATION_AUTOMATIC)) {
                     obj.put(nameSpace+'isActivated__c', true);
