@@ -12,9 +12,22 @@ public class ActionTemplateListController {
             }
             else if(type == 'Call'){
                 jsonList = ringdnaAPI.getCallNoteTemplatesUpdated();  
-            }                      
+            }
+			else if(type =='Email'){
+            List<EmailTemplate>  listOfEmailTemplates =CadenceService.getEmailTemplates();
+            if(listOfEmailTemplates != null){
+                for(EmailTemplate emailtemp : listOfEmailTemplates){
+                   ActionTemplate actionTemp = New ActionTemplate(emailtemp.name,emailtemp.id, emailtemp.TemplateType, emailtemp.Description);
+                   actionTemp.folderId =emailtemp.folderId;
+                   actionTemp.subject=emailTemp.subject;
+                   actionTemp.body=emailTemp.body;
+                   actionTemplateList.add(actionTemp);
+					}
+				}
+			}                      
         }
-        for (Object obj : jsonList) {
+		if (jsonList != null) {
+			for (Object obj : jsonList) {
             Map<String, Object> objMap = (Map<String, Object>)obj;           
             if((Boolean)objMap.get('enabled')) {                                               
                 String teamName = '';
@@ -30,11 +43,17 @@ public class ActionTemplateListController {
                         teamName = 'All';
                     }
                 }
-                
                 actionTemplateList.add(New ActionTemplate(String.valueOf(objMap.get('name')),String.valueOf(objMap.get('id')), teamName.removeEnd(', '), String.valueOf(objMap.get('template'))));
-            } 
-        }
+				} 
+			}
+		}
         return actionTemplateList;
+    }
+	
+	@AuraEnabled
+    public static List<Folder> getFolderType(){
+        List<Folder> folderList = [select Id,Name,Type from Folder where Type = 'Email'];
+         return folderList;
     }
 
     public class ActionTemplate {
@@ -45,6 +64,9 @@ public class ActionTemplateListController {
         @AuraEnabled String template {get;set;}
         @AuraEnabled String selectButtonLabel {get;set;}
         @AuraEnabled String disableselectButton {get;set;}
+        @AuraEnabled String folderId {get;set;}
+        @AuraEnabled String subject {get;set;}
+        @AuraEnabled String body {get;set;}
         public ActionTemplate(String templateName, String templateId, String templateTeam, String templateType){
             name = templateName;
             id = templateId;

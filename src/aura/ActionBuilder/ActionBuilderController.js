@@ -31,6 +31,7 @@
         var isValid = helper.validateEmailActionBuilder(component, event,helper);
         if (isValid){
             component.set('v.isNextEnable' , false);
+            component.set('v.isEmailTemplateList' , true);
         } else {
             component.set('v.isValidationError',true);
         }
@@ -40,6 +41,17 @@
         var currentStep = component.get('v.currentStep');
     },
     createAction: function(component, event, helper) {
-        helper.createAction(component, event,helper);
+       var newAct = component.get("v.newAction");
+       if(newAct.type == 'Email'){
+            if(newAct.templateId != undefined){
+            	helper.createAction(component, event,helper);
+            }
+            else{
+                component.set('v.isValidationError',true);
+            }          
+        }
+        else{
+            helper.createAction(component, event,helper);
+        }
     },
 })

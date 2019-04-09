@@ -8,6 +8,9 @@
         }else{
             helper.setData(component, event, helper);
         }
+		if(newAction.type =='Email'){
+            helper.getFolderType(component, event, helper);
+        }
     },
     viewRecord : function(component, event, helper) {
         var row = event.getParam('row');
@@ -25,6 +28,7 @@
                         rowData.selectButtonLabel = 'Selected';
                         component.set('v.newAction.templateId', rowData.id);
                         component.set('v.newAction.templateName', rowData.name);
+						component.set('v.isValidationError', false);
                         if (newAction.type == 'Email'){
                             rowData.disableselectButton = true;
                         }
@@ -43,6 +47,13 @@
             component.set('v.actionType', newAction.type);
             component.set('v.actionName', row.name);
             component.set('v.actionDesc', row.template);
+			if(newAction.type=='Email'){
+                component.set('v.actionName', row.subject);
+                component.set('v.actionDesc', row.body); 
+            }else{
+                component.set('v.actionName', row.name);
+                component.set('v.actionDesc', row.template);
+            }
         }
     },    
     handleComponentEvent: function(cmp, event, helper) {
@@ -63,4 +74,7 @@
         cmp.set("v.sortedDirection", sortDirection);
         helper.sortData(cmp, fieldName, sortDirection, helper);    
     },    
+	filterFolderType: function(component, event, helper){
+        helper.applyFilters(component, event, helper);
+    }
 })
