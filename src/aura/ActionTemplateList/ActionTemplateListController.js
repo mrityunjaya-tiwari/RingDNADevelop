@@ -13,14 +13,23 @@
         var row = event.getParam('row');
         var recordId = row.id;
         var actionName = event.getParam('action').name;
+		var newAction = component.get('v.newAction');
         if ( actionName == 'Edit' ) {
             var data = component.get('v.actionTemplateList');
             data = data.map(function(rowData) {
-                if (rowData.id === row.id) {
-                    rowData.selectButtonLabel = 'Selected';
-                    component.set('v.newAction.templateId', rowData.id);
-                    component.set('v.newAction.templateName', rowData.name);
-                    rowData.disableselectButton = true;
+                 if (rowData.id === row.id) {
+                    if (rowData.selectButtonLabel == 'Selected' && newAction.type != 'Email'){
+                        rowData.selectButtonLabel = 'Select';
+                        component.set('v.newAction.templateId', '');
+                    }else{
+                        rowData.selectButtonLabel = 'Selected';
+                        component.set('v.newAction.templateId', rowData.id);
+                        component.set('v.newAction.templateName', rowData.name);
+                        if (newAction.type == 'Email'){
+                            rowData.disableselectButton = true;
+                        }
+                    }
+                    
                 }else{
                     rowData.selectButtonLabel = 'Select';
                     rowData.disableselectButton = false;

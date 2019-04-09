@@ -59,22 +59,23 @@
         action.setCallback(this, function(response){
             var state = response.getState();
             if (state === "SUCCESS") { 
-                component.set("v.rowActionTemplateList", response.getReturnValue());            
-                helper.setData(component, event, helper);
-                var newAction = component.get('v.newAction'); 
-                var data = component.get('v.actionTemplateList');
+                component.set("v.rowActionTemplateList", response.getReturnValue());   var newAction = component.get('v.newAction'); 
+                var data = component.get('v.rowActionTemplateList');
                 data = data.map(function(rowData) { 
                     if (rowData.id === newAction.templateId) {
                         rowData.selectButtonLabel = 'Selected';
-                        rowData.disableselectButton = true;
+                        if (newAction.type == 'Email'){
+                            rowData.disableselectButton = true;
+                        }
                     }else{
                         rowData.selectButtonLabel = 'Select';
                         rowData.disableselectButton = false;
                     }
                     return rowData;
                 });
-                component.set("v.actionTemplateList", data);
-            }
+                component.set("v.rowActionTemplateList", data);
+                helper.setData(component, event, helper);
+			}
             component.set('v.spinner', false);           
         });
         $A.enqueueAction(action);

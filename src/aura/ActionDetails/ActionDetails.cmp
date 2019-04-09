@@ -1,7 +1,7 @@
 <aura:component controller="ActionDetailController" implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction,force:appHostable" access="global">
 <!-- Disabled property for action type-->
 <aura:attribute name = "disableActionType" type = "Boolean" default = "false"/>
- <!-- Disabled property for activationType type-->
+<!-- Disabled property for activationType type-->
 <aura:attribute name = "disableActivationType" type = "Boolean" default = 'true'/>
 <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>  
 <aura:attribute name="UpdateFieldList" type="List"/>
@@ -32,38 +32,41 @@
 <aura:attribute name="currentStep" type="string" default="1"/>
 <aura:attribute name="isNextEnable" type="boolean" default="false"/>
 <aura:attribute type="List" name="rowActionTemplateList"/>      
-	<!-- Body Start -->
-	<div class="slds-box_xx-small">
-		<fieldset class="slds-form-element slds-form_compound">
-			<!-- CREATE NEW ACTION FORM -->
-			<form class="slds slds-form slds-m-left_large">
+<!-- Body Start -->
+<div class="slds-box_xx-small" style="height : 450px">
+	<fieldset class="slds-form-element slds-form_compound">
+		<!-- CREATE NEW ACTION FORM -->
+		<form class="slds slds-form slds-m-left_large">
+			
+			<p class="slds-page-header__row slds-m-top_large slds-truncate slds-align_absolute-center rdna-sub-header-bold" >Action Details</p>
+			<p class="slds-align_absolute-center slds-m-bottom_large rdna-sub-header" style="padding-top:15px;">Enter the details of your new action which can be added to any sequence list.</p>
+			
+			<div class="slds-form-element__row slds-p-top_small slds-align_absolute-center">
+				<div class="slds-form-element__control slds-size_1-of-4 ">
+					<lightning:input aura:id="formValidationId" label="Name"
+									 name="actionname"
+									 value="{!v.newAction.name}"
+									 placeholder = "Enter Action Name"
+									 messageWhenBadInput = "Please Enter Name"
+									 required="true"/> 
+				</div>                                                
+			</div>                    
+			<span class="rdna-template-bold slds-p-top_medium slds-page-header__row slds-text-title_bold slds-truncate slds-align_absolute-center">Action Types</span>
+			<span class="rdna-styling slds-align_absolute-center">Choose the type of action you want to build.</span>
+			<div class="slds-form-element__row slds-p-top_small">
 				
-				<p class="slds-page-header__row slds-m-top_large slds-truncate slds-align_absolute-center rdna-sub-header-bold" >Action Details</p>
-				<p class="slds-align_absolute-center slds-m-bottom_large rdna-sub-header" style="padding-top:15px;">Enter the details of your new action which can be added to any sequence list.</p>
-				
-				<div class="slds-form-element__row slds-p-top_small slds-align_absolute-center">
-					<div class="slds-form-element__control slds-size_1-of-4 ">
-						<lightning:input aura:id="formValidationId" label="Name"
-										 name="actionname"
-										 value="{!v.newAction.name}"
-										 placeholder = "Enter Action Name"
-										 messageWhenBadInput = "Please Enter Name"
-										 required="true"/> 
-					</div>                                                
-				</div>                    
-				<span class="rdna-template-bold slds-p-top_medium slds-page-header__row slds-text-title_bold slds-truncate slds-align_absolute-center">Action Types</span>
-				<span class="rdna-styling slds-align_absolute-center">Choose the type of action you want to build.</span>
-				<div class="slds-form-element__row slds-p-top_small">
-					
-					<div class="rdna-div slds-align_absolute-center" required="true" messageWhenValueMissing="Please Select Action Type." disabled = "{!v.disableActionType}">
-						<a onclick="{!c.createCallAction}" disabled = "{!v.disableActionType}">              
-							<aura:if isTrue="{!v.newAction.type == 'Call'}">
-							   <img class = "actions-icon" src="{!$Resource.cadence_icons + '/action-icons/select/call.png'}"/> 
-								<aura:set attribute="else">
+				<div class="rdna-div slds-align_absolute-center" required="true" messageWhenValueMissing="Please Select Action Type." disabled = "{!v.disableActionType}">
+						<div><a onclick="{!c.createCallAction}" disabled = "{!v.disableActionType}">              
+						<aura:if isTrue="{!v.newAction.type == 'Call'}">
+							<img class = "actions-icon" src="{!$Resource.cadence_icons + '/action-icons/select/call.png'}"/> 
+							<aura:set attribute="else">
 								<img class = "actions-icon" src="{!$Resource.cadence_icons + '/action-icons/default/call.png'}"/>
-								</aura:set>
-							</aura:if>
+							</aura:set>
+						</aura:if>                   
 						</a>
+						<p class="slds-m-left-xx_large slds-p-top_small rdna-name">Call</p>
+					</div>
+					<div>
 						<a onclick="{!c.createEmailAction}" disabled = "{!v.disableActionType}">
 							<aura:if isTrue="{!v.newAction.type == 'Email'}">
 								<img class = "actions-icon rdna-icon" src="{!$Resource.cadence_icons + '/action-icons/select/email.png'}"/> 
@@ -71,7 +74,10 @@
 									<img class = "actions-icon rdna-icon" src="{!$Resource.cadence_icons + '/action-icons/default/email.png'}"/>
 								</aura:set>
 							</aura:if>
-						</a>                             
+						</a>
+						<p class="slds-m-left-x_large slds-p-top_small rdna-name-styling">Email</p>
+					</div>
+					<div>
 						<a onclick="{!c.createSMSAction}" disabled = "{!v.disableActionType}">
 							<aura:if isTrue="{!v.newAction.type == 'SMS'}">
 								<img class = "actions-icon rdna-icon" src="{!$Resource.cadence_icons + '/action-icons/select/sms.png'}"/> 
@@ -79,7 +85,10 @@
 									<img class = "actions-icon rdna-icon" src="{!$Resource.cadence_icons + '/action-icons/default/sms.png'}"/>
 								</aura:set>
 							</aura:if>
-						</a>                               
+						</a>
+						<p class="slds-m-left-xx_large slds-p-top_small rdna-name-styling">SMS</p>
+					</div>
+					<div>
 						<a onclick="{!c.createTaskAction}" disabled = "{!v.disableActionType}">
 							<aura:if isTrue="{!v.newAction.type == 'Task'}">
 								<img class = "actions-icon rdna-icon" src="{!$Resource.cadence_icons + '/action-icons/select/task.png'}"/> 
@@ -87,10 +96,12 @@
 									<img class = "actions-icon rdna-icon" src="{!$Resource.cadence_icons + '/action-icons/default/task.png'}"/>
 								</aura:set>
 							</aura:if>
-						</a>                                                      
-					</div>                    
-				</div>
-			</form>
-		</fieldset>
-	</div>
+						</a>
+						<p class="slds-m-left-xx_large slds-p-top_small rdna-name-styling">Task</p>
+					</div>                                                   
+				</div>                    
+			</div>
+		</form>
+	</fieldset>
+</div>
 </aura:component>
