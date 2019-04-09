@@ -246,11 +246,11 @@
         <unique>false</unique>
     </fields>
     <fields>
-		<fullName>Get_Opportunity_Id__c</fullName>
+		<fullName>Opportunity_Id__c</fullName>
 		<externalId>false</externalId>
 		<formula>Contact_Id__r.Opportunity_Id__c</formula>
 		<formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
-		<label>Get Opportunity Id</label>
+		<label>Opportunity Id</label>
 		<required>false</required>
 		<trackTrending>false</trackTrending>
 		<type>Text</type>
