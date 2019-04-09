@@ -32,6 +32,13 @@ public class TestDataFactory {
         return opp;
     }
     
+    public static OpportunityContactRole createOpportunityRole(Id opportunityId,Id contactId) {
+        OpportunityContactRole oppRole = new OpportunityContactRole();
+        oppRole.ContactId = contactId;
+        oppRole.OpportunityId = opportunityId;
+        return oppRole;
+    }    
+    
     public static Lead createLead() { 
         Lead l = new Lead();
         l.LastName = 'Test Lead';

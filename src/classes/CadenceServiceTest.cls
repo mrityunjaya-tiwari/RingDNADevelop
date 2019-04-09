@@ -225,6 +225,31 @@ public class CadenceServiceTest {
         Test.stopTest();
     }
     
+	@isTest
+    public static void OpportunityTest(){
+         Opportunity opportunity = TestDataFactory.createOpp('Test-opp-01');
+         insert opportunity;
+         System.assertNotEquals(null, opportunity.Id); 
+        
+         Contact c1= new Contact();
+         c1.FirstName='fname';
+         c1.LastName='lname';
+         c1.Department='IT';
+         insert c1;
+         System.assertNotEquals(null, c1.Id);
+        
+         OpportunityContactRole oppRol = TestDataFactory.createOpportunityRole(opportunity.Id,c1.Id);
+         insert oppRol;
+         System.assertNotEquals(null, oppRol.Id);
+        
+        
+         Test.startTest();
+         map<string,List<String>> mapOfOpportunityContactIds = CadenceService.getOpportunityOrContactMap(new List<sobject>{c1});
+         CadenceService.GetOpportunityIdByContactId(mapOfOpportunityContactIds,c1.Id);
+         Test.stopTest(); 
+        
+    }    
+    
     @isTest
     public static void mapToWrapperObjTest(){
         Map<String, String> apiMap = New Map<String, String>();
