@@ -227,7 +227,7 @@ public class CadenceActionListController {
     
     public static void deleteActionOnpartcipants(List<Id> cadIds){      
         List<Sequence_Action__c> actionOnParticipants = [select Id from Sequence_Action__c where CadenceAction_ID__r.Cadence_Id__c  IN :cadIds and isActionPerformed__c=false];
-        List<Contact> contactList = [select Id,Opportunity_Id__c from Contact where Cadence_ID__c  IN :cadIds];
+        List<Contact> contactList = [select Id,Opportunity_Id__c from Contact where Cadence_ID__c  IN :cadIds and Opportunity_Id__c != null];
         if(!actionOnParticipants.isEmpty()) {
             delete actionOnParticipants;
         }
