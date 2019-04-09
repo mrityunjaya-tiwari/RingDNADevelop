@@ -133,6 +133,7 @@
     letter-spacing: normal;
     text-align: center;
     color: #979797;
+    text-decoration-line: underline;
 }
 .THIS .slds-button_neutral{
     width: 88px;
@@ -148,6 +149,11 @@
     letter-spacing: normal;
     text-align: center;
     color: #0066ff;
+    text-decoration-line: none;
+}
+.THIS .slds-button_neutral[disabled]{
+    color: #0066ff !important;
+    text-decoration: none !important;
 }
 .THIS .slds-scope .slds-button:active{
     color: #0066ff !important;
@@ -155,8 +161,17 @@
 .THIS .slds-button:active {
     color: #0066ff !important;
 }
+.THIS .slds-button:visited{
+    color: #0066ff !important;
+}
 .THIS .slds-button:hover {
     color: #0066ff !important;
+}
+.THIS .slds-button:focus {
+    color: #0066ff !important;
+    outline: none !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
 }
 .THIS .rdna-style{
     width: 638px;

@@ -81,7 +81,7 @@
             <aura:if isTrue = "{!v.newAction.type == 'SMS'}">
                 <p class="slds-page-header__row slds-m-top_large slds-truncate slds-align_absolute-center rdna-sub-header-bold" >SMS Templates</p>
                 <p class="slds-align_absolute-center  rdna-sub-header" style="padding-top:15px;">Create pre-configured SMS Templates.</p>
-                <p class="slds-align_absolute-center slds-m-bottom_large rdna-sub-header-small" style="padding-top:5px;">There are currently no pre-configured SMS Templates associated to this account. (Optional) </p>
+                <p class="slds-align_absolute-center slds-m-bottom_large rdna-sub-header-small" style="padding-top:5px;">(Optional)</p>
                 <c:ActionTemplateList newAction="{!v.newAction}" 
                                       spinner="{!v.spinner}"
                                       rowActionTemplateList="{!v.rowActionTemplateList}"/>
@@ -89,7 +89,7 @@
             <aura:if isTrue = "{!v.newAction.type == 'Call'}">
                 <p class="slds-page-header__row slds-m-top_large slds-truncate slds-align_absolute-center rdna-sub-header-bold" >Call Notes Templates</p>
                 <p class="slds-align_absolute-center  rdna-sub-header" style="padding-top:15px;">Create pre-configured Call Notes Templates.</p>
-                <p class="slds-align_absolute-center slds-m-bottom_large rdna-sub-header-small" style="padding-top:5px;">There are currently no pre-configured Call Notes Templates associated to this account. (Optional)</p>
+                <p class="slds-align_absolute-center slds-m-bottom_large rdna-sub-header-small" style="padding-top:5px;">(Optional)</p>
                 <c:ActionTemplateList newAction="{!v.newAction}" 
                                       spinner="{!v.spinner}"
                                       rowActionTemplateList="{!v.rowActionTemplateList}" />
