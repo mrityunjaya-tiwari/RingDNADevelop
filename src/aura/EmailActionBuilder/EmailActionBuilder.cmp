@@ -206,7 +206,7 @@
                                             <lightning:button class="email-builder-button email-builder-button-text slds-text-align_center slds-m-top_small slds-p-left_medium slds-p-right_medium" aura:id="deleteActions" label="Weekdays" onclick="{!c.createWeekdayAction}"/>
                                         </aura:set>
                                     </aura:if>
-                                    <aura:if isTrue="{!v.newAction.deliveryPreference == 'AnyDay'}">
+                                    <aura:if isTrue="{!v.newAction.deliveryPreference == 'Any Day'}">
                                         <lightning:button class="email-builder-button-toggle email-builder-button-text-toggle slds-text-align_center slds-m-top_small slds-p-left_medium slds-p-right_medium" aura:id="deleteActions" label="Any Day" onclick="{!c.createAnyDayAction}"/>
                                         <aura:set attribute="else">
                                             <lightning:button class="email-builder-button email-builder-button-text slds-text-align_center slds-m-top_small slds-p-left_medium slds-p-right_medium" aura:id="deleteActions" label="Any Day" onclick="{!c.createAnyDayAction}"/>

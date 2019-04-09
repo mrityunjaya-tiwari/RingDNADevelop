@@ -39,7 +39,7 @@
     createAnyDayAction : function(component, event,helper) {
         var newAct = component.get("v.newAction");
         if(newAct.id == '' || newAct.id == null){
-            component.set('v.newAction.deliveryPreference','AnyDay');
+            component.set('v.newAction.deliveryPreference','Any Day');
         }
     },
     validateActionName: function(component, event, helper){ 
