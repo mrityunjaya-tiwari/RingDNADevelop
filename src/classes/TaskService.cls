@@ -17,6 +17,9 @@ public class TaskService {
     	if(!objIds.isEmpty()) {
     		objToPartActMap = CadenceService.getRemainingParticipantAction(objIds, CadenceConstants.CONTACT_OBJECT_NAME);    	
     	}
+        if(objToPartActMap == null || objToPartActMap.size() == 0){
+            objToPartActMap = CadenceService.getRemainingParticipantAction(objIds, CadenceConstants.OPPORTUNITY_OBJECT_NAME);
+        }
     	return objToPartActMap;
     }
     
@@ -75,15 +78,22 @@ public class TaskService {
 		List<SObject> sObjListToUpdate = new List<SObject>();
 		Map<String, List<String>> leadfieldDataTypeMap = CadenceUtil.getObjectFieldsType(CadenceConstants.LEAD_OBJECT_NAME);
 		Map<String, List<String>> contactfieldDataTypeMap = CadenceUtil.getObjectFieldsType(CadenceConstants.CONTACT_OBJECT_NAME);
+        //Pankaj-478
+        Map<String, List<String>> opportunityfieldDataTypeMap = CadenceUtil.getObjectFieldsType(CadenceConstants.OPPORTUNITY_OBJECT_NAME);
 	
 		for(Sequence_Action__c partAct : actPartList) {
 			SObject sObj;
-			if(partAct.Lead_Id__c == null) { 
-				sObj = new Contact();
-				sObj.put('Id', partAct.Contact_Id__c);
-			} else {
+			//Pankaj-478
+            System.debug('partAct.Opportunity_Id__c='+partAct.Get_Opportunity_Id__c);
+            if(partAct.Get_Opportunity_Id__c != null && String.isNotBlank(partAct.Get_Opportunity_Id__c)) { 
+				sObj = new Opportunity();
+				sObj.put('Id', partAct.Get_Opportunity_Id__c);
+			} else if(partAct.Lead_Id__c != null) { 
 				sObj = new Lead();
 				sObj.put('Id', partAct.Lead_Id__c);
+			} else if(partAct.Contact_Id__c != null) { 
+				sObj = new Contact();
+				sObj.put('Id', partAct.Contact_Id__c);
 			}
 			String fieldsToUpdate = partAct.CadenceAction_Id__r.Fields_To_Update_Action__c;
 			if(fieldsToUpdate != null && !fieldsToUpdate.equals('')) {
@@ -91,11 +101,14 @@ public class TaskService {
 				fieldMap.remove('sobjectType');
 				for(String fieldName : fieldMap.keySet()) {
 					List<String> apiList;
-					if(partAct.Lead_Id__c == null) {
-						apiList = contactfieldDataTypeMap.get(fieldName);
-					} else {
-						apiList = leadfieldDataTypeMap.get(fieldName);
-					}
+                    if(partAct.Cadence_Type__c.equals(CadenceConstants.OPPORTUNITY_OBJECT_NAME) && String.isNotBlank(partAct.Get_Opportunity_Id__c)){
+                        apiList = opportunityfieldDataTypeMap.get(fieldName);
+                    } else if(partAct.Lead_Id__c != null) { 
+                        apiList = leadfieldDataTypeMap.get(fieldName);
+                    } else if(partAct.Contact_Id__c != null) { 
+                        apiList = contactfieldDataTypeMap.get(fieldName);
+                    }
+                    
                     String fieldApiName = apiList[0];
                     String fieldApiType = apiList[1];
                     CadenceUtil.updateFieldValue(sObj, fieldApiName, fieldMap.get(fieldName), fieldApiType);

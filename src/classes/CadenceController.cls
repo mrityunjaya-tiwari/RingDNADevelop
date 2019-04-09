@@ -343,7 +343,7 @@ public with sharing class CadenceController {
             listOfOppContactIds = new set<String>();
             List<Opportunity> listOfopprtunityToUpdate = new List<Opportunity>();
             List<Opportunity> listOfopprtunity = Database.query(opporQuery);
-            System.debug('listOfopprtunity'+listOfopprtunity);
+            CadenceService.mapOfOppcontact = CadenceService.opporContactMap(listOfopprtunity);
             String oppContactRoleQuery;
             if(contactRole!='')
             	oppContactRoleQuery='Select ContactId,OpportunityId From OpportunityContactRole Where OpportunityId In :listOfopprtunity and Role =\''+String.escapeSingleQuotes(contactRole)+'\'';    
