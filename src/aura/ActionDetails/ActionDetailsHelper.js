@@ -23,6 +23,10 @@
         var newAct = component.get("v.newAction");
         var isValid = helper.validateActionName(component, event,helper);
         if(newAct.id == '' || newAct.id == null){
+            if (newAct.type != 'Email'){
+                var emptyList = [];
+                component.set('v.rowActionTemplateList', emptyList);
+            }
             component.set('v.newAction.type', 'Email');
             component.set('v.isNextEnable' , true);
             component.set("v.isActionTypeRequired", true);

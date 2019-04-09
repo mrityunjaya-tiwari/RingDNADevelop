@@ -20,6 +20,7 @@
     <!--Validation attribute -->
     <aura:attribute name="isActionTypeRequired" type="boolean" default='true' />
     <aura:attribute name="isValid" type="boolean" default='true' />
+    <aura:attribute name="isEmailTemplateList" type="boolean" default='false' />
     <aura:attribute name="isValidationError" type="boolean" default='false' />
     <aura:attribute name="isValidDynamicRow" type="boolean" default='false' />
     <aura:attribute name="ValidationError" type="String" default='Validation Error' />
@@ -81,7 +82,7 @@
             <aura:if isTrue = "{!v.newAction.type == 'SMS'}">
                 <p class="slds-page-header__row slds-m-top_large slds-truncate slds-align_absolute-center rdna-sub-header-bold" >SMS Templates</p>
                 <p class="slds-align_absolute-center  rdna-sub-header" style="padding-top:15px;">Create pre-configured SMS Templates.</p>
-                <p class="slds-align_absolute-center slds-m-bottom_large rdna-sub-header-small" style="padding-top:5px;">(Optional)</p>
+                <p class="slds-align_absolute-center slds-m-bottom_large rdna-sub-header-small" style="padding-top:5px;">There are currently no pre-configured SMS Templates associated to this account. (Optional) </p>
                 <c:ActionTemplateList newAction="{!v.newAction}" 
                                       spinner="{!v.spinner}"
                                       rowActionTemplateList="{!v.rowActionTemplateList}"/>
@@ -89,15 +90,29 @@
             <aura:if isTrue = "{!v.newAction.type == 'Call'}">
                 <p class="slds-page-header__row slds-m-top_large slds-truncate slds-align_absolute-center rdna-sub-header-bold" >Call Notes Templates</p>
                 <p class="slds-align_absolute-center  rdna-sub-header" style="padding-top:15px;">Create pre-configured Call Notes Templates.</p>
-                <p class="slds-align_absolute-center slds-m-bottom_large rdna-sub-header-small" style="padding-top:5px;">(Optional)</p>
+                <p class="slds-align_absolute-center slds-m-bottom_large rdna-sub-header-small" style="padding-top:5px;">There are currently no pre-configured Call Notes Templates associated to this account. (Optional)</p>
                 <c:ActionTemplateList newAction="{!v.newAction}" 
                                       spinner="{!v.spinner}"
                                       rowActionTemplateList="{!v.rowActionTemplateList}" />
             </aura:if>
-            <aura:if isTrue = "{!v.newAction.type == 'Email'}">
+            <aura:if isTrue = "{! and(v.newAction.type == 'Email' , not(v.isEmailTemplateList)) }">
                 <c:EmailActionBuilder aura:id="newActionDetail" newAction = "{!v.newAction}" disableActionType = "{!v.disableActionType}" 
                                       isValidationError="{!v.isValidationError}" ValidationError="{!v.ValidationError}"
                                       currentStep ="{!v.currentStep}"/>       
+            </aura:if>
+            <aura:if isTrue = "{! and(v.newAction.type == 'Email' , v.isEmailTemplateList) }">
+                <p class="slds-page-header__row slds-m-top_large slds-truncate slds-align_absolute-center rdna-sub-header-bold" >{!v.newAction.type} Templates</p>
+                <p class="slds-align_absolute-center  rdna-sub-header" style="padding-top:15px;">Create pre-configured {!v.newAction.type} Templates.</p>
+                <p class="slds-align_absolute-center slds-m-bottom_small rdna-sub-header-small" style="padding-top:5px;">There are currently no pre-configured {!v.newAction.type} Templates associated to this account.</p>
+                <aura:if isTrue="{!v.isValidationError}">
+                    <aura:if isTrue="{!v.newAction.templateId == '' || v.newAction.templateId == null}">
+                        <p class="slds-align_absolute-center slds-m-bottom_large rdna-sub-header-small rdna-required">(Required) </p>
+                    </aura:if>
+                    <aura:set attribute="else">
+                    	<p class="slds-align_absolute-center slds-m-bottom_large rdna-sub-header-small">(Required) </p>
+                    </aura:set>                        
+                </aura:if>                
+				<c:ActionTemplateList newAction="{!v.newAction}" isValidationError="{!v.isValidationError}" spinner="{!v.spinner}" rowActionTemplateList="{!v.rowActionTemplateList}" />                
             </aura:if>
         </aura:if>
     </div>

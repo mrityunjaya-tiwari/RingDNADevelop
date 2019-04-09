@@ -26,3 +26,18 @@
     height: 24px;
     
 }
+/*--new--*/
+.THIS .email-card .slds-card{
+    width: 640px;
+    height: 270px;
+    border-radius: 6px;
+    border: solid 1px #0066ff;
+    background-color: #ffffff;
+}
+.THIS .email-card .rdna-bgcolor{
+    width: 36px;
+    height: 24px;    
+}
+.THIS .email-card textarea{
+    height: 143px !important;
+}

@@ -10,6 +10,7 @@
     <aura:attribute name="sortedDirection" type="String" default="asc"/>
     <aura:attribute name="spinner" type="boolean" default="false"/>
     <aura:attribute name="isModal" type="boolean" default="false"/>
+    <aura:attribute name="isValidationError" type="boolean" default='false' />
     <!--Action Model attribute -->
     <aura:attribute name="actionType" type="string" default="Action Type"/>
     <aura:attribute name="actionName" type="string" default="Action Name"/>
@@ -18,10 +19,29 @@
     <aura:attribute name="newAction" type="Action" default="{ 'sobjectType': 'Action'}"/>    
     <aura:handler name="init" value="{!this}" action="{!c.initActionTemplateTable}"/>
     <aura:handler name="cadencePagination" event="c:CadPagination" action="{!c.handleComponentEvent}"/>
+    <!-- Attribute for email template folder select list and folder filter -->
+    <aura:attribute name="templateFolderList" type ="List"/>
+    <aura:attribute name="folderFilter" type="String"/>
+    
     <div class="slds-grid slds-m-left_large">
-        <div class="slds-m-top_medium slds-col">
-            <span class="rdna-header-small">{!v.totalNumberOfRows} Items • Sorted by {!v.sortedBy} </span>
-        </div>
+        <aura:if isTrue="{!v.newAction.type == 'Email'}">
+            <div class="slds-m-right_medium slds-m-top_medium rdna-header-small">
+                <span>{!v.totalNumberOfRows} Items • Sorted by {!v.sortedBy} </span>
+            </div>
+            <div>
+                <lightning:select variant = "label-hidden" name="select" label='' value="{!v.folderFilter}" onchange="{!c.filterFolderType}">
+                    <option value="">Folders</option>
+                    <aura:iteration var="templateFolder" items="{!v.templateFolderList}">
+                        <option value="{!templateFolder.Id}">{!templateFolder.Name}</option>
+                    </aura:iteration>
+                </lightning:select>
+            </div>
+            <aura:set attribute="else">
+                <div class="slds-m-right_medium slds-m-top_medium rdna-header-small">
+                    <span class="rdna-header-small">{!v.totalNumberOfRows} Items • Sorted by {!v.sortedBy} </span>
+                </div>
+            </aura:set>
+        </aura:if>
     </div>
     <div class="slds-grid slds-m-left_large slds-m-right_large">
         <lightning:datatable 

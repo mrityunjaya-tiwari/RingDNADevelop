@@ -8,8 +8,8 @@ global  without sharing class CadenceService {
     //mapOfOppContactRoles.put('test',new List<OpportunityContactRole>());
     
     public static List<EmailTemplate> getEmailTemplates(){ 
-        List<EmailTemplate> listEmailTemplate = [Select Id, Name, IsActive, Description From EmailTemplate Where IsActive = true];
-        return listEmailTemplate;
+        List<EmailTemplate> listEmailTemplate = [Select Id, Name, Subject, Body, IsActive, Description,UIType,TemplateType,FolderId,Folder.Name,Folder.Type From EmailTemplate Where IsActive = true]; 
+      	return listEmailTemplate;
     } 
     
     public static List<LookupFieldController.UserListWrapper> getUserWrapperList(){
