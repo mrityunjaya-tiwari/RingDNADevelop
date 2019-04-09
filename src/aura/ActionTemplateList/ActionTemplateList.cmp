@@ -14,7 +14,6 @@
     <aura:attribute name="actionType" type="string" default="Action Type"/>
     <aura:attribute name="actionName" type="string" default="Action Name"/>
     <aura:attribute name="actionDesc" type="string" default="Action Description"/>
-    <aura:attribute name="isSMSAction" type="boolean" default="false"/>
     <!--Action Objects -->
     <aura:attribute name="newAction" type="Action" default="{ 'sobjectType': 'Action'}"/>    
     <aura:handler name="init" value="{!this}" action="{!c.initActionTemplateTable}"/>
@@ -37,7 +36,7 @@
                              sortedDirection="{!v.sortedDirection}"
                              />
     </div>
-    <aura:if isTrue="{!and(empty(v.rowActionTemplateList), v.isSMSAction)}">
+    <aura:if isTrue="{!and(empty(v.rowActionTemplateList),(v.newAction.type == 'SMS'))}">
     <div class="slds-align_absolute-center">
         <p class="rdna-style">There are currently no pre-configured SMS Templates associated to this account.</p></div>
         <aura:set attribute="else">

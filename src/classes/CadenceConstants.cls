@@ -20,6 +20,8 @@ public with sharing class CadenceConstants {
     
     public static final String OPPORTUNITY_ROLE_OBJECT_NAME = 'OpportunityContactRole';
     
+    public static final String SFDC_EMAIL_TYPE = 'SFDC';
+    public static final String NATIVE_EMAIL_TYPE = 'NATIVE';
 	//cadence criterion types
     public static final String CRITERION_TYPE_ENTRY = 'Entry';
     public static final String CRITERION_TYPE_EXIT = 'Exit'; 
