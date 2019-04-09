@@ -37,7 +37,7 @@
                 <aura:if isTrue="{!v.isValidationError}">
                     <aura:if isTrue="{!v.newAction.emailType == '' || v.newAction.emailType == null}">
                         <div aura:id="msg" class=" slds-form-element__row slds-align_absolute-center slds-text-color_error slds-text-heading_small slds-text-align_center">
-                            <ui:outputText value="{!v.ValidationError}" />
+                            <ui:outputText value="Select Account" />
                         </div>
                     </aura:if>
                 </aura:if>
@@ -96,7 +96,7 @@
                 <aura:if isTrue="{!v.isValidationError}">
                     <aura:if isTrue="{!v.newAction.activationType == '' || v.newAction.activationType == null}">
                         <div aura:id="msg" class=" slds-form-element__row slds-align_absolute-center slds-text-color_error slds-text-heading_small slds-text-align_center">
-                            <ui:outputText value="{!v.ValidationError}" />
+                            <ui:outputText value="Select Activation" />
                         </div>
                     </aura:if>
                 </aura:if>
@@ -155,7 +155,7 @@
                     <aura:if isTrue="{!v.isValidationError}">
                         <aura:if isTrue="{!v.newAction.deliveryPreference == '' || v.newAction.deliveryPreference == null}">
                             <div aura:id="msg" class=" slds-form-element__row slds-align_absolute-center slds-text-color_error slds-text-heading_small slds-text-align_center">
-                                <ui:outputText value="{!v.ValidationError}" />
+                                <ui:outputText value="Select Hours" />
                             </div>
                         </aura:if>
                     </aura:if>
