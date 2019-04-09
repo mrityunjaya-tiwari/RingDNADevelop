@@ -1018,11 +1018,7 @@ global  without sharing class CadenceService {
                 } else {
                     objId = partAct.Contact_Id__c;
                 }
-                /* if(partAct.Lead_Id__c == null) {
-                    objId = partAct.Contact_Id__c;
-                } else {
-                    objId = partAct.Lead_Id__c;
-                }*/
+
                 for(String fieldName : fieldMap.keySet()) {
                     List<String> apiList;
                     if(partAct.Cadence_Type__c == CadenceConstants.OPPORTUNITY_OBJECT_NAME){
