@@ -21,10 +21,6 @@
         <type>Default</type>
     </actionOverrides>
     <actionOverrides>
-        <actionName>Follow</actionName>
-        <type>Default</type>
-    </actionOverrides>
-    <actionOverrides>
         <actionName>List</actionName>
         <type>Default</type>
     </actionOverrides>
@@ -49,7 +45,6 @@
     <allowInChatterGroups>false</allowInChatterGroups>
     <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
-    <deprecated>false</deprecated>
     <enableActivities>false</enableActivities>
     <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
@@ -60,29 +55,77 @@
     <enableStreamingApi>true</enableStreamingApi>
     <fields>
         <fullName>Activation_Type__c</fullName>
-        <deprecated>false</deprecated>
         <description>This means if action needs to perform automatically or manually</description>
         <externalId>false</externalId>
         <label>Activation Type</label>
-        <picklist>
-            <picklistValues>
-                <fullName>Automatic</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Manual</fullName>
-                <default>false</default>
-            </picklistValues>
-            <restrictedPicklist>true</restrictedPicklist>
-            <sorted>false</sorted>
-        </picklist>
         <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
+        <valueSet>
+            <restricted>true</restricted>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>Automatic</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Manual</fullName>
+                    <default>false</default>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+    <fields>
+        <fullName>Delivery_Preference__c</fullName>
+        <externalId>false</externalId>
+        <label>Delivery Preference</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+        <valueSet>
+            <restricted>true</restricted>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>Immediate</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Weekdays</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Any Day</fullName>
+                    <default>false</default>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+    <fields>
+        <fullName>Email_Type__c</fullName>
+        <externalId>false</externalId>
+        <label>Email Type</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+        <valueSet>
+            <restricted>true</restricted>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>SFDC</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>NATIVE</fullName>
+                    <default>false</default>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
     </fields>
     <fields>
         <fullName>Task_Description__c</fullName>
-        <deprecated>false</deprecated>
         <description>Task detail(Name, Type, Subject, Description) will be saved in JSON format.</description>
         <externalId>false</externalId>
         <label>Task Description</label>
@@ -93,7 +136,6 @@
     </fields>
     <fields>
         <fullName>Template_Id__c</fullName>
-        <deprecated>false</deprecated>
         <description>Save id of EmailTemplate (If Email Template), Call and SMS template data will be retrieved from RingDNA</description>
         <externalId>false</externalId>
         <label>Template Id</label>
@@ -103,7 +145,6 @@
     </fields>
     <fields>
         <fullName>Template_Name__c</fullName>
-        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Template Name</label>
         <required>false</required>
@@ -112,36 +153,37 @@
     </fields>
     <fields>
         <fullName>Type__c</fullName>
-        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Type</label>
-        <picklist>
-            <picklistValues>
-                <fullName>Call</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Call+Voicemail</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Email</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>SMS</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>Task</fullName>
-                <default>false</default>
-            </picklistValues>
-            <restrictedPicklist>true</restrictedPicklist>
-            <sorted>false</sorted>
-        </picklist>
         <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
+        <valueSet>
+            <restricted>true</restricted>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>Call</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Call+Voicemail</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Email</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>SMS</fullName>
+                    <default>false</default>
+                </value>
+                <value>
+                    <fullName>Task</fullName>
+                    <default>false</default>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
     </fields>
     <label>Action</label>
     <listViews>

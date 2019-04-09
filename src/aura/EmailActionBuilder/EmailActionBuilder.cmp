@@ -1,0 +1,223 @@
+<aura:component controller="ActionDetailController" implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction,force:appHostable" access="global">
+    <!-- Disabled property for action type-->
+    <aura:attribute name = "disableActionType" type = "Boolean" default = "false"/>
+    <!-- Disabled property for activationType type-->
+    <aura:attribute name = "disableActivationType" type = "Boolean" default = 'true'/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>  
+    
+    <!--Action Objects -->
+    <aura:attribute name="newAction" type="Action" default="{ 'sobjectType': 'Action'}"/>
+    
+    <!--Validation attribute -->
+    <aura:attribute name="isActionTypeRequired" type="boolean" default='true' />
+    <aura:attribute name="isValid" type="boolean" default='true' />
+    <!--For edit page-->
+    <aura:attribute name="recordId" type="Id"/>
+    <aura:attribute name="recordName" type="String" default='New Action'/>
+    <aura:attribute name="isNew" type="Boolean" default='false'/>
+    <aura:attribute name="themeName" type="String"/>
+    <!--create a component attributs -->
+    <aura:attribute name="spinner" type="boolean" default="false"/>
+    <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>
+    <aura:attribute name="activationtypeList" type="List" default="['Automatic', 'Manual']" />
+    <aura:attribute name="currentStep" type="string" default="1"/>
+    <!-- validation attribute -->
+    <aura:attribute name="isValidationError" type="boolean" default='false' />
+    <aura:attribute name="ValidationError" type="String" default='Please Select Required Fields' />
+    
+    <!-- Body Start -->
+    <div class="slds-box_xx-small">
+        <fieldset class="slds-form-element slds-form_compound">
+            <!-- CREATE NEW ACTION FORM -->
+            <form class="slds slds-form slds-m-left_large">
+                <!--========= Select email type sfdc/native========================================== --> 
+                <p class="slds-truncate slds-align_absolute-center Account-Required-bold" >Account</p>
+                <p class="slds-align_absolute-center Account-Required">(Required)</p>
+                <!--Validation -->
+                <aura:if isTrue="{!v.isValidationError}">
+                    <aura:if isTrue="{!v.newAction.emailType == '' || v.newAction.emailType == null}">
+                        <div aura:id="msg" class=" slds-form-element__row slds-align_absolute-center slds-text-color_error slds-text-heading_small slds-text-align_center">
+                            <ui:outputText value="{!v.ValidationError}" />
+                        </div>
+                    </aura:if>
+                </aura:if>
+                <div class="slds-form-element__row slds-p-top_small">
+                    <div class="rdna-div slds-align_absolute-center">
+                        <div class="slds-p-horizontal_medium">
+                            <div class="slds-align_absolute-center">
+                                <!--  <a onclick="{!c.createEmailAction}" disabled = "{!v.disableActionType}"> -->
+                                <aura:if isTrue="{!v.newAction.emailType == 'SFDC'}">
+                                    <img class = "sfdc" src="{!$Resource.cadence_icons + '/action-icons/select/sfdc.png'}"/> 
+                                    <aura:set attribute="else">
+                                        <img class = "sfdc" src="{!$Resource.cadence_icons + '/action-icons/default/sfdc.png'}"/>
+                                    </aura:set>
+                                </aura:if>
+                                <!--  </a>    -->
+                            </div>
+                            <p class=" slds-truncate slds-align_absolute-center SFDC-Email-List-SFDF-bold" >SFDC Email List </p>
+                            <div class = "SFDC-Email-List-SFDC">
+                                SFDC emails are sent directly from the
+                                SFDC platform based on the profile of the
+                                sequence action record owner.
+                            </div>
+                            <div class="slds-text-align_center">
+                                <lightning:button class="email-builder-button email-builder-button-text slds-text-align_center slds-m-top_small slds-p-left_large slds-p-right_large" aura:id="deleteActions" label="Select" onclick="{!c.createSFDCEmail}"/>
+                            </div>
+                        </div>
+                        <div class="slds-p-horizontal_medium">
+                            <div class="slds-page-header__row  slds-align_absolute-center">
+                                <!-- <a onclick="{!c.createSMSAction}" disabled = "{!v.disableActionType}"> -->
+                                <aura:if isTrue="{!v.newAction.emailType == 'NATIVE'}">
+                                    <img class = "native" src="{!$Resource.cadence_icons + '/action-icons/select/native.png'}"/> 
+                                    <aura:set attribute="else">
+                                        <img class = "native" src="{!$Resource.cadence_icons + '/action-icons/default/native.png'}"/>
+                                    </aura:set>
+                                </aura:if>
+                                <!-- </a>       -->
+                            </div>
+                            <p class="slds-page-header__row slds-truncate slds-align_absolute-center SFDC-Email-List-SFDF-bold" >Native Email </p>
+                            <div class = "SFDC-Email-List-SFDC">
+                                Native emails allow for the detection of open,
+                                reply, and bounce rates and requires
+                                a connected ringDNA email account.
+                            </div>
+                            <div class="slds-text-align_center">
+                                <lightning:button class="email-builder-button email-builder-button-text slds-text-align_center slds-m-top_small slds-p-left_large slds-p-right_large" aura:id="deleteActions" label="Select" onclick="{!c.createNativeEmail}"/>
+                            </div>
+                            
+                        </div>
+                    </div> 
+                </div>
+                <div class="slds-form-element__row slds-text-align_center slds-m-top_medium c-email-templates slds-border_top" />
+                <!--================= Select Activation  Type ======================================================================== --> 
+                <p class="slds-truncate slds-align_absolute-center Account-Required-bold" >Activation</p>
+                <p class="slds-align_absolute-center Account-Required">(Required)</p>
+                <!--Validation -->
+                <aura:if isTrue="{!v.isValidationError}">
+                    <aura:if isTrue="{!v.newAction.activationType == '' || v.newAction.activationType == null}">
+                        <div aura:id="msg" class=" slds-form-element__row slds-align_absolute-center slds-text-color_error slds-text-heading_small slds-text-align_center">
+                            <ui:outputText value="{!v.ValidationError}" />
+                        </div>
+                    </aura:if>
+                </aura:if>
+                <div class="slds-form-element__row slds-p-top_small">
+                    <div class="rdna-div slds-align_absolute-center" >
+                        <div class="slds-p-horizontal_medium">
+                            <div class="slds-align_absolute-center">
+                                <!--  <a onclick="{!c.createEmailAction}" disabled = "{!v.disableActionType}"> -->
+                                <aura:if isTrue="{!v.newAction.activationType == 'Automatic'}">
+                                    <img class = "sfdc" src="{!$Resource.cadence_icons + '/action-icons/select/auto.png'}"/> 
+                                    <aura:set attribute="else">
+                                        <img class = "sfdc" src="{!$Resource.cadence_icons + '/action-icons/default/auto.png'}"/>
+                                    </aura:set>
+                                </aura:if>
+                                <!--  </a>    -->
+                            </div>
+                            <p class=" slds-truncate slds-align_absolute-center SFDC-Email-List-SFDF-bold" >Auto</p>
+                            <div class = "SFDC-Email-List-SFDC">
+                                Automatic emails will be sent immediately
+                                on behalf of a user based on the scheduling of
+                                a sequence action as part of a sequence.
+                            </div>
+                            <div class="slds-text-align_center">
+                                <lightning:button class="email-builder-button email-builder-button-text slds-text-align_center slds-m-top_small slds-p-left_large slds-p-right_large" aura:id="deleteActions" label="Select" onclick="{!c.createAutomaticEmail}"/>
+                            </div>
+                        </div>
+                        <div class="slds-p-horizontal_medium">
+                            <div class="slds-page-header__row  slds-align_absolute-center">
+                                <!-- <a onclick="{!c.createSMSAction}" disabled = "{!v.disableActionType}"> -->
+                                <aura:if isTrue="{!v.newAction.activationType == 'Manual'}">
+                                    <img class = "native" src="{!$Resource.cadence_icons + '/action-icons/select/manual.png'}"/> 
+                                    <aura:set attribute="else">
+                                        <img class = "native" src="{!$Resource.cadence_icons + '/action-icons/default/manual.png'}"/>
+                                    </aura:set>
+                                </aura:if>
+                                <!-- </a>       -->
+                            </div>
+                            <p class="slds-page-header__row slds-truncate slds-align_absolute-center SFDC-Email-List-SFDF-bold" >Manul</p>
+                            <div class = "SFDC-Email-List-Manual">
+                                Manual emails will be added to the today view of their
+                                respective record owner to perform manually. This allows
+                                users the ability to customize the email as necessary.
+                            </div>
+                            <div class="slds-text-align_center">
+                                <lightning:button class="email-builder-button email-builder-button-text slds-text-align_center slds-m-top_small slds-p-left_large slds-p-right_large" aura:id="deleteActions" label="Select" onclick="{!c.createManualEmail}"/>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+                <div class="slds-form-element__row slds-text-align_center slds-m-top_medium c-email-templates slds-border_top" />
+                <!--===================================== Select business hours ======================================== -->
+                <aura:if isTrue="{!v.newAction.activationType == 'Automatic'}">
+                    <p class="slds-truncate slds-align_absolute-center Account-Required-bold" >Hours</p>
+                    <p class="slds-align_absolute-center Account-Required">(Required)</p>
+                    <!--Validation -->
+                    <aura:if isTrue="{!v.isValidationError}">
+                        <aura:if isTrue="{!v.newAction.deliveryPreference == '' || v.newAction.deliveryPreference == null}">
+                            <div aura:id="msg" class=" slds-form-element__row slds-align_absolute-center slds-text-color_error slds-text-heading_small slds-text-align_center">
+                                <ui:outputText value="{!v.ValidationError}" />
+                            </div>
+                        </aura:if>
+                    </aura:if>
+                    <div class="slds-form-element__row slds-p-top_small">
+                        <div class="rdna-div slds-align_absolute-center" >
+                            <div class="slds-p-horizontal_medium">
+                                <div class="slds-align_absolute-center">
+                                    <!--  <a onclick="{!c.createEmailAction}" disabled = "{!v.disableActionType}"> -->
+                                    <aura:if isTrue="{!v.newAction.deliveryPreference == 'Immediate'}">
+                                        <img class = "sfdc" src="{!$Resource.cadence_icons + '/action-icons/select/immediate-activation.png'}"/> 
+                                        <aura:set attribute="else">
+                                            <img class = "sfdc" src="{!$Resource.cadence_icons + '/action-icons/default/immediate-activation.png'}"/>
+                                        </aura:set>
+                                    </aura:if>
+                                    <!--  </a>    -->
+                                </div>
+                                <p class=" slds-truncate slds-align_absolute-center SFDC-Email-List-SFDF-bold" >Immediate Activation</p>
+                                <div class = "SFDC-Email-List-SFDC">
+                                    This selection triggers an email at the instant
+                                    that it is activated based on the logic of a
+                                    time-dependent action resolving to true.
+                                </div>
+                                <div class="slds-text-align_center">
+                                    <lightning:button class="email-builder-button email-builder-button-text slds-text-align_center slds-m-top_small slds-p-left_large slds-p-right_large" aura:id="deleteActions" label="Select" onclick="{!c.createImmediateAction}"/>
+                                </div>
+                            </div>
+                            <div class="slds-p-horizontal_medium">
+                                <div class="slds-page-header__row  slds-align_absolute-center">
+                                    <!-- <a onclick="{!c.createSMSAction}" disabled = "{!v.disableActionType}"> -->
+                                    <aura:if isTrue="{!v.newAction.deliveryPreference == 'Weekdays' || v.newAction.deliveryPreference == 'AnyDay'}">
+                                        <img class = "native" src="{!$Resource.cadence_icons + '/action-icons/select/business.png'}"/> 
+                                        <aura:set attribute="else">
+                                            <img class = "native" src="{!$Resource.cadence_icons + '/action-icons/default/business.png'}"/>
+                                        </aura:set>
+                                    </aura:if>
+                                    <!-- </a>       -->
+                                </div>
+                                <p class="slds-page-header__row slds-truncate slds-align_absolute-center SFDC-Email-List-SFDF-bold" >Business Hours</p>
+                                <div class = "SFDC-Email-List-Manual">
+                                    Lorem ipsum dolor sit amet, consectetur
+                                    adipiscing elit, sed do eiusmod tempor incididunt
+                                    ut labore et dolore magna aliqua.
+                                </div>
+                                <div class="slds-text-align_center">
+                                    <aura:if isTrue="{!v.newAction.deliveryPreference == 'Weekdays'}">
+                                        <lightning:button class="email-builder-button-toggle email-builder-button-text-toggle slds-text-align_center slds-m-top_small slds-p-left_medium slds-p-right_medium" aura:id="deleteActions" label="Weekdays" onclick="{!c.createWeekdayAction}"/>
+                                        <aura:set attribute="else">
+                                            <lightning:button class="email-builder-button email-builder-button-text slds-text-align_center slds-m-top_small slds-p-left_medium slds-p-right_medium" aura:id="deleteActions" label="Weekdays" onclick="{!c.createWeekdayAction}"/>
+                                        </aura:set>
+                                    </aura:if>
+                                    <aura:if isTrue="{!v.newAction.deliveryPreference == 'AnyDay'}">
+                                        <lightning:button class="email-builder-button-toggle email-builder-button-text-toggle slds-text-align_center slds-m-top_small slds-p-left_medium slds-p-right_medium" aura:id="deleteActions" label="Any Day" onclick="{!c.createAnyDayAction}"/>
+                                        <aura:set attribute="else">
+                                            <lightning:button class="email-builder-button email-builder-button-text slds-text-align_center slds-m-top_small slds-p-left_medium slds-p-right_medium" aura:id="deleteActions" label="Any Day" onclick="{!c.createAnyDayAction}"/>
+                                        </aura:set>
+                                    </aura:if>
+                                </div>
+                            </div>
+                        </div> 
+                    </div>
+                </aura:if>
+            </form>
+        </fieldset>
+    </div>
+</aura:component>

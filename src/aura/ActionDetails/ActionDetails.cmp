@@ -7,7 +7,7 @@
 <aura:attribute name="UpdateFieldList" type="List"/>
 
 <!--Action Objects -->
-<aura:attribute name="newAction" type="Action" default="{ 'sobjectType': 'ActionWrapper'}"/>
+<aura:attribute name="newAction" type="Action" default="{ 'sobjectType': 'Action'}"/>
 <!--Task Objects -->
 <aura:attribute name="taskObj" type="Task" default="{ 'sobjectType': 'Task'}"/>
 <!--Wrapper class having Task fields detail -->
@@ -32,6 +32,7 @@
 <aura:attribute name="currentStep" type="string" default="1"/>
 <aura:attribute name="isTaskAction" type="boolean" default="false"/>
 <aura:attribute name="isSMSAction" type="boolean" default="false"/>
+<aura:attribute name="isNextEnable" type="boolean" default="false"/>
 <aura:attribute type="List" name="rowActionTemplateList"/>      
 	<!-- Body Start -->
 	<div class="slds-box_xx-small">

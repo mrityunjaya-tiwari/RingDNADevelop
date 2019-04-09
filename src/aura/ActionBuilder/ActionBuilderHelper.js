@@ -102,4 +102,19 @@
         });
         component.set("v.listTask", rowList);
     },
+    validateEmailActionBuilder: function(component, event, helper){ 
+        var newAct = component.get("v.newAction");
+        if(newAct.emailType == '' || newAct.emailType == null){
+            component.set('v.ValidationError' , 'Select Required Field');
+            return false;
+        }else if(newAct.activationType == '' || newAct.activationType == null){
+            component.set('v.ValidationError' , 'Select Required Field');
+            return false;
+        }else if(newAct.activationType == 'Automatic' && (newAct.deliveryPreference == '' || newAct.deliveryPreference == null)){
+            component.set('v.ValidationError' , 'Select Required Field');
+            return false;
+        }else{
+                return true;
+            }
+    },  
 })

@@ -27,15 +27,19 @@
     onCancel: function(component, event, helper){
         helper.onCancel(component, event);
     },
+    onNext: function(component, event, helper){
+        var isValid = helper.validateEmailActionBuilder(component, event,helper);
+        if (isValid){
+            component.set('v.isNextEnable' , false);
+        } else {
+            component.set('v.isValidationError',true);
+        }
+    },
     clickBack: function(component, event, helper){
         component.set('v.currentStep','1');
         var currentStep = component.get('v.currentStep');
     },
     createAction: function(component, event, helper) {
-        var newAct = component.get("v.newAction");
-        // We can use it for validate if action type is email.
-        //if(newAct.type == 'Email' && newAct.templateId == null ){
-            helper.createAction(component, event,helper);
-        //} 
+        helper.createAction(component, event,helper);
     },
 })
