@@ -17,8 +17,6 @@
         if (isValid && newAct.type == 'Call'){
             component.set('v.currentStep' , '2');
             component.set('v.isNextEnable' , false);
-            component.set('v.isSMSAction' , false);
-            component.set('v.isTaskAction' , false);
         }        
     },
     createEmailAction : function(component, event, helper){
@@ -29,8 +27,6 @@
             component.set('v.isNextEnable' , true);
             component.set("v.isActionTypeRequired", true);
             component.set('v.disableActivationType', false);  
-            component.set('v.isTaskAction' , false);
-            component.set('v.isSMSAction' , false);
         }
         if (isValid && newAct.type == 'Email'){
             component.set('v.currentStep' , '2');
@@ -54,15 +50,12 @@
         if (isValid && newAct.type == 'SMS'){
             component.set('v.currentStep' , '2');  
             component.set('v.isNextEnable' , false);
-            component.set('v.isTaskAction' , false);
-            component.set('v.isSMSAction' , true);
         }
     },
     createTaskAction : function(component, event, helper){
-		var isValid = helper.validateActionName(component, event,helper);
         var newAct = component.get("v.newAction");
+        var isValid = helper.validateActionName(component, event,helper);
         if(newAct.id == '' || newAct.id == null){
-            helper.validateActionName(component, event,helper);
             component.set('v.newAction.type', 'Task');
             component.set('v.isNextEnable' , false);
             component.set('v.newAction.activationType','Manual');
@@ -72,7 +65,6 @@
         if (isValid && newAct.type == 'Task'){
             component.set('v.currentStep' , '2');
             component.set('v.isNextEnable' , false);
-            component.set('v.isTaskAction' , true);            
         }      
     },
     validateActionName: function(component, event, helper){ 

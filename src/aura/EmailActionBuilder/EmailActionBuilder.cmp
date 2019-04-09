@@ -45,14 +45,12 @@
                     <div class="rdna-div slds-align_absolute-center">
                         <div class="slds-p-horizontal_medium">
                             <div class="slds-align_absolute-center">
-                                <!--  <a onclick="{!c.createEmailAction}" disabled = "{!v.disableActionType}"> -->
                                 <aura:if isTrue="{!v.newAction.emailType == 'SFDC'}">
                                     <img class = "sfdc" src="{!$Resource.cadence_icons + '/action-icons/select/sfdc.png'}"/> 
                                     <aura:set attribute="else">
                                         <img class = "sfdc" src="{!$Resource.cadence_icons + '/action-icons/default/sfdc.png'}"/>
                                     </aura:set>
                                 </aura:if>
-                                <!--  </a>    -->
                             </div>
                             <p class=" slds-truncate slds-align_absolute-center SFDC-Email-List-SFDF-bold" >SFDC Email List </p>
                             <div class = "SFDC-Email-List-SFDC">
@@ -66,14 +64,12 @@
                         </div>
                         <div class="slds-p-horizontal_medium">
                             <div class="slds-page-header__row  slds-align_absolute-center">
-                                <!-- <a onclick="{!c.createSMSAction}" disabled = "{!v.disableActionType}"> -->
                                 <aura:if isTrue="{!v.newAction.emailType == 'NATIVE'}">
                                     <img class = "native" src="{!$Resource.cadence_icons + '/action-icons/select/native.png'}"/> 
                                     <aura:set attribute="else">
                                         <img class = "native" src="{!$Resource.cadence_icons + '/action-icons/default/native.png'}"/>
                                     </aura:set>
                                 </aura:if>
-                                <!-- </a>       -->
                             </div>
                             <p class="slds-page-header__row slds-truncate slds-align_absolute-center SFDC-Email-List-SFDF-bold" >Native Email </p>
                             <div class = "SFDC-Email-List-SFDC">
@@ -104,14 +100,12 @@
                     <div class="rdna-div slds-align_absolute-center" >
                         <div class="slds-p-horizontal_medium">
                             <div class="slds-align_absolute-center">
-                                <!--  <a onclick="{!c.createEmailAction}" disabled = "{!v.disableActionType}"> -->
                                 <aura:if isTrue="{!v.newAction.activationType == 'Automatic'}">
                                     <img class = "sfdc" src="{!$Resource.cadence_icons + '/action-icons/select/auto.png'}"/> 
                                     <aura:set attribute="else">
                                         <img class = "sfdc" src="{!$Resource.cadence_icons + '/action-icons/default/auto.png'}"/>
                                     </aura:set>
                                 </aura:if>
-                                <!--  </a>    -->
                             </div>
                             <p class=" slds-truncate slds-align_absolute-center SFDC-Email-List-SFDF-bold" >Auto</p>
                             <div class = "SFDC-Email-List-SFDC">
@@ -125,14 +119,12 @@
                         </div>
                         <div class="slds-p-horizontal_medium">
                             <div class="slds-page-header__row  slds-align_absolute-center">
-                                <!-- <a onclick="{!c.createSMSAction}" disabled = "{!v.disableActionType}"> -->
                                 <aura:if isTrue="{!v.newAction.activationType == 'Manual'}">
                                     <img class = "native" src="{!$Resource.cadence_icons + '/action-icons/select/manual.png'}"/> 
                                     <aura:set attribute="else">
                                         <img class = "native" src="{!$Resource.cadence_icons + '/action-icons/default/manual.png'}"/>
                                     </aura:set>
                                 </aura:if>
-                                <!-- </a>       -->
                             </div>
                             <p class="slds-page-header__row slds-truncate slds-align_absolute-center SFDC-Email-List-SFDF-bold" >Manul</p>
                             <div class = "SFDC-Email-List-Manual">
@@ -163,14 +155,12 @@
                         <div class="rdna-div slds-align_absolute-center" >
                             <div class="slds-p-horizontal_medium">
                                 <div class="slds-align_absolute-center">
-                                    <!--  <a onclick="{!c.createEmailAction}" disabled = "{!v.disableActionType}"> -->
                                     <aura:if isTrue="{!v.newAction.deliveryPreference == 'Immediate'}">
                                         <img class = "sfdc" src="{!$Resource.cadence_icons + '/action-icons/select/immediate-activation.png'}"/> 
                                         <aura:set attribute="else">
                                             <img class = "sfdc" src="{!$Resource.cadence_icons + '/action-icons/default/immediate-activation.png'}"/>
                                         </aura:set>
                                     </aura:if>
-                                    <!--  </a>    -->
                                 </div>
                                 <p class=" slds-truncate slds-align_absolute-center SFDC-Email-List-SFDF-bold" >Immediate Activation</p>
                                 <div class = "SFDC-Email-List-SFDC">
@@ -184,14 +174,12 @@
                             </div>
                             <div class="slds-p-horizontal_medium">
                                 <div class="slds-page-header__row  slds-align_absolute-center">
-                                    <!-- <a onclick="{!c.createSMSAction}" disabled = "{!v.disableActionType}"> -->
                                     <aura:if isTrue="{!v.newAction.deliveryPreference == 'Weekdays' || v.newAction.deliveryPreference == 'AnyDay'}">
                                         <img class = "native" src="{!$Resource.cadence_icons + '/action-icons/select/business.png'}"/> 
                                         <aura:set attribute="else">
                                             <img class = "native" src="{!$Resource.cadence_icons + '/action-icons/default/business.png'}"/>
                                         </aura:set>
                                     </aura:if>
-                                    <!-- </a>       -->
                                 </div>
                                 <p class="slds-page-header__row slds-truncate slds-align_absolute-center SFDC-Email-List-SFDF-bold" >Business Hours</p>
                                 <div class = "SFDC-Email-List-Manual">

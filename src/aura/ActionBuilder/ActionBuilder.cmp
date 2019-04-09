@@ -32,8 +32,6 @@
     <aura:attribute name="spinner" type="boolean" default="false"/>
     <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>
     <aura:attribute name="activationtypeList" type="List" default="['Automatic', 'Manual']" />
-    <aura:attribute name="isTaskAction" type="boolean" default="false"/>
-    <aura:attribute name="isSMSAction" type="boolean" default="false"/>
     <aura:attribute name="isNextEnable" type="boolean" default="false"/>
     
     <aura:attribute name="currentStep" type="string" default="1"/>
@@ -74,35 +72,27 @@
         <!-- Body Start -->
        <!-- CREATE NEW ACTION FORM -->
         <aura:if isTrue = "{!v.currentStep == '1' || v.currentStep == 1}" >          
-            <c:ActionDetails aura:id="newActionDetail" newAction = "{!v.newAction}" disableActionType = "{!v.disableActionType}" isNextEnable="{!v.isNextEnable}" currentStep ="{!v.currentStep}" isTaskAction="{!v.isTaskAction}" isSMSAction="{!v.isSMSAction}" rowActionTemplateList="{!v.rowActionTemplateList}"/>       
+            <c:ActionDetails aura:id="newActionDetail" newAction = "{!v.newAction}" disableActionType = "{!v.disableActionType}" isNextEnable="{!v.isNextEnable}" currentStep ="{!v.currentStep}"  rowActionTemplateList="{!v.rowActionTemplateList}"/>       
         </aura:if>
         <aura:if isTrue = "{!v.currentStep == '2' || v.currentStep == 2}" >
-            <aura:if isTrue = "{!v.isTaskAction}">
-                <c:TaskActionDetails  newAction = "{!v.newAction}" taskObj="{!taskObj}" wrapperTaskFields="{!v.wrapperTaskFields}" listTask="{!v.listTask}" isTaskAction="{!v.isTaskAction}" spinner="{!v.spinner}" recordId="{!v.recordId}" isValidDynamicRow="{!v.isValidDynamicRow}"/>
-                <aura:set attribute="else">
-                    <div>
-                        <aura:if isTrue = "{!v.isSMSAction}">
-                        <p class="slds-page-header__row slds-m-top_large slds-truncate slds-align_absolute-center rdna-sub-header-bold" >SMS Templates</p>
-                        <p class="slds-align_absolute-center  rdna-sub-header" style="padding-top:15px;">Create pre-configured SMS Templates.</p>
-                        <p class="slds-align_absolute-center slds-m-bottom_large rdna-sub-header-small" style="padding-top:5px;">There are currently no pre-configured SMS Templates associated to this account. (Optional) </p>
-                        <c:ActionTemplateList newAction="{!v.newAction}" 
-                                                  spinner="{!v.spinner}"
-                                                  rowActionTemplateList="{!v.rowActionTemplateList}" 
-                                                  isSMSAction="{!v.isSMSAction}"/>
-                            <aura:set attribute="else">
-                                <aura:if isTrue = "{!v.newAction.type == 'Call'}">
-                                    <p class="slds-page-header__row slds-m-top_large slds-truncate slds-align_absolute-center rdna-sub-header-bold" >Call Notes Templates</p>
-                                    <p class="slds-align_absolute-center  rdna-sub-header" style="padding-top:15px;">Create pre-configured Call Notes Templates.</p>
-                                    <p class="slds-align_absolute-center slds-m-bottom_large rdna-sub-header-small" style="padding-top:5px;">There are currently no pre-configured Call Notes Templates associated to this account. (Optional)</p>
-                                    <c:ActionTemplateList newAction="{!v.newAction}" 
-                                                          spinner="{!v.spinner}"
-                                                          rowActionTemplateList="{!v.rowActionTemplateList}" 
-                                                          isSMSAction="{!v.isSMSAction}"/>
-                                </aura:if>
-                            </aura:set>
-                        </aura:if>
-                    </div>
-                </aura:set>
+            <aura:if isTrue="{!v.newAction.type == 'Task'}">
+                <c:TaskActionDetails  newAction = "{!v.newAction}" taskObj="{!taskObj}" wrapperTaskFields="{!v.wrapperTaskFields}" listTask="{!v.listTask}" spinner="{!v.spinner}" recordId="{!v.recordId}" isValidDynamicRow="{!v.isValidDynamicRow}"/>
+            </aura:if>
+            <aura:if isTrue = "{!v.newAction.type == 'SMS'}">
+                <p class="slds-page-header__row slds-m-top_large slds-truncate slds-align_absolute-center rdna-sub-header-bold" >SMS Templates</p>
+                <p class="slds-align_absolute-center  rdna-sub-header" style="padding-top:15px;">Create pre-configured SMS Templates.</p>
+                <p class="slds-align_absolute-center slds-m-bottom_large rdna-sub-header-small" style="padding-top:5px;">There are currently no pre-configured SMS Templates associated to this account. (Optional) </p>
+                <c:ActionTemplateList newAction="{!v.newAction}" 
+                                      spinner="{!v.spinner}"
+                                      rowActionTemplateList="{!v.rowActionTemplateList}"/>
+            </aura:if>
+            <aura:if isTrue = "{!v.newAction.type == 'Call'}">
+                <p class="slds-page-header__row slds-m-top_large slds-truncate slds-align_absolute-center rdna-sub-header-bold" >Call Notes Templates</p>
+                <p class="slds-align_absolute-center  rdna-sub-header" style="padding-top:15px;">Create pre-configured Call Notes Templates.</p>
+                <p class="slds-align_absolute-center slds-m-bottom_large rdna-sub-header-small" style="padding-top:5px;">There are currently no pre-configured Call Notes Templates associated to this account. (Optional)</p>
+                <c:ActionTemplateList newAction="{!v.newAction}" 
+                                      spinner="{!v.spinner}"
+                                      rowActionTemplateList="{!v.rowActionTemplateList}" />
             </aura:if>
             <aura:if isTrue = "{!v.newAction.type == 'Email'}">
                 <c:EmailActionBuilder aura:id="newActionDetail" newAction = "{!v.newAction}" disableActionType = "{!v.disableActionType}" 
@@ -110,6 +100,5 @@
                                       currentStep ="{!v.currentStep}"/>       
             </aura:if>
         </aura:if>
-        
     </div>
 </aura:component>

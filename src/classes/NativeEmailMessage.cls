@@ -1,5 +1,4 @@
 public class NativeEmailMessage { 
-    @AuraEnabled public string MailFrom {get; set;}
     @AuraEnabled public string MailTo {get; set;}
     @AuraEnabled public string MailCc {get; set;}
     @AuraEnabled public string MailBcc {get; set;}
@@ -11,9 +10,8 @@ public class NativeEmailMessage {
         
     }
     
-    public NativeEmailMessage ( string nativeMailFrom, string nativeMailTo, string nativeMailCc, 
+    public NativeEmailMessage ( string nativeMailTo, string nativeMailCc, 
                                string nativeMailBcc, string nativeSubject, string nativeBody, Id nativeTemplateId){
-                                   MailFrom = nativeMailFrom;
                                    MailTo = nativeMailTo;
                                    MailCc = nativeMailCc;
                                    MailBcc = nativeMailBcc;

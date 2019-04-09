@@ -1,6 +1,5 @@
 ({
     initActionTemplateTable : function(component, event, helper) {
-        var isSMSaction = component.get('v.isSMSAction');
         var newAction  = component.get('v.newAction');
         helper.setTableColunm(component, event , helper);
         var rowActionTemplateList = component.get("v.rowActionTemplateList");

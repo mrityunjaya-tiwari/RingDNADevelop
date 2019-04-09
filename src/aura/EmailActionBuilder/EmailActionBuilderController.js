@@ -1,6 +1,5 @@
 ({
     doInit: function(component, event, helper) {
-       console.log('disableactiontype-AB', component.get('v.disableActionType'));
     },
     createSFDCEmail : function(component, event,helper) {
         helper.createSFDCEmail(component, event,helper);

@@ -1,7 +1,7 @@
 ({
     setTableColunm :function(component, event, helper) {
-        var SMSaction = component.get('v.isSMSAction');
-        if(SMSaction ==  true){
+        var newAction = component.get('v.newAction');
+        if(newAction.type == 'SMS'){
         component.set('v.columns', [
             {label: 'SMS Template Name', fieldName: 'name', type: 'text' ,sortable:'true'},
             {label: 'Team', fieldName: 'teams', type: 'text',sortable:'true'}, 

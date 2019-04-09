@@ -12,11 +12,6 @@ global  without sharing class CadenceService {
         return listEmailTemplate;
     } 
     
-    public static List<ActionDetailController.WrapperTemplateObj> getSMSTemplates(){
-        RingDNAApiCallouts ringdnaAPI = new RingDNAApiCallouts();
-        return mapToWrapperObj(ringdnaAPI.getSMSTemplates());
-    } 
-    
     public static List<LookupFieldController.UserListWrapper> getUserWrapperList(){
         List<User> userList = CadenceSelector.getUserList();
         List<LookupFieldController.UserListWrapper> userListWrapperList = New List<LookupFieldController.UserListWrapper>();
@@ -40,7 +35,10 @@ global  without sharing class CadenceService {
         }
         return dandBCompanyListWrapperList;
     }
-    
+    public static List<ActionDetailController.WrapperTemplateObj> getSMSTemplates(){
+        RingDNAApiCallouts ringdnaAPI = new RingDNAApiCallouts();
+        return mapToWrapperObj(ringdnaAPI.getSMSTemplates());
+    } 
     public static List<ActionDetailController.WrapperTemplateObj> getCallTemplates(){
         RingDNAApiCallouts ringdnaAPI = new RingDNAApiCallouts();
         return mapToWrapperObj(ringdnaAPI.getCallNoteTemplates());
@@ -440,6 +438,25 @@ global  without sharing class CadenceService {
         mail.setTargetObjectIds(new List<Id>{sObjectId});
         mail.setTemplateId(EmailTemplateId);
         return mail; 
+    }
+    public static NativeEmailMessage createNativeEmailMessage(String nativeMailTo,Id EmailTemplateId){
+        NativeEmailMessage nativeEmail = new NativeEmailMessage (nativeMailTo, '','', '', '',EmailTemplateId);
+        return nativeEmail; 
+    }
+    public static List<NativeEmailMessage> updateNativeEmailMessage(List<NativeEmailMessage> nativeEmailToSend , List<Id> emailTemplateIdList){
+        List<NativeEmailMessage> updatedNativeEmailToSend = New List<NativeEmailMessage>();
+        List<EmailTemplate> emailTemp = [Select id, Subject, Body from EmailTemplate where Id IN : emailTemplateIdList];
+        Map<Id, EmailTemplate> nativeEmailMessageMap = New Map<Id, EmailTemplate>(emailTemp);
+        for (NativeEmailMessage nativeEmail : nativeEmailToSend){
+            EmailTemplate email = nativeEmailMessageMap.get(nativeEmail.TemplateId);
+            nativeEmail.Subject  = email.Subject;
+            nativeEmail.Body  = email.Body;
+            updatedNativeEmailToSend.add(nativeEmail);
+        }
+        return updatedNativeEmailToSend; 
+    }
+     public static Boolean SendNativeEmail(List<NativeEmailMessage> nativeEmailToSend){
+        return false;
     }
     
     public static Task getEmailTask(Id sequenceActionId, String actionName, Id sObjectId, Id templateId) {
@@ -863,7 +880,8 @@ global  without sharing class CadenceService {
         List<Sequence_Action__c> partActToUpdate = new List<Sequence_Action__c>();
         List<Task> tasksToCreate = new List<Task>();
         List<Messaging.MassEmailMessage> emailsToSend = new List<Messaging.MassEmailMessage>();
-        
+        List<NativeEmailMessage> nativeEmailToSend = new List<NativeEmailMessage>();
+        List<Id> emailTemplateIdList = new List<Id>();
         //Return if no unperformed participant actions 
         if(partActionsMap == null || partActionsMap.isEmpty()) {
             return performedPartActions;
@@ -884,6 +902,13 @@ global  without sharing class CadenceService {
                     if(partAct.CadenceAction_Id__r.Action_Id__r.Type__c.equals(CadenceConstants.ACTION_TYPE_EMAIL)) {
                         if(objMap.containsKey(objId) && objMap.get(objId).get('Email')!=null) {
                             emailsToSend.add(createEmailMessage(objId, partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c));
+                            String nativeMailTo = String.valueOf(objMap.get(objId).get('Email'));
+                            if(partAct.CadenceAction_Id__r.Action_Id__r.Email_Type__c.equals(CadenceConstants.NATIVE_EMAIL_TYPE)){
+                                nativeEmailToSend.add(createNativeEmailMessage(nativeMailTo, partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c));
+                                emailTemplateIdList.add(partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c);
+                            }else{
+                                emailTemplateIdList.add(partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c);
+                            }
                             tasksToCreate.add(getEmailTask(partAct.Id, partAct.Name, objId, partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c));
                             performed = true;
                         } 
@@ -936,7 +961,13 @@ global  without sharing class CadenceService {
            } 
         }
         
-        if(!emailsToSend.isEmpty()) {
+        if(!nativeEmailToSend.isEmpty()) {
+            List<NativeEmailMessage> updatedNativeEmailToSend = updateNativeEmailMessage(nativeEmailToSend, emailTemplateIdList);
+            Boolean isNative = SendNativeEmail(updatedNativeEmailToSend);
+            if (isNative == false){
+                Messaging.SendEmailResult[] results = Messaging.sendEmail(emailsToSend, false);
+            }
+        }else if(!emailsToSend.isEmpty()) {
             Messaging.SendEmailResult[] results = Messaging.sendEmail(emailsToSend, false);
         }
         

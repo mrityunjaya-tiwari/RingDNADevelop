@@ -4,7 +4,6 @@
         newAct.sobjectType = 'ActionWrapper';
         var action = component.get("c.saveAction");
         var listTask = component.get("v.listTask");
-       // var wrapperTaskFields = component.get("v.wrapperTaskFields");
         var newTask = component.get("v.taskObj");
         for(var index in listTask){
             var wrapperTOCreateTask = listTask[index];
