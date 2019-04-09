@@ -82,51 +82,49 @@
     </fields>
     <fields>
         <fullName>Delivery_Preference__c</fullName>
+		<deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Delivery Preference</label>
+		<picklist>
+            <picklistValues>
+                <fullName>Immediate</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Weekdays</fullName>
+                <default>false</default>
+            </picklistValues>
+			<picklistValues>
+                <fullName>Any Day</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
         <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
-        <valueSet>
-            <restricted>true</restricted>
-            <valueSetDefinition>
-                <sorted>false</sorted>
-                <value>
-                    <fullName>Immediate</fullName>
-                    <default>false</default>
-                </value>
-                <value>
-                    <fullName>Weekdays</fullName>
-                    <default>false</default>
-                </value>
-                <value>
-                    <fullName>Any Day</fullName>
-                    <default>false</default>
-                </value>
-            </valueSetDefinition>
-        </valueSet>
     </fields>
     <fields>
         <fullName>Email_Type__c</fullName>
+		<deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Email Type</label>
         <required>false</required>
+		<picklist>
+            <picklistValues>
+                <fullName>SFDC</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>NATIVE</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
         <trackTrending>false</trackTrending>
         <type>Picklist</type>
-        <valueSet>
-            <restricted>true</restricted>
-            <valueSetDefinition>
-                <sorted>false</sorted>
-                <value>
-                    <fullName>SFDC</fullName>
-                    <default>false</default>
-                </value>
-                <value>
-                    <fullName>NATIVE</fullName>
-                    <default>false</default>
-                </value>
-            </valueSetDefinition>
-        </valueSet>
     </fields>
     <fields>
         <fullName>Task_Description__c</fullName>
