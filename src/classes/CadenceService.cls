@@ -1192,16 +1192,16 @@ global  without sharing class CadenceService {
         List<Sequence_Action__c> participantActions = new List<Sequence_Action__c>();
             
         if(objName == CadenceConstants.OPPORTUNITY_OBJECT_NAME){
-            participantActions = [Select Id, Name, CadenceAction_ID__c, Show_on_Target_List__c, Lead_Id__c, Contact_Id__c,Get_Opportunity_Id__c,Cadence_Type__c, isActionPerformed__c, CadenceAction_Id__r.Day__c,
+            participantActions = [Select Id, Name, CadenceAction_ID__c, Show_on_Target_List__c, Lead_Id__c, Contact_Id__c,Opportunity_Id__c,Cadence_Type__c, isActionPerformed__c, CadenceAction_Id__r.Day__c,
                                   CadenceAction_Id__r.Hour__c, CadenceAction_Id__r.Action_Id__r.Type__c, CadenceAction_Id__r.Fields_To_Update_Action__c,
                                   CadenceAction_Id__r.Action_Id__r.Activation_Type__c, CadenceAction_Id__r.Trigger_Type__c,
                                   CadenceAction_Id__r.Action_Id__r.Task_Description__c, CadenceAction_Id__r.Action_Id__r.Template_Id__c, 
                                   CadenceAction_Id__r.Index__c, Expected_Execution_Date__c, Actual_Execution_Date__c From Sequence_Action__c 
-                                  where Contact_Id__c IN : objIds AND CadenceAction_ID__r.Cadence_Id__r.Record_Type__c = 'Opportunity' AND Get_Opportunity_Id__c != null AND isActionPerformed__c = false AND isDeferred__c = false 
+                                  where Contact_Id__c IN : objIds AND CadenceAction_ID__r.Cadence_Id__r.Record_Type__c = 'Opportunity' AND Opportunity_Id__c != null AND isActionPerformed__c = false AND isDeferred__c = false 
                                   order by CadenceAction_Id__r.Index__c];
         }
         else{
-            participantActions = [Select Id, Name, CadenceAction_ID__c, Show_on_Target_List__c, Lead_Id__c, Contact_Id__c,Get_Opportunity_Id__c,Cadence_Type__c, isActionPerformed__c, CadenceAction_Id__r.Day__c,
+            participantActions = [Select Id, Name, CadenceAction_ID__c, Show_on_Target_List__c, Lead_Id__c, Contact_Id__c,Opportunity_Id__c,Cadence_Type__c, isActionPerformed__c, CadenceAction_Id__r.Day__c,
                                   CadenceAction_Id__r.Hour__c, CadenceAction_Id__r.Action_Id__r.Type__c, CadenceAction_Id__r.Fields_To_Update_Action__c,
                                   CadenceAction_Id__r.Action_Id__r.Activation_Type__c, CadenceAction_Id__r.Trigger_Type__c,
                                   CadenceAction_Id__r.Action_Id__r.Task_Description__c, CadenceAction_Id__r.Action_Id__r.Template_Id__c, 
@@ -1234,7 +1234,6 @@ global  without sharing class CadenceService {
     
     //This method is to process participant if they are activated firstTime
     public static void processParticipantActivation(Map<Id, Cadence__c> cadMap, List<SObject> objList, String objName) {
-    	System.debug('objName:'+objName);
         Map<Id, List<CadenceAction__c>> objIdToAllCadActListMap = new Map<Id, List<CadenceAction__c>>();
         for(SObject Obj : objList){
             if((Boolean)Obj.get(nameSpace + 'isActivated__c') == true && Obj.get(nameSpace + 'EntranceCriteria_Matched_Date__c') == null){
@@ -1250,8 +1249,6 @@ global  without sharing class CadenceService {
                 CadenceService.createActionParticipants(objIdToAllCadActListMap, new Map<Id, SObject>(objList), objName);
             }
         }
-        
-        System.debug('objName:'+objName);
         
 	}
     
@@ -1432,7 +1429,6 @@ global  without sharing class CadenceService {
     public static Sobject UpdateSequenceOnParticipant(Sobject partObj,Cadence__c cadToUpdate){
         //After matching criteria setting matching cadence data to participant
         //for(SObject partObj :  partList){
-        System.debug('partObj:##'+partObj);
             partObj.put(nameSpace+'Cadence_Id__c', cadToUpdate.Id); 
             if(cadToUpdate.Participent_Activation__c.equalsIgnoreCase(CadenceConstants.PARTICIPANT_ACTIVATION_AUTOMATIC)) {
                 partObj.put(nameSpace+'isActivated__c', true);
@@ -1451,8 +1447,6 @@ global  without sharing class CadenceService {
         List<String> allcontacts = new List<string>();
         list<OpportunityContactRole> templist = [Select ContactId,OpportunityId From OpportunityContactRole Where OpportunityId In :(sobjectList)];
         for(OpportunityContactRole oppCont : templist){
-            System.debug('oppCont'+oppCont);
-            System.debug('oppCont.ContactId'+oppCont.ContactId);
             setOfcontactstring = new List<string>();
             if(oppCont.ContactId != null ){
                 if(mapOfoppcontactIds.containskey(oppCont.OpportunityId) && mapOfoppcontactIds.get(oppCont.OpportunityId) != null){
@@ -1466,6 +1460,7 @@ global  without sharing class CadenceService {
             mapOfoppcontactIds.put(oppCont.OpportunityId,setOfcontactstring);
             allcontacts.addAll(setOfcontactstring);
         }
+        
         List<Contact> contactList = [Select Id,Opportunity_Id__c from Contact Where Id in:setOfcontactstring];
         for(Contact con:contactList){
             con.Opportunity_Id__c = GetOpportunityIdByContactId(mapOfoppcontactIds,con.Id);

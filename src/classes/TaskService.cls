@@ -17,6 +17,7 @@ public class TaskService {
     	if(!objIds.isEmpty()) {
     		objToPartActMap = CadenceService.getRemainingParticipantAction(objIds, CadenceConstants.CONTACT_OBJECT_NAME);    	
     	}
+        
         if(objToPartActMap == null || objToPartActMap.size() == 0){
             objToPartActMap = CadenceService.getRemainingParticipantAction(objIds, CadenceConstants.OPPORTUNITY_OBJECT_NAME);
         }
@@ -78,16 +79,13 @@ public class TaskService {
 		List<SObject> sObjListToUpdate = new List<SObject>();
 		Map<String, List<String>> leadfieldDataTypeMap = CadenceUtil.getObjectFieldsType(CadenceConstants.LEAD_OBJECT_NAME);
 		Map<String, List<String>> contactfieldDataTypeMap = CadenceUtil.getObjectFieldsType(CadenceConstants.CONTACT_OBJECT_NAME);
-        //Pankaj-478
         Map<String, List<String>> opportunityfieldDataTypeMap = CadenceUtil.getObjectFieldsType(CadenceConstants.OPPORTUNITY_OBJECT_NAME);
 	
 		for(Sequence_Action__c partAct : actPartList) {
 			SObject sObj;
-			//Pankaj-478
-            System.debug('partAct.Opportunity_Id__c='+partAct.Get_Opportunity_Id__c);
-            if(partAct.Get_Opportunity_Id__c != null && String.isNotBlank(partAct.Get_Opportunity_Id__c)) { 
+			if(partAct.Opportunity_Id__c != null && String.isNotBlank(partAct.Opportunity_Id__c)) { 
 				sObj = new Opportunity();
-				sObj.put('Id', partAct.Get_Opportunity_Id__c);
+				sObj.put('Id', partAct.Opportunity_Id__c);
 			} else if(partAct.Lead_Id__c != null) { 
 				sObj = new Lead();
 				sObj.put('Id', partAct.Lead_Id__c);
@@ -101,7 +99,7 @@ public class TaskService {
 				fieldMap.remove('sobjectType');
 				for(String fieldName : fieldMap.keySet()) {
 					List<String> apiList;
-                    if(partAct.Cadence_Type__c.equals(CadenceConstants.OPPORTUNITY_OBJECT_NAME) && String.isNotBlank(partAct.Get_Opportunity_Id__c)){
+                    if(partAct.Cadence_Type__c.equals(CadenceConstants.OPPORTUNITY_OBJECT_NAME) && String.isNotBlank(partAct.Opportunity_Id__c)){
                         apiList = opportunityfieldDataTypeMap.get(fieldName);
                     } else if(partAct.Lead_Id__c != null) { 
                         apiList = leadfieldDataTypeMap.get(fieldName);
