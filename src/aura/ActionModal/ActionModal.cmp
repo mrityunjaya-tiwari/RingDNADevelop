@@ -20,7 +20,7 @@
                     <aura:set attribute="actions"></aura:set>
                     <div class="slds-card__body_inner">
                         <div class="slds-p-top_medium"><lightning:textarea class="email-description" value="{!v.actionDesc}" 
-                                                                           label="Plain text preview" maxlength="300" readonly="true"/></div>
+                                                                           label="Plain Text Preview" maxlength="300" readonly="true"/></div>
                     </div>
                 </lightning:card>
             </div>

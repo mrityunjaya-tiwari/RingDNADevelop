@@ -126,11 +126,11 @@
                                     </aura:set>
                                 </aura:if>
                             </div>
-                            <p class="slds-page-header__row slds-truncate slds-align_absolute-center SFDC-Email-List-SFDF-bold" >Manul</p>
+                            <p class="slds-page-header__row slds-truncate slds-align_absolute-center SFDC-Email-List-SFDF-bold" >Manual</p>
                             <div class = "SFDC-Email-List-Manual">
-                                Manual emails will be added to the today view of their
+                               <p class="SFDC-email-message"> Manual emails will be added to the today view of their
                                 respective record owner to perform manually. This allows
-                                users the ability to customize the email as necessary.
+                                users the ability to customize the email as necessary.</p>
                             </div>
                             <div class="slds-text-align_center">
                                 <lightning:button class="email-builder-button email-builder-button-text slds-text-align_center slds-m-top_small slds-p-left_large slds-p-right_large" aura:id="deleteActions" label="Select" onclick="{!c.createManualEmail}"/>
@@ -174,7 +174,7 @@
                             </div>
                             <div class="slds-p-horizontal_medium">
                                 <div class="slds-page-header__row  slds-align_absolute-center">
-                                    <aura:if isTrue="{!v.newAction.deliveryPreference == 'Weekdays' || v.newAction.deliveryPreference == 'AnyDay'}">
+                                    <aura:if isTrue="{!v.newAction.deliveryPreference == 'Weekdays' || v.newAction.deliveryPreference == 'Any Day'}">
                                         <img class = "native" src="{!$Resource.cadence_icons + '/action-icons/select/business.png'}"/> 
                                         <aura:set attribute="else">
                                             <img class = "native" src="{!$Resource.cadence_icons + '/action-icons/default/business.png'}"/>

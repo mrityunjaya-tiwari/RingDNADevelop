@@ -24,6 +24,7 @@
                     if (rowData.selectButtonLabel == 'Selected' && newAction.type != 'Email'){
                         rowData.selectButtonLabel = 'Select';
                         component.set('v.newAction.templateId', '');
+                        component.set('v.newAction.templateName', '');
                     }else{
                         rowData.selectButtonLabel = 'Selected';
                         component.set('v.newAction.templateId', rowData.id);

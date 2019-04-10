@@ -98,6 +98,8 @@
                     }else{
                         rowData.selectButtonLabel = 'Select';
                         rowData.disableselectButton = false;
+                        component.set('v.newAction.templateId', '');
+                        component.set('v.newAction.templateName', '');
                     }
                     return rowData;
                 });
