@@ -127,3 +127,15 @@
     margin-left : 324 px;
     background-color: #ffffff;
 }
+.THIS .slds-border_top{
+    width: 640px;
+    height: 1px;
+    border: solid 0.5px #cccccc;
+    margin-left: 325px;
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+.THIS .SFDC-email-message{
+    width: 349px;
+    height: 88px;
+}

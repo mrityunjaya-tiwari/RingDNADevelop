@@ -151,15 +151,34 @@
     color: #0066ff;
     text-decoration-line: none;
 }
+.THIS .slds-button_neutral:after{
+    width: 88px;
+    height: 30px;
+    border-radius: 6px;
+    border: solid 1px #0066ff;
+    font-family: Logical;
+    font-size: 14px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    text-align: center;
+    color: #0066ff;
+    text-decoration-line: none;
+    background-color: #0066ff;
+}
 .THIS .slds-button_neutral[disabled]{
     color: #0066ff !important;
     text-decoration: none !important;
 }
 .THIS .slds-scope .slds-button:active{
-    color: #0066ff !important;
+    color: #0066ff !important;    
 }
 .THIS .slds-button:active {
     color: #0066ff !important;
+    border: solid 1px #0066ff;
+    background-color: #0066ff;
 }
 .THIS .slds-button:visited{
     color: #0066ff !important;
@@ -168,10 +187,11 @@
     color: #0066ff !important;
 }
 .THIS .slds-button:focus {
-    color: #0066ff !important;
+    color: #ffffff !important;
     outline: none !important;
     -webkit-box-shadow: none !important;
     box-shadow: none !important;
+    background-color: #0066ff;
 }
 .THIS .rdna-style{
     width: 638px;
@@ -202,4 +222,11 @@
     color: #000000;
     margin-top: 142px;
     margin-bottom: 123px;
+}
+.THIS .rdna-preview-button{
+    color: #ffffff !important;
+    outline: none !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    background-color: #0066ff;
 }

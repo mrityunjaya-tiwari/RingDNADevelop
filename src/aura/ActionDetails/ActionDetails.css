@@ -1,7 +1,9 @@
 .THIS .slds-icon-text-default {
     fill: rgb(37, 122, 249); 
 }
-
+.THIS .slds-input{
+    margin-top: 7px;
+}
 .THIS .rdna-logo{
     padding-top : 8px;
     width : 32px;

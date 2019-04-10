@@ -6,6 +6,8 @@
 			if (newAct.type != 'Call'){
                 var emptyList = [];
                 component.set('v.rowActionTemplateList', emptyList);
+                component.set('v.newAction.templateId', '');
+                component.set('v.newAction.templateName', '');
             }
             helper.validateActionName(component, event,helper);
             component.set('v.newAction.type','Call');
@@ -26,6 +28,8 @@
             if (newAct.type != 'Email'){
                 var emptyList = [];
                 component.set('v.rowActionTemplateList', emptyList);
+                component.set('v.newAction.templateId', '');
+                component.set('v.newAction.templateName', '');
             }
             component.set('v.newAction.type', 'Email');
             component.set('v.isNextEnable' , true);
@@ -44,6 +48,8 @@
 			if (newAct.type != 'SMS'){
                 var emptyList = [];
                 component.set('v.rowActionTemplateList', emptyList);
+                component.set('v.newAction.templateId', '');
+                component.set('v.newAction.templateName', '');
             }
             component.set('v.newAction.type', 'SMS');
             component.set('v.isNextEnable' , false);
