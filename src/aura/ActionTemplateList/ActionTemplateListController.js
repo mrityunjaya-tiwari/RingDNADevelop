@@ -1,6 +1,5 @@
 ({
     initActionTemplateTable : function(component, event, helper) {
-        var isSMSaction = component.get('v.isSMSAction');
         var newAction  = component.get('v.newAction');
         helper.setTableColunm(component, event , helper);
         var rowActionTemplateList = component.get("v.rowActionTemplateList");
@@ -9,19 +8,32 @@
         }else{
             helper.setData(component, event, helper);
         }
+		if(newAction.type =='Email'){
+            helper.getFolderType(component, event, helper);
+        }
     },
     viewRecord : function(component, event, helper) {
         var row = event.getParam('row');
         var recordId = row.id;
         var actionName = event.getParam('action').name;
+		var newAction = component.get('v.newAction');
         if ( actionName == 'Edit' ) {
             var data = component.get('v.actionTemplateList');
             data = data.map(function(rowData) {
-                if (rowData.id === row.id) {
-                    rowData.selectButtonLabel = 'Selected';
-                    component.set('v.newAction.templateId', rowData.id);
-                    component.set('v.newAction.templateName', rowData.name);
-                    rowData.disableselectButton = true;
+                 if (rowData.id === row.id) {
+                    if (rowData.selectButtonLabel == 'Selected' && newAction.type != 'Email'){
+                        rowData.selectButtonLabel = 'Select';
+                        component.set('v.newAction.templateId', '');
+                    }else{
+                        rowData.selectButtonLabel = 'Selected';
+                        component.set('v.newAction.templateId', rowData.id);
+                        component.set('v.newAction.templateName', rowData.name);
+						component.set('v.isValidationError', false);
+                        if (newAction.type == 'Email'){
+                            rowData.disableselectButton = true;
+                        }
+                    }
+                    
                 }else{
                     rowData.selectButtonLabel = 'Select';
                     rowData.disableselectButton = false;
@@ -35,6 +47,13 @@
             component.set('v.actionType', newAction.type);
             component.set('v.actionName', row.name);
             component.set('v.actionDesc', row.template);
+			if(newAction.type=='Email'){
+                component.set('v.actionName', row.subject);
+                component.set('v.actionDesc', row.body); 
+            }else{
+                component.set('v.actionName', row.name);
+                component.set('v.actionDesc', row.template);
+            }
         }
     },    
     handleComponentEvent: function(cmp, event, helper) {
@@ -55,4 +74,7 @@
         cmp.set("v.sortedDirection", sortDirection);
         helper.sortData(cmp, fieldName, sortDirection, helper);    
     },    
+	filterFolderType: function(component, event, helper){
+        helper.applyFilters(component, event, helper);
+    }
 })

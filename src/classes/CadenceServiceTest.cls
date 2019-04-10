@@ -234,5 +234,22 @@ public class CadenceServiceTest {
          Test.stopTest(); 
         
     }
-       
+    
+    @isTest
+    public static void createNativeEmailMessageTest(){
+        EmailTemplate emailTemplate = [select Id, Name from EmailTemplate LIMIT 1];
+        List<Id> emailTemplateIdList = new List<Id>();
+        emailTemplateIdList.add(emailTemplate.Id);
+        List<NativeEmailMessage> nativeEmailMsgList = new List<NativeEmailMessage>();
+        Boolean isNativeEmail;
+        Test.startTest();
+        nativeEmailMsgList.add(CadenceService.createNativeEmailMessage('test@gmail.com' , emailTemplate.Id));
+        nativeEmailMsgList = CadenceService.updateNativeEmailMessage(nativeEmailMsgList, emailTemplateIdList);
+        isNativeEmail = CadenceService.SendNativeEmail(nativeEmailMsgList);
+        Test.stopTest(); 
+        NativeEmailMessage nativeEmailMsg = nativeEmailMsgList[0];
+        System.assertEquals(nativeEmailMsg.TemplateId, emailTemplate.Id);
+        System.assertEquals(isNativeEmail, false);
+    }
+    
 }

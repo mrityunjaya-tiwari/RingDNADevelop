@@ -34,7 +34,6 @@
     <aura:attribute name="isNew" type="Boolean" default='false'/>
     <aura:attribute name="themeName" type="String"/>
     <!--create a component attributes -->
-    <aura:attribute name="isTaskAction" type="boolean" default="false"/>
     <aura:attribute name="spinner" type="boolean" default="false"/>
     <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>
 

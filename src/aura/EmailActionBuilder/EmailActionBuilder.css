@@ -1,0 +1,129 @@
+.THIS rdna-icon-Email{
+}
+.THIS .email-builder-button-text {
+    width: 41px;
+    height: 17px;
+    font-family: Logical;
+    font-size: 14px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    text-align: center;
+    color: #0066ff;
+}
+
+.THIS .email-builder-button {
+    width: 93.8px;
+    height: 30px;
+    border-radius: 6px;
+    border: solid 1px #0066ff;
+}
+.THIS .email-builder-button-text-toggle {
+    width: 41px;
+    height: 17px;
+    font-family: Logical;
+    font-size: 14px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    text-align: center;
+    background: #0066ff;
+    color: #ffffff;
+}
+
+.THIS .email-builder-button-toggle {
+    width: 93.8px;
+    height: 30px;
+    border-radius: 6px;
+    background: #0066ff;
+    border: solid 1px #0066ff;
+}
+
+.THIS .sfdc {
+    width: 86px;
+    height: 86px;
+    object-fit: contain;
+}
+.THIS .native {
+    width: 86px;
+    height: 86px;
+    object-fit: contain;
+}
+.THIS .Account-Required {
+    width: 84px;
+    height: 24px;
+    font-family: Logical;
+    font-size: 14px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.71;
+    letter-spacing: normal;
+    text-align: center;
+    color: #979797;
+}
+
+.THIS .Account-Required-bold {
+    font-size: 24px;
+    font-weight: bold;
+    width: 120px;
+    height: 24px;
+    font-family: Logical;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.71;
+    letter-spacing: normal;
+    text-align: center;
+    color: #000000;
+}
+.THIS .SFDC-Email-List-Manual{
+    width: 330px;
+    height: 66px;
+    font-family: Logical;
+    font-size: 14px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.57;
+    letter-spacing: normal;
+    text-align: center;
+    color: #000000;
+}
+.THIS .SFDC-Email-List-SFDC {
+    width: 300px;
+    height: 66px;
+    font-family: Logical;
+    font-size: 14px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.57;
+    letter-spacing: normal;
+    text-align: center;
+    color: #000000;
+}
+.THIS .SFDC-Email-List-SFDF-bold {
+    width: 251px;
+    height: 22px;
+    font-weight: bold;
+    font-family: Logical;
+    font-size: 14px;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.57;
+    letter-spacing: normal;
+    text-align: center;
+    color: #000000;
+}
+
+.THIS .c-email-templates {
+    clear: both;
+    width: 700  !important;
+    height: 1px;
+    margin-left : 324 px;
+    background-color: #ffffff;
+}

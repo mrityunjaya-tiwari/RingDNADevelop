@@ -7,22 +7,42 @@
     
     <!--Preview action Dialogue box start -->
     <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
-        <div class="slds-modal__container slds-p-top_large">
-            <lightning:card variant="base">
-                <div class="slds-float--right rdna-bgcolor">
-                    <a onclick="{!c.onCancel}">
-                        <img class = "Ovalhead" src="{!$Resource.cadence_icons + '/delete/delete@3x.png'}"/>
-                    </a>
+        <aura:if isTrue="{!v.actionType=='Email'}">
+            <div class="slds-modal__container slds-p-top_large email-card">
+                <lightning:card variant="base">
+                    <div class="slds-float--right  rdna-bgcolor">
+                        <a onclick="{!c.onCancel}">
+                            <img class = "Ovalhead slds-p-right_small" src="{!$Resource.cadence_icons + '/delete/delete@3x.png'}"/>
+                        </a>
+                    </div>
+                    <p class="slds-p-horizontal_small rdna-text-heading_small">{!v.actionType + ' Template'} </p>
+                    <p class="slds-p-horizontal_small">Subject - {!v.actionName} </p>
+                    <aura:set attribute="actions"></aura:set>
+                    <div class="slds-card__body_inner">
+                        <div class="slds-p-top_medium"><lightning:textarea class="email-description" value="{!v.actionDesc}" 
+                                                                           label="Plain text preview" maxlength="300" readonly="true"/></div>
+                    </div>
+                </lightning:card>
+            </div>
+            <aura:set attribute="else">
+                <div class="slds-modal__container slds-p-top_large">
+                    <lightning:card variant="base">
+                        <div class="slds-float--right rdna-bgcolor">
+                            <a onclick="{!c.onCancel}">
+                                <img class = "Ovalhead" src="{!$Resource.cadence_icons + '/delete/delete@3x.png'}"/>
+                            </a>
+                        </div>
+                        <p class="slds-p-horizontal_small rdna-text-heading_small">{!v.actionType + ' Template'} </p>
+                        <p class="slds-p-horizontal_small">{!v.actionName} </p>
+                        <aura:set attribute="actions"></aura:set>
+                        <div class="slds-card__body_inner">
+                            <div class="slds-p-top_medium"><lightning:input label="Name" placeholder="Template Name" type="text" variant="standard" disabled="true" value="{!v.actionName}"/></div>
+                            <div class="slds-p-top_medium"><lightning:textarea value="{!v.actionDesc}" 
+                                                                               label="Template" maxlength="300" readonly="true"/></div>
+                        </div>
+                    </lightning:card>
                 </div>
-                <p class="slds-p-horizontal_small rdna-text-heading_small">{!v.actionType + ' Template'} </p>
-                <p class="slds-p-horizontal_small">{!v.actionName} </p>
-                <aura:set attribute="actions"></aura:set>
-                <div class="slds-card__body_inner">
-                    <div class="slds-p-top_medium"><lightning:input label="Name" placeholder="Template Name" type="text" variant="standard" disabled="true" value="{!v.actionName}"/></div>
-                    <div class="slds-p-top_medium"><lightning:textarea value="{!v.actionDesc}" 
-                                                                       label="Template" maxlength="300" readonly="true"/></div>
-                </div>
-            </lightning:card>
-        </div>
+            </aura:set>
+        </aura:if>
     </section>
 </aura:component>
