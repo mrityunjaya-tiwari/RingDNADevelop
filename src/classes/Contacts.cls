@@ -80,10 +80,9 @@ public class Contacts  extends SObjectDomain {
             if(cObj.AccountId != null) {
                 accountIds.add(cObj.AccountId);
             }
-            if(cObj.Opportunity_Id__c == null ||  String.isBlank(cObj.Opportunity_Id__c)){
-               if(cObj.Sequence_Type__c == CadenceConstants.OPPORTUNITY_OBJECT_NAME){
-                    cObj.Opportunity_Id__c = CadenceService.GetOpportunityIdByContactId(mapOfOpportunityContactIds,cObj.Id);
-                }
+
+            if( cObj.Sequence_Type__c == CadenceConstants.OPPORTUNITY_OBJECT_NAME && (cObj.Opportunity_Id__c == null ||  String.isBlank(cObj.Opportunity_Id__c))){
+                  cObj.Opportunity_Id__c = CadenceService.GetOpportunityIdByContactId(mapOfOpportunityContactIds,cObj.Id);
             }
 		}
         
