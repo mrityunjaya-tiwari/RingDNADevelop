@@ -241,7 +241,6 @@ public with sharing class CadenceSelector {
      * @param objType - sObject name string
      * @return - List<SObject> - list of SObject
      */
-    //Pankaj-478
     public static List<SObject> getOpportunity(List<String> opportunityIds, String objType){
         List<String> cId = opportunityIds;
         String query = getQuery(objType);
