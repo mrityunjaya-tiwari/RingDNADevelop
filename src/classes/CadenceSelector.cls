@@ -166,9 +166,14 @@ public with sharing class CadenceSelector {
      * @return - String - SOQL query
      */
     public  static String getQueryForObject(String objType){
-        if(objType.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_OBJECT_NAME))
+        if(objType.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_OBJECT_NAME)){
         	objType = CadenceConstants.CONTACT_OBJECT_NAME;
+        }
         
+        return getQuery(objType);
+    }  
+    
+    private static String getQuery(String objType){
         Set<String> allowedFields = new Set<String>();
         String query = 'Select ';
         Map<String, Schema.SObjectField> fieldMap = Schema.getGlobalDescribe().get(objType).getDescribe().fields.getMap();
@@ -194,7 +199,7 @@ public with sharing class CadenceSelector {
         query += String.join(new List<String>(allowedFields), ',');
         query += ' FROM '+ objType + '';
         return query;
-    }  
+    }
     
     public static List<User> getUserList(){
         return [select id, Name  from user where ReceivesAdminInfoEmails = true];
@@ -229,5 +234,17 @@ public with sharing class CadenceSelector {
 				 Where Sequence_Action__r.CadenceAction_ID__r.Action_Id__r.Type__c = 'Task'
 				 AND Sequence_Action__r.isActionPerformed__c = False
 				 AND Status = 'Completed' AND Id in:ids];
+    }
+    
+      /**
+     * @description - get all opportunity by Ids.
+     * @param objType - sObject name string
+     * @return - List<SObject> - list of SObject
+     */
+    public static List<SObject> getOpportunity(List<String> opportunityIds, String objType){
+        List<String> cId = opportunityIds;
+        String query = getQuery(objType);
+        query += ' WHERE Id in :cId';
+        return Database.query(query); 
     }
 }

@@ -225,6 +225,77 @@ public class CadenceServiceTest {
         Test.stopTest();
     }
     
+	@isTest
+    public static void OpportunityTest(){
+        Cadence__c cadence1 = TestDataFactory.createCadence(CadenceConstants.OPPORTUNITY_OBJECT_NAME);
+        cadence1.matching_priority__c= 'P1';
+        cadence1.Record_Type__c=CadenceConstants.OPPORTUNITY_OBJECT_NAME;
+        String entryJson = TestDataFactory.createCadJsonWithNameCriterionsForOpp('Test',  CadenceConstants.CONDITION_AND, '');
+        String exitJson = TestDataFactory.createCadJsonWithNameCriterionsForOpp('Test1',  CadenceConstants.CONDITION_AND, '');
+        cadence1.Entrance_Criteria__c = entryJson;
+        cadence1.Exit_Criteria__c = exitJson;
+        insert cadence1;
+        
+        action1= TestDataFactory.createAction('Email');
+        action1.Template_Id__c= '00Xf4000001cPpjEAE';
+        action1.Activation_Type__c = 'Automatic';
+        insert action1;
+        System.assertNotEquals(null, action1);
+        
+        cadenceActionLeadAND =TestDataFactory.createCadenceAction(cadence1.Id, action1.Id);
+        cadenceActionLeadAND.Day__c= 0;
+        cadenceActionLeadAND.Hour__c= 0;
+        cadenceActionLeadAND.Trigger_Type__c = 'Immediate';
+        cadenceActionLeadAND.Fields_To_Update_Action__c = '{"sobjectType":"Lead","IsPrivate":"false"}';
+        insert cadenceActionLeadAND;
+        
+        System.assertNotEquals(null, cadenceActionLeadAND.Id);
+        
+        Opportunity opportunity = TestDataFactory.createOpp('Test-opp-01');
+         insert opportunity;
+         System.assertNotEquals(null, opportunity.Id); 
+        
+         Contact c1= new Contact();
+         c1.FirstName='fname';
+         c1.LastName='lname';
+         c1.Department='IT';
+         c1.Opportunity_Id__c = opportunity.Id;
+         insert c1;
+         System.assertNotEquals(null, c1.Id);
+        
+        Sequence_Action__c seqAction  =  new Sequence_Action__c();
+        seqAction.CadenceAction_Id__c = cadenceActionLeadAND.id;
+        seqAction.isActionPerformed__c =false;
+        seqAction.Contact_Id__c = c1.Id;
+        insert seqAction;
+        System.assertNotEquals(null, seqAction.Id);
+        
+         OpportunityContactRole oppRol = TestDataFactory.createOpportunityRole(opportunity.Id,c1.Id);
+         insert oppRol;
+         System.assertNotEquals(null, oppRol.Id);
+         
+         Test.startTest();
+         PerformCadenceActionBatch con=new PerformCadenceActionBatch(new List<string>{CadenceConstants.CONTACT_OBJECT_NAME, CadenceConstants.ACCOUNT_OBJECT_NAME});
+         Database.executeBatch(con,500);
+        
+         // Schedule batch for lead
+         PerformCadenceActionBatch led=new PerformCadenceActionBatch(new List<string>{CadenceConstants.LEAD_OBJECT_NAME, CadenceConstants.DB_OBJECT_NAME});
+         Database.executeBatch(led,500);
+        
+         // Schedule batch for opportunity
+         PerformCadenceActionBatch opp =new PerformCadenceActionBatch(new List<string>{CadenceConstants.OPPORTUNITY_OBJECT_NAME, CadenceConstants.ACCOUNT_OBJECT_NAME,CadenceConstants.CONTRACT_OBJECT_NAME,CadenceConstants.PRICE_BOOK_OBJECT_NAME});
+         Database.executeBatch(opp,500);
+        
+         List<SObject> objList = new List<SObject>{opportunity}; 
+         Map<Id, List<Sequence_Action__c>> seqList = new Map<Id, List<Sequence_Action__c>>();
+         seqList.put(c1.Id,new List<Sequence_Action__c>{seqAction});
+         CadenceService.updateSObjectFields(objList,seqList ,CadenceConstants.OPPORTUNITY_OBJECT_NAME,false);
+        
+         System.assertEquals(opportunity.IsPrivate,false);
+         Test.stopTest(); 
+        
+    }    
+    
     @isTest
     public static void mapToWrapperObjTest(){
         Map<String, String> apiMap = New Map<String, String>();

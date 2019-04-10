@@ -5,6 +5,7 @@ public class Contacts  extends SObjectDomain {
     List<Contact> records;
     public static boolean flag = true;
     Map<Id, Cadence__c> cadMap;
+    map<string,List<String>> mapOfOpportunityContactIds= new map<String,List<string>>();
     
     public Contacts(List<Contact> sObjectList) {
         super(sObjectList);
@@ -14,6 +15,7 @@ public class Contacts  extends SObjectDomain {
         contsWithoutCadence = contList.get('contactListWithoutCadenceIds');
         cadMap = CadenceSelector.getActiveCadencesByRecordType(New List<String>{CadenceConstants.CONTACT_OBJECT_NAME,CadenceConstants.OPPORTUNITY_OBJECT_NAME});
         CadenceService.processParticipantActivation(cadMap, contsWithCadence, CadenceConstants.CONTACT_OBJECT_NAME);
+        mapOfOpportunityContactIds = CadenceService.getOpportunityOrContactMap(records);
     }
    
     public class Constructor implements SObjectDomain.IConstructable {
@@ -77,6 +79,10 @@ public class Contacts  extends SObjectDomain {
             }
             if(cObj.AccountId != null) {
                 accountIds.add(cObj.AccountId);
+            }
+
+            if( cObj.Sequence_Type__c == CadenceConstants.OPPORTUNITY_OBJECT_NAME && (cObj.Opportunity_Id__c == null ||  String.isBlank(cObj.Opportunity_Id__c))){
+                  cObj.Opportunity_Id__c = CadenceService.GetOpportunityIdByContactId(mapOfOpportunityContactIds,cObj.Id);
             }
 		}
         
