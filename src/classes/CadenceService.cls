@@ -1042,8 +1042,8 @@ global  without sharing class CadenceService {
                 fieldMap.remove('sobjectType');
                 Id objId;
                 //Pankaj-478
-                if(partAct.Cadence_Type__c.equals(CadenceConstants.OPPORTUNITY_OBJECT_NAME) && String.isNotBlank(partAct.Get_Opportunity_Id__c)){
-                    objId = partAct.Get_Opportunity_Id__c;
+                if(partAct.Cadence_Type__c.equals(CadenceConstants.OPPORTUNITY_OBJECT_NAME) && String.isNotBlank(partAct.Opportunity_Id__c)){
+                    objId = partAct.Opportunity_Id__c;
                 } else if(partAct.Lead_Id__c != null) {
                     objId = partAct.Lead_Id__c;
                 } else {
