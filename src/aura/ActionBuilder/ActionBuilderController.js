@@ -40,6 +40,7 @@
        var EmailTemplateList = component.get('v.isEmailTemplateList'); 
         if(EmailTemplateList == true){
             component.set('v.isEmailTemplateList', false);
+            component.set('v.isNextEnable', true);
         }
         else{
            component.set('v.currentStep','1'); 
