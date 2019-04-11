@@ -21,7 +21,8 @@
                 title: 'Edit',
                 value: 'edit',
                 iconPosition: 'left'
-            }}
+            }, cellAttributes:
+             { class: 'ringdna-select-button'}}
         ]);
         }        
         else if (newAction.type == 'Call'){
@@ -98,8 +99,6 @@
                     }else{
                         rowData.selectButtonLabel = 'Select';
                         rowData.disableselectButton = false;
-                        component.set('v.newAction.templateId', '');
-                        component.set('v.newAction.templateName', '');
                     }
                     return rowData;
                 });

@@ -226,12 +226,12 @@
                         var url = $A.get('$Resource.cadence_icons') + '/message/msg-icon@3x.png' ;
                         var urlicon = $A.get('$Resource.cadence_icons') + '/rdna-icon/default/rdna-logo@3x.png' ;
                         var smsLink =  '<img class = "Oval" src=' + url + ' />';
-                        smsLink = '<div class="slds-float_right slds-col"><a href="tel:'+ rawData[index].phone + '" class="ringdna-sms" data-phone="'+ rawData[index].phone + '" data-sms-template-id="'+ rawData[index].tempId +'">' + smsLink + '</a>';
+                        smsLink = '<div class="slds-float_right slds-col"><a href="tel:'+ rawData[index].phone + '" class="ringdna-sms" data-phone="'+ rawData[index].phone + '">' + smsLink + '</a>';
                         var phoneLinkIcon =  '<img class = "OvalPLIs" src=' + urlicon + ' />';
                         if( rawData[index].actionType == 'Call'){
-                           phoneLinkIcon = '<a href="tel:'+ rawData[index].phone + '" class="ringdna-phone" data-phone="'+ rawData[index].phone + '" data-call-notes-template-id="'+ rawData[index].tempId + '">' + phoneLinkIcon + '</a> </div>'; 
+                           phoneLinkIcon = '<a href="tel:'+ rawData[index].phone + '" class="ringdna-phone" data-phone="'+ rawData[index].phone + '">' + phoneLinkIcon + '</a> </div>'; 
                         }else{
-                        phoneLinkIcon = '<a href="tel:'+ rawData[index].phone + '" class="ringdna-phone" data-phone="'+ rawData[index].phone + '" data-vm-drop-id="'+ rawData[index].tempId + '">' + phoneLinkIcon + '</a> </div>';
+                        phoneLinkIcon = '<a href="tel:'+ rawData[index].phone + '" class="ringdna-phone" data-phone="'+ rawData[index].phone + '">' + phoneLinkIcon + '</a> </div>';
                         }
                         rdpElement.innerHTML =   '<div class="slds-grid slds-truncate">' + phoneLink  + smsLink + phoneLinkIcon  + '</div>';
                     }else{

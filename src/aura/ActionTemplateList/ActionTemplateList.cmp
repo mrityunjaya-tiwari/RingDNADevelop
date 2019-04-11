@@ -5,7 +5,7 @@
     <aura:attribute type="List" name="actionTemplateList"/>
     <aura:attribute name="columns" type="List"/>
     <aura:attribute name="totalNumberOfRows" type="Integer" default="5"/>
-    <aura:attribute name="rowsToLoad" type="Integer" default="5"/> 
+    <aura:attribute name="rowsToLoad" type="Integer" default="10"/> 
     <aura:attribute name="sortedBy" type="String" default="Name"/>
     <aura:attribute name="sortedDirection" type="String" default="asc"/>
     <aura:attribute name="spinner" type="boolean" default="false"/>
@@ -25,7 +25,7 @@
     
     <div class="slds-grid slds-m-left_large">
         <aura:if isTrue="{!v.newAction.type == 'Email'}">
-            <div class="slds-m-right_medium slds-m-top_medium rdna-header-small">
+            <div class="slds-m-right_medium rdna-header-small rdna-sort-margin">
                 <span>{!v.totalNumberOfRows} Items • Sorted by {!v.sortedBy} </span>
             </div>
             <div>
@@ -43,7 +43,7 @@
             </aura:set>
         </aura:if>
     </div>
-    <div class="slds-grid slds-m-left_large slds-m-right_large">
+    <div class="slds-grid slds-m-left_large slds-m-right_large slds-m-top_medium">
         <lightning:datatable 
                              class= "cols-table"
                              data="{! v.actionTemplateList }" 

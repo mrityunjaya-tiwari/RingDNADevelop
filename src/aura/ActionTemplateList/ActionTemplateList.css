@@ -151,7 +151,7 @@
     color: #0066ff;
     text-decoration-line: none;
 }
-.THIS .slds-button_neutral:after{
+.THIS .slds-button:visited{
     width: 88px;
     height: 30px;
     border-radius: 6px;
@@ -229,4 +229,16 @@
     -webkit-box-shadow: none !important;
     box-shadow: none !important;
     background-color: #0066ff;
+}
+.THIS .slds-truncate{
+    text-transform: capitalize;
+}
+.THIS .slds-select{
+    width: 185px !important;
+    height: 30px !important;
+    border-radius: 6px !important;
+    border: solid 1px #979797 !important;
+}
+.THIS .rdna-sort-margin{
+    margin-top: 30px !important;
 }
