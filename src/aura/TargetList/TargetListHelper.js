@@ -162,8 +162,7 @@
                         if (rawData[index].actionPerformDay == 'Previous'){
                             url = $A.get('$Resource.cadence_icons') + '/call/FF4545/call-icon-FF4545@3x.png' ;
                         }
-                        var innerHtml =  '<img class = "Oval" src=' + url + ' />';
-                         
+                        var innerHtml =  '<img class = "Oval" src=' + url + ' />';  
                         if( rawData[index].actionType == 'Call'){
                         innerHtml = '<a href="tel:'+ rawData[index].phone + '" class="ringdna-phone" data-phone="'+ rawData[index].phone + '" data-call-notes-template-id="'+ rawData[index].tempId +'">' + innerHtml + '</a>';
                         }else{innerHtml = '<a href="tel:'+ rawData[index].phone + '" class="ringdna-phone" data-phone="'+ rawData[index].phone + '" data-vm-drop-id="'+ rawData[index].tempId +'">' + innerHtml + '</a>';}
@@ -179,10 +178,22 @@
                         }
                         var innerHtml =  '<img class = "Oval" src=' + url + ' />';
                         var hostName = window.location.hostname;
-                        if(rawData[index].type == 'Contact') {
-                            innerHtml = '<a href="https://' + hostName + '/_ui/core/email/author/EmailAuthor?p2_lkid='+ rawData[index].participantId + '&rtype=003&template_id=' + rawData[index].emailTempId + '"'+ ' target="_blank" ' + '>' + innerHtml + '</a>';
-                        } else {
-                            innerHtml = '<a href="https://' + hostName + '/_ui/core/email/author/EmailAuthor?p2_lkid='+ rawData[index].participantId + '&rtype=00Q&template_id=' + rawData[index].emailTempId + '"'+ ' target="_blank" ' + '>' + innerHtml + '</a>';	
+                        if(rawData[index].emailType !='NATIVE'){
+                            if(rawData[index].type == 'Contact') {
+                                innerHtml = '<a href="https://' + hostName + '/_ui/core/email/author/EmailAuthor?p2_lkid='+ rawData[index].participantId + '&rtype=003&template_id=' + rawData[index].emailTempId + '"'+ ' target="_blank" ' + '>' + innerHtml + '</a>';
+                            } else {
+                                innerHtml = '<a href="https://' + hostName + '/_ui/core/email/author/EmailAuthor?p2_lkid='+ rawData[index].participantId + '&rtype=00Q&template_id=' + rawData[index].emailTempId + '"'+ ' target="_blank" ' + '>' + innerHtml + '</a>';	
+                            }
+                        }
+                        else{
+                            var reDirectUrl =window.location.pathname;
+                            reDirectUrl =reDirectUrl.slice(0,reDirectUrl.indexOf("Target_List"))+'Native_Email';
+                            var myUserContext = component.get("v.themeName");
+                            if(myUserContext == 'Theme3'  || myUserContext == 'Theme4t' || myUserContext == 'Theme4d') {
+                                innerHtml = '<a href="https://' + hostName +'/apex/NativeEmailPage?pId=' + rawData[index].participantId + '&template_id=' + rawData[index].emailTempId + '&sequencePart_id=' + rawData[index].participantActionsId+ '"'+ ' target="_blank" ' + '>' + innerHtml + '</a>';
+                            } else{
+                                innerHtml = '<a href="https://' + hostName +reDirectUrl+'?pId=' + rawData[index].participantId + '&template_id=' + rawData[index].emailTempId + '&sequencePart_id=' + rawData[index].participantActionsId+ '"'+ ' target="_blank" ' + '>' + innerHtml + '</a>';
+                            }
                         }
                         var ActionLink = '<a href="/' + rawData[index].nextAction + '" target="_self" tabindex="-1">'+ rawData[index].linkActionName + '</a>';
                         rdpElement.innerHTML = '<div class="slds-truncate">' + innerHtml + ' ' + ActionLink + '</div>';

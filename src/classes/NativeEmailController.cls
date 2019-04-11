@@ -1,81 +1,77 @@
 public class NativeEmailController {
     @AuraEnabled
-    public static Boolean sendEmail(String mailTo, String mailCc, String mailBcc, String subject, String body,String participantId,String templateId){
-        Boolean isNativeEmailSend =sendEmailDirectly(mailTo, mailCc, mailBcc, subject, body);
-        if(isNativeEmailSend != null && !isNativeEmailSend){
-           sendEmailSfdc(participantId,templateId);
-            return true;
-        }
-        
+    public static Boolean sendNativeEmail(String nativeEmailParam){
+      	if(nativeEmailParam != null && nativeEmailParam !=''){
+            List<NativeEmailMessage> listOfNativeEmailMsg = (List<NativeEmailMessage>)System.JSON.deserialize(nativeEmailParam, List<NativeEmailMessage>.class);
+        	if(listOfNativeEmailMsg != null && listOfNativeEmailMsg.size()>0){
+           		list<NativeEmailMessage> listforfailback =new list<NativeEmailMessage>();
+                for(NativeEmailMessage nativeEmail :listOfNativeEmailMsg){
+                    Boolean isNativeEmailSend =sendEmailDirectly(nativeEmail.mailTo, nativeEmail.mailCc, nativeEmail.mailBcc, nativeEmail.subject, nativeEmail.body);
+                    if(isNativeEmailSend != null && !isNativeEmailSend){
+                       listforfailback.add(nativeEmail);
+                    } 
+                }
+           		if(listforfailback != null && listforfailback.size() > 0){
+                    sendEmail(listforfailback);
+                     return true;
+                }
+            } 
+        }    
         return null;
     }
     
-    public class CadenceTypeWrapper {
+    public class NativeEmailWrapper {
         @AuraEnabled public String recordType;
         @AuraEnabled public String sequenceActionAPI;
         @AuraEnabled public String recordTypeAPI;
-        @AuraEnabled public String emailTemplateData;
+        @AuraEnabled public String emailTemplateBody;
+        @AuraEnabled public String emailTemplateSubject;
     }
     
     @AuraEnabled
-    public static CadenceTypeWrapper getData(String participantId,String emailTemplateId){
+    public static NativeEmailWrapper getData(String participantId,String emailTemplateId){
         Id pId = Id.ValueOf(participantId);
         Sequence_Action__c sequenceAction=[SELECT Cadence_Type__c FROM Sequence_Action__c WHERE Lead_ID__c = :pId OR Contact_Id__c =: pId LIMIT 1];
         EmailTemplate emailTemp = [Select id,Body from EmailTemplate where id=:emailTemplateId];
-        CadenceTypeWrapper obj=new CadenceTypeWrapper();
+        NativeEmailWrapper obj=new NativeEmailWrapper();
         obj.recordType=sequenceAction.Cadence_Type__c;
-        obj.sequenceActionAPI=cadenceConstants.NAMESPACE+'Sequence_Action__c';
-        
+        obj.sequenceActionAPI=cadenceConstants.NAMESPACE+'Sequence_Action__c';        
         if(obj.recordType=='Contact'){
             obj.recordTypeAPI=cadenceConstants.NAMESPACE+'Contact_Id__c';
         }else{
             obj.recordTypeAPI=cadenceConstants.NAMESPACE+'Lead_Id__c';
         }
-        if(emailTemp != null)
-        obj.emailTemplateData = emailTemp.Body != null ? resolveMergeFields(participantId, emailTemp.Body):''; //new change
-
-        System.debug('Object---'+obj);
+        if(emailTemp != null){
+            NativeEmailMessage emailMessage=resolveMergeFields(participantId, emailTemplateId);
+            obj.emailTemplateBody=emailMessage.body;
+            obj.emailTemplateSubject=emailMessage.subject;
+        }
         return obj;
     }
     
-    public static String resolveMergeFields(String pid, String body){
-        
-        String objectName=Id.valueOf(pid).getSObjectType().getDescribe().getName();
-        Map<String,String> mapofFieldsWithLabels = getObjectFieldsType(objectName);
-        System.debug('mapofFieldsWithLabels key '+mapofFieldsWithLabels.keyset());
-        System.debug('mapofFieldsWithLabels'+mapofFieldsWithLabels.values());
-        String queryFields='';
-        String query='SELECT Id';
-        while(body.substringBetween('{!','}')!=null){
-            String exp=body.substringBetween('{!','}');
-            String obj=exp.substringBefore('.');
-            System.debug('obj'+obj);
-            if(mapofFieldsWithLabels.containskey(obj) || objectName.endsWithIgnoreCase(obj)){
-                System.debug('Test'+mapofFieldsWithLabels.get(obj));
-                query =','+mapofFieldsWithLabels.get(obj);
-            }
-            String field=exp.substringAfter('.');
-            if(obj==objectName){
-                queryFields+= ', '+cadenceConstants.NAMESPACE+field;
-                body=body.replace('{!'+exp+'}','{@'+exp+'}');
-            }else{
-                body=body.replace('{!'+exp+'}','');
-            }
+   public static NativeEmailMessage resolveMergeFields(String participantId, String emailTemplateId){
+        Messaging.SingleEmailMessage[] previewEmails = new Messaging.SingleEmailMessage[]{};
+        Messaging.SingleEmailMessage firstPreviewEmail = new Messaging.SingleEmailMessage();
+        firstPreviewEmail.setUseSignature(false);
+        NativeEmailMessage emailMessage=new NativeEmailMessage();
+        firstPreviewEmail.setSaveAsActivity(false);
+        List<String> sendTo=new List<String>();
+        sendTo.add('dummy@gmail.com');
+        firstPreviewEmail.setToAddresses(sendTo);
+        firstPreviewEmail.setTemplateId(Id.valueOf(emailTemplateId));
+        firstPreviewEmail.setTargetObjectId(Id.valueOf(participantId));
+        previewEmails.add(firstPreviewEmail);
+        Messaging.SingleEmailMessage secondPreviewEmail = new Messaging.SingleEmailMessage();
+        previewEmails.add(secondPreviewEmail);
+        List<Messaging.SendEmailResult> previewResult;
+        try{
+            previewResult = Messaging.sendEmail(previewEmails);
         }
-        //queryFields=queryFields.removeEnd(', ');    
-        query= query+' FROM '+ objectName 
-                +' WHERE Id = :pid' ;
-        System.debug('query--'+query);
-        sObject obj=Database.query(query);
-        System.debug(obj);
-        while(body.substringBetween('{@','}')!=null){
-            String exp=body.substringBetween('{@','}');
-            body=body.replace('{@'+exp+'}',(String)obj.get(exp.substringAfter('.')));
+        catch (Exception e) {
+            emailMessage.subject=firstPreviewEmail.subject;
+            emailMessage.body=firstPreviewEmail.plainTextBody;
         }
-           
-        System.debug('body--'+body);  
-        return body;
-        
+         return emailMessage;
     }
     
     @AuraEnabled
@@ -83,21 +79,24 @@ public class NativeEmailController {
         return false;
     }
     
-    @AuraEnabled
-    public static Boolean Cancel(Boolean isCancel){
-        return isCancel;
-    }
-    
-    Public static void sendEmailSfdc(String participantId,String templateId){
-        Id partId = participantId;
-        Id templateIds = templateId ;
+    public static void sendEmail(List<NativeEmailMessage> listforfailbackEmail){
         List<Messaging.MassEmailMessage> emailsToSend = new  List<Messaging.MassEmailMessage>();
-        emailsToSend.add(createEmailMessage(partId,templateIds));
+        List<Sequence_Action__c> listOfSequence_Action = new List<Sequence_Action__c>();
+        for(NativeEmailMessage native : listforfailbackEmail){
+     		emailsToSend.add(createEmailMessage(native.participantId,native.templateId));
+            Sequence_Action__c partAct = new Sequence_Action__c(Id=native.sequenceActionId);
+            partAct.Actual_Execution_Date__c = System.Now();
+            partAct.isActionPerformed__c = true;
+            listOfSequence_Action.add(partAct);
+        }
+        if(listOfSequence_Action != null && listOfSequence_Action.size()>0){
+            update listOfSequence_Action;
+        }
         if(!emailsToSend.isEmpty()) {
             Messaging.SendEmailResult[] results = Messaging.sendEmail(emailsToSend, false);
-            System.debug('emailsToSend'+emailsToSend);
         }
     }
+    
     public static Messaging.MassEmailMessage createEmailMessage(Id sObjectId,Id EmailTemplateId){
         Messaging.MassEmailMessage mail = new Messaging.MassEmailMessage();
         mail.setSaveAsActivity(false);
@@ -106,10 +105,8 @@ public class NativeEmailController {
         return mail; 
     }
     
-     public static Map<String,String> getObjectFieldsType(String objType) {
-        
+    public static Map<String,String> getObjectFieldsType(String objType) {
         Map<String, String> objectFieldDataTypeMap = new Map<String,String>();
-        
         Map<String, Schema.SObjectField> fieldMap = Schema.getGlobalDescribe().get(objType).getDescribe().fields.getMap();
         for(String fieldName : fieldMap.keySet()) {
             Schema.sObjectField fieldAPIName = fieldMap.get(fieldName);
@@ -118,4 +115,15 @@ public class NativeEmailController {
         }
         return objectFieldDataTypeMap;
     }
+    
+   public Class NativeEmailMessage { 
+       public string mailTo;
+       public string mailCc;
+       public string mailBcc; 
+       public string subject;
+       public string body; 
+       public String templateId; 
+       public string participantId;
+       public string sequenceActionId;
+   }
 }

@@ -2,22 +2,18 @@
     overflow-y:visible !important;
     overflow-x:visible !important;
 }
-
 .THIS .slds-grid_align-end {
     justify-content: flex-start !important;
 }
-
 .THIS .slds-page-header {
     background-color: #fafafa !important;	
     background: #fafafa !important;
 }
-
 .THIS .rdna-logo{
     padding-top : 8px;
     width : 32px;
     height :40px;
 }
-
 .THIS .option-style{
     border-radius: 10px;
     background-color: #ffffff;
@@ -43,10 +39,6 @@
     letter-spacing: normal;
     color: #000000;
 }
-
-/*Header css */
-
-
 /*Button*/
 .THIS .rdna-button-cancel{
   border-radius: 6px !important;
@@ -72,47 +64,14 @@
     text-align: center;
     color: #979797;
 }
-
-.THIS .cols-table table thead th span{ 
-    font-size: 11px;
-    text-transform: capitalize;
-}
-
-.THIS .cols-table .slds-button_icon-bare{ 
-    display: none;
-    
-}
 .THIS .slds-button_icon-border{
     color: #000000;
     border-color: #ffffff !important;
     border-radius: none;
 }
-
 @font-face {
     font-family: 'Logical';
     src: url(/resource/LogicalFontRegular) format('woff');
-}
-
-/*
-.THIS .cols-table div:hover {
-    background-color: #eaeaea !important;
-}
-*/
-
-.THIS .cols-table table tbody tr td span.slds-checkbox_faux{
-   
-}
-.THIS .cols-table table tbody tr td span.slds-checkbox [type=checkbox]:checked + label::after {
-    background-image:url("/resource/cadence_icons/selection-box/selected/select-check@3x.png");    
-    content: '';
-    height: .25rem;
-    width: .5rem;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate3d(-50%, -50%, 0) rotate(-45deg);
-    border-bottom: 2px solid rgba(27, 82, 151, 1.0);
-    border-left: 2px solid rgba(27, 82, 151, 1.0);
 }
 .THIS .heading{
     font-family: Logical;
@@ -127,7 +86,7 @@
 }
 .THIS .form-label{
     font-family: Logical !important;
-  font-size: 12px !important;
+  	font-size: 12px !important;
     padding: 10px 0px 10px 25px !important;
 }
 .THIS .slds-select{
@@ -147,7 +106,6 @@
 .THIS .text-area{
     padding-left:25px;
 }
-
 .THIS .form-align{
     margin:0% 25%;
     padding:2% 0%;
@@ -173,8 +131,8 @@
     content: "Complete this field.";
     margin: 0 0.125rem 0 0.125rem;
     color: rgb(194, 57, 52);
-    float: left; } 
-
+    float: left; 
+} 
 /* Rounded header-corner*/
 .THIS .slds-table_header-fixed_container{
     border-top-right-radius: 6px;

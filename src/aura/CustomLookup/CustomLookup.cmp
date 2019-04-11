@@ -2,50 +2,23 @@
     <aura:attribute name="recordType" type="String"/>
     <aura:attribute name="parentId" type="Object" default=""/>
     <aura:attribute name="fieldName" type="String"/>
-
     <aura:attribute name="isRequired" type="Boolean" default="false"/>
-    <!-- Disabled proerty-->
-    <aura:attribute name = "isDisabled" type = "Boolean" default = "false"/>
-    <aura:attribute name = "isLookup" type = "Boolean" default = "true"/>
-    <!--validateDynamicRowForm -->
+   <!--validateDynamicRowForm -->
     <aura:method name="resetLookUpField" action="{!c.resetLookUpField}">
         <aura:attribute name="fieldName" type="String" /> 
     </aura:method>
     <aura:method name="validateLookUpField" action="{!c.validateLookUpField}"/>
     <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
-    <aura:attribute name = "userWrapperList" type = "List" />
-    <lightning:recordEditForm aura:id="form"
+  	<lightning:recordEditForm aura:id="form"
                               onload = "{!c.handleOnload}"
                               objectApiName="{!v.recordType}"
-                              class=" "
-                              >
-        <aura:if isTrue = "{!v.isLookup}">
-            <aura:if isTrue="{!v.isDisabled}" >
-                <lightning:inputField fieldName="{!v.fieldName}"  disabled = "{!v.isDisabled}"
-                                      class="customRequired cb" required="true" aura:id="lookup" onchange="{!c.handleOnSubmit}"/>
+                              class=" ">
+        <aura:if isTrue="{!v.isRequired}" >
+            <lightning:inputField fieldName="{!v.fieldName}"  required="true" aura:id="lookup" onchange="{!c.handleOnSubmit}"/>
+            
             <aura:set attribute="else">
-                    <aura:if isTrue="{!v.isRequired}" >
-                        <lightning:inputField fieldName="{!v.fieldName}"  disabled = "{!v.isDisabled}"
-                                              required="true" aura:id="lookup" onchange="{!c.handleOnSubmit}"/>
-                   
-                    <aura:set attribute="else">
-                        <lightning:inputField fieldName="{!v.fieldName}"  disabled = "{!v.isDisabled}"
-                                              required="false" aura:id="lookup" onchange="{!c.handleOnSubmit}"/>
-                    </aura:set>
-                         </aura:if>
-                </aura:set>
-            </aura:if>
-            <aura:set attribute="else">
-                <lightning:select aura:id="validateLookups" name="selectUser"  class="customRequired"
-                                  label="Type" required="true" value="{!v.fieldName}" 
-                                  messageWhenValueMissing="Please Select User" onchange="{!c.handleOnSelect}"
-                                  disabled = "{!v.isDisabled}">
-                    <option value="" >Please select User</option>
-                    <aura:iteration items="{!v.userWrapperList}" var="user" indexVar="selectedIndex">
-                        <option value="{!user.userId}" >{!user.userName}</option>
-                    </aura:iteration>
-                </lightning:select>
+                <lightning:inputField fieldName="{!v.fieldName}" required="false" aura:id="lookup" onchange="{!c.handleOnSubmit}"/>
             </aura:set>
         </aura:if>
-    </lightning:recordEditForm>
+     </lightning:recordEditForm>
 </aura:component>

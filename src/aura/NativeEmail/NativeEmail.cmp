@@ -1,25 +1,21 @@
-<aura:component Controller="NativeEmailController" implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction,force:appHostable,lightning:isUrlAddressable" access="global"> 
-    
-    <aura:attribute name="cadenceAction" type = "SequenceAction" default="{ 'sobjectType': 'SequenceAction'" />
-    <aura:attribute name="accessToken" type="string"/>
-     <aura:attribute name="sequenceAction" type="string"/>
+<aura:component Controller="NativeEmailController" implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction,force:appHostable,lightning:isUrlAddressable" access="global">
     <aura:attribute name="emailTemplateId" type="string"/>
-     <aura:attribute name="recordType" type="string"/>
-    <aura:attribute name="currentUrl" type="String"/>
+    <aura:attribute name="partActionId" type="string"/>
+    <aura:attribute name="recordType" type="string"/>
+    <aura:attribute name="sequenceAction" type ="String" />
     <aura:attribute name="recordId" type="Id"/>
     <aura:attribute name="showErrorMessage" type="boolean"/> <!--new attribute for error dialog-->
     <aura:attribute name="mailTo" type="Object"/>
     <aura:attribute name="mailCc" type="Object"/>
     <aura:attribute name="mailBcc" type="Object"/>
-    <aura:attribute name="setup" type="boolean" default="false"/>
+    <aura:attribute name="childComponentActivation" type="boolean" default="false"/>
     <aura:attribute name="spinner" type="boolean" default="false"/>
     <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>
     <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
     <aura:attribute name="EmailWrappercls" type="Sobject"/>
     <aura:attribute name="themeName" type="String"/>
     <!-- PAGE HEADER -->
-    <div class="slds-page-header" style="background-color: #fafafa">
-        
+    <div class="slds-page-header" style="background-color: #fafafa">       
         <div class="slds-grid">
             <div>
                 <img class = "rdna-logo" src="{!$Resource.cadence_icons + '/rdna-logo/rdna-logo@2x.png'}"/>
@@ -34,86 +30,48 @@
                 <lightning:button class="rdna-button-cancel rdna-button-cancel-text slds-m-right_small slds-text-align_center" aura:id="cancel" label="Cancel" onclick="{!c.cancelBtn}"/>
                 <lightning:button class="rdna-button-send rdna-button-send-text slds-m-right_small slds-text-align_center" aura:id="send" label="Send" onclick="{!c.nativeEmailSend}"/>
             </div>
-        </div>
-        
+        </div>        
         <div class="heading slds-m-top--small" style="font-weight:bold;">New Email Message
         </div>
         <div class="heading">Compose, Edit, Update or Send an Email Message.
-        </div>
-        
+        </div>        
         <div class="slds-form form-align slds-p-top_x-large" >
-            <!--<div class="slds-form-element slds-form-element_horizontal slds-form-element_1-col">
-                <label class="slds-form-element__label form-label" for="horizontal-input-id-01">From</label>
-                <div class="slds-form-element__control">
-                    <lightning:select aura:id="mailFrom"  label="" name="selectActionType">
-                        <option value="" class="option-style">Select Account</option>
-                        <option value="Native1" class="option-style">Native1</option>
-                        <option value="Native2" class="option-style">Native2</option>
-                        <option value="Native3" class="option-style">Native3</option>
-                        <option value="Native4" class="option-style">Native4</option>
-                        <option value="Native5" class="option-style">Native5</option>
-                    </lightning:select>  
-                </div>
-            </div>-->
-            
-             
-               <div class="slds-form-element slds-form-element_horizontal slds-form-element_1-col">
+            <div class="slds-form-element slds-form-element_horizontal slds-form-element_1-col">
                 <label class="slds-form-element__label form-label" for="horizontal-input-id-01">To</label>
                 <div class="slds-form-element__control">
-                    <aura:if isTrue="{!v.setup}" >
-                    <c:CustomLookup aura:id="to" recordType="{!v.sequenceAction}" isDisabled="false" 
-                                    userWrapperList="" isRequired="true"
-                                    parentId="{!v.mailTo}" fieldName="{!v.recordType}"/>
-                        <aura:set attribute="else">
-                            <span>Error fetching data</span>
-                 </aura:set>
-            </aura:if>
+                    <aura:if isTrue="{!v.childComponentActivation}" >
+                        <c:CustomLookup aura:id="to" recordType="{!v.sequenceAction}" isRequired="true"
+                                        parentId="{!v.mailTo}" fieldName="{!v.recordType}"/>
+                    </aura:if>
                 </div>
-            </div>
-            
-                   
-            
+            </div>         
             <div class="slds-form-element slds-form-element_horizontal slds-form-element_1-col">
                 <label class="slds-form-element__label form-label " for="horizontal-input-id-01">CC:</label>
                 <div class="slds-form-element__control">
-                    <aura:if isTrue="{!v.setup}" >
-                    <c:CustomLookup aura:id="cc" recordType="{!v.sequenceAction}" isDisabled="false" 
-                                    userWrapperList=""
-                                    parentId="{!v.mailCc}" fieldName="{!v.recordType}"/> 
-                        <aura:set attribute="else">
-                            <span>Error fetching data</span>
-                 </aura:set>
-            </aura:if>
-                        
+                    <aura:if isTrue="{!v.childComponentActivation}" >
+                        <c:CustomLookup aura:id="cc" recordType="{!v.sequenceAction}" parentId="{!v.mailCc}" fieldName="{!v.recordType}"/>
+                    </aura:if>                  
                 </div>
             </div>
             <div class="slds-form-element slds-form-element_horizontal slds-form-element_1-col">
                 <label class="slds-form-element__label form-label customNotRequired" for="horizontal-input-id-01">BCC:</label>
                 <div class="slds-form-element__control">
-                    <aura:if isTrue="{!v.setup}" >
-                    <c:CustomLookup aura:id="bcc" recordType="{!v.sequenceAction}" isDisabled="false" 
-                                    userWrapperList=""
-                                    parentId="{!v.mailBcc}" fieldName="{!v.recordType}"/>
-                    <aura:set attribute="else">
-                        <span>Error fetching data</span>
-                 </aura:set>
-            </aura:if>
+                    <aura:if isTrue="{!v.childComponentActivation}" >
+                        <c:CustomLookup aura:id="bcc" recordType="{!v.sequenceAction}" parentId="{!v.mailBcc}" fieldName="{!v.recordType}"/>
+                    </aura:if>
                 </div>
             </div>
             <div class="slds-form-element slds-form-element_horizontal slds-form-element_1-col">
                 <label class="slds-form-element__label form-label" for="horizontal-input-id-01">Subject:</label>
                 <div class="slds-form-element__control">
-                    <lightning:input aura:id="subject" label=""
-                                     name="subject"
-                                     value=""/>
+                    <lightning:input aura:id="subject" label="" name="subject" value=""/>
                 </div>
             </div>
             <div>
                 <lightning:textarea class="text-area" aura:id="body" name="body" label="" />
             </div>
         </div>
-    </div>
-    
+    </div>   
     <aura:if isTrue="{!v.showErrorMessage}">
         <div>
             <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
@@ -131,9 +89,5 @@
             </section>
             <div class="slds-backdrop slds-backdrop_open"></div>
         </div>
-    </aura:if>    
-    
-    
-    
-    
+    </aura:if>     
 </aura:component>
