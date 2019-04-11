@@ -21,7 +21,8 @@
                 title: 'Edit',
                 value: 'edit',
                 iconPosition: 'left'
-            }}
+            }, cellAttributes:
+             { class: 'ringdna-select-button'}}
         ]);
         }        
         else if (newAction.type == 'Call'){

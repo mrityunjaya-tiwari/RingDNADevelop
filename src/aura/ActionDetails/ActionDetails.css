@@ -1,7 +1,9 @@
 .THIS .slds-icon-text-default {
     fill: rgb(37, 122, 249); 
 }
-
+.THIS .slds-input{
+    margin-top: 7px;
+}
 .THIS .rdna-logo{
     padding-top : 8px;
     width : 32px;
@@ -34,24 +36,24 @@
 
 /*Header css */
 .THIS .rdna-header-small {
-  font-family: Logical;
-  font-size: 14px;
-  font-weight: normal;
-  font-style: normal;
-  font-stretch: normal;
-  line-height: normal;
-  letter-spacing: normal;
-  color: #000000;
+    font-family: Logical;
+    font-size: 14px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    color: #000000;
 }
 .THIS .rdna-header-large { 
-  font-family: Logical;
-  font-size: 38px;
-  font-weight: normal;
-  font-style: normal;
-  font-stretch: normal;
-  line-height: normal;
-  letter-spacing: normal;
-  color: #000000;
+    font-family: Logical;
+    font-size: 38px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    color: #000000;
 }
 /*Header css */
 
@@ -134,7 +136,7 @@
     background-color: #fafafa !important;
     border-radius: 6px !important;
 }
- 
+
 @font-face {
     font-family: 'Logical';
     src: url(/resource/RDNACadence__LogicalFontRegular) format('woff');
@@ -174,5 +176,8 @@
     margin-left : 35px;    
 }
 .THIS .rdna-name-styling{
-    margin-left : 70px;
+    margin-left : 65px;
+}
+.THIS .rdna-bottom-margin{
+    padding-bottom: 18px;
 }

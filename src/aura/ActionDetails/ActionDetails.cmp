@@ -51,9 +51,9 @@
 									 required="true"/> 
 				</div>                                                
 			</div>                    
-			<span class="rdna-template-bold slds-p-top_medium slds-page-header__row slds-text-title_bold slds-truncate slds-align_absolute-center">Action Types</span>
-			<span class="rdna-styling slds-align_absolute-center">Choose the type of action you want to build.</span>
-			<div class="slds-form-element__row slds-p-top_small">
+			<span class="rdna-template-bold slds-p-top_medium slds-m-top_large slds-page-header__row slds-text-title_bold slds-truncate slds-align_absolute-center">Action Types</span>
+			<span class="rdna-styling rdna-bottom-margin slds-align_absolute-center">Choose the type of action you want to build.</span>
+			<div class="slds-form-element__row">
 				
 				<div class="rdna-div slds-align_absolute-center" required="true" messageWhenValueMissing="Please Select Action Type." disabled = "{!v.disableActionType}">
 						<div><a onclick="{!c.createCallAction}" disabled = "{!v.disableActionType}">              

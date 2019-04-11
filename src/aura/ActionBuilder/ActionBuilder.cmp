@@ -58,7 +58,7 @@
             <div>
                 <lightning:button class="rdna-button rdna-button-text slds-text-align_center slds-m-top_large  slds-m-right_medium slds-p-left_large slds-p-right_large" aura:id="cancel" label="Cancel" onclick="{!c.onCancel}"/>
             </div>
-            <aura:if isTrue = "{!v.isNextEnable}">
+            <aura:if isTrue = "{!and(or(v.currentStep == '2' , v.currentStep == 2), v.isNextEnable)}">
                 <div>
                     <lightning:button class="rdna-button-save rdna-button-text-save slds-text-align_center slds-m-top_large slds-p-left_large slds-p-right_large slds-m-right_large" aura:id="Next" label="Next" onclick="{!c.onNext}"/>
                 </div>
@@ -82,7 +82,7 @@
             <aura:if isTrue = "{!v.newAction.type == 'SMS'}">
                 <p class="slds-page-header__row slds-m-top_large slds-truncate slds-align_absolute-center rdna-sub-header-bold" >SMS Templates</p>
                 <p class="slds-align_absolute-center  rdna-sub-header" style="padding-top:15px;">Create pre-configured SMS Templates.</p>
-                <p class="slds-align_absolute-center slds-m-bottom_large rdna-sub-header-small" style="padding-top:5px;">There are currently no pre-configured SMS Templates associated to this account. (Optional) </p>
+                <p class="slds-align_absolute-center slds-m-bottom_large rdna-sub-header-small" style="padding-top:5px;">(Optional) </p>
                 <c:ActionTemplateList newAction="{!v.newAction}" 
                                       spinner="{!v.spinner}"
                                       rowActionTemplateList="{!v.rowActionTemplateList}"/>
@@ -90,7 +90,7 @@
             <aura:if isTrue = "{!v.newAction.type == 'Call'}">
                 <p class="slds-page-header__row slds-m-top_large slds-truncate slds-align_absolute-center rdna-sub-header-bold" >Call Notes Templates</p>
                 <p class="slds-align_absolute-center  rdna-sub-header" style="padding-top:15px;">Create pre-configured Call Notes Templates.</p>
-                <p class="slds-align_absolute-center slds-m-bottom_large rdna-sub-header-small" style="padding-top:5px;">There are currently no pre-configured Call Notes Templates associated to this account. (Optional)</p>
+                <p class="slds-align_absolute-center slds-m-bottom_large rdna-sub-header-small" style="padding-top:5px;">(Optional)</p>
                 <c:ActionTemplateList newAction="{!v.newAction}" 
                                       spinner="{!v.spinner}"
                                       rowActionTemplateList="{!v.rowActionTemplateList}" />
@@ -102,8 +102,7 @@
             </aura:if>
             <aura:if isTrue = "{! and(v.newAction.type == 'Email' , v.isEmailTemplateList) }">
                 <p class="slds-page-header__row slds-m-top_large slds-truncate slds-align_absolute-center rdna-sub-header-bold" >{!v.newAction.type} Templates</p>
-                <p class="slds-align_absolute-center  rdna-sub-header" style="padding-top:15px;">Create pre-configured {!v.newAction.type} Templates.</p>
-                <p class="slds-align_absolute-center slds-m-bottom_small rdna-sub-header-small" style="padding-top:5px;">There are currently no pre-configured {!v.newAction.type} Templates associated to this account.</p>
+                <p class="slds-align_absolute-center  rdna-sub-header" style="padding-top:5px;">Create pre-configured {!v.newAction.type} Templates.</p>                
                 <aura:if isTrue="{!v.isValidationError}">
                     <aura:if isTrue="{!v.newAction.templateId == '' || v.newAction.templateId == null}">
                         <p class="slds-align_absolute-center slds-m-bottom_large rdna-sub-header-small rdna-required">(Required) </p>
