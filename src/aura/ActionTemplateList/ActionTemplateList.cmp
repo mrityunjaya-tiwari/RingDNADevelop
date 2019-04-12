@@ -1,6 +1,7 @@
 <aura:component implements="force:appHostable"
                 controller="ActionTemplateListController">
-    <aura:attribute name="currentPage" type="Integer" default="1"/>   
+    <aura:attribute name="currentPage" type="Integer" default="1"/>
+    <aura:attribute type="List" name="AllActionTemplateList"/>
     <aura:attribute type="List" name="rowActionTemplateList"/>
     <aura:attribute type="List" name="actionTemplateList"/>
     <aura:attribute name="columns" type="List"/>
@@ -60,11 +61,19 @@
     <div class="slds-align_absolute-center">
         <p class="rdna-style">There are currently no pre-configured SMS Templates associated to this account.</p></div>
         <aura:set attribute="else">
-            <aura:if isTrue="{!(empty(v.rowActionTemplateList))}">
-            <div class="slds-align_absolute-center">
-                <p class="rdna-style-call">There are currently no pre-configured Call Notes Templates associated to this account.</p></div>
+            <aura:if isTrue="{!and(empty(v.rowActionTemplateList),(v.newAction.type == 'Email'))}">
+            	<div class="slds-align_absolute-center">
+                	<p class="rdna-style-call">There are currently no pre-configured Email Templates associated to this account.</p>
+                </div>
+                <aura:set attribute="else">
+                    <aura:if isTrue="{!empty(v.rowActionTemplateList)}">
+                        <div class="slds-align_absolute-center">
+                            <p class="rdna-style-call">There are currently no pre-configured Call Notes Templates associated to this account.</p>
+                        </div>
+                    </aura:if>
+                </aura:set>
             </aura:if>
-            </aura:set>
+        </aura:set>
     </aura:if>
         <div class="rdna-bottom-padding  slds-m-left_medium">
         <c:Pagination total="{!v.totalNumberOfRows}" pageOffset="{!v.rowsToLoad}"/>
