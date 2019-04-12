@@ -31,7 +31,6 @@
             var field = FieldList[fieldObj];
             if (field.fieldName == taskObj.key){
                 UpdateFieldList[0]["fieldsDetail"].unshift(field);
-                //UpdateFieldList[0]["fieldsDetail"].splice(fieldObj, 0, field);
             }
         }
     },
