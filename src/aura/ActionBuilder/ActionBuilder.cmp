@@ -37,6 +37,7 @@
     
     <aura:attribute name="currentStep" type="string" default="1"/>
     <aura:attribute type="List" name="rowActionTemplateList"/>
+    <aura:attribute type="List" name="allActionTemplateList"/>
     
     <!-- PAGE HEADER -->
     <div class="slds-page-header" style="background-color: #ffffff">
@@ -109,7 +110,7 @@
                     	<p class="slds-align_absolute-center slds-m-bottom_large rdna-sub-header-small">(Required) </p>
                     </aura:set>                        
                 </aura:if>                
-				<c:ActionTemplateList newAction="{!v.newAction}" isValidationError="{!v.isValidationError}" spinner="{!v.spinner}" rowActionTemplateList="{!v.rowActionTemplateList}" />                
+				<c:ActionTemplateList newAction="{!v.newAction}" isValidationError="{!v.isValidationError}" spinner="{!v.spinner}" AllActionTemplateList="{!v.allActionTemplateList}" rowActionTemplateList="{!v.rowActionTemplateList}"/>                
             </aura:if>
         </aura:if>
     </div>

@@ -88,7 +88,8 @@
         action.setCallback(this, function(response){
             var state = response.getState();
             if (state === "SUCCESS") { 
-                component.set("v.rowActionTemplateList", response.getReturnValue());   var newAction = component.get('v.newAction'); 
+                component.set("v.rowActionTemplateList", response.getReturnValue());   
+                var newAction = component.get('v.newAction'); 
                 var data = component.get('v.rowActionTemplateList');
                 data = data.map(function(rowData) { 
                     if (rowData.id === newAction.templateId) {
@@ -103,6 +104,7 @@
                     return rowData;
                 });
                 component.set("v.rowActionTemplateList", data);
+                component.set("v.AllActionTemplateList", data);
                 helper.setData(component, event, helper);
 			}
             component.set('v.spinner', false);           
@@ -157,10 +159,10 @@
         $A.enqueueAction(action);
     },
     applyFilters : function(component, event, helper){
-    	var data = component.get('v.rowActionTemplateList');
-        var folderFilter = component.get('v.folderFilter');
+    	var data = component.get('v.AllActionTemplateList');
+     	var folderFilter = component.get('v.folderFilter');
         var filterData=[];
-        if(folderFilter !=''){
+        if(folderFilter !='' && (data != undefined && data !='')){
             for(var item in data){
                 if(data[item].folderId ==folderFilter ){
                     filterData.push(data[item]);
