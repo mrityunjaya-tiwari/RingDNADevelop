@@ -13,34 +13,24 @@
     },
     createManualEmail : function(component, event, helper){
         var newAct = component.get("v.newAction");
-        if(newAct.id == '' || newAct.id == null){
-            component.set('v.newAction.activationType','Manual');
-            component.set('v.newAction.deliveryPreference','');
-        }
+        component.set('v.newAction.activationType','Manual');
+        component.set('v.newAction.deliveryPreference','');
     },
     createAutomaticEmail : function(component, event, helper){
         var newAct = component.get("v.newAction");
-        if(newAct.id == '' || newAct.id == null){
-            component.set('v.newAction.activationType','Automatic');
-        }
+        component.set('v.newAction.activationType','Automatic');
     },
     createImmediateAction : function(component, event,helper) {
         var newAct = component.get("v.newAction");
-        if(newAct.id == '' || newAct.id == null){
-            component.set('v.newAction.deliveryPreference','Immediate');
-        }
+        component.set('v.newAction.deliveryPreference','Immediate');
     },
     createWeekdayAction : function(component, event,helper) {
         var newAct = component.get("v.newAction");
-        if(newAct.id == '' || newAct.id == null){
-            component.set('v.newAction.deliveryPreference','Weekdays');
-        }
+        component.set('v.newAction.deliveryPreference','Weekdays');
     },
     createAnyDayAction : function(component, event,helper) {
         var newAct = component.get("v.newAction");
-        if(newAct.id == '' || newAct.id == null){
-            component.set('v.newAction.deliveryPreference','Any Day');
-        }
+        component.set('v.newAction.deliveryPreference','Any Day');
     },
     validateActionName: function(component, event, helper){ 
         var newAct = component.get("v.newAction");
