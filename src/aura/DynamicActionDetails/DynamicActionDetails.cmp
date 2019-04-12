@@ -79,7 +79,6 @@
                                 <option value="Email" class="option-style">Email</option>
                                 <option value="SMS" class="option-style">SMS</option>
                                 <option value="Call" class="option-style">Call</option>
-                                <option value="Call+Voicemail" class="option-style">Call+Voicemail</option>
                                 <option value="Task" class="option-style">Task</option>
                             </lightning:select>
                         </div>
