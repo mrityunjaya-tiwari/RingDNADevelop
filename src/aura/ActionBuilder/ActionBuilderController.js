@@ -47,16 +47,25 @@
         }
     },
     createAction: function(component, event, helper) {
-       var newAct = component.get("v.newAction");
-       if(newAct.type == 'Email'){
-            if(newAct.templateId != undefined){
-            	helper.createAction(component, event,helper);
+        var newAct = component.get("v.newAction");
+        var isValid;
+        if(newAct.type == 'Email'){
+            if(newAct.templateId != undefined && newAct.templateId != ''){
+                isValid = true;
             }
             else{
+                isValid = false;
                 component.set('v.isValidationError',true);
             }          
+        }else if(newAct.type == 'Task'){
+            var taskActionDetails = component.find("taskActionDetails");
+            if (taskActionDetails){
+                isValid = taskActionDetails.validationTask();
+            }
+        }else{
+            isValid = true;
         }
-        else{
+        if (isValid){
             helper.createAction(component, event,helper);
         }
     },

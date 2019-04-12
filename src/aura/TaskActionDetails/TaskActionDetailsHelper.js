@@ -15,14 +15,13 @@
         component.set("v.listTask", rowList);
     },
     handleCadDynamicRowEvent: function(component, event, helper){
-        console.log('in-event');
         var ronIndex = event.getParam("ronIndex");
         var rowList = component.get("v.listTask");
         console.log('in-ev',JSON.stringify(rowList [ronIndex]));
         rowList.splice(ronIndex, 1);
         component.set("v.listTask", rowList);
     },
-         // Check Validation for sub component - ActionDetailsDynamicRow
+    // Check Validation for sub component - ActionDetailsDynamicRow
     validateFieldsToUpdateComponent:function(component, event, helper){
         var dynamicROw = [];
         dynamicROw = component.find('dynamicROw');
@@ -39,6 +38,5 @@
             isValid = dynamicROw.validateDynamicRowForm();
         }
         return isValid;
-        
     },
 })

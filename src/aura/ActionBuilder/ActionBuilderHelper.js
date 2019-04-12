@@ -50,12 +50,7 @@
                     }                    
                     component.set('v.listTask', taskList);
                 }
-                window.setTimeout(
-                    $A.getCallback(function() {
-                        component.set('v.newAction', component.get('v.newAction'));
-                        component.set('v.spinner', false);
-                    }), 500
-                );                
+                component.set('v.spinner', false);
             }else{
                 component.set('v.spinner', false);
             }

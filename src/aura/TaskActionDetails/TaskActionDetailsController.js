@@ -4,24 +4,32 @@
         var newAction  = component.get('v.newAction');
         var actionWrapper;    
         var action = component.get("c.getActionWrapper");
+        component.set('v.spinner', true); 
         action.setCallback(this, function(response) {
             var state = response.getState();
             if (state === "SUCCESS") {         
                 actionWrapper= response.getReturnValue();
                 component.set('v.UpdateFieldList', actionWrapper.wrapperTaskFields);
                 var test = component.get('v.UpdateFieldList');
-                console.log('test',test);
-                var FieldList = component.get('v.FieldList');
+                var FieldList = [];
                 for(var i=0; test.length > i;i++){
-                    console.log('for-loop');
                     var fields = test[i]["fieldsDetail"];
-                        FieldList.push(test[i]);
+                    for(var fieldObj in fields){
+                        var field = fields[fieldObj];
+                        FieldList.push(field);
+                    }
                 }
                 component.set('v.FieldList', FieldList);
-                //console.log('FieldList-task-init',JSON.stringify(component.get('v.FieldList')));
-
-                component.set('v.spinner', false); 
-                //helper.validateFieldsToUpdateComponent(component, event, helper);
+                var listTask = component.get('v.listTask');
+                
+                window.setTimeout(
+                    $A.getCallback(function() {
+                        component.set('v.listTask', component.get('v.listTask'));
+                        component.set('v.newAction', component.get('v.newAction'));
+                        component.set('v.spinner', false); 
+                    }), 100
+                ); 
+                
             }
             else {
                 component.set('v.spinner', false);
@@ -37,6 +45,9 @@
     },
     handleCadDynamicRowEvent: function(component, event, helper){
         helper.handleCadDynamicRowEvent(component, event, helper);
+    },
+    validationTask : function(component, event, helper){
+        return helper.validateFieldsToUpdateComponent(component, event, helper); 
     },
     
 })

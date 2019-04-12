@@ -1,7 +1,9 @@
 ({
     doInit: function(component, event, helper) {
-       var UpdateFieldList = component.get("v.UpdateFieldList");
-        var FieldList = component.get("v.FieldList");
+        var isValidateUpdateFieldList = component.get('v.isValidateUpdateFieldList');
+        if (isValidateUpdateFieldList == true){
+            helper.removeAlreadySelectedRowFromUpdateFieldList(component);
+        }
         helper.updateTaskField(component, event, helper);
     },
     updateTaskField : function(component, event, helper){
@@ -11,6 +13,8 @@
     removeRow : function(component, event, helper){
         var pageIndex = component.get("v.currentIndex");
         var eventObj = component.getEvent("cadDynamicRowEvent");
+        //Added  deleted field in UpdateFieldList
+        helper.addDeletedRowBackToUpdateFieldList(component);
         eventObj.setParams({
             ronIndex: pageIndex
         }).fire();
