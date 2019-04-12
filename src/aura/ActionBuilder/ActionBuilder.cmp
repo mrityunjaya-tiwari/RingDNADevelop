@@ -77,7 +77,7 @@
         </aura:if>
         <aura:if isTrue = "{!v.currentStep == '2' || v.currentStep == 2}" >
             <aura:if isTrue="{!v.newAction.type == 'Task'}">
-                <c:TaskActionDetails  newAction = "{!v.newAction}" taskObj="{!taskObj}" wrapperTaskFields="{!v.wrapperTaskFields}" listTask="{!v.listTask}" spinner="{!v.spinner}" recordId="{!v.recordId}" isValidDynamicRow="{!v.isValidDynamicRow}"/>
+                <c:TaskActionDetails  aura:id="taskActionDetails" newAction = "{!v.newAction}" taskObj="{!taskObj}" wrapperTaskFields="{!v.wrapperTaskFields}"  listTask="{!v.listTask}" spinner="{!v.spinner}" recordId="{!v.recordId}" isValidDynamicRow="{!v.isValidDynamicRow}"/>
             </aura:if>
             <aura:if isTrue = "{!v.newAction.type == 'SMS'}">
                 <p class="slds-page-header__row slds-m-top_large slds-truncate slds-align_absolute-center rdna-sub-header-bold" >SMS Templates</p>
@@ -104,9 +104,7 @@
                 <p class="slds-page-header__row slds-m-top_large slds-truncate slds-align_absolute-center rdna-sub-header-bold" >{!v.newAction.type} Templates</p>
                 <p class="slds-align_absolute-center  rdna-sub-header" style="padding-top:5px;">Create pre-configured {!v.newAction.type} Templates.</p>                
                 <aura:if isTrue="{!v.isValidationError}">
-                    <aura:if isTrue="{!v.newAction.templateId == '' || v.newAction.templateId == null}">
                         <p class="slds-align_absolute-center slds-m-bottom_large rdna-sub-header-small rdna-required">(Required) </p>
-                    </aura:if>
                     <aura:set attribute="else">
                     	<p class="slds-align_absolute-center slds-m-bottom_large rdna-sub-header-small">(Required) </p>
                     </aura:set>                        

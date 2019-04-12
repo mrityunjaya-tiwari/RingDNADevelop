@@ -27,6 +27,8 @@
     <aura:attribute name="recordType" type="String" default="Contact" />
     <aura:attribute name="UpdateFieldList" type="List"/>
     <aura:attribute name="FieldList" type="List"/>
+    <aura:attribute name="listTask" type="List"/>
+    <aura:attribute name = "isValidateUpdateFieldList" type = "Boolean" default = "false"/>
     
     
     

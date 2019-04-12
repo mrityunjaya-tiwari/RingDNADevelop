@@ -35,6 +35,7 @@
     <aura:attribute name="themeName" type="String"/>
     <!--create a component attributes -->
     <aura:attribute name="spinner" type="boolean" default="false"/>
+    <aura:method name="validationTask" action="{!c.validationTask}" access="public"/> 
     <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>
 
         <fieldset class="slds-form-element slds-form_compound">
@@ -51,6 +52,7 @@
                         <aura:iteration items="{!v.listTask}" var="taskObj" indexVar="index">
                             <div class = "slds-form-element__row slds-size_1-of-1 rdna-margin">
                                 <c:ActionDetailsDynamicRow aura:id="dynamicROw"  taskObj="{!taskObj}" 
+                                                           listTask="{!v.listTask}" isValidateUpdateFieldList="true"
                                                            UpdateFieldList="{!v.UpdateFieldList}" FieldList="{!v.FieldList}" 
                                                            currentIndex = "{!index}" listPicklistValues="" dataType = ""/> 
                             </div>
