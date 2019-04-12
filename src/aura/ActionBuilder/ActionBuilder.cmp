@@ -76,7 +76,7 @@
             <c:ActionDetails aura:id="newActionDetail" newAction = "{!v.newAction}" disableActionType = "{!v.disableActionType}" isNextEnable="{!v.isNextEnable}" currentStep ="{!v.currentStep}"  rowActionTemplateList="{!v.rowActionTemplateList}"/>       
         </aura:if>
         <aura:if isTrue = "{!v.currentStep == '2' || v.currentStep == 2}" >
-            <aura:if isTrue="{! v.newAction.type == 'Task'  }">
+            <aura:if isTrue="{!v.newAction.type == 'Task'}">
                 <c:TaskActionDetails  aura:id="taskActionDetails" newAction = "{!v.newAction}" taskObj="{!taskObj}" wrapperTaskFields="{!v.wrapperTaskFields}"  listTask="{!v.listTask}" spinner="{!v.spinner}" recordId="{!v.recordId}" isValidDynamicRow="{!v.isValidDynamicRow}"/>
             </aura:if>
             <aura:if isTrue = "{!v.newAction.type == 'SMS'}">
