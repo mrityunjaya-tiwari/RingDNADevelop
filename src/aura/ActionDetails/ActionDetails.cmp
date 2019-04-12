@@ -39,8 +39,12 @@
 		<form class="slds slds-form slds-m-left_large">
 			
 			<p class="slds-page-header__row slds-m-top_large slds-truncate slds-align_absolute-center rdna-sub-header-bold" >Action Details</p>
+            <aura:if isTrue = "{!v.recordId == null || v.recordId == '' }"> 
 			<p class="slds-align_absolute-center slds-m-bottom_large rdna-sub-header" style="padding-top:15px;">Enter the details of your new action which can be added to any sequence list.</p>
-			
+                <aura:set attribute="else">
+                    <p class="slds-align_absolute-center slds-m-bottom_large rdna-sub-header" style="padding-top:15px;">Enter the details of your action which can be added to any sequence list.</p>
+                </aura:set>
+            </aura:if>
 			<div class="slds-form-element__row slds-p-top_small slds-align_absolute-center">
 				<div class="slds-form-element__control slds-size_1-of-4 ">
 					<lightning:input aura:id="formValidationId" label="Name"
@@ -52,8 +56,13 @@
 				</div>                                                
 			</div>                    
 			<span class="rdna-template-bold slds-p-top_medium slds-m-top_large slds-page-header__row slds-text-title_bold slds-truncate slds-align_absolute-center">Action Types</span>
-			<span class="rdna-styling rdna-bottom-margin slds-align_absolute-center">Choose the type of action you want to build.</span>
-			<div class="slds-form-element__row">
+            <aura:if isTrue = "{!v.recordId == null || v.recordId == '' }"> 
+            <span class="rdna-styling rdna-bottom-margin slds-align_absolute-center">Choose the type of action you want to build.</span>
+                <aura:set attribute="else">
+                <span class="rdna-styling rdna-bottom-margin slds-align_absolute-center">Type of action you want to build.</span>
+                </aura:set>
+            </aura:if>
+                <div class="slds-form-element__row">
 				
 				<div class="rdna-div slds-align_absolute-center" required="true" messageWhenValueMissing="Please Select Action Type." disabled = "{!v.disableActionType}">
 						<div><a onclick="{!c.createCallAction}" disabled = "{!v.disableActionType}">              

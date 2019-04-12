@@ -1,5 +1,6 @@
 ({
     doInit: function(component, event, helper) {
+		var id = component.get('v.recordId');
         component.get('v.disableActionType');
     },
     createCallAction : function(component, event,helper) {
