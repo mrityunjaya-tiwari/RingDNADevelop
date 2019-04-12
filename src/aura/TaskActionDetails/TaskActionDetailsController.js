@@ -20,8 +20,6 @@
                     }
                 }
                 component.set('v.FieldList', FieldList);
-                var listTask = component.get('v.listTask');
-                
                 window.setTimeout(
                     $A.getCallback(function() {
                         component.set('v.listTask', component.get('v.listTask'));
