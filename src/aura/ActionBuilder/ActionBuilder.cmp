@@ -104,7 +104,7 @@
                 <p class="slds-page-header__row slds-m-top_large slds-truncate slds-align_absolute-center rdna-sub-header-bold" >{!v.newAction.type} Templates</p>
                 <p class="slds-align_absolute-center  rdna-sub-header" style="padding-top:5px;">Create pre-configured {!v.newAction.type} Templates.</p>                
                 <aura:if isTrue="{!v.isValidationError}">
-                        <p class="slds-align_absolute-center slds-m-bottom_large rdna-sub-header-small rdna-required">(Required) </p>
+                        <p class="slds-align_absolute-center slds-m-bottom_large rdna-required">(Required) </p>
                     <aura:set attribute="else">
                     	<p class="slds-align_absolute-center slds-m-bottom_large rdna-sub-header-small">(Required) </p>
                     </aura:set>                        
