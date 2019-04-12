@@ -104,8 +104,10 @@
                 <p class="slds-page-header__row slds-m-top_large slds-truncate slds-align_absolute-center rdna-sub-header-bold" >{!v.newAction.type} Templates</p>
                 <p class="slds-align_absolute-center  rdna-sub-header" style="padding-top:5px;">Create pre-configured {!v.newAction.type} Templates.</p>                
                 <aura:if isTrue="{!v.isValidationError}">
-                    <aura:if isTrue="{!v.newAction.templateId == '' || v.newAction.templateId == null}">
-                        <p class="slds-align_absolute-center slds-m-bottom_large rdna-sub-header-small rdna-required">(Required) </p>
+                    <aura:if isTrue="{!or(v.newAction.templateId == null , v.newAction.templateId == '')}">
+                        <div aura:id="msg" class=" slds-form-element__row slds-align_absolute-center slds-text-color_error slds-text-heading_small slds-text-align_center">
+                            <ui:outputText value="Please Select Template Type." />
+                        </div>
                     </aura:if>
                     <aura:set attribute="else">
                     	<p class="slds-align_absolute-center slds-m-bottom_large rdna-sub-header-small">(Required) </p>

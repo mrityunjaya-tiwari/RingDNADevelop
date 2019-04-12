@@ -49,7 +49,7 @@
     createAction: function(component, event, helper) {
        var newAct = component.get("v.newAction");
        if(newAct.type == 'Email'){
-            if(newAct.templateId != undefined){
+            if(newAct.templateId != undefined && newAct.templateId.length > 0){
             	helper.createAction(component, event,helper);
             }
             else{
