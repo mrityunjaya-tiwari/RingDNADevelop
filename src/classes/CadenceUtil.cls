@@ -252,7 +252,7 @@ public with sharing class CadenceUtil {
      * @param objList - List of object
      * @return List<String> - list of valid object on org.
      */
-    public static List<String> getValidSObjectListWithOrg(List<String> objList){
+    public static List<String> getValidSObjectListInOrg(List<String> objList){
         List<String> sObjectList = new List<string>();
         for(String obj : objList){
             for (Schema.SObjectType sObjectType : Schema.getGlobalDescribe().values()) {

@@ -110,7 +110,7 @@ global  without sharing class CadenceService {
         CriterionWrapper criterionWrapper,criterionWrapperPartnerAccount;
         Integer index = 0;
         Boolean IsPartnerAccount = false;
-        List<Schema.DescribeSObjectResult> descResult = Schema.describeSObjects(CadenceUtil.getValidSObjectListWithOrg(objectlist));
+        List<Schema.DescribeSObjectResult> descResult = Schema.describeSObjects(CadenceUtil.getValidSObjectListInOrg(objectlist));
         if(descResult != null && descResult.size() > 0){
             for(Schema.DescribeSObjectResult dsc : descResult){ 
                 if(dsc != null && dsc.getName()!= null){
@@ -221,7 +221,7 @@ global  without sharing class CadenceService {
         List<CriterionWrapper> fieldList = new List<CriterionWrapper>();      
         CriterionWrapper criterionWrapper;
         Integer index = 0;
-        List<Schema.DescribeSObjectResult> descResult = Schema.describeSObjects(CadenceUtil.getValidSObjectListWithOrg(objectlist));
+        List<Schema.DescribeSObjectResult> descResult = Schema.describeSObjects(CadenceUtil.getValidSObjectListInOrg(objectlist));
         if(descResult != null && descResult.size() > 0){
             for(Schema.DescribeSObjectResult dsc : descResult){ 
                 if(dsc != null && dsc.getName()!= null){
@@ -1359,7 +1359,7 @@ global  without sharing class CadenceService {
         CriterionWrapper criterionWrapper,criterionWrapperPartnerAccount;
         Integer index = 0;
         Boolean IsPartnerAccount = false;
-        List<Schema.DescribeSObjectResult> descResult = Schema.describeSObjects(CadenceUtil.getValidSObjectListWithOrg(objectlist));
+        List<Schema.DescribeSObjectResult> descResult = Schema.describeSObjects(CadenceUtil.getValidSObjectListInOrg(objectlist));
         if(descResult != null && descResult.size() > 0){
             for(Schema.DescribeSObjectResult dsc : descResult){ 
                 if(dsc != null && dsc.getName()!= null){
