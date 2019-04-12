@@ -89,7 +89,9 @@ public with sharing class RuleCriterionMatcher {
 			partObj.put(nameSpace+'Cadence_Id__c', null);
 			partObj.put(nameSpace+'isActivated__c', false);
 			partObj.put(nameSpace+'EntranceCriteria_Matched_Date__c', null);
-            partObj.put(nameSpace+'Opportunity_Id__c', null);
+            if(objName == CadenceConstants.CONTACT_OBJECT_NAME){
+                partObj.put(nameSpace+'Opportunity_Id__c', null);
+            }
 			return partObj;
 		} 
 		return null;
