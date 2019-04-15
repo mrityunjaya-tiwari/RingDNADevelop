@@ -1,23 +1,12 @@
 public class NativeEmailController {
     @AuraEnabled
-    public static Boolean sendNativeEmail(String nativeEmailParam){
-      	if(nativeEmailParam != null && nativeEmailParam !=''){
-            List<NativeEmailMessage> listOfNativeEmailMsg = (List<NativeEmailMessage>)System.JSON.deserialize(nativeEmailParam, List<NativeEmailMessage>.class);
-        	if(listOfNativeEmailMsg != null && listOfNativeEmailMsg.size()>0){
-           		list<NativeEmailMessage> listforfailback =new list<NativeEmailMessage>();
-                for(NativeEmailMessage nativeEmail :listOfNativeEmailMsg){
-                    Boolean isNativeEmailSend =sendEmailDirectly(nativeEmail.mailTo, nativeEmail.mailCc, nativeEmail.mailBcc, nativeEmail.subject, nativeEmail.body);
-                    if(isNativeEmailSend != null && !isNativeEmailSend){
-                       listforfailback.add(nativeEmail);
-                    } 
-                }
-           		if(listforfailback != null && listforfailback.size() > 0){
-                    sendEmail(listforfailback);
-                     return true;
-                }
-            } 
-        }    
-        return null;
+    public static Boolean sendEmail(String mailTo, String mailCc, String mailBcc, String subject, String body,String participantId,String templateId,String sequenceActionId){
+        Boolean isNativeEmailSend =CadenceService.SendNativeEmail(New list<NativeEmailMessage>());
+        if(isNativeEmailSend != null && !isNativeEmailSend){
+            sendSfdcEmail(participantId,templateId,sequenceActionId);
+            return true;
+        } 
+        return false;
     }
     
     public class NativeEmailWrapper {
@@ -74,26 +63,21 @@ public class NativeEmailController {
          return emailMessage;
     }
     
-    @AuraEnabled
-    public static Boolean sendEmailDirectly(String mailTo, String mailCc, String mailBcc, String subject, String body){
-        return false;
-    }
-    
-    public static void sendEmail(List<NativeEmailMessage> listforfailbackEmail){
+    public static void sendSfdcEmail(String participantId,string templateId,string sequenceActionId){
         List<Messaging.MassEmailMessage> emailsToSend = new  List<Messaging.MassEmailMessage>();
         List<Sequence_Action__c> listOfSequence_Action = new List<Sequence_Action__c>();
-        for(NativeEmailMessage native : listforfailbackEmail){
-     		emailsToSend.add(createEmailMessage(native.participantId,native.templateId));
-            Sequence_Action__c partAct = new Sequence_Action__c(Id=native.sequenceActionId);
-            partAct.Actual_Execution_Date__c = System.Now();
-            partAct.isActionPerformed__c = true;
-            listOfSequence_Action.add(partAct);
-        }
-        if(listOfSequence_Action != null && listOfSequence_Action.size()>0){
-            update listOfSequence_Action;
-        }
+        emailsToSend.add(createEmailMessage(participantId,templateId));
+        Sequence_Action__c partAct = new Sequence_Action__c(Id=sequenceActionId);
+        partAct.Actual_Execution_Date__c = System.Now();
+        partAct.isActionPerformed__c = true;
+        listOfSequence_Action.add(partAct);
         if(!emailsToSend.isEmpty()) {
             Messaging.SendEmailResult[] results = Messaging.sendEmail(emailsToSend, false);
+            if (results != null && results.get(0).isSuccess()) {
+                if(listOfSequence_Action != null && listOfSequence_Action.size()>0){
+                    update listOfSequence_Action;
+                }
+            }
         }
     }
     
@@ -115,15 +99,4 @@ public class NativeEmailController {
         }
         return objectFieldDataTypeMap;
     }
-    
-   public Class NativeEmailMessage { 
-       public string mailTo;
-       public string mailCc;
-       public string mailBcc; 
-       public string subject;
-       public string body; 
-       public String templateId; 
-       public string participantId;
-       public string sequenceActionId;
-   }
 }

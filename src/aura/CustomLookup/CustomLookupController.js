@@ -8,16 +8,12 @@
             var fieldName = params.fieldName;
             component.set("v.fieldName", fieldName);
         }
-        var updatedFieldName = component.get("v.fieldName");
-        if (updatedFieldName == 'CreatedById' || updatedFieldName == 'LastModifiedById' || updatedFieldName == 'OwnerId'){
-            component.set('v.isLookup', "false");
-            component.set("v.fieldName", parentId);
-        }else{
-            component.set('v.isLookup', "true");
-        }
+        component.set('v.isLookup', "true");
+        component.set("v.fieldName", parentId);
     },
     handleOnload : function(component, event, helper) {
        helper.handleOnload(component, event, helper);
+       component.set('v.spinner', false);
     },
     
     handleOnSubmit : function(component, event, helper) {

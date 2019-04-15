@@ -41,7 +41,7 @@
                 <div class="slds-form-element__control">
                     <aura:if isTrue="{!v.childComponentActivation}" >
                         <c:CustomLookup aura:id="to" recordType="{!v.sequenceAction}" isRequired="true"
-                                        parentId="{!v.mailTo}" fieldName="{!v.recordType}"/>
+                                        parentId="{!v.mailTo}" fieldName="{!v.recordType}" spinner ="{!v.spinner}"/>
                     </aura:if>
                 </div>
             </div>         
@@ -49,7 +49,7 @@
                 <label class="slds-form-element__label form-label " for="horizontal-input-id-01">CC:</label>
                 <div class="slds-form-element__control">
                     <aura:if isTrue="{!v.childComponentActivation}" >
-                        <c:CustomLookup aura:id="cc" recordType="{!v.sequenceAction}" parentId="{!v.mailCc}" fieldName="{!v.recordType}"/>
+                        <c:CustomLookup aura:id="cc" recordType="{!v.sequenceAction}" parentId="{!v.mailCc}" fieldName="{!v.recordType}" spinner ="{!v.spinner}"/>
                     </aura:if>                  
                 </div>
             </div>
@@ -57,7 +57,7 @@
                 <label class="slds-form-element__label form-label customNotRequired" for="horizontal-input-id-01">BCC:</label>
                 <div class="slds-form-element__control">
                     <aura:if isTrue="{!v.childComponentActivation}" >
-                        <c:CustomLookup aura:id="bcc" recordType="{!v.sequenceAction}" parentId="{!v.mailBcc}" fieldName="{!v.recordType}"/>
+                        <c:CustomLookup aura:id="bcc" recordType="{!v.sequenceAction}" parentId="{!v.mailBcc}" fieldName="{!v.recordType}" spinner ="{!v.spinner}"/>
                     </aura:if>
                 </div>
             </div>

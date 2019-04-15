@@ -15,13 +15,12 @@
                 var result = response.getReturnValue();
                 component.set('v.recordType', result.recordTypeAPI);
                 component.set('v.sequenceAction', result.sequenceActionAPI);
-                component.set('v.spinner', false);
                 component.find('body').set('v.value',result.emailTemplateBody);   
                 component.find('subject').set('v.value',result.emailTemplateSubject);     
             }else {
                 component.set('v.spinner', false);
             }
-            component.set('v.childComponentActivation', true);             
+            component.set('v.childComponentActivation', true);           
         });
         $A.enqueueAction(action);        
     },

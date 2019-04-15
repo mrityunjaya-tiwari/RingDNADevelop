@@ -19,16 +19,13 @@
             var mailBcc= JSON.stringify(component.get('v.mailBcc'));
             var subject= component.find('subject').get('v.value');
             var body= component.find('body').get('v.value');
-            var action = component.get("c.sendNativeEmail");
+            var action = component.get("c.sendEmail");
             var participantId= component.get('v.recordId');
             var emailTemplateId= component.get('v.emailTemplateId');
             var partActionId= component.get('v.partActionId');
-            var emailParamJson =[{"mailTo":mailTo,"mailCc":mailCc,
+            action.setParams({"mailTo":mailTo,"mailCc":mailCc,
                 "mailBcc":mailBcc,"subject":subject,"body":body,"participantId" : participantId,
-                "templateId" :emailTemplateId,"sequenceActionId" :partActionId}];
-            action.setParams({ 
-                nativeEmailParam :JSON.stringify(emailParamJson)
-            }); 
+                "templateId" :emailTemplateId,"sequenceActionId" :partActionId}); 
             action.setCallback(this, function(response) {
                 var state = response.getState();
                 if (state == "SUCCESS") { 

@@ -3,6 +3,7 @@
     <aura:attribute name="parentId" type="Object" default=""/>
     <aura:attribute name="fieldName" type="String"/>
     <aura:attribute name="isRequired" type="Boolean" default="false"/>
+    <aura:attribute name="spinner" type="boolean" default="false"/>
    <!--validateDynamicRowForm -->
     <aura:method name="resetLookUpField" action="{!c.resetLookUpField}">
         <aura:attribute name="fieldName" type="String" /> 
