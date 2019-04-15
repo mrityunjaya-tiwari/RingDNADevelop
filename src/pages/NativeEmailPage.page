@@ -1,25 +1,18 @@
-<apex:page standardcontroller="Action__c" extensions="GetNamespace" sidebar="true" applyHtmlTag="true" tabStyle="Cadence_Actions_Classic__tab" showHeader="true">
+<apex:page standardcontroller="Action__c" extensions="GetNamespace" sidebar="false" applyHtmlTag="true" tabStyle="Cadence_Actions_Classic__tab" showHeader="true">
     <script src="/lightning/lightning.out.js"/>
     <apex:slds />
-    <div id="myDivId3" />
+    <div id="cmpDiv" />
     <script>
     	var myUserContext = "{!$User.UITheme}";
         var recordIds = '{!$CurrentPage.parameters.pId}'; 
-     	var emailtemplateIds = '{!$CurrentPage.parameters.template_id}'; 
-        var currentPage =window.location.href;
-        console.log('currentPage'+currentPage);
-        var accessTokenVar = '{!$CurrentPage.parameters.access_token}';
-    	console.log('accessToken'+accessTokenVar);
-        var isNewVar = '{!$CurrentPage.parameters.isNew}' != undefined ? '{!$CurrentPage.parameters.isNew}':true;
+     	var emailtemplateIds = '{!$CurrentPage.parameters.template_id}';
+        var partActionId = '{!$CurrentPage.parameters.sequencePart_id}';
         $Lightning.use("{!namespace}:CadenceActionListApp", function() {
             $Lightning.createComponent(
                 "{!namespace}:NativeEmail",
-                {recordId: recordIds,themeName: myUserContext,isNew : isNewVar,currentUrl :currentPage,accessToken:accessTokenVar,emailTemplateId:emailtemplateIds},
-                "myDivId3",
-                function(cmp) {
-                   
-                }); 
+                {recordId: recordIds,themeName: myUserContext,emailTemplateId:emailtemplateIds,partActionId :partActionId },
+                "cmpDiv",
+                function(cmp) { }); 
         }); 
     </script>
-    
 </apex:page>

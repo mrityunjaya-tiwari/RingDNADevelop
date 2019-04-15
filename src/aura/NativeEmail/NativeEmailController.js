@@ -31,8 +31,8 @@
                 if (state == "SUCCESS") { 
                     var isredirect = response.getReturnValue();
                     if(isredirect ==true){
-                        var myUserContext = component.get("v.themeName");
-                        if(myUserContext == 'Theme3'  || myUserContext == 'Theme4t' || myUserContext == 'Theme4d') {
+                        var themeName = component.get("v.themeName");
+                        if(themeName == 'Theme3'  || themeName == 'Theme4t' || themeName == 'Theme4d') {
                              window.location = '/apex/TargetList';
                          }else{
                             var evt = $A.get("e.force:navigateToComponent");
@@ -53,8 +53,8 @@
         component.set('v.showErrorMessage', false);
     },
     cancelBtn: function(component, event, helper){
-        var myUserContext = component.get("v.themeName");
-        if(myUserContext == 'Theme3'  || myUserContext == 'Theme4t' || myUserContext == 'Theme4d') {
+        var themeName = component.get("v.themeName");
+        if(themeName == 'Theme3'  || themeName == 'Theme4t' || themeName == 'Theme4d') {
             window.location = '/apex/TargetList';
         }else{
             var evt = $A.get("e.force:navigateToComponent");
