@@ -1,0 +1,140 @@
+.THIS .slds-scrollable_y {
+    overflow-y:visible !important;
+    overflow-x:visible !important;
+}
+.THIS .slds-grid_align-end {
+    justify-content: flex-start !important;
+}
+.THIS .slds-page-header {
+    background-color: #fafafa !important;	
+    background: #fafafa !important;
+}
+.THIS .rdna-logo{
+    padding-top : 8px;
+    width : 32px;
+    height :40px;
+}
+.THIS .option-style{
+    border-radius: 10px;
+    background-color: #ffffff;
+}
+/*Header css */
+.THIS .rdna-header-small {
+    font-family: Logical;
+    font-size: 14px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    color: #000000;
+}
+.THIS .rdna-header-large { 
+    font-family: Logical;
+    font-size: 38px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    color: #000000;
+}
+/*Button*/
+.THIS .rdna-button-cancel{
+  border-radius: 6px !important;
+  border: solid 1px #979797 !important;
+  background-color: #fafafa !important;
+}
+.THIS .rdna-button-send{
+    border: 1.4px solid #0066ff !important;
+    border-color: #0066ff  !important;
+    border-radius: 6px !important;
+    background-color: #fafafa !important;
+    
+}
+.THIS .rdna-button-send-text{
+    font-family: Logical;
+    font-size: 14px !important;
+    text-align: center;
+    color: #0066ff;
+}
+.THIS .rdna-button-cancel-text{
+    font-family: Logical;
+    font-size: 14px !important;
+    text-align: center;
+    color: #979797;
+}
+.THIS .slds-button_icon-border{
+    color: #000000;
+    border-color: #ffffff !important;
+    border-radius: none;
+}
+@font-face {
+    font-family: 'Logical';
+    src: url(/resource/LogicalFontRegular) format('woff');
+}
+.THIS .heading{
+    font-family: Logical;
+  font-size: 24px;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 1.33;
+  letter-spacing: normal;
+  text-align: center;
+  color: #000000;
+}
+.THIS .form-label{
+    font-family: Logical !important;
+  	font-size: 12px !important;
+    padding: 10px 0px 10px 25px !important;
+}
+.THIS .slds-select{
+    border-radius: 6px !important;
+  border: solid 1px #979797 !important;
+}
+.THIS .slds-input{
+    border-radius: 6px !important;
+  border: solid 1px #979797 !important;
+}
+.THIS .slds-textarea{
+    border-radius: 6px !important;
+  border: solid 1px #979797 !important;
+    height:450px !important;
+    
+}
+.THIS .text-area{
+    padding-left:25px;
+}
+.THIS .form-align{
+    margin:0% 25%;
+    padding:2% 0%;
+}
+.THIS .slds-form-element{
+    height: auto !important;
+    width: auto !important;
+}
+.THIS .customRequired{
+    font-weight: 400; } 
+.THIS .customRequired:after{    
+    content: "*";
+    padding-top: 0px;
+    margin: 0 0.300rem 0 0.125rem;
+    color: rgb(194, 57, 52);
+    float: left; } 
+.THIS .customNotRequired:before{    
+    content: " ";
+    float: left; } 
+.THIS .customRequiredMessage{
+    font-weight: 400; } 
+.THIS .customRequiredMessage:after{    
+    content: "Complete this field.";
+    margin: 0 0.125rem 0 0.125rem;
+    color: rgb(194, 57, 52);
+    float: left; 
+} 
+/* Rounded header-corner*/
+.THIS .slds-table_header-fixed_container{
+    border-top-right-radius: 6px;
+    border-top-left-radius: 6px;
+}

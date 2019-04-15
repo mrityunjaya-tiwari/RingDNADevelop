@@ -1,0 +1,25 @@
+<aura:component  implements="flexipage:availableForAllPageTypes" access="global">
+    <aura:attribute name="recordType" type="String"/>
+    <aura:attribute name="parentId" type="Object" default=""/>
+    <aura:attribute name="fieldName" type="String"/>
+    <aura:attribute name="isRequired" type="Boolean" default="false"/>
+    <aura:attribute name="spinner" type="boolean" default="false"/>
+   <!--validateDynamicRowForm -->
+    <aura:method name="resetLookUpField" action="{!c.resetLookUpField}">
+        <aura:attribute name="fieldName" type="String" /> 
+    </aura:method>
+    <aura:method name="validateLookUpField" action="{!c.validateLookUpField}"/>
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
+  	<lightning:recordEditForm aura:id="form"
+                              onload = "{!c.handleOnload}"
+                              objectApiName="{!v.recordType}"
+                              class=" ">
+        <aura:if isTrue="{!v.isRequired}" >
+            <lightning:inputField fieldName="{!v.fieldName}"  required="true" aura:id="lookup" onchange="{!c.handleOnSubmit}"/>
+            
+            <aura:set attribute="else">
+                <lightning:inputField fieldName="{!v.fieldName}" required="false" aura:id="lookup" onchange="{!c.handleOnSubmit}"/>
+            </aura:set>
+        </aura:if>
+     </lightning:recordEditForm>
+</aura:component>

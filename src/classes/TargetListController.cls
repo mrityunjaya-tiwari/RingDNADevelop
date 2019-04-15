@@ -75,6 +75,7 @@ public class TargetListController {
         @AuraEnabled public String cadenceId;
         @AuraEnabled public String cadenceName;
         @AuraEnabled public String taskId;
+        @AuraEnabled public String emailType;
     }
     
     @AuraEnabled
@@ -194,6 +195,7 @@ public class TargetListController {
                     tlObj.linkActionName =  caObj.Name;             
                     
                     tlObj.actionType = caObj.Action_Id__r.Type__c;
+                    tlObj.emailType = caObj.Action_Id__r.Email_Type__c;
                     tlObj.emailTempId = caObj.Action_Id__r.Template_Id__c;
                     tlObj.tempId = caObj.Action_Id__r.Template_Id__c;                                       
                     tlObj.type = objectType;
