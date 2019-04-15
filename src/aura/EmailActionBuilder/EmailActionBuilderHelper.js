@@ -1,15 +1,11 @@
 ({
     createSFDCEmail : function(component, event, helper){
         var newAct = component.get("v.newAction");
-        if(newAct.id == '' || newAct.id == null){
-            component.set('v.newAction.emailType','SFDC');
-        }
+        component.set('v.newAction.emailType','SFDC');
     },
     createNativeEmail : function(component, event, helper){
         var newAct = component.get("v.newAction");
-        if(newAct.id == '' || newAct.id == null){
-            component.set('v.newAction.emailType','NATIVE');
-        }
+        component.set('v.newAction.emailType','NATIVE');
     },
     createManualEmail : function(component, event, helper){
         var newAct = component.get("v.newAction");

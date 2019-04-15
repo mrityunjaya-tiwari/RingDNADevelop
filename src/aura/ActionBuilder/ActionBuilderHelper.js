@@ -1,5 +1,6 @@
 ({
     createAction : function(component, event,helper) {       
+        component.set('v.spinner', true);
         var newAct = component.get("v.newAction");
         newAct.sobjectType = 'ActionWrapper';
         var action = component.get("c.saveAction");
@@ -21,8 +22,8 @@
             if (state === "SUCCESS") { 
                 var actionId  = response.getReturnValue();
                 helper.viewDetails(component, event, actionId);	
-            }else{ 
             }
+            component.set('v.spinner', false);
         });
         if (component.get('v.isValid') == true){
             $A.enqueueAction(action)
