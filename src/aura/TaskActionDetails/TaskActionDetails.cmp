@@ -59,7 +59,7 @@
                         </aura:iteration>
                         <div class = "slds-form-element__row slds-size_1-of-1 rdna-margin">
                             <a onclick="{!c.AddNewRow}"> 
-                                <label class="rdna-field-margin">+ Add Field</label>
+                                <label class="rdna-field-margin">+ Add Task Field</label>
                             </a>    
                         </div>
                         <div class = "slds-form-element__row slds-size_1-of-1">
