@@ -25,7 +25,7 @@ public with sharing class CadenceSelector {
                 (SELECT Id, Name, Action_Criterion__c, Action_Criteria_PE__c, Action_Id__c,
                  Cadence_Id__c, Day__c, Hour__c, Trigger_Type__c, Fields_To_Update_Action__c, Action_Id__r.Activation_Type__c, 
                  Action_Id__r.Task_Description__c, Action_Id__r.Template_Id__c, Action_Id__r.Type__c  
-                 FROM CadenceActions__r) 
+                 FROM CadenceActions__r order by Index__c) 
                 FROM Cadence__c WHERE Id = :cadId LIMIT 1];
         
     } 
