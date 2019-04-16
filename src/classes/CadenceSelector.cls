@@ -152,7 +152,7 @@ public with sharing class CadenceSelector {
     public static List<CadenceAction__c> getCadenceActionsByIds(List<Id> Ids){
         List<Id> caIds = Ids;
         String objType = nameSpace+'CadenceAction__c';
-        String parentFields = ' '+nameSpace+'Action_Id__r.'+nameSpace+'Type__c, '+nameSpace+'Action_Id__r.'+nameSpace+'Activation_Type__c, '+nameSpace+'Action_Id__r.'+nameSpace+'Template_Id__c, '+nameSpace+ 'Action_Id__r.'+nameSpace +'Task_Description__c, ';
+        String parentFields = ' '+nameSpace+'Action_Id__r.'+nameSpace+'Type__c, '+nameSpace+'Action_Id__r.'+nameSpace+'Activation_Type__c, '+nameSpace+'Action_Id__r.'+nameSpace+'Template_Id__c, '+nameSpace+ 'Action_Id__r.'+nameSpace +'Task_Description__c, '+nameSpace+ 'Action_Id__r.'+nameSpace +'Email_Type__c, ';
         String query = getQueryForObject(objType);
         query = query.replace('Select ', parentFields);
         query = 'Select ' + query + ' WHERE Id In :caIds ';

@@ -1,11 +1,14 @@
 public class NativeEmailController {
     @AuraEnabled
     public static Boolean sendEmail(String mailTo, String mailCc, String mailBcc, String subject, String body,String participantId,String templateId,String sequenceActionId){
-        Boolean isNativeEmailSend =CadenceService.SendNativeEmail(New list<NativeEmailMessage>());
-        if(isNativeEmailSend != null && !isNativeEmailSend){
-            sendSfdcEmail(participantId,templateId,sequenceActionId);
-            return true;
-        } 
+        Boolean isValid=isValidEmail(mailTo);
+        if(!isValid){
+        	Boolean isNativeEmailSend =CadenceService.SendNativeEmail(New list<NativeEmailMessage>());
+            if(isNativeEmailSend != null && !isNativeEmailSend){
+                sendSfdcEmail(participantId,templateId,sequenceActionId,mailCc,mailBcc);
+                return true;
+            }  
+        }
         return false;
     }
     
@@ -60,35 +63,72 @@ public class NativeEmailController {
             emailMessage.subject=firstPreviewEmail.subject;
             emailMessage.body=firstPreviewEmail.plainTextBody;
         }
-         return emailMessage;
+        return emailMessage;
     }
     
-    public static void sendSfdcEmail(String participantId,string templateId,string sequenceActionId){
-        List<Messaging.MassEmailMessage> emailsToSend = new  List<Messaging.MassEmailMessage>();
+    public static String sendSfdcEmail(String participantId,string templateId,string sequenceActionId,string mailCc,string mailBcc){
+        List<Messaging.SingleEmailMessage> emailsToSend = new  List<Messaging.SingleEmailMessage>();
         List<Sequence_Action__c> listOfSequence_Action = new List<Sequence_Action__c>();
-        emailsToSend.add(createEmailMessage(participantId,templateId));
+        List<Task> tasksToCreate = new List<Task>();
+        if(mailCc != null){
+             mailCc =mailCc.contains('"') ?mailCc.remove('"'):'';  
+        }
+         if(mailBcc != null){
+             mailBcc =mailBcc.contains('"') ?mailBcc.remove('"'):'';  
+        }
+        emailsToSend.add(createEmailMessage(participantId,templateId,mailCc,mailBcc));
         Sequence_Action__c partAct = new Sequence_Action__c(Id=sequenceActionId);
         partAct.Actual_Execution_Date__c = System.Now();
         partAct.isActionPerformed__c = true;
         listOfSequence_Action.add(partAct);
+        tasksToCreate.add(CadenceService.getEmailTask(partAct.Id,partAct.Name,participantId,templateId));
         if(!emailsToSend.isEmpty()) {
             Messaging.SendEmailResult[] results = Messaging.sendEmail(emailsToSend, false);
             if (results != null && results.get(0).isSuccess()) {
                 if(listOfSequence_Action != null && listOfSequence_Action.size()>0){
                     update listOfSequence_Action;
                 }
+                if(tasksToCreate != null && tasksToCreate.size()>0){
+                   upsert tasksToCreate;
+               }
             }
         }
+        return null;
     }
     
-    public static Messaging.MassEmailMessage createEmailMessage(Id sObjectId,Id EmailTemplateId){
-        Messaging.MassEmailMessage mail = new Messaging.MassEmailMessage();
-        mail.setSaveAsActivity(false);
-        mail.setTargetObjectIds(new List<Id>{sObjectId});
-        mail.setTemplateId(EmailTemplateId);
-        return mail; 
+    public static Messaging.SingleEmailMessage createEmailMessage(Id sObjectId,Id EmailTemplateId,Id mailCc,Id mailBcc){
+        List<String> listofemailParticipant = new List<String>{sObjectId,mailCc,mailBcc}; 
+        Messaging.SingleEmailMessage singleEmail = new Messaging.SingleEmailMessage();
+        String objName = sObjectId.getSObjectType().getDescribe().getName();
+        for(Sobject sobj : Database.query('Select Id,Email,Name from '+objName +' where Id In :listofemailParticipant')){
+            if(sobj.get('Id') == sObjectId && sobj.get('Email') != null){
+                singleEmail.setToAddresses(New List<String>{String.valueOf(sobj.get('Email'))});
+            }
+            if(sobj.get('Id') == mailCc && sobj.get('Email') != null){
+              	singleEmail.setCcAddresses(New List<String>{String.valueOf(sobj.get('Email'))});
+            }
+            else if(sobj.get('Id') == mailBcc && sobj.get('Email') != null){
+            	singleEmail.setBccAddresses(New List<String>{String.valueOf(sobj.get('Email'))});
+            }
+        }
+        singleEmail.setTargetObjectId(sObjectId);
+        singleEmail.setSaveAsActivity(false);
+        singleEmail.setTemplateId(EmailTemplateId);
+		return singleEmail; 
     }
-    
+    private static boolean isValidEmail(String participantId){
+        Id participantIds ;
+        if(participantId != null){
+             participantId =participantId.contains('"') ?participantId.remove('"'):'';
+             participantIds = (Id)participantId;
+        }
+        String objName = participantIds.getSObjectType().getDescribe().getName();
+        Sobject sobj = Database.query('Select Id,Email,Name from '+objName +' where Id =: participantIds');
+        if(sobj != null && sobj.get('Email') != null){
+            return true;
+        }
+        return false;
+    }
     public static Map<String,String> getObjectFieldsType(String objType) {
         Map<String, String> objectFieldDataTypeMap = new Map<String,String>();
         Map<String, Schema.SObjectField> fieldMap = Schema.getGlobalDescribe().get(objType).getDescribe().fields.getMap();

@@ -39,6 +39,10 @@
     letter-spacing: normal;
     color: #000000;
 }
+@font-face {
+    font-family: 'Logical';
+    src: url(/resource/RDNACadence5__LogicalFontRegular) format('woff');
+}
 /*Button*/
 .THIS .rdna-button-cancel{
   border-radius: 6px !important;
@@ -75,14 +79,14 @@
 }
 .THIS .heading{
     font-family: Logical;
-  font-size: 24px;
-  font-weight: normal;
-  font-style: normal;
-  font-stretch: normal;
-  line-height: 1.33;
-  letter-spacing: normal;
-  text-align: center;
-  color: #000000;
+    font-size: 24px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.33;
+    letter-spacing: normal;
+    text-align: center;
+    color: #000000;
 }
 .THIS .form-label{
     font-family: Logical !important;
@@ -137,4 +141,7 @@
 .THIS .slds-table_header-fixed_container{
     border-top-right-radius: 6px;
     border-top-left-radius: 6px;
+}
+.THIS .rdna-required{
+    color:red;
 }

@@ -14,6 +14,7 @@
     <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
     <aura:attribute name="EmailWrappercls" type="Sobject"/>
     <aura:attribute name="themeName" type="String"/>
+    <aura:attribute name="emailRequired" type="Boolean"/>
     <!-- PAGE HEADER -->
     <div class="slds-page-header" style="background-color: #fafafa">       
         <div class="slds-grid">
@@ -24,7 +25,7 @@
                 <!-- HEADING AREA -->
                 <p class="slds-line-height_reset rdna-header-small slds-p-left_xx-small">Sequence Actions</p>
                 <h1 class="slds-page-header__title slds-m-right_small slds-align-middle slds-truncate rdna-header-large"  title="All Actions">New Email</h1>
-                <!-- / HEADING AREA -->
+                    <!-- / HEADING AREA -->
             </div>
             <div class="slds-col-3 slds-m-top_medium slds-align--absolute-center slds-float_right slds-m-right_small">
                 <lightning:button class="rdna-button-cancel rdna-button-cancel-text slds-m-right_small slds-text-align_center" aura:id="cancel" label="Cancel" onclick="{!c.cancelBtn}"/>
@@ -34,7 +35,12 @@
         <div class="heading slds-m-top--small" style="font-weight:bold;">New Email Message
         </div>
         <div class="heading">Compose, Edit, Update or Send an Email Message.
-        </div>        
+        </div> 
+        <div>
+            <aura:if isTrue="{!v.emailRequired}">
+                <p class="slds-align_absolute-center slds-m-bottom_large rdna-required">Invalid Email Address </p>
+            </aura:if>
+        </div>
         <div class="slds-form form-align slds-p-top_x-large" >
             <div class="slds-form-element slds-form-element_horizontal slds-form-element_1-col">
                 <label class="slds-form-element__label form-label" for="horizontal-input-id-01">To</label>
