@@ -26,7 +26,7 @@
     
     <div class="slds-grid slds-m-left_large">
         <aura:if isTrue="{!v.newAction.type == 'Email'}">
-            <div class="slds-m-right_medium rdna-header-small rdna-sort-margin">
+            <div class="slds-m-right_medium rdna-header-small rdna-sort-margin rdna-classic-margin">
                 <span>{!v.totalNumberOfRows} Items • Sorted by {!v.sortedBy} </span>
             </div>
             <div>

@@ -59,6 +59,7 @@ public class CadenceSelectorTest {
         CadenceSelector.getParticipantsWithCadenceActionsOfUser('Contact');
         CadenceSelector.getCadenceActionsByIds(new list<Id>{cadenceAction1.Id});
         CadenceSelector.getQueryForObject('Contact');
+        CadenceSelector.getParticipantActions(new set<Id>{actionOnParticipants.id});
         //cadenceAction1= [Select Id, Name from CadenceAction__c where Id = :cadenceAction1.Id]; 
         
         //CadenceSelector.getActionOnParticipantId();

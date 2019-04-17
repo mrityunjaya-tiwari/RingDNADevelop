@@ -187,9 +187,9 @@
                         }
                         else{
                             var reDirectUrl =window.location.pathname;
-                            reDirectUrl =reDirectUrl.slice(0,reDirectUrl.indexOf("Target_List"))+'Native_Email';
-                            var myUserContext = component.get("v.themeName");
-                            if(myUserContext == 'Theme3'  || myUserContext == 'Theme4t' || myUserContext == 'Theme4d') {
+                            reDirectUrl = '/lightning/n/' + rawData[index].nameSpace +'Native_Email';
+                            var themeName = component.get("v.themeName");
+                            if(themeName == 'Theme3'  || themeName == 'Theme4t' || themeName == 'Theme4d') {
                                 innerHtml = '<a href="https://' + hostName +'/apex/NativeEmailPage?pId=' + rawData[index].participantId + '&template_id=' + rawData[index].emailTempId + '&sequencePart_id=' + rawData[index].participantActionsId+ '"'+ ' target="_blank" ' + '>' + innerHtml + '</a>';
                             } else{
                                 innerHtml = '<a href="https://' + hostName +reDirectUrl+'?pId=' + rawData[index].participantId + '&template_id=' + rawData[index].emailTempId + '&sequencePart_id=' + rawData[index].participantActionsId+ '"'+ ' target="_blank" ' + '>' + innerHtml + '</a>';

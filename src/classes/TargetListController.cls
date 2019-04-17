@@ -76,6 +76,10 @@ public class TargetListController {
         @AuraEnabled public String cadenceName;
         @AuraEnabled public String taskId;
         @AuraEnabled public String emailType;
+        @AuraEnabled public String nameSpace;
+        public TargetListWrapper(){
+            nameSpace = CadenceConstants.NAMESPACE;
+        }
     }
     
     @AuraEnabled

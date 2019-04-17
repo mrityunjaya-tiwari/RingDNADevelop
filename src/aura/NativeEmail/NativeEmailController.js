@@ -14,15 +14,15 @@
             component.set('v.showErrorMessage',true);
         }
         else{
-            var mailTo= JSON.stringify(component.get('v.mailTo'));
-            var mailCc= JSON.stringify(component.get('v.mailCc'));
-            var mailBcc= JSON.stringify(component.get('v.mailBcc'));
+            var mailTo= component.get('v.mailTo');
+            var mailCc= component.get('v.mailCc');
+            var mailBcc= component.get('v.mailBcc');
             var subject= component.find('subject').get('v.value');
             var body= component.find('body').get('v.value');
-            var action = component.get("c.sendEmail");
             var participantId= component.get('v.recordId');
             var emailTemplateId= component.get('v.emailTemplateId');
             var partActionId= component.get('v.partActionId');
+            var action = component.get("c.sendEmail");
             action.setParams({"mailTo":mailTo,"mailCc":mailCc,
                 "mailBcc":mailBcc,"subject":subject,"body":body,"participantId" : participantId,
                 "templateId" :emailTemplateId,"sequenceActionId" :partActionId}); 
@@ -43,6 +43,9 @@
                             });
                             evt.fire();
                         }
+                    }
+                    else{
+                        component.set('v.emailRequired',true);
                     }
                 }
             });
