@@ -37,7 +37,7 @@
                          }else{
                             var evt = $A.get("e.force:navigateToComponent");
                             evt.setParams({
-                                componentDef  : "RDNACadence2:TargetList" ,
+                                componentDef  : "c:TargetList" ,
                                 componentAttributes : {
                                 }
                             });
@@ -61,7 +61,7 @@
             window.location = '/apex/TargetList';
         }else{
             var evt = $A.get("e.force:navigateToComponent");
-            evt.setParams({componentDef  : "RDNACadence2:TargetList" ,componentAttributes : {}});
+            evt.setParams({componentDef  : "c:TargetList" ,componentAttributes : {}});
             evt.fire();
         }
     }
