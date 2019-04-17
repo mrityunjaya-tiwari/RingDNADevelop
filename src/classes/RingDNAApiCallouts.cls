@@ -11,6 +11,10 @@ public class RingDNAApiCallouts {
     private final String SMS_TEMPLATES_PATH = 'smsTemplates';
     private final String VOICEMAIL_DROPS_PATH = 'voicemailDrops';
     
+	private final String HTTP_METHOD_POST = 'POST';
+    private final String BASE_URL_SEQUENCE = 'api/v2/sequence';
+    private final String SEND_EMAIL_PATH = 'messages/send';    
+    
     public RingDNAApiCallouts() {
         host = RingDNAHost.getBaseUri();
         Map<String, Object> accountDetails = getAccountDetails();
@@ -25,7 +29,7 @@ public class RingDNAApiCallouts {
         String uri = host + '/' + ACCOUNT_DETAILS_PATH;
         String endpoint = uri +
             '?' + 'sfUserId=' + UserInfo.getUserId() +
-            '&' + 'sfSessionId=' + getSessionIdFrmVFPg(Page.SessionIdVfPage);
+            '&' + 'sfSessionId='  + getSessionIdFrmVFPg(Page.SessionIdVfPage);
         
         if(test.isRunningTest()) Test.setMock(HttpCalloutMock.class, new AccountDetailsMockClass());
         HTTPResponse httpResponse = getResponse(HTTP_METHOD, endpoint, null);
@@ -59,7 +63,6 @@ public class RingDNAApiCallouts {
      public List<Object> getCallNoteTemplatesUpdated() {
         String uri = host + '/' + BASE_URL + '/' + CALL_NOTE_TEMPLATES_PATH;
         String endpoint = uri + '?' + 'accountId=' + accountId;
-        system.debug('endpoint ' + endpoint);
         if(sessionId == null || host == '') {
             return New List<Object>();
         }
@@ -90,7 +93,6 @@ public class RingDNAApiCallouts {
     public List<Object> getSMSTemplatesUpdated() {
         String uri = host + '/' + BASE_URL + '/' + SMS_TEMPLATES_PATH;
         String endpoint = uri + '?' + 'sessionId='+ sessionid + '&' +'accountId=' + accountId;
-        system.debug('endpoint ' + endpoint);
         if(sessionId == null || host == '') {
             return New List<Object>();
         }
@@ -132,14 +134,20 @@ public class RingDNAApiCallouts {
     }
     
     public String getSessionIdFrmVFPg(PageReference vfPageContainSessionId){
-        String data ='';
-            //String data= vfPageContainSessionId.getContent().toString();
-        if(!test.isRunningTest()){
-            data= vfPageContainSessionId.getContent().toString();
-          }else{
-            data =  'Session_Id_Start_Here'+userinfo.getSessionId()+'Session_Id_End_Here';
-          }
-        return data.substring(data.indexOf('Session_Id_Start_Here') + 'Session_Id_Start_Here'.length(), data.indexOf('Session_Id_End_Here'));
+        return userinfo.getSessionId();
 	}
-
+    
+    public Map<String, Object> sendNativeEmail(String toEmail, String toName, String body, String actionId, String subject) {
+        String uri = host + '/' + BASE_URL_SEQUENCE + '/' + SEND_EMAIL_PATH;
+        String endpoint = uri + '?' + 'sessionId='+ sessionid;
+        //Adding parameters in endpoint
+        endpoint = endpoint + '&toEmail=' + toEmail + + '&subject=' + EncodingUtil.urlEncode(subject, 'UTF-8') +'&toName=' + EncodingUtil.urlEncode(toName, 'UTF-8') + '&body=' + EncodingUtil.urlEncode(body, 'UTF-8')  + '&actionId=' + EncodingUtil.urlEncode(actionId, 'UTF-8');
+        if(sessionId == null || host == '') {
+            return New Map<String, Object>();
+        }
+        HTTPResponse httpResponse = getResponse(HTTP_METHOD_POST, endpoint, sessionId);
+        Object obj = JSON.deserializeUntyped(httpResponse.getBody());
+        Map<String, Object> objMap = (Map<String, Object>)obj; 
+        return objMap;
+    }
 }
