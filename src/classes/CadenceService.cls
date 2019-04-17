@@ -466,7 +466,7 @@ global  without sharing class CadenceService {
                 }catch(exception ex){
                     failedActionIds.add(nativeEmailMessage.ActionId);
                 }
-                if (responseMap.isEmpty() || responseMap.get('success') == false ){
+                if (responseMap.isEmpty()  || (!responseMap.isEmpty() && responseMap.get('success') == false) ){
                     failedActionIds.add(nativeEmailMessage.ActionId);
                 }else {
                     emailsToSend.remove(nativeEmailMessage.ActionId);
@@ -889,7 +889,7 @@ global  without sharing class CadenceService {
                         performed = true;
                     }*/
                     //Processing email type of participant action
-                    if(partAct.CadenceAction_Id__r.Action_Id__r.Type__c.equals(CadenceConstants.ACTION_TYPE_EMAIL)) {
+                    if(partAct.CadenceAction_Id__r.Action_Id__r.Type__c != null && partAct.CadenceAction_Id__r.Action_Id__r.Type__c.equals(CadenceConstants.ACTION_TYPE_EMAIL)) {
                         if(objMap.containsKey(objId) && objMap.get(objId).get('Email')!=null) {
                             emailsToSend.put(partAct.Id, createEmailMessage(objId, partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c));
                             String nativeMailTo = String.valueOf(objMap.get(objId).get('Email'));
@@ -1590,7 +1590,7 @@ global  without sharing class CadenceService {
             
         }
         
-        if (responseMap.isEmpty()  || responseMap.get('success') == false ){
+        if (responseMap.isEmpty()  || (!responseMap.isEmpty() && responseMap.get('success') == false) ){
             List<Messaging.MassEmailMessage> sfdcMailToSent = New List<Messaging.MassEmailMessage>();
             Messaging.MassEmailMessage mail = new Messaging.MassEmailMessage();
             mail.setSaveAsActivity(false);
