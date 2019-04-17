@@ -163,9 +163,13 @@
                             url = $A.get('$Resource.cadence_icons') + '/call/FF4545/call-icon-FF4545@3x.png' ;
                         }
                         var innerHtml =  '<img class = "Oval" src=' + url + ' />';  
-                        if( rawData[index].actionType == 'Call'){
-                        innerHtml = '<a href="tel:'+ rawData[index].phone + '" class="ringdna-phone" data-phone="'+ rawData[index].phone + '" data-call-notes-template-id="'+ rawData[index].tempId +'">' + innerHtml + '</a>';
-                        }else{innerHtml = '<a href="tel:'+ rawData[index].phone + '" class="ringdna-phone" data-phone="'+ rawData[index].phone + '" data-vm-drop-id="'+ rawData[index].tempId +'">' + innerHtml + '</a>';}
+                        if(rawData[index].actionType == 'Call'){
+                            if(rawData[index].tempId == undefined || rawData[index].tempId == ''){
+                            	innerHtml = '<a href="tel:'+ rawData[index].phone + '" class="ringdna-phone" data-phone="'+ rawData[index].phone +'">' + innerHtml + '</a>';    
+                            }else{
+                                innerHtml = '<a href="tel:'+ rawData[index].phone + '" class="ringdna-phone" data-phone="'+ rawData[index].phone + '" data-call-notes-template-id="'+ rawData[index].tempId +'">' + innerHtml + '</a>';
+                            }
+                        }
                         
                         var div = '<div>' + rawData[index].nextAction + '</div>';
                         var ActionLink = '<a href="/' + rawData[index].nextAction  +'" target="_self" tabindex="-1">'+ rawData[index].linkActionName + '</a>';
@@ -204,7 +208,12 @@
                             url = $A.get('$Resource.cadence_icons') + '/message/FF4545/msg-icon-FF4545@3x.png' ;
                         }
                         var innerHtml =  '<img class = "Oval" src=' + url + ' />';
-                        innerHtml = '<a href="tel:'+ rawData[index].phone + '" class="ringdna-sms" data-phone="'+ rawData[index].phone + '" data-sms-template-id="'+ rawData[index].tempId + '">' + innerHtml + '</a>';
+                        if(rawData[index].tempId == undefined || rawData[index].tempId == ''){
+                            innerHtml = '<a href="tel:'+ rawData[index].phone + '" class="ringdna-sms" data-phone="'+ rawData[index].phone + '">' + innerHtml + '</a>';
+                        }else{
+                        	innerHtml = '<a href="tel:'+ rawData[index].phone + '" class="ringdna-sms" data-phone="'+ rawData[index].phone + '" data-sms-template-id="'+ rawData[index].tempId + '">' + innerHtml + '</a>';    
+                        }
+                        
                         var ActionLink = '<a href="/' + rawData[index].nextAction + '" target="_self" tabindex="-1">'+ rawData[index].linkActionName + '</a>';
                         rdpElement.innerHTML =  '<div class="slds-truncate">' + innerHtml + ' ' + ActionLink + '</div>';
                     }
