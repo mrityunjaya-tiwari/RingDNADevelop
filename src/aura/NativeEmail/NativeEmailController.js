@@ -14,9 +14,9 @@
             component.set('v.showErrorMessage',true);
         }
         else{
-            var mailTo= JSON.stringify(component.get('v.mailTo'));
-            var mailCc= JSON.stringify(component.get('v.mailCc'));
-            var mailBcc= JSON.stringify(component.get('v.mailBcc'));
+            var mailTo= component.get('v.mailTo');
+            var mailCc= component.get('v.mailCc');
+            var mailBcc= component.get('v.mailBcc');
             var subject= component.find('subject').get('v.value');
             var body= component.find('body').get('v.value');
             var participantId= component.get('v.recordId');
@@ -37,7 +37,7 @@
                          }else{
                             var evt = $A.get("e.force:navigateToComponent");
                             evt.setParams({
-                                componentDef  : "c:TargetList" ,
+                                componentDef  : "RDNACadence2:TargetList" ,
                                 componentAttributes : {
                                 }
                             });
@@ -61,7 +61,7 @@
             window.location = '/apex/TargetList';
         }else{
             var evt = $A.get("e.force:navigateToComponent");
-            evt.setParams({componentDef  : "c:TargetList" ,componentAttributes : {}});
+            evt.setParams({componentDef  : "RDNACadence2:TargetList" ,componentAttributes : {}});
             evt.fire();
         }
     }

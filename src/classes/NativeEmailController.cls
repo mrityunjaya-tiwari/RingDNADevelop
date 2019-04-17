@@ -2,7 +2,7 @@ public class NativeEmailController {
     @AuraEnabled
     public static Boolean sendEmail(String mailTo, String mailCc, String mailBcc, String subject, String body,String participantId,String templateId,String sequenceActionId){
         Boolean isValid=isValidEmail(mailTo);
-        if(!isValid){
+        if(isValid){
         	Boolean isNativeEmailSend =CadenceService.SendNativeEmail(New list<NativeEmailMessage>());
             if(isNativeEmailSend != null && !isNativeEmailSend){
                 sendSfdcEmail(participantId,templateId,sequenceActionId,mailCc,mailBcc);
@@ -70,12 +70,6 @@ public class NativeEmailController {
         List<Messaging.SingleEmailMessage> emailsToSend = new  List<Messaging.SingleEmailMessage>();
         List<Sequence_Action__c> listOfSequence_Action = new List<Sequence_Action__c>();
         List<Task> tasksToCreate = new List<Task>();
-        if(mailCc != null){
-             mailCc =mailCc.contains('"') ?mailCc.remove('"'):'';  
-        }
-         if(mailBcc != null){
-             mailBcc =mailBcc.contains('"') ?mailBcc.remove('"'):'';  
-        }
         emailsToSend.add(createEmailMessage(participantId,templateId,mailCc,mailBcc));
         Sequence_Action__c partAct = new Sequence_Action__c(Id=sequenceActionId);
         partAct.Actual_Execution_Date__c = System.Now();
@@ -86,12 +80,26 @@ public class NativeEmailController {
             Messaging.SendEmailResult[] results = Messaging.sendEmail(emailsToSend, false);
             if (results != null && results.get(0).isSuccess()) {
                 if(listOfSequence_Action != null && listOfSequence_Action.size()>0){
-                    update listOfSequence_Action;
+                	update listOfSequence_Action;
                 }
                 if(tasksToCreate != null && tasksToCreate.size()>0){
-                   upsert tasksToCreate;
+                	upsert tasksToCreate;
                }
             }
+        }
+        
+        //Updating dates on remaining participant objects 
+        List<Sequence_Action__c> sequenceActionList = CadenceSelector.getParticipantActions(new Set<Id>{sequenceActionId});
+        Id participantIds  = (Id)participantId;
+        String objType = participantIds.getSObjectType().getDescribe().getName();
+        Map<Id, List<Sequence_Action__c>> partActionsMap = CadenceService.getRemainingParticipantAction(new Set<Id>{participantIds},objType);
+        List<Sequence_Action__c> saToUpdate = new List<Sequence_Action__c>();
+        for(Sequence_Action__c sa : sequenceActionList) { 
+            Id partId = sa.Lead_Id__c == null ? sa.Contact_Id__c : sa.Lead_Id__c; 
+            saToUpdate.addAll(CadenceService.updateActionOnParticipantExpectedDate(sa.Actual_Execution_Date__c, (Integer)sa.CadenceAction_Id__r.Index__c, partActionsMap.get(partId)));
+        }
+        if(!saToUpdate.isEmpty()) {
+            update saToUpdate;
         }
         return null;
     }
@@ -119,13 +127,12 @@ public class NativeEmailController {
     private static boolean isValidEmail(String participantId){
         Id participantIds ;
         if(participantId != null){
-             participantId =participantId.contains('"') ?participantId.remove('"'):'';
              participantIds = (Id)participantId;
         }
         String objName = participantIds.getSObjectType().getDescribe().getName();
         Sobject sobj = Database.query('Select Id,Email,Name from '+objName +' where Id =: participantIds');
-        if(sobj != null && sobj.get('Email') != null){
-            return true;
+      	if(sobj != null && sobj.get('Email') != null){
+       		return true;
         }
         return false;
     }

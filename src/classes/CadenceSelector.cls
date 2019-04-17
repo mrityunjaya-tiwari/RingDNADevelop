@@ -247,4 +247,19 @@ public with sharing class CadenceSelector {
         query += ' WHERE Id in :cId';
         return Database.query(query); 
     }
+     /**
+     * @description - get all Sequence Action by Ids.
+     * @param objType - Set of Id
+     * @return - List<Sequence_Action__c> - list of Sequence Action
+     */
+    public static List<Sequence_Action__c> getParticipantActions(Set<Id> objIds) {
+       List<Sequence_Action__c> participantActions = new List<Sequence_Action__c>();
+       
+       participantActions = [Select Id, Name, CadenceAction_ID__c,Actual_Execution_Date__c, Expected_Execution_Date__c,  Lead_Id__c, Contact_Id__c, isActionPerformed__c,
+                             CadenceAction_Id__r.Day__c,CadenceAction_Id__r.Hour__c, CadenceAction_Id__r.Action_Id__r.Type__c,CadenceAction_Id__r.Index__c
+                             From Sequence_Action__c 
+                             where Id IN :objIds ];
+       
+       return participantActions;
+   }
 }

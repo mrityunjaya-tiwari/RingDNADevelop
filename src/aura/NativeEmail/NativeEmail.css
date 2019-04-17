@@ -41,7 +41,7 @@
 }
 @font-face {
     font-family: 'Logical';
-    src: url(/resource/RDNACadence5__LogicalFontRegular) format('woff');
+    src: url(/resource/LogicalFontRegular) format('woff');
 }
 /*Button*/
 .THIS .rdna-button-cancel{

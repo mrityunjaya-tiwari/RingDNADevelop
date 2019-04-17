@@ -38,7 +38,7 @@
         </div> 
         <div>
             <aura:if isTrue="{!v.emailRequired}">
-                <p class="slds-align_absolute-center slds-m-bottom_large rdna-required">Invalid Email Address </p>
+                <p class="slds-align_absolute-center slds-m-bottom_large rdna-required">Invalid email address.</p>
             </aura:if>
         </div>
         <div class="slds-form form-align slds-p-top_x-large" >
