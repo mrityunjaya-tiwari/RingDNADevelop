@@ -306,7 +306,7 @@ public class CadenceServiceTest {
         
     }
     
-    @isTest
+    /*@isTest
     public static void createNativeEmailMessageTest(){
         EmailTemplate emailTemplate = [select Id, Name from EmailTemplate LIMIT 1];
         List<Id> emailTemplateIdList = new List<Id>();
@@ -321,6 +321,6 @@ public class CadenceServiceTest {
         NativeEmailMessage nativeEmailMsg = nativeEmailMsgList[0];
         System.assertEquals(nativeEmailMsg.TemplateId, emailTemplate.Id);
         System.assertEquals(isNativeEmail, false);
-    }
+    }*/
     
 }

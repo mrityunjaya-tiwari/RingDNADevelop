@@ -4,7 +4,7 @@ public class NativeEmailController {
         RingDNAApiCallouts ringDNAApiCallout = new RingDNAApiCallouts();
         Map<String, Object> responseMap = ringDNAApiCallout.sendNativeEmail(mailTo, '', body, sequenceActionId,  subject);
         if (responseMap.isEmpty()  || (!responseMap.isEmpty() && responseMap.get('success') == false) ){
-            sendSfdcEmail(participantId,templateId,sequenceActionId);
+            sendSfdcEmail(participantId,templateId,sequenceActionId, mailCc, mailBcc);
         } 
          return true;
     }
@@ -65,7 +65,7 @@ public class NativeEmailController {
     
     private static void sendSfdcEmail(String participantId,string templateId,string sequenceActionId,string mailCc,string mailBcc){
         List<Messaging.SingleEmailMessage> emailsToSend = new  List<Messaging.SingleEmailMessage>();
-        emailsToSend.add(createEmailMessage(participantId,templateId,mailCc,mailBcc));
+        emailsToSend.add(createEmailMessage(Id.valueOf(participantId),templateId,mailCc,mailBcc));
         if(!emailsToSend.isEmpty()) {
             Messaging.SendEmailResult[] results = Messaging.sendEmail(emailsToSend, false);
             if (results != null && results.get(0).isSuccess()) {
