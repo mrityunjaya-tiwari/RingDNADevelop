@@ -1128,6 +1128,10 @@ global  without sharing class CadenceService {
             
         }
             
+        updateRemainingParticipantAction(performedPartAct,partActionsMap);
+    }
+    
+    public static void updateRemainingParticipantAction(Map<Id, List<Sequence_Action__c>> performedPartAct,Map<Id, List<Sequence_Action__c>> partActionsMap){
         //Updating dates on remaining participant objects 
         List<Sequence_Action__c> saToUpdate = new List<Sequence_Action__c>();
         for(Id objId : performedPartAct.keySet()) {
