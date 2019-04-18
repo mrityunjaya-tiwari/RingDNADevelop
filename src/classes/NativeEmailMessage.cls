@@ -5,6 +5,9 @@ public class NativeEmailMessage {
     @AuraEnabled public string Subject {get; set;}
     @AuraEnabled public string Body {get; set;}
     @AuraEnabled public Id TemplateId {get; set;}
+    @AuraEnabled public Id ActionId {get; set;}
+    @AuraEnabled public string NameTo {get; set;}
+    @AuraEnabled public Id ParticipantId {get; set;}
     
     public NativeEmailMessage (){
         
@@ -18,5 +21,18 @@ public class NativeEmailMessage {
                                    Subject = nativeSubject;
                                    Body = nativeBody;
                                    TemplateId = nativeTemplateId;
+                               }
+    public NativeEmailMessage ( string nativeMailTo, string nativeMailCc, 
+                               string nativeMailBcc, string nativeSubject, string nativeBody, 
+                               Id nativeTemplateId,Id nativeActionId, String nativeNameTO , Id nativeParticipantId){
+                                   MailTo = nativeMailTo;
+                                   MailCc = nativeMailCc;
+                                   MailBcc = nativeMailBcc;
+                                   Subject = nativeSubject;
+                                   Body = nativeBody;
+                                   TemplateId = nativeTemplateId;
+                                   ActionId = nativeActionId;
+                                   NameTo = nativeNameTO;
+                                   ParticipantId = nativeParticipantId;
                                }
 }

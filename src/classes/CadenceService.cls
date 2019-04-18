@@ -438,8 +438,9 @@ global  without sharing class CadenceService {
         mail.setTemplateId(EmailTemplateId);
         return mail; 
     }
-    public static NativeEmailMessage createNativeEmailMessage(String nativeMailTo,Id EmailTemplateId){
-        NativeEmailMessage nativeEmail = new NativeEmailMessage (nativeMailTo, '','', '', '',EmailTemplateId);
+    public static NativeEmailMessage createNativeEmailMessage(String nativeMailTo,Id EmailTemplateId,Id participantId, Id actionId, String nameTo ){
+        NativeEmailMessage emailMessage= NativeEmailController.resolveMergeFields(String.valueOf(participantId) , String.valueOf(EmailTemplateId));
+        NativeEmailMessage nativeEmail = new NativeEmailMessage (nativeMailTo, '','', emailMessage.subject, emailMessage.Body,EmailTemplateId, actionId, nameTo, participantId);
         return nativeEmail; 
     }
     public static List<NativeEmailMessage> updateNativeEmailMessage(List<NativeEmailMessage> nativeEmailToSend , List<Id> emailTemplateIdList){
@@ -454,8 +455,28 @@ global  without sharing class CadenceService {
         }
         return updatedNativeEmailToSend; 
     }
-     public static Boolean SendNativeEmail(List<NativeEmailMessage> nativeEmailToSend){
-        return false;
+    public static List<Id> SendNativeEmail(List<NativeEmailMessage> nativeEmailToSend ,Map<Id, Messaging.MassEmailMessage> emailsToSend ){
+        List<Id> failedActionIds = New List<Id>();
+        RingDNAApiCallouts ringDNAApiCallout = new RingDNAApiCallouts();
+        for(NativeEmailMessage nativeEmailMessage :nativeEmailToSend ){
+            Map<String, Object> responseMap = new Map<String, Object>();
+            if (System.isBatch()){
+                try{
+                    responseMap = ringDNAApiCallout.sendNativeEmail(nativeEmailMessage.MailTo, nativeEmailMessage.NameTo, nativeEmailMessage.Body, string.valueOf(nativeEmailMessage.ActionId),  nativeEmailMessage.Subject);
+                }catch(exception ex){
+                    failedActionIds.add(nativeEmailMessage.ActionId);
+                }
+                if (responseMap.isEmpty()  || (!responseMap.isEmpty() && responseMap.get('success') == false) ){
+                    failedActionIds.add(nativeEmailMessage.ActionId);
+                }else {
+                    emailsToSend.remove(nativeEmailMessage.ActionId);
+                }
+            }else{
+                emailsToSend.remove(nativeEmailMessage.ActionId);
+                sendNativeEmailTroughTrigger(nativeEmailMessage.MailTo, nativeEmailMessage.NameTo, nativeEmailMessage.Body, string.valueOf(nativeEmailMessage.ActionId),  nativeEmailMessage.Subject, nativeEmailMessage.TemplateId, nativeEmailMessage.ParticipantId);
+            }
+        }
+        return failedActionIds;
     }
     
     public static Task getEmailTask(Id sequenceActionId, String actionName, Id sObjectId, Id templateId) {
@@ -578,8 +599,6 @@ global  without sharing class CadenceService {
             sObjectsToProcess = new List<Contact>();
         }  
         
-        System.debug('##Test##');
-        
         Map<Id, Id> oldPartActionToDelete = new Map<Id, Id>();
         Map<Id, List<CadenceAction__c>> objIdToAllCadActListMap = new Map<Id, List<CadenceAction__c>>();
         Map<Id,List<Id>> sequenceHistoryMap = getParticipantSequenceHistory((new Map<Id,SObject>(objList)).keySet(),objName);
@@ -597,11 +616,8 @@ global  without sharing class CadenceService {
                     listOfContactids.addAll(mapOfOppcontact.get(oppids));
                 }
             }
-            System.debug('mapOfOppcontact:##'+mapOfOppcontact);
-            System.debug('listOfContactids:##'+listOfContactids);
           
             if(listOfContactids.size() > 0){
-                //for(Contact con : [Select id,Cadence_Id__c,isActivated__c,EntranceCriteria_Matched_Date__c,Email from Contact Where (Cadence_ID__c = null) AND Id In :listOfContactids]){
                 for(Contact con : [Select id,Cadence_Id__c,isActivated__c,EntranceCriteria_Matched_Date__c,Email from Contact Where Id In :listOfContactids]){
                     mapOfContacts.put(con.id,(Sobject)con);
                     if(con.Cadence_ID__c == null){
@@ -614,10 +630,8 @@ global  without sharing class CadenceService {
         //Updating the obj list with cadences 
         for(SObject obj : objList) {
             Map<Id, Cadence__c> cadMapNew =  removeCadencefromMap(cadMap.clone(),sequenceHistoryMap.get(obj.Id));
-            //System.debug('cadMapNew:'+cadMapNew);
             if(obj.get(nameSpace+'Cadence_Id__c') == null) {                
                 Cadence__c cad = RuleCriterionMatcher.assignCadenceToNotAssignedParticipant(cadMapNew, obj, parentMap.get((Id)obj.get('Id')), objName);
-                System.debug('test cad'+cad);
                 if(cad != null) {
                     if(objName.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_OBJECT_NAME)){
                         string oppIds = String.valueOf(obj.get('Id'));
@@ -626,7 +640,6 @@ global  without sharing class CadenceService {
                                 Set<String> setOfMatchRole;
                                 if(CadenceService.mapOfOpportunityRole.containskey(oppIds)) 
                                 setOfMatchRole = CadenceService.mapOfOpportunityRole.get(oppIds);
-                                system.debug('setOfMatchRole'+setOfMatchRole);
                                 if(CadenceService.mapOfOpportunityRole.containskey(oppIds)){
                                     if(setOfMatchRole.contains(associateContactofOpp)){
                                         Contact contSobj = new Contact();
@@ -661,7 +674,6 @@ global  without sharing class CadenceService {
                     
                 }				
             } else {
-                System.debug('Test##06:');
                 Id cadId = (Id)obj.get(nameSpace+'Cadence_Id__c'); 
                 
                 //SObject sObj = RuleCriterionMatcher.matchExitCriterion(cadMapNew.get((Id)obj.get(nameSpace+'Cadence_Id__c')), obj, parentMap.get((Id)obj.get('Id')), objName);
@@ -680,9 +692,7 @@ global  without sharing class CadenceService {
                 }else {
                     sObj= RuleCriterionMatcher.matchExitCriterion(cadMapNew.get(cadId), obj, parentMap.get((Id)obj.get('Id')), objName);
                 }
-                System.debug('isexitMatchOpp:'+isexitMatchOpp);
                 if(sObj != null || isexitMatchOpp) {
-                     System.debug('oppContactList:'+oppContactList);
                     if(objName.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_OBJECT_NAME)){
                         for(Contact con : oppContactList){
                             newSequenceHistory.add(createHistoryObject(cadId,con.Id,objName));
@@ -692,9 +702,7 @@ global  without sharing class CadenceService {
                         newSequenceHistory.add(createHistoryObject(cadId,(Id)obj.get('Id'),objName));
                         oldPartActionToDelete.put((Id)obj.get('Id'), cadId); 
                     }
-                    System.debug('newSequenceHistory:'+newSequenceHistory);
                     Cadence__c cad = RuleCriterionMatcher.assignCadenceToNotAssignedParticipant(cadMapNew, obj, parentMap.get((Id)obj.get('Id')), objName);
-                    //System.debug('Test##07');
                     if(cad != null) {
                         if(objName.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_OBJECT_NAME)){
                             string oppIds = String.valueOf(obj.get('Id'));
@@ -727,14 +735,12 @@ global  without sharing class CadenceService {
                                 }
                             }
                         }else{
-                            //System.debug('Test##09');
                             sObjectsToProcess.add(obj);
                             objIdToAllCadActListMap.put((Id)obj.get('Id'), cad.CadenceActions__r);
                         }
                         
                     }				
                 } else {
-                    //System.debug('Test##10');
                     if(objName.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_OBJECT_NAME)){
                         string oppIds = String.valueOf(obj.get('Id'));
                         if(mapOfOppcontact.keyset().size() > 0 && mapOfOppcontact.containskey(oppIds)){
@@ -770,7 +776,6 @@ global  without sharing class CadenceService {
                             }
                         }
                     }else{
-                        //System.debug('Test##11');
                         sObjectsToProcess.add(obj);
                      }
                     //sObjectsToProcess.add(obj);
@@ -783,7 +788,6 @@ global  without sharing class CadenceService {
         
         //Update Contact which exit match form Opportunity
         if(oppContactList != null && oppContactList.size() > 0){
-            System.debug('oppContactList:##'+oppContactList);
              update oppContactList;
         }
         
@@ -795,7 +799,6 @@ global  without sharing class CadenceService {
         //Deleting old non performed participant actions 
         CadenceService.deleteUnperformedPartActions(oldPartActionToDelete, objName);
         //Creating new participant actions for new cadence  
-        //System.debug('Test##12:'+objIdToAllCadActListMap);
         CadenceService.createActionParticipants(objIdToAllCadActListMap, new Map<Id, SObject>(sObjectsToProcess), objName); 
         
         return sObjectsToProcess;
@@ -866,7 +869,7 @@ global  without sharing class CadenceService {
         Map<Id, SObject> objMap = new Map<Id, SObject>(objList); 
         List<Sequence_Action__c> partActToUpdate = new List<Sequence_Action__c>();
         List<Task> tasksToCreate = new List<Task>();
-        List<Messaging.MassEmailMessage> emailsToSend = new List<Messaging.MassEmailMessage>();
+        Map<Id, Messaging.MassEmailMessage> emailsToSend = new Map<Id, Messaging.MassEmailMessage>();
         List<NativeEmailMessage> nativeEmailToSend = new List<NativeEmailMessage>();
         List<Id> emailTemplateIdList = new List<Id>();
         //Return if no unperformed participant actions 
@@ -886,16 +889,18 @@ global  without sharing class CadenceService {
                         performed = true;
                     }*/
                     //Processing email type of participant action
-                    if(partAct.CadenceAction_Id__r.Action_Id__r.Type__c.equals(CadenceConstants.ACTION_TYPE_EMAIL)) {
+                    if(partAct.CadenceAction_Id__r.Action_Id__r.Type__c != null && partAct.CadenceAction_Id__r.Action_Id__r.Type__c.equals(CadenceConstants.ACTION_TYPE_EMAIL)) {
                         if(objMap.containsKey(objId) && objMap.get(objId).get('Email')!=null) {
-                            emailsToSend.add(createEmailMessage(objId, partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c));
+                            emailsToSend.put(partAct.Id, createEmailMessage(objId, partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c));
                             String nativeMailTo = String.valueOf(objMap.get(objId).get('Email'));
+                            String nativeNameTo = String.valueOf(objMap.get(objId).get('Name'));
                             if(partAct.CadenceAction_Id__r.Action_Id__r.Email_Type__c.equals(CadenceConstants.NATIVE_EMAIL_TYPE)){
-                                nativeEmailToSend.add(createNativeEmailMessage(nativeMailTo, partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c));
-                                emailTemplateIdList.add(partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c);
-                            }else{
-                                emailTemplateIdList.add(partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c);
-                            }
+                                nativeEmailToSend.add(createNativeEmailMessage(nativeMailTo, partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c, 
+                                                                               objId, partAct.Id, nativeNameTo));
+                                //emailTemplateIdList.add(partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c);
+                            }//else{
+                                //emailTemplateIdList.add(partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c);
+                            //}
                             tasksToCreate.add(getEmailTask(partAct.Id, partAct.Name, objId, partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c));
                             performed = true;
                         } 
@@ -909,9 +914,8 @@ global  without sharing class CadenceService {
                         tsk.Sequence_Action__c = partAct.Id; 
                         tasksToCreate.add(tsk);
                         if(tsk.Status == 'Completed'){
-                            system.debug('completed');
                             performed = true;   
-                        }else{system.debug('not-completed');
+                        }else{
                         	 IsTaskNotCompleted = true;
                         }
                         
@@ -947,32 +951,32 @@ global  without sharing class CadenceService {
                 
            } 
         }
-        
         if(!nativeEmailToSend.isEmpty()) {
-            List<NativeEmailMessage> updatedNativeEmailToSend = updateNativeEmailMessage(nativeEmailToSend, emailTemplateIdList);
-            Boolean isNative = SendNativeEmail(updatedNativeEmailToSend);
-            if (isNative == false){
-                Messaging.SendEmailResult[] results = Messaging.sendEmail(emailsToSend, false);
+            //List<NativeEmailMessage> updatedNativeEmailToSend = updateNativeEmailMessage(nativeEmailToSend, emailTemplateIdList);
+            List<Id> failedActionIds = SendNativeEmail(nativeEmailToSend, emailsToSend);
+            if (!failedActionIds.isEmpty()){
+                List<Messaging.MassEmailMessage> sfdcMailToSent = New List<Messaging.MassEmailMessage>();
+                for(Id actionId : failedActionIds){
+                    sfdcMailToSent.add(emailsToSend.get(actionId));
+                    emailsToSend.remove(actionId);
+                }
+                Messaging.SendEmailResult[] results = Messaging.sendEmail(sfdcMailToSent, false);
             }
         }else if(!emailsToSend.isEmpty()) {
-            Messaging.SendEmailResult[] results = Messaging.sendEmail(emailsToSend, false);
+            Messaging.SendEmailResult[] results = Messaging.sendEmail(emailsToSend.values(), false);
         }
-        
         if(!tasksToCreate.isEmpty()) {
             if(System.isBatch()) {
                 Database.SaveResult[] results = Database.insert(tasksToCreate, false);
-                
             } else {
                 String tasksJson = JSON.serialize(tasksToCreate); 
                 createTasks(tasksJson);
             }
         } 
-        
         if(!partActToUpdate.isEmpty()) {
             Database.update(partActToUpdate, false);
         } 
         return performedPartActions;
-        
     } 
     
     @future
@@ -1101,7 +1105,6 @@ global  without sharing class CadenceService {
             } 	
         } 
         
-        //System.debug('partActToPerform:'+partActToPerform);
         //perform participant actions  
        Map<Id, List<Sequence_Action__c>> performedPartAct = CadenceService.performParticipantActions(objMap.values(), partActToPerform);
         
@@ -1178,7 +1181,6 @@ global  without sharing class CadenceService {
     
     
     public static boolean validForCriteria(String objectName, String fieldName){
-        system.debug(objectName + '  ' + fieldName );
         if (objectName == CadenceConstants.CONTACT_OBJECT_NAME){
             if (fieldName == 'MasterRecordId' || fieldName == 'AccountId' 
                 || fieldName == 'CreatedById' || fieldName == 'LastModifiedById' || fieldName == 'OwnerId'
@@ -1210,7 +1212,6 @@ global  without sharing class CadenceService {
                 || fieldName == nameSpace+'From_Contract__c' || fieldName == nameSpace+'Order__c' || fieldName == nameSpace+'Reseller__c'){
                 return true;
             }else {
-                System.debug('Ref--##--No:' + fieldName);
                 return false;
             }
         }else  {
@@ -1576,5 +1577,27 @@ global  without sharing class CadenceService {
             }
         }
         return Id;
+    }
+    
+    @future(callout=true)
+    public static void sendNativeEmailTroughTrigger(String toEmail, String toName, String body, String actionId, String subject, Id templateId, Id participantId)
+    {   
+        RingDNAApiCallouts ringDNAApiCallout = new RingDNAApiCallouts();
+        Map<String, Object> responseMap = new Map<String, Object>();
+        try{
+            responseMap = ringDNAApiCallout.sendNativeEmail(toEmail, toName, body, actionId,  subject);
+        }catch(exception ex){
+            
+        }
+        
+        if (responseMap.isEmpty()  || (!responseMap.isEmpty() && responseMap.get('success') == false) ){
+            List<Messaging.MassEmailMessage> sfdcMailToSent = New List<Messaging.MassEmailMessage>();
+            Messaging.MassEmailMessage mail = new Messaging.MassEmailMessage();
+            mail.setSaveAsActivity(false);
+            mail.setTargetObjectIds(new List<Id>{participantId});
+            mail.setTemplateId(templateId);
+            sfdcMailToSent.add(mail);
+            Messaging.SendEmailResult[] results = Messaging.sendEmail(sfdcMailToSent, false);
+        }
     }
 }

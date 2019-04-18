@@ -139,7 +139,6 @@ public with sharing class CadenceSelector {
             queryWithSubQuery = 'Select '+nameSpace+'Cadence_ID__r.name, ' + queryWithSubQuery ;
             queryWithSubQuery += ' WHERE '+nameSpace+'isActivated__c = true AND IsConverted != true  AND '+nameSpace+'Cadence_Id__c != null AND OwnerId=:userId';
         }
-        System.debug('queryWithSubQuery:'+queryWithSubQuery);
         return Database.query(queryWithSubQuery); 
     }
     
