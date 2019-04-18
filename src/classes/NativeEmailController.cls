@@ -12,7 +12,9 @@ public class NativeEmailController {
             if (responseMap.isEmpty()  || (!responseMap.isEmpty() && responseMap.get('success') == false) ){
                 isMailSent = sendSfdcEmail(participantId,templateId,sequenceActionId, mailCc, mailBcc);
             } 
-        } 
+        }else{
+            isMailSent = false;
+        }
         if (isMailSent){
             createTasks(participantId,sequenceActionId,templateId);
             updateSequenceAction(sequenceActionId,participantId);
