@@ -53,9 +53,8 @@ public class NativeEmailControllerTest {
     } 
     @isTest
     public static void testGetData(){
-        NativeEmailController.NativeEmailWrapper emailWrapper;
         Test.startTest();
-        emailWrapper=NativeEmailController.getData(testLead.Id,template.Id);
+        NativeEmailController.NativeEmailWrapper emailWrapper=NativeEmailController.getData(testLead.Id,template.Id);
         Test.stopTest();
         System.assertEquals('New Test Lead',emailWrapper.emailTemplateSubject);
         subject=emailWrapper.emailTemplateSubject;
@@ -75,7 +74,7 @@ public class NativeEmailControllerTest {
     public static void testSendEmail(){
         Boolean result;
         Test.startTest();
-        result=NativeEmailController.sendEmail((String)testLead.Id,null,null,subject,body,(String)testLead.Id,(String)template.Id,(String)sequenceActionLead.Id);
+        result=NativeEmailController.sendEmail((String)testLead.Id,null,null,'Test Subject','test this body',(String)testLead.Id,(String)template.Id,(String)sequenceActionLead.Id);
         Test.stopTest();
         System.assertEquals(true, result);
     }
