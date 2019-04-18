@@ -134,8 +134,18 @@ public class RingDNAApiCallouts {
     }
     
     public String getSessionIdFrmVFPg(PageReference vfPageContainSessionId){
-        return userinfo.getSessionId();
-	}
+        String data ='';
+        if(!test.isRunningTest()){
+            try{
+                data= vfPageContainSessionId.getContent().toString();
+            }catch(Exception ex){
+                data =  'Session_Id_Start_Here'+userinfo.getSessionId()+'Session_Id_End_Here';
+            }
+        }else{
+            data =  'Session_Id_Start_Here'+userinfo.getSessionId()+'Session_Id_End_Here';
+        }
+        return data.substring(data.indexOf('Session_Id_Start_Here') + 'Session_Id_Start_Here'.length(), data.indexOf('Session_Id_End_Here'));
+    }
     
     public Map<String, Object> sendNativeEmail(String toEmail, String toName, String body, String actionId, String subject) {
         String uri = host + '/' + BASE_URL_SEQUENCE + '/' + SEND_EMAIL_PATH;
