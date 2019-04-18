@@ -255,8 +255,8 @@ public with sharing class CadenceSelector {
        List<Sequence_Action__c> participantActions = new List<Sequence_Action__c>();
        
        participantActions = [Select Id, Name, CadenceAction_ID__c,Actual_Execution_Date__c, Expected_Execution_Date__c,  Lead_Id__c, Contact_Id__c, isActionPerformed__c,
-                             CadenceAction_Id__r.Day__c,CadenceAction_Id__r.Hour__c, CadenceAction_Id__r.Action_Id__r.Type__c,CadenceAction_Id__r.Index__c
-                             From Sequence_Action__c 
+                             CadenceAction_Id__r.Day__c,CadenceAction_Id__r.Hour__c, CadenceAction_Id__r.Action_Id__r.Type__c,CadenceAction_Id__r.Index__c,Opportunity_Id__c,Cadence_Type__c,CadenceAction_Id__r.Fields_To_Update_Action__c
+                             From Sequence_Action__c
                              where Id IN :objIds ];
        
        return participantActions;

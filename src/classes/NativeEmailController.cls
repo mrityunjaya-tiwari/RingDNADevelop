@@ -25,7 +25,7 @@ public class NativeEmailController {
         NativeEmailWrapper obj=new NativeEmailWrapper();
         obj.recordType=sequenceAction.Cadence_Type__c;
         obj.sequenceActionAPI=cadenceConstants.NAMESPACE+'Sequence_Action__c';        
-        if(obj.recordType=='Contact'){
+        if(obj.recordType==cadenceConstants.CONTACT_OBJECT_NAME || obj.recordType ==cadenceConstants.OPPORTUNITY_OBJECT_NAME){
             obj.recordTypeAPI=cadenceConstants.NAMESPACE+'Contact_Id__c';
         }else{
             obj.recordTypeAPI=cadenceConstants.NAMESPACE+'Lead_Id__c';
@@ -69,35 +69,39 @@ public class NativeEmailController {
         if(!emailsToSend.isEmpty()) {
             Messaging.SendEmailResult[] results = Messaging.sendEmail(emailsToSend, false);
             if (results != null && results.get(0).isSuccess()) {
-                createTasks(participantId,sequenceActionId,templateId);
-                updateSequenceAction(sequenceActionId,participantId);
+                List<Sequence_Action__c> sequenceActionList = CadenceSelector.getParticipantActions(new Set<Id>{sequenceActionId});
+                createTasks(participantId,sequenceActionList,templateId);
+                updateSequenceAction(sequenceActionList,participantId);
             }
         }
     }
     
-    private static void createTasks(String participantId,String sequenceActionId,String templateId){
+    private static void createTasks(String participantId,List<Sequence_Action__c> sequenceActionList,String templateId){
         List<Sequence_Action__c> listOfSequence_Action = new List<Sequence_Action__c>();
         List<Task> tasksToCreate = new List<Task>();
-        Sequence_Action__c partAct = new Sequence_Action__c(Id=sequenceActionId);
+		Sequence_Action__c partAct = sequenceActionList != null && sequenceActionList.size() > 0? sequenceActionList[0]:new Sequence_Action__c();
         partAct.Actual_Execution_Date__c = System.Now();
         partAct.isActionPerformed__c = true;
         listOfSequence_Action.add(partAct);
-        tasksToCreate.add(CadenceService.getEmailTask(partAct.Id,partAct.Name,participantId,templateId));
-        if(listOfSequence_Action != null && listOfSequence_Action.size()>0){
-             update listOfSequence_Action;
-        }
+        tasksToCreate.add(CadenceService.getEmailTask(null,partAct.Name,participantId,templateId));
         if(tasksToCreate != null && tasksToCreate.size()>0){
-            upsert tasksToCreate;
+         	Database.SaveResult[] results = Database.insert(tasksToCreate, false);
+        }
+        if(listOfSequence_Action != null && listOfSequence_Action.size()>0){
+        	update listOfSequence_Action;
         }
     }
     
-    private static void updateSequenceAction(string sequenceActionId,string participantId){
+    private static void updateSequenceAction(List<Sequence_Action__c> sequenceActionList,string participantId){
         //Updating dates on remaining participant objects 
-        List<Sequence_Action__c> sequenceActionList = CadenceSelector.getParticipantActions(new Set<Id>{sequenceActionId});
         Id participantIds  = (Id)participantId;
         String objType = participantIds.getSObjectType().getDescribe().getName();
         Map<Id, List<Sequence_Action__c>> partActionsMap = CadenceService.getRemainingParticipantAction(new Set<Id>{participantIds},objType);
         Map<Id, List<Sequence_Action__c>> performedPartAct = new Map<Id, List<Sequence_Action__c>>{participantId =>sequenceActionList};
+        if(sequenceActionList != null && sequenceActionList.size() > 0 && sequenceActionList[0].Cadence_Type__c == CadenceConstants.OPPORTUNITY_OBJECT_NAME){
+         	List<SObject> sobjectList = CadenceSelector.getSobjectListByIds(CadenceConstants.CONTACT_OBJECT_NAME,new List<Id>{participantId});
+         	CadenceService.updateSObjectFields(sobjectList, performedPartAct, CadenceConstants.CONTACT_OBJECT_NAME, false);
+        }
         CadenceService.updateRemainingParticipantAction(performedPartAct,partActionsMap);
     }
     
