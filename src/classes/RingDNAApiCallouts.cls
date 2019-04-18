@@ -140,7 +140,6 @@ public class RingDNAApiCallouts {
                 data= vfPageContainSessionId.getContent().toString();
             }catch(Exception ex){
                 data =  'Session_Id_Start_Here'+userinfo.getSessionId()+'Session_Id_End_Here';
-                system.debug('in catch');
             }
         }else{
             data =  'Session_Id_Start_Here'+userinfo.getSessionId()+'Session_Id_End_Here';
