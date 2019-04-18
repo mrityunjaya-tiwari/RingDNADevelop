@@ -1,12 +1,25 @@
 public class NativeEmailController {
     @AuraEnabled
     public static Boolean sendEmail(String mailTo, String mailCc, String mailBcc, String subject, String body,String participantId,String templateId,String sequenceActionId){
+        Boolean isMailSent = true;
         RingDNAApiCallouts ringDNAApiCallout = new RingDNAApiCallouts();
-        Map<String, Object> responseMap = ringDNAApiCallout.sendNativeEmail(mailTo, '', body, sequenceActionId,  subject);
-        if (responseMap.isEmpty()  || (!responseMap.isEmpty() && responseMap.get('success') == false) ){
-            sendSfdcEmail(participantId,templateId,sequenceActionId, mailCc, mailBcc);
+        Id  sObjectId = Id.valueOf(participantId);
+        String objName = sObjectId.getSObjectType().getDescribe().getName();
+        Sobject participant =  Database.query('Select Id,Email,Name from '+objName +' where Id = :sObjectId');
+        if (participant.get('Email') != null){
+            mailTo = String.valueOf(participant.get('Email'));
+            Map<String, Object> responseMap = ringDNAApiCallout.sendNativeEmail(mailTo, '', body, String.valueOf(sequenceActionId),  subject);
+            if (responseMap.isEmpty()  || (!responseMap.isEmpty() && responseMap.get('success') == false) ){
+                isMailSent = sendSfdcEmail(participantId,templateId,sequenceActionId, mailCc, mailBcc);
+            } 
         } 
-         return true;
+        if (isMailSent){
+            createTasks(participantId,sequenceActionId,templateId);
+            updateSequenceAction(sequenceActionId,participantId);
+            return true;
+        }else{
+            return false;
+        }
     }
     
     public class NativeEmailWrapper {
@@ -63,16 +76,18 @@ public class NativeEmailController {
         return emailMessage;
     }
     
-    private static void sendSfdcEmail(String participantId,string templateId,string sequenceActionId,string mailCc,string mailBcc){
+    private static Boolean sendSfdcEmail(String participantId,string templateId,string sequenceActionId,string mailCc,string mailBcc){
         List<Messaging.SingleEmailMessage> emailsToSend = new  List<Messaging.SingleEmailMessage>();
         emailsToSend.add(createEmailMessage(Id.valueOf(participantId),templateId,mailCc,mailBcc));
         if(!emailsToSend.isEmpty()) {
             Messaging.SendEmailResult[] results = Messaging.sendEmail(emailsToSend, false);
             if (results != null && results.get(0).isSuccess()) {
-                List<Sequence_Action__c> sequenceActionList = CadenceSelector.getParticipantActions(new Set<Id>{sequenceActionId});
-                createTasks(participantId,sequenceActionList,templateId);
-                updateSequenceAction(sequenceActionList,participantId);
+                return true;
+            }else{
+                return false;
             }
+        }else {
+            return false;
         }
     }
     
