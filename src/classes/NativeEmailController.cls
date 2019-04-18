@@ -16,8 +16,9 @@ public class NativeEmailController {
             isMailSent = false;
         }
         if (isMailSent){
-            createTasks(participantId,sequenceActionId,templateId);
-            updateSequenceAction(sequenceActionId,participantId);
+            List<Sequence_Action__c> sequenceActionList = CadenceSelector.getParticipantActions(new Set<Id>{sequenceActionId});
+            createTasks(participantId,sequenceActionList,templateId);
+            updateSequenceAction(sequenceActionList,participantId);
             return true;
         }else{
             return false;
