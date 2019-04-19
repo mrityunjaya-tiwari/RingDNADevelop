@@ -144,17 +144,5 @@ public class NativeEmailController {
         singleEmail.setTemplateId(EmailTemplateId);
 		return singleEmail; 
     }
-    
-    private static boolean isValidEmail(String participantId){
-        if(participantId != null){
-            Id participantIds ;
-            participantIds = (Id)participantId;
-            String objName = participantIds.getSObjectType().getDescribe().getName();
-            Sobject sobj = Database.query('Select Id,Email,Name from '+objName +' where Id =: participantIds');
-            if(sobj != null && sobj.get('Email') != null){
-                return true;
-            }
-        }
-        return false;
-    }
+   
 }

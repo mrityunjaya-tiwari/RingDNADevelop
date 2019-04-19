@@ -70,12 +70,13 @@ public class NativeEmailControllerTest {
         System.assertEquals('New Test Lead',message.Subject);
         System.assertEquals('Test Body for Test Lead',message.Body);
     }
-    /*@isTest
+    
+    @isTest
     public static void testSendEmail(){
         Boolean result;
         Test.startTest();
         result=NativeEmailController.sendEmail((String)testLead.Id,null,null,'Test Subject','test this body',(String)testLead.Id,(String)template.Id,(String)sequenceActionLead.Id);
         Test.stopTest();
         System.assertEquals(true, result);
-    }*/
+    }
 }
