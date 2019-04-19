@@ -57,7 +57,7 @@ public class RingDNAApiCallouts_test {
         test.startTest();
         RingDNAApiCallouts testRingDNAApiCallout = new RingDNAApiCallouts();
         Test.setMock(HttpCalloutMock.class, new SendNativeEmailMockCallout());
-        testRingDNAApiCallout.sendNativeEmail('test@gmail.com','Test Name','Test body',accountId,'Test Subject');
+        testRingDNAApiCallout.sendNativeEmail('test@gmail.com','Test Name','Test body',accountId,'Test Subject', 'UserId');
         test.stopTest();
     }
 }

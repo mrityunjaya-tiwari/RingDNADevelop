@@ -443,18 +443,6 @@ global  without sharing class CadenceService {
         NativeEmailMessage nativeEmail = new NativeEmailMessage (nativeMailTo, '','', emailMessage.subject, emailMessage.Body,EmailTemplateId, actionId, nameTo, participantId);
         return nativeEmail; 
     }
-    public static List<NativeEmailMessage> updateNativeEmailMessage(List<NativeEmailMessage> nativeEmailToSend , List<Id> emailTemplateIdList){
-        List<NativeEmailMessage> updatedNativeEmailToSend = New List<NativeEmailMessage>();
-        List<EmailTemplate> emailTemp = [Select id, Subject, Body from EmailTemplate where Id IN : emailTemplateIdList];
-        Map<Id, EmailTemplate> nativeEmailMessageMap = New Map<Id, EmailTemplate>(emailTemp);
-        for (NativeEmailMessage nativeEmail : nativeEmailToSend){
-            EmailTemplate email = nativeEmailMessageMap.get(nativeEmail.TemplateId);
-            nativeEmail.Subject  = email.Subject;
-            nativeEmail.Body  = email.Body;
-            updatedNativeEmailToSend.add(nativeEmail);
-        }
-        return updatedNativeEmailToSend; 
-    }
     public static List<Id> SendNativeEmail(List<NativeEmailMessage> nativeEmailToSend ,Map<Id, Messaging.MassEmailMessage> emailsToSend ){
         List<Id> failedActionIds = New List<Id>();
         RingDNAApiCallouts ringDNAApiCallout = new RingDNAApiCallouts();
