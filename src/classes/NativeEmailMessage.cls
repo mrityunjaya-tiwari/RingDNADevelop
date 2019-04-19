@@ -8,6 +8,7 @@ public class NativeEmailMessage {
     @AuraEnabled public Id ActionId {get; set;}
     @AuraEnabled public string NameTo {get; set;}
     @AuraEnabled public Id ParticipantId {get; set;}
+    @AuraEnabled public Id UserId {get; set;}
     
     public NativeEmailMessage (){
         
@@ -24,7 +25,7 @@ public class NativeEmailMessage {
                                }
     public NativeEmailMessage ( string nativeMailTo, string nativeMailCc, 
                                string nativeMailBcc, string nativeSubject, string nativeBody, 
-                               Id nativeTemplateId,Id nativeActionId, String nativeNameTO , Id nativeParticipantId){
+                               Id nativeTemplateId,Id nativeActionId, String nativeNameTO , Id nativeParticipantId, Id participantUserId){
                                    MailTo = nativeMailTo;
                                    MailCc = nativeMailCc;
                                    MailBcc = nativeMailBcc;
@@ -34,5 +35,6 @@ public class NativeEmailMessage {
                                    ActionId = nativeActionId;
                                    NameTo = nativeNameTO;
                                    ParticipantId = nativeParticipantId;
+                                   UserId = participantUserId;
                                }
 }

@@ -438,9 +438,9 @@ global  without sharing class CadenceService {
         mail.setTemplateId(EmailTemplateId);
         return mail; 
     }
-    public static NativeEmailMessage createNativeEmailMessage(String nativeMailTo,Id EmailTemplateId,Id participantId, Id actionId, String nameTo ){
+    public static NativeEmailMessage createNativeEmailMessage(String nativeMailTo,Id EmailTemplateId,Id participantId, Id actionId, String nameTo, Id usreId ){
         NativeEmailMessage emailMessage= NativeEmailController.resolveMergeFields(String.valueOf(participantId) , String.valueOf(EmailTemplateId));
-        NativeEmailMessage nativeEmail = new NativeEmailMessage (nativeMailTo, '','', emailMessage.subject, emailMessage.Body,EmailTemplateId, actionId, nameTo, participantId);
+        NativeEmailMessage nativeEmail = new NativeEmailMessage (nativeMailTo, '','', emailMessage.subject, emailMessage.Body,EmailTemplateId, actionId, nameTo, participantId, usreId);
         return nativeEmail; 
     }
     public static List<NativeEmailMessage> updateNativeEmailMessage(List<NativeEmailMessage> nativeEmailToSend , List<Id> emailTemplateIdList){
@@ -457,12 +457,14 @@ global  without sharing class CadenceService {
     }
     public static List<Id> SendNativeEmail(List<NativeEmailMessage> nativeEmailToSend ,Map<Id, Messaging.MassEmailMessage> emailsToSend ){
         List<Id> failedActionIds = New List<Id>();
-        RingDNAApiCallouts ringDNAApiCallout = new RingDNAApiCallouts();
+        RingDNAApiCallouts ringDNAApiCallout = new RingDNAApiCallouts(true);
         for(NativeEmailMessage nativeEmailMessage :nativeEmailToSend ){
             Map<String, Object> responseMap = new Map<String, Object>();
             if (System.isBatch()){
                 try{
-                    responseMap = ringDNAApiCallout.sendNativeEmail(nativeEmailMessage.MailTo, nativeEmailMessage.NameTo, nativeEmailMessage.Body, string.valueOf(nativeEmailMessage.ActionId),  nativeEmailMessage.Subject);
+                    responseMap = ringDNAApiCallout.sendNativeEmail(nativeEmailMessage.MailTo, nativeEmailMessage.NameTo, nativeEmailMessage.Body, 
+                                                                    string.valueOf(nativeEmailMessage.ActionId),
+                                                                    nativeEmailMessage.Subject, string.valueOf(nativeEmailMessage.UserId));
                 }catch(exception ex){
                     failedActionIds.add(nativeEmailMessage.ActionId);
                 }
@@ -473,7 +475,7 @@ global  without sharing class CadenceService {
                 }
             }else{
                 emailsToSend.remove(nativeEmailMessage.ActionId);
-                sendNativeEmailTroughTrigger(nativeEmailMessage.MailTo, nativeEmailMessage.NameTo, nativeEmailMessage.Body, string.valueOf(nativeEmailMessage.ActionId),  nativeEmailMessage.Subject, nativeEmailMessage.TemplateId, nativeEmailMessage.ParticipantId);
+                sendNativeEmailTroughTrigger(nativeEmailMessage.MailTo, nativeEmailMessage.NameTo, nativeEmailMessage.Body, string.valueOf(nativeEmailMessage.ActionId),  nativeEmailMessage.Subject, nativeEmailMessage.TemplateId, nativeEmailMessage.ParticipantId, String.ValueOf(nativeEmailMessage.UserId));
             }
         }
         return failedActionIds;
@@ -894,9 +896,11 @@ global  without sharing class CadenceService {
                             emailsToSend.put(partAct.Id, createEmailMessage(objId, partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c));
                             String nativeMailTo = String.valueOf(objMap.get(objId).get('Email'));
                             String nativeNameTo = String.valueOf(objMap.get(objId).get('Name'));
+                            String participantOwnerId = String.valueOf(objMap.get(objId).get('OwnerId'));
+                            Id userId = Id.valueOf(participantOwnerId);
                             if(partAct.CadenceAction_Id__r.Action_Id__r.Email_Type__c.equals(CadenceConstants.NATIVE_EMAIL_TYPE)){
                                 nativeEmailToSend.add(createNativeEmailMessage(nativeMailTo, partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c, 
-                                                                               objId, partAct.Id, nativeNameTo));
+                                                                               objId, partAct.Id, nativeNameTo, userId));
                                 //emailTemplateIdList.add(partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c);
                             }//else{
                                 //emailTemplateIdList.add(partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c);
@@ -1580,12 +1584,12 @@ global  without sharing class CadenceService {
     }
     
     @future(callout=true)
-    public static void sendNativeEmailTroughTrigger(String toEmail, String toName, String body, String actionId, String subject, Id templateId, Id participantId)
+    public static void sendNativeEmailTroughTrigger(String toEmail, String toName, String body, String actionId, String subject, Id templateId, Id participantId, String userId)
     {   
-        RingDNAApiCallouts ringDNAApiCallout = new RingDNAApiCallouts();
+        RingDNAApiCallouts ringDNAApiCallout = new RingDNAApiCallouts(true);
         Map<String, Object> responseMap = new Map<String, Object>();
         try{
-            responseMap = ringDNAApiCallout.sendNativeEmail(toEmail, toName, body, actionId,  subject);
+            responseMap = ringDNAApiCallout.sendNativeEmail(toEmail, toName, body, actionId,  subject, userId);
         }catch(exception ex){
             
         }

@@ -25,7 +25,6 @@ public with sharing class Criterion {
 		if (fieldValue == null || this.value == null) {
 			return false;
 		}
-        System.debug('Field value = '+ fieldValue);
 		if ('equals'.equalsIgnoreCase(this.operation)) {
 			ret = criterionEvaluator.equals(fieldValue, this.value); 
 		} else if ('not_equals'.equalsIgnoreCase(this.operation)) {
