@@ -175,7 +175,6 @@ public class RingDNAApiCallouts {
             + '&sfOrgId=' + CadenceConstants.ORANIZATION_ID
             + '&sfUserId=' + userId
             + '&actionId=' + EncodingUtil.urlEncode(actionId, 'UTF-8');
-        
         if(host == '' || API_KEY == '' || API_SECRET == '' || (userId == null || (userId != null && userId == ''))) {
             return New Map<String, Object>();
         }
@@ -185,8 +184,11 @@ public class RingDNAApiCallouts {
         httpRequest.setBody(body.replaceAll('(\\r|\\n)+', '<br>'));
         
         HTTPResponse httpResponse = postResponse(httpRequest);
-        Object obj = JSON.deserializeUntyped(httpResponse.getBody());
-        Map<String, Object> objMap = (Map<String, Object>)obj; 
+        Map<String, Object> objMap = new Map<String, Object>();
+        if (httpResponse != null && httpResponse.getStatusCode() == 200){
+            Object obj = JSON.deserializeUntyped(httpResponse.getBody());
+            objMap = (Map<String, Object>)obj; 
+        }
         return objMap;
     }
     
