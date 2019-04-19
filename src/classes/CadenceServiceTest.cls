@@ -321,7 +321,7 @@ public class CadenceServiceTest {
         Test.startTest();
         CadenceService.createNativeEmailMessage('test@gmail.com',emailTemplate.Id, c1.Id, c1.Id, 'testName', c1.Id );
         //nativeEmailMsgList = CadenceService.updateNativeEmailMessage(nativeEmailMsgList, emailTemplateIdList);
-        CadenceService.sendNativeEmailTroughTrigger('test@gmail.com', 'test', 'testBody', '123456', 'subject', emailTemplate.Id, c1.Id, 'userId');
+        CadenceService.sendNativeEmailTroughTrigger(new List<String>());
         Test.stopTest(); 
     }
     
