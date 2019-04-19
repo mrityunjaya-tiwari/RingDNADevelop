@@ -306,21 +306,23 @@ public class CadenceServiceTest {
         
     }
     
-    /*@isTest
+    @isTest
     public static void createNativeEmailMessageTest(){
         EmailTemplate emailTemplate = [select Id, Name from EmailTemplate LIMIT 1];
         List<Id> emailTemplateIdList = new List<Id>();
         emailTemplateIdList.add(emailTemplate.Id);
         List<NativeEmailMessage> nativeEmailMsgList = new List<NativeEmailMessage>();
         Boolean isNativeEmail;
+        Contact c1= new Contact();
+         c1.FirstName='fname';
+         c1.LastName='lname';
+         c1.Department='IT';
+         insert c1;
         Test.startTest();
-        nativeEmailMsgList.add(CadenceService.createNativeEmailMessage('test@gmail.com' , emailTemplate.Id));
-        nativeEmailMsgList = CadenceService.updateNativeEmailMessage(nativeEmailMsgList, emailTemplateIdList);
-        isNativeEmail = CadenceService.SendNativeEmail(nativeEmailMsgList);
+        CadenceService.createNativeEmailMessage('test@gmail.com',emailTemplate.Id, c1.Id, c1.Id, 'testName', c1.Id );
+        //nativeEmailMsgList = CadenceService.updateNativeEmailMessage(nativeEmailMsgList, emailTemplateIdList);
+        CadenceService.sendNativeEmailTroughTrigger('test@gmail.com', 'test', 'testBody', '123456', 'subject', emailTemplate.Id, c1.Id, 'userId');
         Test.stopTest(); 
-        NativeEmailMessage nativeEmailMsg = nativeEmailMsgList[0];
-        System.assertEquals(nativeEmailMsg.TemplateId, emailTemplate.Id);
-        System.assertEquals(isNativeEmail, false);
-    }*/
+    }
     
 }

@@ -1,4 +1,4 @@
-public class PerformCadenceActionBatch implements Database.Batchable<sObject>, Database.stateful {
+public class PerformCadenceActionBatch implements Database.Batchable<sObject>, Database.stateful, Database.AllowsCallouts {
     
     public static String nameSpace = CadenceConstants.NAMESPACE;
     public String objType;
