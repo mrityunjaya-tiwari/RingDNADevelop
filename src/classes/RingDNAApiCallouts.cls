@@ -13,10 +13,15 @@ public class RingDNAApiCallouts {
     
 	private final String HTTP_METHOD_POST = 'POST';
     private final String BASE_URL_SEQUENCE = 'api/v2/sequence';
-    private final String SEND_EMAIL_PATH = 'messages/send';    
+    private final String SEND_EMAIL_PATH = 'messages/send';  
+    private final String API_KEY ;
+    private final String API_SECRET;
     
     public RingDNAApiCallouts() {
-        host = RingDNAHost.getBaseUri();
+        Map<String, String> dataFromCustomSetting = RingDNAHost.getBaseUri();
+        host = dataFromCustomSetting.get('Host');
+        API_KEY = dataFromCustomSetting.get('ApiKey');
+        API_SECRET = dataFromCustomSetting.get('ApiSecret');
         Map<String, Object> accountDetails = getAccountDetails();
         if(accountDetails != null && !accountDetails.isEmpty()) {
         	sessionId = String.valueOf(accountDetails.get('sessionId'));
@@ -24,6 +29,13 @@ public class RingDNAApiCallouts {
 	        userId = String.valueOf(accountDetails.get('userId'));
         }	
     } 
+    
+    public RingDNAApiCallouts(Boolean isNative) {
+        Map<String, String> dataFromCustomSetting = RingDNAHost.getBaseUri();
+        host = dataFromCustomSetting.get('Host');
+        API_KEY = dataFromCustomSetting.get('ApiKey');
+        API_SECRET = dataFromCustomSetting.get('ApiSecret');
+    }
     
     public Map<String, Object> getAccountDetails() {
         String uri = host + '/' + ACCOUNT_DETAILS_PATH;
@@ -147,20 +159,43 @@ public class RingDNAApiCallouts {
         return data.substring(data.indexOf('Session_Id_Start_Here') + 'Session_Id_Start_Here'.length(), data.indexOf('Session_Id_End_Here'));
     }
     
-    public Map<String, Object> sendNativeEmail(String toEmail, String toName, String body, String actionId, String subject) {
+    public Map<String, Object> sendNativeEmail(String toEmail, String toName, String body, String actionId, String subject, String userId) {
         String uri = host + '/' + BASE_URL_SEQUENCE + '/' + SEND_EMAIL_PATH;
         String endpoint = uri + '?' + 'sessionId='+ sessionid;
         if (toName == null){
             toName = '';
         }
         //Adding parameters in endpoint
-        endpoint = endpoint + '&toEmail=' + toEmail + + '&subject=' + EncodingUtil.urlEncode(subject, 'UTF-8') +'&toName=' + EncodingUtil.urlEncode(toName, 'UTF-8') + '&body=' + EncodingUtil.urlEncode(body, 'UTF-8')  + '&actionId=' + EncodingUtil.urlEncode(actionId, 'UTF-8');
-        if(sessionId == null || host == '') {
+        endpoint = endpoint 
+            + '&toEmail=' + toEmail 
+            + '&subject=' + EncodingUtil.urlEncode(subject, 'UTF-8') 
+            + '&toName=' + EncodingUtil.urlEncode(toName, 'UTF-8') 
+            + '&apiKey=' + API_KEY
+            + '&apiSecret=' + API_SECRET 
+            + '&sfOrgId=' + CadenceConstants.ORANIZATION_ID
+            + '&sfUserId=' + userId
+            + '&actionId=' + EncodingUtil.urlEncode(actionId, 'UTF-8');
+        
+        if(host == '' || API_KEY == '' || API_SECRET == '' || (userId == null || (userId != null && userId == ''))) {
             return New Map<String, Object>();
         }
-        HTTPResponse httpResponse = getResponse(HTTP_METHOD_POST, endpoint, sessionId);
+               
+        HttpRequest httpRequest = new HttpRequest();        
+        httpRequest.setEndpoint(endpoint);
+        httpRequest.setBody(body.replaceAll('(\\r|\\n)+', '<br>'));
+        
+        HTTPResponse httpResponse = postResponse(httpRequest);
         Object obj = JSON.deserializeUntyped(httpResponse.getBody());
         Map<String, Object> objMap = (Map<String, Object>)obj; 
         return objMap;
+    }
+    
+    private HTTPResponse postResponse(HttpRequest httpRequest) {
+        try {            
+            httpRequest.setMethod(HTTP_METHOD_POST);
+            return new Http().send(httpRequest);
+        }  catch(Exception e) {
+            return null;
+        }
     }
 }

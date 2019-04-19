@@ -2,13 +2,14 @@ public class NativeEmailController {
     @AuraEnabled
     public static Boolean sendEmail(String mailTo, String mailCc, String mailBcc, String subject, String body,String participantId,String templateId,String sequenceActionId){
         Boolean isMailSent = true;
-        RingDNAApiCallouts ringDNAApiCallout = new RingDNAApiCallouts();
+        RingDNAApiCallouts ringDNAApiCallout = new RingDNAApiCallouts(true);
         Id  sObjectId = Id.valueOf(participantId);
         String objName = sObjectId.getSObjectType().getDescribe().getName();
-        Sobject participant =  Database.query('Select Id,Email,Name from '+objName +' where Id = :sObjectId');
+        Sobject participant =  Database.query('Select Id,OwnerId,Email,Name from '+objName +' where Id = :sObjectId');
         if (participant.get('Email') != null){
             mailTo = String.valueOf(participant.get('Email'));
-            Map<String, Object> responseMap = ringDNAApiCallout.sendNativeEmail(mailTo, '', body, String.valueOf(sequenceActionId),  subject);
+            String participantOwnerId = String.valueOf(participant.get('OwnerId'));
+            Map<String, Object> responseMap = ringDNAApiCallout.sendNativeEmail(mailTo, '', body, String.valueOf(sequenceActionId),  subject,  participantOwnerId);
             if (responseMap.isEmpty()  || (!responseMap.isEmpty() && responseMap.get('success') == false) ){
                 isMailSent = sendSfdcEmail(participantId,templateId,sequenceActionId, mailCc, mailBcc);
             } 
