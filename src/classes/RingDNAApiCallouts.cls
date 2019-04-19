@@ -170,8 +170,8 @@ public class RingDNAApiCallouts {
             + '&toEmail=' + toEmail 
             + '&subject=' + EncodingUtil.urlEncode(subject, 'UTF-8') 
             + '&toName=' + EncodingUtil.urlEncode(toName, 'UTF-8') 
-            + '&apiKey=' + API_KEY
-            + '&apiSecret=' + API_SECRET 
+            + '&apiKey=' + EncodingUtil.urlEncode(API_KEY, 'UTF-8')
+            + '&apiSecret=' + EncodingUtil.urlEncode(API_SECRET, 'UTF-8') 
             + '&sfOrgId=' + CadenceConstants.ORANIZATION_ID
             + '&sfUserId=' + userId
             + '&actionId=' + EncodingUtil.urlEncode(actionId, 'UTF-8');
