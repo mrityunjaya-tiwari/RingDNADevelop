@@ -325,4 +325,52 @@ public class CadenceServiceTest {
         Test.stopTest(); 
     }
     
+    @isTest
+    public static void getTemplateTest(){
+        Cadence__c cadence1 = TestDataFactory.createCadence(CadenceConstants.OPPORTUNITY_OBJECT_NAME);
+        cadence1.matching_priority__c= 'P1';
+        cadence1.Record_Type__c=CadenceConstants.OPPORTUNITY_OBJECT_NAME;
+        String entryJson = TestDataFactory.createCadJsonWithNameCriterionsForOpp('Test',  CadenceConstants.CONDITION_AND, '');
+        String exitJson = TestDataFactory.createCadJsonWithNameCriterionsForOpp('Test1',  CadenceConstants.CONDITION_AND, '');
+        cadence1.Entrance_Criteria__c = entryJson;
+        cadence1.Exit_Criteria__c = exitJson;
+        insert cadence1;
+        
+         Contact c1= new Contact();
+         c1.FirstName='fname';
+         c1.LastName='lname';
+         c1.Department='IT';
+         insert c1;
+        
+         c1.Department = 'Sales';
+         update c1;
+        
+        action1= TestDataFactory.createAction('Email');
+        action1.Template_Id__c= '00Xf4000001cPpjEAE';
+        action1.Activation_Type__c = 'Automatic';
+        insert action1;
+        System.assertNotEquals(null, action1);
+        
+        cadenceActionLeadAND =TestDataFactory.createCadenceAction(cadence1.Id, action1.Id);
+        cadenceActionLeadAND.Day__c= 0;
+        cadenceActionLeadAND.Hour__c= 0;
+        cadenceActionLeadAND.Trigger_Type__c = 'Immediate';
+        cadenceActionLeadAND.Fields_To_Update_Action__c = '{"sobjectType":"Lead","IsPrivate":"false"}';
+        insert cadenceActionLeadAND;
+        
+        System.assertNotEquals(null, cadenceActionLeadAND.Id);
+        
+        Test.startTest();
+        CadenceService.getSMSTemplates();
+        CadenceService.getCallTemplates();
+        CadenceService.getVMTemplates();
+        CadenceService.getEmailTemplates();
+        CadenceService.getUserWrapperList();
+        CadenceService.getDandBCompanyWrapperList();
+        CadenceService.getFields('Contact');
+        CadenceService.getFieldsWithLabelsForUpdate(new List<String>{CadenceConstants.CONTACT_OBJECT_NAME,CadenceConstants.ACCOUNT_OBJECT_NAME}); 
+        CadenceService.setParticipantsActivation(cadence1.Id,true);
+        CadenceService.getCadenceParticipants(cadence1.Id,CadenceConstants.OPPORTUNITY_OBJECT_NAME);
+        Test.stopTest(); 
+    }
 }

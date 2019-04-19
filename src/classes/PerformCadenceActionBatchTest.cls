@@ -218,5 +218,12 @@ public class PerformCadenceActionBatchTest {
         Test.stopTest();
         opportunity = [Select id,Cadence_Id__c from Opportunity where id = :opportunity.Id];
         System.assertNotEquals(null, opportunity.Cadence_Id__c, 'Cadence lookup will populate as its criterion matches');
+    }
+
+    @isTest 
+    static void codeTest(){
+        Test.startTest();
+        PerformCadenceActionBatch.getObjectFields(CadenceConstants.CONTACT_OBJECT_NAME, false);
+        Test.stopTest();
     }    
 }
