@@ -460,7 +460,7 @@ global  without sharing class CadenceService {
                 }catch(exception ex){
                     failedActionIds.add(nativeEmailMessage.ActionId);
                 }
-                if (responseMap.isEmpty()  || (!responseMap.isEmpty() && responseMap.get('success') == false) ){
+                if (responseMap.isEmpty()  || (!responseMap.isEmpty() && (responseMap.get('success') == false || responseMap.get('success') == 'false')) ){
                     failedActionIds.add(nativeEmailMessage.ActionId);
                 }else {
                     emailsToSend.remove(nativeEmailMessage.ActionId);
@@ -1592,8 +1592,8 @@ global  without sharing class CadenceService {
             
             try{
                 responseMap = ringDNAApiCallout.sendNativeEmail(nativeEmailMessage.MailTo, nativeEmailMessage.NameTo, nativeEmailMessage.Body, string.valueOf(nativeEmailMessage.ActionId),  nativeEmailMessage.Subject, nativeEmailMessage.UserId);
-                if (responseMap.isEmpty()  || (!responseMap.isEmpty() && responseMap.get('success') == false) ){
-					sfdcEmailMessageList.add(createEmailMessage(nativeEmailMessage.ParticipantId, nativeEmailMessage.TemplateId));                    
+                if (responseMap.isEmpty()  || (!responseMap.isEmpty() && (responseMap.get('success') == false || responseMap.get('success') == 'false')) ){
+                    sfdcEmailMessageList.add(createEmailMessage(nativeEmailMessage.ParticipantId, nativeEmailMessage.TemplateId));                    
                 }
             }catch(exception ex){                
                 sfdcEmailMessageList.add(createEmailMessage(nativeEmailMessage.ParticipantId, nativeEmailMessage.TemplateId));

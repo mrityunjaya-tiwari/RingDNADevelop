@@ -10,7 +10,7 @@ public class NativeEmailController {
             mailTo = String.valueOf(participant.get('Email'));
             String participantOwnerId = String.valueOf(participant.get('OwnerId'));
             Map<String, Object> responseMap = ringDNAApiCallout.sendNativeEmail(mailTo, '', body, String.valueOf(sequenceActionId),  subject,  participantOwnerId);
-            if (responseMap.isEmpty()  || (!responseMap.isEmpty() && responseMap.get('success') == false) ){
+            if (responseMap.isEmpty()  || (!responseMap.isEmpty() && (responseMap.get('success') == false || responseMap.get('success') == 'false')) ){
                 isMailSent = sendSfdcEmail(participantId,templateId,sequenceActionId, mailCc, mailBcc);
             } 
         }else{
