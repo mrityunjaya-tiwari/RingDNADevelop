@@ -149,9 +149,13 @@ public class Contacts  extends SObjectDomain {
 		}
         Map<Id, Id> contIdToAccIdMap = new Map<Id, Id>();
         Map<Id, Account> parentMap = new Map<Id, Account>();
+        Boolean IsOpportunity = false;
         for(Contact cObj: (List<Contact>) records) {
             if(cObj.AccountId != null) {
                 contIdToAccIdMap.put(cObj.Id, cObj.AccountId);
+            }
+            if(cObj.Opportunity_Id__c != null && !String.isBlank(cObj.Opportunity_Id__c)) {
+                IsOpportunity = true;
             }
         }
         
@@ -171,7 +175,12 @@ public class Contacts  extends SObjectDomain {
 		Map<Id, Contact> contMap = new Map<Id, Contact>((List<Contact>)CadenceService.getSObjectsToProcess(records, parentMap, cadMap, CadenceConstants.CONTACT_OBJECT_NAME));
 		
 		//Getting non performed participant actions 
-		Map<Id, List<Sequence_Action__c>> partActionsMap = CadenceService.getRemainingParticipantAction(contMap.keySet(), CadenceConstants.CONTACT_OBJECT_NAME);
+        Map<Id, List<Sequence_Action__c>> partActionsMap;
+        if(IsOpportunity == true){
+        	partActionsMap = CadenceService.getRemainingParticipantAction(contMap.keySet(), CadenceConstants.OPPORTUNITY_OBJECT_NAME);    
+        }else{
+            partActionsMap = CadenceService.getRemainingParticipantAction(contMap.keySet(), CadenceConstants.CONTACT_OBJECT_NAME);
+        }
 		
 		//Getting participant action to perform 
 		for(Contact cObj : contMap.values()) {
