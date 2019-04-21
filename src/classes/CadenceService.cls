@@ -895,7 +895,7 @@ global  without sharing class CadenceService {
                             String nativeNameTo = String.valueOf(objMap.get(objId).get('Name'));
                             String participantOwnerId = String.valueOf(objMap.get(objId).get('OwnerId'));
                             Id userId = Id.valueOf(participantOwnerId);
-                            if(partAct.CadenceAction_Id__r.Action_Id__r.Email_Type__c.equals(CadenceConstants.NATIVE_EMAIL_TYPE)){
+                            if(partAct.CadenceAction_Id__r.Action_Id__r.Email_Type__c != null && partAct.CadenceAction_Id__r.Action_Id__r.Email_Type__c.equals(CadenceConstants.NATIVE_EMAIL_TYPE)){
                                 nativeEmailToSend.add(createNativeEmailMessage(nativeMailTo, partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c, 
                                                                                objId, partAct.Id, nativeNameTo, userId));
                                 //emailTemplateIdList.add(partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c);
