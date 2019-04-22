@@ -952,6 +952,7 @@ global  without sharing class CadenceService {
                 
            } 
         }
+	    
         if(!nativeEmailToSend.isEmpty()) {
             //List<NativeEmailMessage> updatedNativeEmailToSend = updateNativeEmailMessage(nativeEmailToSend, emailTemplateIdList);
             List<Id> failedActionIds = SendNativeEmail(nativeEmailToSend, emailsToSend);
@@ -963,9 +964,12 @@ global  without sharing class CadenceService {
                 }
                 Messaging.SendEmailResult[] results = Messaging.sendEmail(sfdcMailToSent, false);
             }
-        }else if(!emailsToSend.isEmpty()) {
+        }
+	    
+	if(!emailsToSend.isEmpty()) {
             Messaging.SendEmailResult[] results = Messaging.sendEmail(emailsToSend.values(), false);
         }
+	    
         if(!tasksToCreate.isEmpty()) {
             if(System.isBatch()) {
                 Database.SaveResult[] results = Database.insert(tasksToCreate, false);
@@ -974,9 +978,11 @@ global  without sharing class CadenceService {
                 createTasks(tasksJson);
             }
         } 
+	    
         if(!partActToUpdate.isEmpty()) {
             Database.update(partActToUpdate, false);
         } 
+	    
         return performedPartActions;
     } 
     
