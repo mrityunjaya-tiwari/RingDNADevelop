@@ -161,13 +161,12 @@ public class RingDNAApiCallouts {
     
     public Map<String, Object> sendNativeEmail(String toEmail, String toName, String body, String actionId, String subject, String userId) {
         String uri = host + '/' + BASE_URL_SEQUENCE + '/' + SEND_EMAIL_PATH;
-        String endpoint = uri + '?' + 'sessionId='+ sessionid;
         if (toName == null){
             toName = '';
         }
         //Adding parameters in endpoint
-        endpoint = endpoint 
-            + '&toEmail=' + toEmail 
+        String endpoint = uri 
+            + '?toEmail=' + toEmail 
             + '&subject=' + EncodingUtil.urlEncode(subject, 'UTF-8') 
             + '&toName=' + EncodingUtil.urlEncode(toName, 'UTF-8') 
             + '&apiKey=' + EncodingUtil.urlEncode(API_KEY, 'UTF-8')
