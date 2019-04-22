@@ -895,7 +895,7 @@ global  without sharing class CadenceService {
                             String nativeNameTo = String.valueOf(objMap.get(objId).get('Name'));
                             String participantOwnerId = String.valueOf(objMap.get(objId).get('OwnerId'));
                             Id userId = Id.valueOf(participantOwnerId);
-                            if(partAct.CadenceAction_Id__r.Action_Id__r.Email_Type__c.equals(CadenceConstants.NATIVE_EMAIL_TYPE)){
+                            if(partAct.CadenceAction_Id__r.Action_Id__r.Email_Type__c != null && partAct.CadenceAction_Id__r.Action_Id__r.Email_Type__c.equals(CadenceConstants.NATIVE_EMAIL_TYPE)){
                                 nativeEmailToSend.add(createNativeEmailMessage(nativeMailTo, partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c, 
                                                                                objId, partAct.Id, nativeNameTo, userId));
                                 //emailTemplateIdList.add(partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c);
@@ -952,6 +952,7 @@ global  without sharing class CadenceService {
                 
            } 
         }
+	    
         if(!nativeEmailToSend.isEmpty()) {
             //List<NativeEmailMessage> updatedNativeEmailToSend = updateNativeEmailMessage(nativeEmailToSend, emailTemplateIdList);
             List<Id> failedActionIds = SendNativeEmail(nativeEmailToSend, emailsToSend);
@@ -963,9 +964,12 @@ global  without sharing class CadenceService {
                 }
                 Messaging.SendEmailResult[] results = Messaging.sendEmail(sfdcMailToSent, false);
             }
-        }else if(!emailsToSend.isEmpty()) {
+        }
+	    
+	if(!emailsToSend.isEmpty()) {
             Messaging.SendEmailResult[] results = Messaging.sendEmail(emailsToSend.values(), false);
         }
+	    
         if(!tasksToCreate.isEmpty()) {
             if(System.isBatch()) {
                 Database.SaveResult[] results = Database.insert(tasksToCreate, false);
@@ -974,9 +978,11 @@ global  without sharing class CadenceService {
                 createTasks(tasksJson);
             }
         } 
+	    
         if(!partActToUpdate.isEmpty()) {
             Database.update(partActToUpdate, false);
         } 
+	    
         return performedPartActions;
     } 
     
