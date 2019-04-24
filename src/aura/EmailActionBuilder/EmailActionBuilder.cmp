@@ -183,9 +183,10 @@
                                 </div>
                                 <p class="slds-page-header__row slds-truncate slds-align_absolute-center SFDC-Email-List-SFDF-bold" >Business Hours</p>
                                 <div class = "SFDC-Email-List-Manual">
-                                    Lorem ipsum dolor sit amet, consectetur
-                                    adipiscing elit, sed do eiusmod tempor incididunt
-                                    ut labore et dolore magna aliqua.
+                                    Only send emails between business
+                                    hours set for the user who is sending the email.
+                                    Business hours are defined for each user with
+                                    their Salesforce profile.
                                 </div>
                                 <div class="slds-text-align_center">
                                     <aura:if isTrue="{!v.newAction.deliveryPreference == 'Weekdays'}">
