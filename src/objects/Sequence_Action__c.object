@@ -246,6 +246,17 @@
         <unique>false</unique>
     </fields>
     <fields>
+		<fullName>Opportunity_Id__c</fullName>
+		<externalId>false</externalId>
+		<formula>Contact_Id__r.Opportunity_Id__c</formula>
+		<formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+		<label>Opportunity Id</label>
+		<required>false</required>
+		<trackTrending>false</trackTrending>
+		<type>Text</type>
+		<unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Participant_Type__c</fullName>
         <deprecated>false</deprecated>
         <externalId>false</externalId>

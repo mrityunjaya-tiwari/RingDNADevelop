@@ -33,7 +33,6 @@ public with sharing class RuleCriterionMatcher {
                 continue;
             }
             Boolean isCriterionMatches = RuleCriterionMatcherHelper.cadenceCriterionMatches(partObj, parentObj, cadCriterion.get(cadId));
-            System.debug('Test#1234567:'+isCriterionMatches);
             if(isCriterionMatches) {
                 matchingCadences.add(cadenceMap.get(cadId));
             } 
@@ -66,22 +65,17 @@ public with sharing class RuleCriterionMatcher {
     }
 	  
 	public static SObject matchExitCriterion(Cadence__c cad, SObject partObj, SObject parentObj, String objName) {
-		System.debug('matchExitCriterion:##');
 		//Returning if given cad is null
 		if(cad == null) {
 			return null;
 		} 
-		System.debug('matchExitCriterion:##12');
 		//Getting cadence criterion for cadence		
 		Map<Id, CriterionSet> cadCriterion = RuleCriterionMatcherHelper.getCadenceWiseCriterions(new List<Cadence__c>{cad}, CadenceConstants.CRITERION_TYPE_EXIT);
-		System.debug('matchExitCriterion:##cadCriterion='+cadCriterion);
         
         //matchExitCriterion
         
 		//Checking for exit Cadence Criterion mathcing or not 
 		Boolean isCriterionMatches = RuleCriterionMatcherHelper.cadenceCriterionMatches(partObj, parentObj, cadCriterion.get(cad.Id));
-		
-        System.debug('Exit isCriterionMatches='+isCriterionMatches);
         
 		//Removing cadence details from participnat if it matches it's exit criterion 
 		if(isCriterionMatches) {
@@ -89,21 +83,21 @@ public with sharing class RuleCriterionMatcher {
 			partObj.put(nameSpace+'Cadence_Id__c', null);
 			partObj.put(nameSpace+'isActivated__c', false);
 			partObj.put(nameSpace+'EntranceCriteria_Matched_Date__c', null);
+            if(objName == CadenceConstants.CONTACT_OBJECT_NAME){
+                partObj.put(nameSpace+'Opportunity_Id__c', null);
+            }
 			return partObj;
 		} 
 		return null;
 	}
 	public static Boolean matchExitCriterionOpp(Cadence__c cad, SObject partObj, SObject parentObj, String objName) {
-		System.debug('matchExitCriterion:##New');
         
 		//Returning if given cad is null
 		if(cad == null) {
             return false;
 		} 
-		System.debug('matchExitCriterion:##12');
 		//Getting cadence criterion for cadence		
 		Map<Id, CriterionSet> cadCriterion = RuleCriterionMatcherHelper.getCadenceWiseCriterions(new List<Cadence__c>{cad}, CadenceConstants.CRITERION_TYPE_EXIT);
-		System.debug('matchExitCriterion:##cadCriterion='+cadCriterion);
         Boolean isCriterionMatches = RuleCriterionMatcherHelper.cadenceCriterionMatches(partObj, parentObj, cadCriterion.get(cad.Id));
 		return isCriterionMatches;
 	}
@@ -189,7 +183,6 @@ public with sharing class RuleCriterionMatcher {
 		if(partActions == null || partActions.isEmpty() || cad == null || cad.CadenceActions__r == null) {
             return actionsToPerform;
         }
-		System.debug('cad getMatchingParticipantActions'+cad);
 		Map<Id, CadenceAction__c> allCadActionMap = new Map<Id, CadenceAction__c>(cad.CadenceActions__r);
 		List<CadenceAction__c> remainingCadActions = new List<CadenceAction__c>();
 		

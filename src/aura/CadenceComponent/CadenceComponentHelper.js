@@ -4,7 +4,7 @@
     },
     
     getCadenceData: function(component,helper){
-        component.set("v.SpinnerForSync",true);
+        component.set("v.spinner",true);
         var cadenceId = component.get("v.recordId");
         
         if(cadenceId){
@@ -36,7 +36,7 @@
                     var exitCriterion = JSON.parse(wrapperResult.sObj.exitCriteria);
                     component.set("v.entranceCriteriaSet",entryCriterion);
                     component.set("v.exitCriteriaSet",exitCriterion);
-                    component.set("v.SpinnerForSync",false);
+                    component.set("v.spinner",false);
                 }else if(state === "ERROR"){
                     var myUserContext = component.get("v.themeName");
                     if(myUserContext == 'Theme3') {
@@ -50,7 +50,7 @@
                         });
                         evt.fire();
                     }}else{
-                        component.set("v.SpinnerForSync",false);
+                        component.set("v.spinner",false);
                     }
             });
             $A.enqueueAction(cadence);
@@ -81,12 +81,19 @@
                         var url = $A.get('$Resource.cadence_icons') + '/message/msg-icon@3x.png' ;
                         var urlicon = $A.get('$Resource.cadence_icons') + '/rdna-icon/default/rdna-logo@3x.png' ;
                         var smsLink =  '<img class = "Oval" src=' + url + ' />';
-                        smsLink = '<div class="slds-float_right slds-col"><a href="tel:'+ rawData[index].phone + '" class="ringdna-sms" data-phone="'+ rawData[index].phone + '" data-sms-template-id="'+ rawData[index].templateId + '">' + smsLink + '</a>';
+                        if(rawData[index].tempId == undefined || rawData[index].tempId == ''){
+                        	smsLink = '<div class="slds-float_right slds-col"><a href="tel:'+ rawData[index].phone + '" class="ringdna-sms" data-phone="'+ rawData[index].phone +'">' + smsLink + '</a>';	    
+                        }else{
+                            smsLink = '<div class="slds-float_right slds-col"><a href="tel:'+ rawData[index].phone + '" class="ringdna-sms" data-phone="'+ rawData[index].phone + '" data-sms-template-id="'+ rawData[index].templateId + '">' + smsLink + '</a>';
+                        }
+                        
                         var phoneLinkIcon =  '<img class = "OvalPLIs" src=' + urlicon + ' />';
                         if(actionType == 'Call'){
-                            phoneLinkIcon = '<a href="tel:'+ rawData[index].phone + '" class="ringdna-phone" data-phone="'+ rawData[index].phone + '" data-call-notes-template-id="'+ rawData[index].templateId + '">' + phoneLinkIcon + '</a> </div>';
-                        }else{
-                            phoneLinkIcon = '<a href="tel:'+ rawData[index].phone + '" class="ringdna-phone" data-phone="'+ rawData[index].phone + '" data-vm-drop-id="'+ rawData[index].templateId + '">' + phoneLinkIcon + '</a> </div>';
+                            if(rawData[index].tempId == undefined || rawData[index].tempId == ''){
+                                phoneLinkIcon = '<a href="tel:'+ rawData[index].phone + '" class="ringdna-phone" data-phone="'+ rawData[index].phone +'">' + phoneLinkIcon + '</a> </div>';
+                            }else{
+                                phoneLinkIcon = '<a href="tel:'+ rawData[index].phone + '" class="ringdna-phone" data-phone="'+ rawData[index].phone + '" data-call-notes-template-id="'+ rawData[index].templateId + '">' + phoneLinkIcon + '</a> </div>';
+                            }
                         }
                         rdpElement.innerHTML =   '<div class="slds-grid slds-truncate">' + phoneLink  + smsLink + phoneLinkIcon  + '</div>';
                     }else{
@@ -162,7 +169,7 @@
     getObjectFieldsList: function(component, event, helper){
         var cadenceObj = component.get("v.cadence");
         var cadence = component.get("c.getObjCriList");
-        component.set("v.SpinnerForSync",true);
+        component.set("v.spinner",true);
         cadence.setParams({objectType: cadenceObj.recordType});
         cadence.setCallback(this, function(response){
             var state = response.getState();
@@ -178,9 +185,9 @@
                     
                 
                 component.set('v.AllFieldList', fieldList);
-                component.set("v.SpinnerForSync",false);
+                component.set("v.spinner",false);
             }else {
-                component.set("v.SpinnerForSync",false);
+                component.set("v.spinner",false);
             }
             component.set("v.settedSequenceType",false);
         });

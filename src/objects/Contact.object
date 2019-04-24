@@ -366,6 +366,27 @@ IF(ringdna100__Last_Outbound_Call__c &gt; ringdna100__Last_Email_Attempt__c, (NO
         <trackFeedHistory>false</trackFeedHistory>
         <type>DateTime</type>
     </fields>
+	<fields>
+        <fullName>Sequence_Type__c</fullName>
+		<description>It will return record type.</description>
+		<externalId>false</externalId>
+		<formula>TEXT(Cadence_ID__r.Record_Type__c)</formula>
+		<formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+		<label>Sequence Type</label>
+		<required>false</required>
+		<type>Text</type>
+		<unique>false</unique>>
+    </fields>
+	<fields>
+		<fullName>Opportunity_Id__c</fullName>
+		<externalId>false</externalId>
+		<label>Opportunity Id</label>
+		<length>20</length>
+		<required>false</required>
+		<trackFeedHistory>false</trackFeedHistory>
+		<type>Text</type>
+		<unique>false</unique>
+    </fields>
     <fields>
         <fullName>ringdna100__First_Inbound_Message__c</fullName>
         <deprecated>false</deprecated>

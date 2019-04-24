@@ -1,6 +1,22 @@
 ({
     doInit: function(component, event, helper){
-        helper.getCadenceActionsData(component, event, helper);
+        var actionWrapper = component.get('v.actionWrapper');
+        if(actionWrapper.length == 0){
+            helper.getCadenceActionsData(component, event, helper);
+        }
+        else{
+            component.set('v.actionList', actionWrapper[0].actionClsList);
+            component.set('v.actionTypeList', actionWrapper[0].actionTypeList); 
+            //Data Sorting
+            for(var i=0;actionWrapper[0].fieldList.length > i;i++){
+                actionWrapper[0].fieldList[i]["fieldsDetail"].sort((a, b) => a.fieldLabel.localeCompare(b.fieldLabel));
+            }
+            
+            component.set('v.UpdateFieldList', actionWrapper[0].fieldList[0]);
+            helper.setDataToEdit(component, event, helper);
+            component.set('v.ISLoad', true);
+            component.set('v.spinner',false);
+        }
     },
     
     // Use to set action type according to button input and add new cadenceAction for cadence
@@ -33,7 +49,6 @@
         return isValid;
     },
     createNewAction : function(component, event, helper){
-       component.set('v.createAction', true); 
-        
+        component.set('v.createAction', true); 
     }
 })

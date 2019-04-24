@@ -47,7 +47,7 @@
         helper.getOperatorList(component, event, helper);
         */
         var AllFieldList = component.get("v.AllFieldList");
-        helper.getuserWrapperList(component, event, helper);
+        helper.getuserAndDnBWrapperList(component, event, helper);		
         for(var i=0;AllFieldList.length > i;i++){
             var fields =AllFieldList[i]["fieldsDetail"];
             var newObj = component.get("v.objectInstance");

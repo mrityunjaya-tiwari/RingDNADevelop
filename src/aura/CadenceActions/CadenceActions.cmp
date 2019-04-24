@@ -36,12 +36,13 @@
     <!-- CadenceAction Id list to delete cadenceActions -->
     <aura:attribute name="caIdsList" type="List"/>
     <!--create a component attributs -->
-    <aura:attribute name="spinner" type="boolean" default="false"/>
+    <aura:attribute name="spinner" type="boolean"/>
     <aura:attribute name= "createAction" type="boolean" default="false"/>
     <aura:attribute name="ISLoad" type="boolean" default="false"/>
+    <aura:attribute name="SaveDisable" type="Boolean" default= "false"/>
     <aura:attribute name="UpdateFieldList" type="List"/>
+    <aura:attribute name= "actionWrapper" type="List"/>
     
-    <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>
     <div class = "slds-m-left_large">
         <div class = "slds-form-element slds-size_1-of-1  slds-m-bottom_large slds-m-top_medium " aura:id = "createTaskdiv">
             <p class="slds-page-header__row slds-truncate rdna-sub-header-bold slds-align_absolute-center" >Sequence Actions</p>
@@ -126,7 +127,7 @@
             </div>
         </aura:if>
         <aura:if isTrue="{!v.createAction}">
-            <c:DynamicActionDetails aura:id="dynamicActionId" createAction="{!v.createAction}" actionTypeList="{!v.actionTypeList}" actionList ="{!v.actionList}" UpdateFieldList="{!v.UpdateFieldList}" />
+            <c:DynamicActionDetails aura:id="dynamicActionId" createAction="{!v.createAction}" actionTypeList="{!v.actionTypeList}" actionList ="{!v.actionList}" />
         </aura:if>
     </div>
 </aura:component>

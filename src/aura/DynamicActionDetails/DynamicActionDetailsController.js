@@ -14,7 +14,7 @@
                 component.set('v.listSmsTemplate', listEmailTemplate.listSmsTemplate);
                 component.set('v.listCallTemplate', listEmailTemplate.listCallTemplate);
                 component.set('v.listVMTemplate', listEmailTemplate.listVMTemplate);
-                component.set('v.wrapperTaskFields', listEmailTemplate.wrapperTaskFields);
+                component.set('v.UpdateFieldList', listEmailTemplate.wrapperTaskFields);
                 component.set('v.listToShowInTemplateType', listEmailTemplate.listSmsTemplate);
                 if(id != null) {
                     if(id != '') {
@@ -31,6 +31,8 @@
         var newAct = component.get("v.newAction");
         var name = newAct.name;
         newAct.name = name.trim();
+        newAct.emailType = 'SFDC';
+        newAct.deliveryPreference = 'Immediate';
         component.set("v.newAction", newAct);
         var isValidAction = component.find('formValidationId').reduce(function (validSoFar, inputCmp) {
             inputCmp.showHelpMessageIfInvalid();

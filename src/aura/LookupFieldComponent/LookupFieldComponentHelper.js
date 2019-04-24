@@ -15,9 +15,13 @@
                 component.set("v.fieldName" , fieldName.slice(pos + 1, fieldName.length));
             }
             var updatedFieldName = component.get("v.fieldName");
-            if (updatedFieldName == 'CreatedById' || updatedFieldName == 'LastModifiedById' || updatedFieldName == 'OwnerId'){
+            if (updatedFieldName == 'CreatedById' || updatedFieldName == 'LastModifiedById' || updatedFieldName == 'OwnerId' || updatedFieldName == 'DandbCompanyId'){
                 component.set('v.isLookup', "false");
+                component.set('v.isDnBCompanyId', "false");
                 component.set("v.fieldName", parentId);
+                if(updatedFieldName == 'DandbCompanyId'){
+                component.set('v.isDnBCompanyId', "true");
+            }
             }
         }catch(err){
             
@@ -27,8 +31,8 @@
     handleOnSelect:function(component, event, helper){
         try{
             var ddElement  = component.find("validateLookups");
-            var value = ddElement.get("v.value");
-            if (value == 'CreatedById' || value == 'LastModifiedById' || value == 'OwnerId' ){
+            var value = ddElement.get("v.value"); 
+            if (value == 'CreatedById' || value == 'LastModifiedById' || value == 'OwnerId' || value == ""){
                 $A.util.removeClass(ddElement, "customRequired");
                 $A.util.addClass(ddElement, "customRequiredMessage");
                 $A.util.addClass(ddElement, "slds-has-error slds-input:active");

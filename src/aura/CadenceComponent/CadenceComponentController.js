@@ -29,7 +29,7 @@
     
     // this function automatic call by aura:doneWaiting event 
     hideSpinner : function(component,event,helper){
-        component.set("v.SpinnerForSync", false);
+        component.set("v.spinner", false);
     },
     settedSequenceType: function(component,event,helper){
         var settedSequenceType = component.get("v.settedSequenceType");

@@ -32,6 +32,13 @@ public class TestDataFactory {
         return opp;
     }
     
+    public static OpportunityContactRole createOpportunityRole(Id opportunityId,Id contactId) {
+        OpportunityContactRole oppRole = new OpportunityContactRole();
+        oppRole.ContactId = contactId;
+        oppRole.OpportunityId = opportunityId;
+        return oppRole;
+    }    
+    
     public static Lead createLead() { 
         Lead l = new Lead();
         l.LastName = 'Test Lead';
@@ -124,7 +131,6 @@ public class TestDataFactory {
 	}
     
     public static String createCadJsonWithNameCriterions(String firstName, String lastName, String condition, String priorityFormula) {
-        
         List<Criterion> criterionList = new List<Criterion>();
         Criterion c1 = TestDataFactory.createCriterion(1, 'FirstName', 'STRING', 'equals', firstName);
         Criterion c2 = TestDataFactory.createCriterion(2, 'LastName', 'STRING', 'equals', lastName);
@@ -132,19 +138,28 @@ public class TestDataFactory {
         criterionList.add(c1);
         criterionList.add(c2);
         criterionList.add(c3);
-        
         return createCadenceJSON(criterionList, condition, priorityFormula);
-
     }
     
     public static String createCadJsonWithNameCriterionsForOpp(String firstName, String condition, String priorityFormula) {
-        
         List<Criterion> criterionList = new List<Criterion>();
         Criterion c1 = TestDataFactory.createCriterion(1, 'Name', 'STRING', 'equals', firstName);
         criterionList.add(c1);
-        
         return createCadenceJSON(criterionList, condition, priorityFormula);
-
     }
     
+    public static String createCadJsonWithNameCriterionsForOppRole(String values, String condition, String  priorityFormula) {
+        List<Criterion> criterionList = new List<Criterion>(); 
+        Criterion c1 = TestDataFactory.createCriterion(1, 'OpportunityContactRole.Role', 'PICKLIST', 'equals', values);
+        criterionList.add(c1);
+        return createCadenceJSON(criterionList, condition, priorityFormula);
+    }
+    public static String createCadJsonWithConditionalCriterionsForOpp(String values, String condition, String priorityFormula,string operator) {
+        List<Criterion> criterionList = new List<Criterion>();
+        Criterion c1 = TestDataFactory.createCriterion(1, 'Amount', 'Number', operator, values);
+        Criterion c2 = TestDataFactory.createCriterion(1, 'CloseDate', 'Date', operator, String.valueof(System.today()));
+        criterionList.add(c1);
+        criterionList.add(c2);
+        return createCadenceJSON(criterionList, condition, priorityFormula); 
+    }
 }

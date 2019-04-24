@@ -152,7 +152,7 @@
         else if( myUserContext == undefined){
             var evt = $A.get("e.force:navigateToComponent");
             evt.setParams({
-                componentDef  : "c:ActionDetails" ,
+                componentDef  : "c:ActionBuilder" ,
                 componentAttributes : {
                     "recordId" : id
                 }

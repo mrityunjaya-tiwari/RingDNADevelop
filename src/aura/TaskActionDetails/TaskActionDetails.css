@@ -1,0 +1,89 @@
+/* Sub Header*/
+.THIS .rdna-sub-header-bold{
+    font-family: Logical;
+    font-weight: bold;
+    font-size: 24px;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.33;
+    letter-spacing: normal;
+    text-align: center;
+    color: #000000;
+}
+.THIS .rdna-sub-header{
+    font-family: Logical;
+    font-size: 24px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.33;
+    letter-spacing: normal;
+    text-align: center;
+    color: #000000;
+}
+
+/*Header css */
+.THIS .rdna-header-small {
+    font-family: Logical;
+    font-size: 14px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    color: #000000;
+}
+.THIS .rdna-header-large { 
+    font-family: Logical;
+    font-size: 38px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    color: #000000;
+}
+.THIS .rdna-required-header{
+    width: 67px;
+    font-family: Logical;
+    font-size: 14px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.71;
+    letter-spacing: normal;
+    text-align: center;
+    color: #979797;
+}
+.THIS .rdna-Field-header-bold{
+    font-family: Logical;
+    font-size: 14px;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.57;
+    letter-spacing: normal;
+    text-align: center;
+    color: #000000;
+    font-weight: bold;
+}
+.THIS .rdna-Field-header{
+    font-family: Logical;
+    font-size: 14px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.57;
+    letter-spacing: normal;
+    text-align: center;
+    color: #000000;
+}
+.THIS .rdna-margin{
+    margin-left: 280px;
+}
+.THIS .rdna-field-margin{
+    margin-left: 18px;
+}
+.THIS .rdna-icon{
+    padding-top: 8px;
+    margin-top: 18px;
+}

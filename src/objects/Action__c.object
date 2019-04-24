@@ -81,6 +81,52 @@
         <type>Picklist</type>
     </fields>
     <fields>
+        <fullName>Delivery_Preference__c</fullName>
+		<deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Delivery Preference</label>
+		<picklist>
+            <picklistValues>
+                <fullName>Immediate</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Weekdays</fullName>
+                <default>false</default>
+            </picklistValues>
+			<picklistValues>
+                <fullName>Any Day</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Email_Type__c</fullName>
+		<deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Email Type</label>
+        <required>false</required>
+		<picklist>
+            <picklistValues>
+                <fullName>SFDC</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>NATIVE</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
         <fullName>Task_Description__c</fullName>
         <deprecated>false</deprecated>
         <description>Task detail(Name, Type, Subject, Description) will be saved in JSON format.</description>

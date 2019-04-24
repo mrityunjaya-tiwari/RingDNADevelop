@@ -16,4 +16,16 @@ public class CadenceUtilTest {
         CadenceUtil.getObjectQuery('Lead',new List<Id>{l1.id});
         //CadenceUtil.scheduleNextCadenceScheduler(15);
     }
+
+    @isTest
+    public static void CheckObjectHasAccessOrNot(){
+        
+        Test.startTest();
+        List<String> objectList1 = CadenceUtil.getValidSObjectListInOrg(new List<String>{CadenceConstants.LEAD_OBJECT_NAME});
+        System.assertEquals(CadenceConstants.LEAD_OBJECT_NAME, objectList1[0]);
+        
+        List<String> objectList2 = CadenceUtil.getValidSObjectListInOrg(new List<String>{'XYZ'});
+        System.assertEquals(0, objectList2.size());
+        Test.stopTest();
+    }    
 }

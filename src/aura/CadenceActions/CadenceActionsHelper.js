@@ -65,6 +65,7 @@
     
     getCadenceActionsData :  function(component, event, helper){
         component.set('v.spinner',true);
+        component.set('v.SaveDisable', true);
         var action = component.get("c.getActionList");
         var cadence = component.get("v.newCadence");
         action.setParams({type: cadence.recordType});
@@ -72,6 +73,7 @@
             var state = response.getState();
             if (state === "SUCCESS") {
                 var actionWrapper = response.getReturnValue();
+                component.set('v.actionWrapper', actionWrapper);
                 component.set('v.actionList', actionWrapper.actionClsList);
                 component.set('v.actionTypeList', actionWrapper.actionTypeList); 
                 //Data Sorting
@@ -88,6 +90,12 @@
                 //component.set('v.spinner',false);
             }
             
+            
+            window.setTimeout(
+                $A.getCallback(function() {
+                    component.set('v.SaveDisable', false);
+                }), 1000
+            );
             component.set('v.ISLoad', true);
             component.set('v.spinner',false);
         });

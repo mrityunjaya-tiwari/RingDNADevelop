@@ -50,11 +50,11 @@
         catch(err) {
             isValid = false;
         }
-        
         return isValid;
     },
     
     saveCadence:function(component, event, helper){
+        component.set('v.spinner' , true);
         component.set('v.newSequence', true);
         var action = component.get("c.saveCadence");
         var cadObj = component.get("v.newCadence");
@@ -68,7 +68,6 @@
         var listCadenceActionString = JSON.stringify(lstCadAction);
         action.setParams({ 
             cadenceObjString :  sequenceWrapper,
-           // listCadenceAction : lstCadAction,
             listCadenceActionString : listCadenceActionString,
             caIdsList : caIdsList
         });
@@ -77,6 +76,7 @@
             if (state === "SUCCESS") {
                var recordId = response.getReturnValue();
                var myUserContext =component.get("v.themeName");
+               component.set("v.SaveDisable", true);
                 
                  if(myUserContext == 'Theme3' || myUserContext == 'Theme4t' || myUserContext == 'Theme4d') {
                     window.location = '/apex/Cadence?isedit=false&id='+recordId;
@@ -92,10 +92,10 @@
                     });
                     evt.fire();
                 }
-            
-            }else{   
-            }
+            }            
+            component.set('v.spinner' , false);
         });
+        component.set("v.SaveDisable",false);
         $A.enqueueAction(action)
     },
     

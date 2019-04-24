@@ -25,7 +25,7 @@ public with sharing class CadenceSelector {
                 (SELECT Id, Name, Action_Criterion__c, Action_Criteria_PE__c, Action_Id__c,
                  Cadence_Id__c, Day__c, Hour__c, Trigger_Type__c, Fields_To_Update_Action__c, Action_Id__r.Activation_Type__c, 
                  Action_Id__r.Task_Description__c, Action_Id__r.Template_Id__c, Action_Id__r.Type__c  
-                 FROM CadenceActions__r) 
+                 FROM CadenceActions__r order by Index__c) 
                 FROM Cadence__c WHERE Id = :cadId LIMIT 1];
         
     } 
@@ -139,7 +139,6 @@ public with sharing class CadenceSelector {
             queryWithSubQuery = 'Select '+nameSpace+'Cadence_ID__r.name, ' + queryWithSubQuery ;
             queryWithSubQuery += ' WHERE '+nameSpace+'isActivated__c = true AND IsConverted != true  AND '+nameSpace+'Cadence_Id__c != null AND OwnerId=:userId';
         }
-        System.debug('queryWithSubQuery:'+queryWithSubQuery);
         return Database.query(queryWithSubQuery); 
     }
     
@@ -152,7 +151,7 @@ public with sharing class CadenceSelector {
     public static List<CadenceAction__c> getCadenceActionsByIds(List<Id> Ids){
         List<Id> caIds = Ids;
         String objType = nameSpace+'CadenceAction__c';
-        String parentFields = ' '+nameSpace+'Action_Id__r.'+nameSpace+'Type__c, '+nameSpace+'Action_Id__r.'+nameSpace+'Activation_Type__c, '+nameSpace+'Action_Id__r.'+nameSpace+'Template_Id__c, '+nameSpace+ 'Action_Id__r.'+nameSpace +'Task_Description__c, ';
+        String parentFields = ' '+nameSpace+'Action_Id__r.'+nameSpace+'Type__c, '+nameSpace+'Action_Id__r.'+nameSpace+'Activation_Type__c, '+nameSpace+'Action_Id__r.'+nameSpace+'Template_Id__c, '+nameSpace+ 'Action_Id__r.'+nameSpace +'Task_Description__c, '+nameSpace+ 'Action_Id__r.'+nameSpace +'Email_Type__c, ';
         String query = getQueryForObject(objType);
         query = query.replace('Select ', parentFields);
         query = 'Select ' + query + ' WHERE Id In :caIds ';
@@ -166,9 +165,14 @@ public with sharing class CadenceSelector {
      * @return - String - SOQL query
      */
     public  static String getQueryForObject(String objType){
-        if(objType.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_OBJECT_NAME))
+        if(objType.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_OBJECT_NAME)){
         	objType = CadenceConstants.CONTACT_OBJECT_NAME;
+        }
         
+        return getQuery(objType);
+    }  
+    
+    private static String getQuery(String objType){
         Set<String> allowedFields = new Set<String>();
         String query = 'Select ';
         Map<String, Schema.SObjectField> fieldMap = Schema.getGlobalDescribe().get(objType).getDescribe().fields.getMap();
@@ -194,10 +198,20 @@ public with sharing class CadenceSelector {
         query += String.join(new List<String>(allowedFields), ',');
         query += ' FROM '+ objType + '';
         return query;
-    }  
+    }
     
     public static List<User> getUserList(){
         return [select id, Name  from user where ReceivesAdminInfoEmails = true];
+    }
+	
+	public static List<SObject> getDandBCompanyList(){ 
+        Schema.sObjectType sObjectName = Schema.getGlobalDescribe().get(CadenceConstants.DB_OBJECT_NAME);
+        if (sObjectName != null){
+            String query = 'Select id, Name  from ' + CadenceConstants.DB_OBJECT_NAME ;
+            return Database.query(query); 
+        }else{
+            return new List<SObject>();
+        }
     }
     
      /**
@@ -220,4 +234,31 @@ public with sharing class CadenceSelector {
 				 AND Sequence_Action__r.isActionPerformed__c = False
 				 AND Status = 'Completed' AND Id in:ids];
     }
+    
+      /**
+     * @description - get all opportunity by Ids.
+     * @param objType - sObject name string
+     * @return - List<SObject> - list of SObject
+     */
+    public static List<SObject> getOpportunity(List<String> opportunityIds, String objType){
+        List<String> cId = opportunityIds;
+        String query = getQuery(objType);
+        query += ' WHERE Id in :cId';
+        return Database.query(query); 
+    }
+     /**
+     * @description - get all Sequence Action by Ids.
+     * @param objType - Set of Id
+     * @return - List<Sequence_Action__c> - list of Sequence Action
+     */
+    public static List<Sequence_Action__c> getParticipantActions(Set<Id> objIds) {
+       List<Sequence_Action__c> participantActions = new List<Sequence_Action__c>();
+       
+       participantActions = [Select Id, Name, CadenceAction_ID__c,Actual_Execution_Date__c, Expected_Execution_Date__c,  Lead_Id__c, Contact_Id__c, isActionPerformed__c,
+                             CadenceAction_Id__r.Day__c,CadenceAction_Id__r.Hour__c, CadenceAction_Id__r.Action_Id__r.Type__c,CadenceAction_Id__r.Index__c,Opportunity_Id__c,Cadence_Type__c,CadenceAction_Id__r.Fields_To_Update_Action__c
+                             From Sequence_Action__c
+                             where Id IN :objIds ];
+       
+       return participantActions;
+   }
 }

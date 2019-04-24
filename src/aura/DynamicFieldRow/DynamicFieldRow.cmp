@@ -2,6 +2,7 @@
     <!-- Aura Attribute for store single Contact[standard Object] Instance
          And Store Index of Particular Instance --> 
     <aura:attribute name = "userWrapperList" type = "List" />
+	<aura:attribute name = "dandBCompanyWrapperList" type = "List" />
     <aura:attribute name="objectInstance" type="Object" default="{
                                                                  'fieldDataType': '',
                                                                  'fieldName': '',
@@ -99,9 +100,10 @@
                                         <aura:set attribute="else">
                                             <aura:if isTrue="{!v.fieldDataType == 'Reference'}">
                                                 <div class="">
-                                                    <aura:if isTrue="{!not(empty(v.userWrapperList))}">
+                                                    <aura:if isTrue="{!not(and(empty(v.userWrapperList),(empty(v.dandBCompanyWrapperList)) ))}">
                                                         <c:LookupFieldComponent aura:id="LookupFieldComponent" recordType="{#v.recordType}" isDisabled="{!v.isViewMode}" 
                                                                                           userWrapperList="{!v.userWrapperList}"
+																						  dandBCompanyWrapperList="{!v.dandBCompanyWrapperList}"
                                                                                           parentId="{!v.objectInstance.value}" fieldName="{#v.objectInstance.fieldName}" />
                                                     </aura:if>
                                                 </div>

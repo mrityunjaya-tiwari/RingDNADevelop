@@ -18,8 +18,7 @@
     <aura:attribute name="toggleRows" type="List" description="" />
     <aura:attribute name="refreshParticipant" type="Boolean"/>
     <!--create a component attributs -->
-    <aura:attribute name="spinner" type="boolean" default="false"/>
-    <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>
+    <aura:attribute name="spinner" type="boolean"/>
     
     <aura:attribute name="pData" type="List"/>
     <aura:attribute name="settedSequenceType" type="Boolean" default= "false"/>
@@ -49,7 +48,8 @@
                                       label="Type" required="true" value="{!v.newCadence.recordType}" 
                                       messageWhenValueMissing="Please Select Record Type."
                                       disabled = "{!v.isDisabled || v.disableCadenceType || v.settedSequenceType}"
-                                      onchange="{!c.fireRecordTypeChangedEvent}">
+                                      >
+                        			  <!-- onchange="{!c.fireRecordTypeChangedEvent}"> -->
                         <option value="">Record Type</option>
                         <option value="Contact">Contact</option>
                         <option value="Lead">Lead</option>
