@@ -1,15 +1,12 @@
 @isTest
 private class CadenceControllerTest {
-    
     public static final String CUSTOM_LOGIC = '1 OR (2 AND 3)';
-    
     public static testMethod void testCadenceQuery(){
     	Cadence__c cadenceRecord = TestDataFactory.createCadence('Lead');
         Test.startTest();
     	insert cadenceRecord;
     	CadenceController.getCadenceDetail(cadenceRecord.Id);
-        Test.stopTest();
-      
+        Test.stopTest();  
     }
     @isTest
     public static void getFieldsTest(){
@@ -40,7 +37,7 @@ private class CadenceControllerTest {
     	cadLeadAND.Entrance_Criteria__c = entryJson;
         cadLeadAND.Exit_Criteria__c = exitJson;
         insert cadLeadAND;*/
-      Cadence__c cadenceobj = TestDataFactory.createCadence('Lead');
+        Cadence__c cadenceobj = TestDataFactory.createCadence('Lead');
         String entryJson = TestDataFactory.createCadJsonWithNameCriterions('Test', 'Test', CadenceConstants.CONDITION_AND, '');
         String exitJson = TestDataFactory.createCadJsonWithNameCriterions('Test1', 'Test1', CadenceConstants.CONDITION_AND, '');
     	cadenceobj.Entrance_Criteria__c = entryJson;
@@ -84,12 +81,11 @@ private class CadenceControllerTest {
     @isTest
     static void getCadenceDataTest() {
         Cadence__c cadLeadAND = TestDataFactory.createCadence(CadenceConstants.LEAD_OBJECT_NAME);
-        String entryJson = TestDataFactory.createCadJsonWithNameCriterions('Test', 'Test', CadenceConstants.CONDITION_AND, '');
+        String entryJson = TestDataFactory.createCadJsonWithNameCriterions('Test', 'Test', CadenceConstants.CONDITION_OR, '');
         String exitJson = TestDataFactory.createCadJsonWithNameCriterions('Test1', 'Test1', CadenceConstants.CONDITION_AND, '');
     	cadLeadAND.Entrance_Criteria__c = entryJson;
         cadLeadAND.Exit_Criteria__c = exitJson;
         insert cadLeadAND;
-		
         Test.startTest();
         CadenceController.getCadenceData(cadLeadAND.Id);
         Test.stopTest();
@@ -113,9 +109,11 @@ private class CadenceControllerTest {
     @isTest
     public static void activateCadenceTestOpp(){
         Opportunity opp = TestDataFactory.createOpp('Test');
+        insert opp;
+        System.assertNotEquals(null, opp);
         Cadence__c cadenceobj = TestDataFactory.createCadence('Opportunity');
-        String entryJson = TestDataFactory.createCadJsonWithNameCriterionsForOpp('Test', CadenceConstants.CONDITION_AND, '');
-        String exitJson = TestDataFactory.createCadJsonWithNameCriterionsForOpp('Test1', CadenceConstants.CONDITION_AND, '');
+        String entryJson = TestDataFactory.createCadJsonWithConditionalCriterionsForOpp('123', CadenceConstants.CONDITION_OR, '','greater');
+        String exitJson = TestDataFactory.createCadJsonWithConditionalCriterionsForOpp('1234', CadenceConstants.CONDITION_AND, '','less_than');
     	cadenceobj.Entrance_Criteria__c = entryJson;
         cadenceobj.Exit_Criteria__c = exitJson;
     	insert cadenceobj;  
@@ -123,7 +121,57 @@ private class CadenceControllerTest {
         upsert cadenceobj;
         Test.startTest();
         CadenceController.activateCadence(cadenceobj.Id);
-        CadenceController.updateParticipants(cadenceobj.Id);
+        Test.stopTest();
+        cadenceobj=[select Id, Status__c from Cadence__c where id =: cadenceobj.Id];
+        System.assertEquals(True, cadenceobj.Status__c, 'Cadence Activated');
+    }
+    
+     @isTest
+    public static void activateCadenceTestOpp2(){
+        Opportunity opp = TestDataFactory.createOpp('Test opp-02');
+        insert opp;
+        System.assertNotEquals(null, opp);
+        Cadence__c cadenceobj = TestDataFactory.createCadence('Opportunity');
+        String entryJson = TestDataFactory.createCadJsonWithConditionalCriterionsForOpp('123', CadenceConstants.CONDITION_OR, '','greater_or_equals');
+        String exitJson = TestDataFactory.createCadJsonWithConditionalCriterionsForOpp('1234', CadenceConstants.CONDITION_AND, '','less_or_equals');
+    	cadenceobj.Entrance_Criteria__c = entryJson;
+        cadenceobj.Exit_Criteria__c = exitJson;
+    	insert cadenceobj;  
+        cadenceobj.Status__c=true;
+        upsert cadenceobj;
+        Test.startTest();
+        CadenceController.activateCadence(cadenceobj.Id);
+        Test.stopTest();
+        cadenceobj=[select Id, Status__c from Cadence__c where id =: cadenceobj.Id];
+        System.assertEquals(True, cadenceobj.Status__c, 'Cadence Activated');
+    }
+    
+    @isTest
+    public static void activateSequenceTestOppRole(){
+        Opportunity opp = TestDataFactory.createOpp('Test role');
+        insert opp;
+        System.assertNotEquals(null, opp);
+        Contact c1= new Contact();
+        c1.FirstName='test Role';
+        c1.LastName='contact';
+        c1.Department='IT';
+        insert c1;
+        System.assertNotEquals(null, c1);
+        OpportunityContactRole contactRole = new OpportunityContactRole(Role='Decision Maker',ContactId=c1.Id,OpportunityId=opp.id);
+        insert contactRole;
+        System.assertNotEquals(null, contactRole);
+        
+        Cadence__c cadenceobj = TestDataFactory.createCadence('Opportunity');
+        String entryJson = TestDataFactory.createCadJsonWithNameCriterionsForOppRole('Decision Maker', CadenceConstants.CONDITION_AND, '');
+        String exitJson = TestDataFactory.createCadJsonWithNameCriterionsForOppRole('Business User', CadenceConstants.CONDITION_AND, '');
+    	cadenceobj.Entrance_Criteria__c = entryJson;
+        cadenceobj.Exit_Criteria__c = exitJson;
+    	insert cadenceobj;  
+        
+        cadenceobj.Status__c=true;
+        upsert cadenceobj;
+        Test.startTest();
+        CadenceController.activateCadence(cadenceobj.Id);
         Test.stopTest();
         cadenceobj=[select Id, Status__c from Cadence__c where id =: cadenceobj.Id];
         System.assertEquals(True, cadenceobj.Status__c, 'Cadence Activated');
@@ -131,11 +179,8 @@ private class CadenceControllerTest {
     
     @isTest
     static void getObjCriListTest() {
-        
         Test.startTest();
         CadenceController.getObjCriList('Contact');
         Test.stopTest();
     }
-    
-    
 }

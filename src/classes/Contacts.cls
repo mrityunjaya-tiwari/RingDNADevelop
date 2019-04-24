@@ -5,6 +5,7 @@ public class Contacts  extends SObjectDomain {
     List<Contact> records;
     public static boolean flag = true;
     Map<Id, Cadence__c> cadMap;
+    map<string,List<String>> mapOfOpportunityContactIds= new map<String,List<string>>();
     
     public Contacts(List<Contact> sObjectList) {
         super(sObjectList);
@@ -14,6 +15,7 @@ public class Contacts  extends SObjectDomain {
         contsWithoutCadence = contList.get('contactListWithoutCadenceIds');
         cadMap = CadenceSelector.getActiveCadencesByRecordType(New List<String>{CadenceConstants.CONTACT_OBJECT_NAME,CadenceConstants.OPPORTUNITY_OBJECT_NAME});
         CadenceService.processParticipantActivation(cadMap, contsWithCadence, CadenceConstants.CONTACT_OBJECT_NAME);
+        mapOfOpportunityContactIds = CadenceService.getOpportunityOrContactMap(records);
     }
    
     public class Constructor implements SObjectDomain.IConstructable {
@@ -77,6 +79,10 @@ public class Contacts  extends SObjectDomain {
             }
             if(cObj.AccountId != null) {
                 accountIds.add(cObj.AccountId);
+            }
+
+            if( cObj.Sequence_Type__c == CadenceConstants.OPPORTUNITY_OBJECT_NAME && (cObj.Opportunity_Id__c == null ||  String.isBlank(cObj.Opportunity_Id__c))){
+                  cObj.Opportunity_Id__c = CadenceService.GetOpportunityIdByContactId(mapOfOpportunityContactIds,cObj.Id);
             }
 		}
         
@@ -143,9 +149,13 @@ public class Contacts  extends SObjectDomain {
 		}
         Map<Id, Id> contIdToAccIdMap = new Map<Id, Id>();
         Map<Id, Account> parentMap = new Map<Id, Account>();
+        Boolean IsOpportunity = false;
         for(Contact cObj: (List<Contact>) records) {
             if(cObj.AccountId != null) {
                 contIdToAccIdMap.put(cObj.Id, cObj.AccountId);
+            }
+            if(cObj.Opportunity_Id__c != null && !String.isBlank(cObj.Opportunity_Id__c)) {
+                IsOpportunity = true;
             }
         }
         
@@ -165,7 +175,12 @@ public class Contacts  extends SObjectDomain {
 		Map<Id, Contact> contMap = new Map<Id, Contact>((List<Contact>)CadenceService.getSObjectsToProcess(records, parentMap, cadMap, CadenceConstants.CONTACT_OBJECT_NAME));
 		
 		//Getting non performed participant actions 
-		Map<Id, List<Sequence_Action__c>> partActionsMap = CadenceService.getRemainingParticipantAction(contMap.keySet(), CadenceConstants.CONTACT_OBJECT_NAME);
+        Map<Id, List<Sequence_Action__c>> partActionsMap;
+        if(IsOpportunity == true){
+        	partActionsMap = CadenceService.getRemainingParticipantAction(contMap.keySet(), CadenceConstants.OPPORTUNITY_OBJECT_NAME);    
+        }else{
+            partActionsMap = CadenceService.getRemainingParticipantAction(contMap.keySet(), CadenceConstants.CONTACT_OBJECT_NAME);
+        }
 		
 		//Getting participant action to perform 
 		for(Contact cObj : contMap.values()) {

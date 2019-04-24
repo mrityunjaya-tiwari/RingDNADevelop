@@ -247,4 +247,22 @@ public with sharing class CadenceUtil {
         return query;
     }
     
+	/**
+     * @description - Use this method to check any object has access on perticular org.
+     * @param objList - List of object
+     * @return List<String> - list of valid object on org.
+     */
+    public static List<String> getValidSObjectListInOrg(List<String> objList){
+        List<String> sObjectList = new List<string>();
+        for(String obj : objList){
+            for (Schema.SObjectType sObjectType : Schema.getGlobalDescribe().values()) {
+                String sobjName = String.valueOf(sObjectType);
+                if(sobjName.contains(obj) ) {
+                    sObjectList.add(obj);
+                    break;
+                }
+            }
+        }
+        return sObjectList;
+    }
 }

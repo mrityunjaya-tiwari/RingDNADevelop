@@ -98,7 +98,7 @@
             
             var evt = $A.get("e.force:navigateToComponent");
             evt.setParams({
-                componentDef  : "c:ActionDetails" ,
+                componentDef  : "c:ActionBuilder" ,
                 componentAttributes : {
                     isNew : "true",
                     

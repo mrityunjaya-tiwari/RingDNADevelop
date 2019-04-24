@@ -1,0 +1,78 @@
+<aura:component controller="ActionDetailController" implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction,force:appHostable" access="global">
+    <!--aura init handler , call js "loadData" function on component load, and display data on form-->
+    <aura:handler name="cadDynamicRowEvent" event="c:CadDynamicRowEvent" action="{!c.handleCadDynamicRowEvent}"/>
+    
+    <!-- Disabled property-->
+    <aura:attribute name = "isDisabled" type = "Boolean" default = "false"/>
+    <!-- Disabled property for action type-->
+    <aura:attribute name = "disableActionType" type = "Boolean" default = "false"/>
+    <!-- Disabled property for activationType type-->
+    <aura:attribute name = "disableActivationType" type = "Boolean" default = 'true'/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <aura:attribute name="UpdateFieldList" type="List"/>
+    <aura:attribute name="FieldList" type="List"/>
+    <aura:attribute name="UpList" type="List"/>
+    <!--Action Objects -->
+    <aura:attribute name="newAction" type="Action" default="{ 'sobjectType': 'Action'}"/>
+    <!--Task Objects -->
+    <aura:attribute name="taskObj" type="Task" default="{ 'sobjectType': 'Task'}"/>
+    <!--Wrapper class having Task fields detail -->
+    <aura:attribute name="wrapperTaskFields" type="object"/>
+    <!--Task object list -Iterated to add multiple row(Multiple Task fields) -->
+    <aura:attribute name="listTask" type="List"/>
+    <!--Validation attribute -->
+    <aura:attribute name="isValidDynamicRow" type="boolean" default='false' />
+    <aura:attribute name="isActionTypeRequired" type="boolean" default='true' />
+    <aura:attribute name="isValid" type="boolean" default='true' />
+    <aura:attribute name="isValidationError" type="boolean" default='false' />
+    <aura:attribute name="ValidationError" type="String" default='Validation Error' />
+    <!--For edit page-->
+    <aura:attribute name="recordId" type="Id"/>
+    <aura:attribute name="recordName" type="String" default='New Action'/>
+    <aura:attribute name="defaultValue" type="Boolean" default='false'/>
+    <aura:attribute name="isNew" type="Boolean" default='false'/>
+    <aura:attribute name="themeName" type="String"/>
+    <!--create a component attributes -->
+    <aura:attribute name="spinner" type="boolean" default="false"/>
+    <aura:method name="validationTask" action="{!c.validationTask}" access="public"/> 
+    <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>
+
+        <fieldset class="slds-form-element slds-form_compound">
+            <!-- CREATE NEW ACTION FORM -->
+            <form class="slds slds-form slds-m-left_large">
+                
+                <p class="slds-page-header__row slds-m-top_large slds-truncate slds-align_absolute-center rdna-sub-header-bold" >Task Field and Value</p>
+                <p class="slds-align_absolute-center rdna-sub-header" style="padding-top:2px;">Create pre-configured Tasks.</p>
+                <p class="slds-align_absolute-center rdna-required-header">(Required)</p>
+                <p class="slds-align_absolute-center slds-m-top_medium rdna-Field-header-bold">Field and Values</p>
+                <p class="slds-align_absolute-center rdna-Field-header">Add the type of field and values that you want to build.</p>
+                <div class="slds-form-element__row slds-p-top_x-large slds-m-top_xx-small">                  
+                    <div class = "slds-form-element slds-size_1-of-1 slds-p-bottom_large" aura:id = "createTaskdiv">
+                        <aura:iteration items="{!v.listTask}" var="taskObj" indexVar="index">
+                            <div class = "slds-form-element__row slds-size_1-of-1 rdna-margin">
+                                <c:ActionDetailsDynamicRow aura:id="dynamicROw"  taskObj="{!taskObj}" 
+                                                           listTask="{!v.listTask}" isValidateUpdateFieldList="true"
+                                                           UpdateFieldList="{!v.UpdateFieldList}" FieldList="{!v.FieldList}" 
+                                                           currentIndex = "{!index}" listPicklistValues="" dataType = ""/> 
+                            </div>
+                        </aura:iteration>
+                        <div class = "slds-form-element__row slds-size_1-of-1 rdna-margin">
+                            <a onclick="{!c.AddNewRow}"> 
+                                <label class="rdna-field-margin">+ Add Task Field</label>
+                            </a>    
+                        </div>
+                        <div class = "slds-form-element__row slds-size_1-of-1">
+                            <!--Validation -->
+                            <aura:if isTrue="{!v.isValidationError}">
+                                <div aura:id="msg" class="slds-text-color_error slds-text-heading_small slds-text-align_center">
+                                    <ui:outputText value="{!v.ValidationError}" />
+                                </div>
+                            </aura:if>
+                        </div>
+                    </div> 
+                </div>
+
+            </form>
+        </fieldset>
+</aura:component>

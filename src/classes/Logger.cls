@@ -9,6 +9,7 @@ public class Logger {
         List<Sequence_Logger__c> enableLoggerSettings = [SELECT IsEnabled__c FROM Sequence_Logger__c LIMIT 1];
         if(enableLoggerSettings.size() > 0 && enableLoggerSettings[0].IsEnabled__c && logInstances.size() > 0){
             insert logInstances;
+            logInstances.clear();
         }
     }
 }

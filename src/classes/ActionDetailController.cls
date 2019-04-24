@@ -6,12 +6,12 @@ public with sharing class ActionDetailController {
     @AuraEnabled
     public static ActionDetailController.ActionWrapper getActionWrapper() {
         ActionDetailController.ActionWrapper initActionObj = new ActionDetailController.ActionWrapper();
-        initActionObj.listEmailTemplate = CadenceService.getEmailTemplates();
+        /*initActionObj.listEmailTemplate = CadenceService.getEmailTemplates();
         if(!test.isRunningTest()){
             initActionObj.listSmsTemplate = CadenceService.getSMSTemplates();
             initActionObj.listCallTemplate = CadenceService.getCallTemplates();
             initActionObj.listVMTemplate = CadenceService.getVMTemplates();
-        }
+        }*/
         initActionObj.wrapperTaskFields = CadenceService.getFields(TASK_OBJECT_STRING);
         initActionObj.action = new Action();
         return initActionObj; 
@@ -55,6 +55,8 @@ public with sharing class ActionDetailController {
         action.Template_Name__c = actionCls.templateName;
         action.Type__c = actionCls.type;
         action.Id = actionCls.id;
+        action.Email_Type__C = actionCls.emailType;
+        action.Delivery_Preference__c = actionCls.deliveryPreference;
         return action;
     }
     
@@ -92,9 +94,9 @@ public with sharing class ActionDetailController {
     @AuraEnabled
     public static ActionDetailController.ActionDataWrapper getActionData(Id actionId) {
         ActionDetailController.ActionDataWrapper actionDataWrapper = new ActionDetailController.ActionDataWrapper();
-        Action__c action = [Select Id, Name, Activation_Type__c, Task_Description__c, Template_Id__c, Template_Name__c, Type__c From Action__c where Id = :actionId];
+        Action__c action = [Select Id, Name, Activation_Type__c, Email_Type__C, Delivery_Preference__c, Task_Description__c, Template_Id__c, Template_Name__c, Type__c From Action__c where Id = :actionId];
         Action actionCls = New Action(action.Id, action.Activation_Type__c, action.Name, action.Task_Description__c,
-                                      action.Template_Id__c, action.Template_Name__c, action.Type__c);
+                                      action.Template_Id__c, action.Template_Name__c, action.Type__c, action.Email_Type__C, action.Delivery_Preference__c);
         actionDataWrapper.actionCls = actionCls;	
         if((action.Task_Description__c != null) && action.Task_Description__c != '') {
             Map<String, Object> taskObjs = (Map<String, Object>)JSON.deserializeUntyped(action.Task_Description__c);
