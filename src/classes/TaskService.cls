@@ -115,7 +115,7 @@ public class TaskService {
 			}
 		}
 		if(!sObjListToUpdate.isEmpty()) {
-			update sObjListToUpdate;		
+			Database.SaveResult[] results = Database.update(sObjListToUpdate, false);
 		}
     }
 

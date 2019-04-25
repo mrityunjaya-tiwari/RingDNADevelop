@@ -119,7 +119,7 @@ public class ActionDetailViewCtrl {
                 participants.add(l); 
             }
         }
-        update participants;
+        Database.SaveResult[] results = Database.update(participants, false);
     }
     
     public class SequenceWrapper {

@@ -353,7 +353,7 @@ global  without sharing class CadenceService {
                 obj.put(nameSpace+'isActivated__c', false);
             }
         }
-        update objList;
+        Database.SaveResult[] results = Database.update(objList, false);
     }
     
     public static List<SObject> getCadenceParticipants(Id cadId, String objName) {
@@ -787,12 +787,12 @@ global  without sharing class CadenceService {
         
         //Update Contact which exit match form Opportunity
         if(oppContactList != null && oppContactList.size() > 0){
-             update oppContactList;
+            Database.SaveResult[] results = Database.update(oppContactList, false);
         }
         
 		//Update Opportunity 
         if(sObjectsForOpportunity != null && sObjectsForOpportunity.size() > 0){
-            update sObjectsForOpportunity;
+            Database.SaveResult[] results = Database.update(sObjectsForOpportunity, false);
         } 
         
         //Deleting old non performed participant actions 
@@ -1076,7 +1076,7 @@ global  without sharing class CadenceService {
             }
         }
         if(opportunityList != null && opportunityList.size() > 0){
-           update opportunityList;
+           Database.SaveResult[] results = Database.update(opportunityList, false);
         }
         return sObjsToUpdate.values();
         
@@ -1129,7 +1129,7 @@ global  without sharing class CadenceService {
                 upsertResult = Database.upsert(objList, false);
                 if(objMap.keyset().size() > 0 && objMap.values().size()>0) {
                     Contacts.flag = false;
-                    update objMap.values();
+                    Database.SaveResult[] results = Database.update(objMap.values(), false);
                 }
             }catch(exception e){ 
                 
