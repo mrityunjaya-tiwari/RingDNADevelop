@@ -119,7 +119,7 @@ public with sharing class CadenceController {
                 List<Sequence_Action__c> testcreateActionParticipants =CadenceService.createActionParticipants(objIdToAllCadActListMap, new Map<Id, SObject>(sObjectListToUpdate), objName);
             }
             if(sObjectListToUpdate !=  null && sObjectListToUpdate.size() > 0) {
-                Database.SaveResult[] srList = Database.update(sObjectListToUpdate, false);
+                Database.SaveResult[] results = Database.update(sObjectListToUpdate, false);
             }
         }
         
