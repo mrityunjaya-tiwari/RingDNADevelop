@@ -1509,7 +1509,7 @@ global  without sharing class CadenceService {
             con.Opportunity_Id__c = GetOpportunityIdByContactId(mapOfoppcontactIds,con.Id);
         }
         if(contactList != null && contactList.size() > 0 ){
-            update contactList;
+             Database.SaveResult[] srList = Database.update(contactList, false);
         }
         return mapOfoppcontactIds;
     }
