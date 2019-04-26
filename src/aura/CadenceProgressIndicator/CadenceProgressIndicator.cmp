@@ -15,7 +15,8 @@
     <aura:attribute name="AllFieldList" type="List"/>
     <aura:attribute name= "actionWrapper" type="List"/>
     <aura:attribute name="spinner" type="boolean"/>
-    
+    <aura:attribute name="duplicateEntranceCriteria" type="Boolean" default="false"/>
+    <aura:attribute name="duplicateExitCriteria" type="Boolean" default="false"/>
     <!--Create or show cadence details -->
     <aura:attribute name= "isEdit" type="Boolean" default= "false"/>
     <!--Regenter event -->
@@ -50,10 +51,7 @@
             </aura:if>
             <aura:if isTrue="{!v.currentStep == '4'}">
                 <div>
-                    <button class="slds-button slds-button_neutral rdna-button rdna-button-text slds-m-top_large slds-m-right_medium slds-p-right_large" onclick="{!c.save}" aura:id="saveButton">Save</button>
-                     
-                    
-                       
+                    <button class="slds-button slds-button_neutral rdna-button rdna-button-text slds-m-top_large slds-m-right_medium slds-p-right_large" onclick="{!c.save}" aura:id="saveButton">Save</button>  
                 </div>
             </aura:if>
         </div>
@@ -84,7 +82,7 @@
                                                                     isViewMode = "false" accountFieldList="{!v.accountFieldList}"
                                                                     criteriaType="Entrance Criteria" criteriaSet="{!v.entranceCriteriaSet}" 
                                                                     cadence="{!v.newCadence}" leadFieldList="{!v.leadFieldList}" dbFieldList="{!v.dbFieldList}" 
-                                                                    contactFieldList="{!v.contactFieldList}"/>
+                                                                    contactFieldList="{!v.contactFieldList}" hasError="{!v.duplicateEntranceCriteria}"/>
                                 </div>
                             </aura:if>
                         </aura:if>
@@ -100,7 +98,7 @@
                                                                     criteriaType="Exit Criteria" criteriaSet="{!v.exitCriteriaSet}" 
                                                                     cadence="{!v.newCadence}" leadFieldList="{!v.leadFieldList}"
                                                                     dbFieldList="{!v.dbFieldList}"
-                                                                    contactFieldList="{!v.contactFieldList}"/>
+                                                                    contactFieldList="{!v.contactFieldList}" hasError="{!v.duplicateExitCriteria}"/>
                                 </div>
                             </aura:if>
                         </aura:if>
