@@ -42,9 +42,9 @@
     <aura:attribute name="themeName" type="String"/>
     <!--create a component attributs -->
     <aura:attribute name= "createAction" type="boolean" default="false"/>
+    <aura:attribute name= "isEnabled" type="boolean" default="false"/>
     <aura:attribute name = "setActionTypeList" type = "Boolean" default = "false"/>
-    <aura:attribute name="actionTypeList" type = "List" />  
-    
+    <aura:attribute name="actionTypeList" type = "List" />     
     <aura:attribute name="activationtypeList" type="List" default="['Automatic', 'Manual']" />
     <aura:attribute name="UpdateFieldList" type="List"/>
     <!-- PAGE HEADER -->

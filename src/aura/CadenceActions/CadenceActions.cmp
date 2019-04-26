@@ -1,8 +1,7 @@
 <aura:component controller="CadenceActionsController" access="global">
     <!-- init -->
     <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
-    
-     
+         
     <!-- Action List-->
     <aura:attribute name="actionList" type = "List" />  
     <!-- Action Type List-->
@@ -16,12 +15,13 @@
     <!--CadenceAction List object list -Iterated to add multiple row(Multiple cadence actions) -->
     <aura:attribute name="cadenceActionList" type="List"/>
     <aura:attribute name="actionType" type="String"/>
+    <aura:attribute name="actionName" type="String"/>
     <!-- List of action type used in sub component(CadenceActionsDetail) for get which type of 
    cadenceAction we have to create-->
     <aura:attribute name="actionTypeListForCadenceAction" type = "List" />  
     <!--Method  to create cadence action-->
     <aura:method name="createCadenceAction" action="{!c.createCadenceAction}"
-                 description="Method  to creata cadence action"> 
+                 description="Method  to create cadence action"> 
     </aura:method>
     <!-- validation attribute -->
     <aura:attribute name="isValidationError" type="boolean" default='false' />
@@ -35,9 +35,15 @@
     <aura:attribute name="dbFieldList" type="List"/>
     <!-- CadenceAction Id list to delete cadenceActions -->
     <aura:attribute name="caIdsList" type="List"/>
-    <!--create a component attributs -->
+    <!--create a component attributes -->
     <aura:attribute name="spinner" type="boolean"/>
     <aura:attribute name= "createAction" type="boolean" default="false"/>
+    <aura:attribute name= "isEnabled" type="boolean" default="false"/>
+    <!-- onchange -->
+    <aura:handler name="change" value="{!v.createAction}" action="{!c.oncreateActionAttributeChange}"/>
+    <aura:attribute name = "showDetail" type = "Boolean" default = "false"/>
+    <aura:attribute name= "isChanged" type="boolean" default="false"/>
+    <aura:attribute name="isNewAction" type="Boolean" default="false"/>
     <aura:attribute name="ISLoad" type="boolean" default="false"/>
     <aura:attribute name="SaveDisable" type="Boolean" default= "false"/>
     <aura:attribute name="UpdateFieldList" type="List"/>
@@ -84,6 +90,8 @@
                                                                       newCadence="{!v.newCadence}" 
                                                                       allActionsList ="{!v.actionList}" 
                                                                       actionTypeListForCadenceAction="{!v.actionTypeListForCadenceAction}" 
+                                                                      actionName="{!v.actionName}"
+                                                                      isNewAction="{!v.isNewAction}"
                                                                       currentIndex = "{!index}"
                                                                       leadFieldList="{!v.leadFieldList}"  
                                                                       contactFieldList="{!v.contactFieldList}"
@@ -112,7 +120,7 @@
             <div class="slds-grid">
                 <div class="slds-form-element slds-size_1-of-2 slds-align-content-center slds-p-top_large slds-m-bottom_large  rdna-styling"> 
                     <!-- <img class = "actions-icon" src="{!$Resource.cadence_icons + '/add/default/add-icon@3x.png'}"/> -->
-                    <lightning:buttonMenu menuAlignment="bottom-center" aura:id="menu"  iconName="utility:add" class="slds-icon slds-icon_x-small slds-m-right_small rdna-icon-classic" onselect="{! c.AddNewCadenceActions }" alternativeText="Show menu" disabled = "{!v.isDisabled}">
+                    <lightning:buttonMenu menuAlignment="bottom-center" aura:id="menu"  iconName="utility:add" class="slds-icon slds-icon_x-small slds-m-right_small rdna-icon-classic" onselect="{! c.addNewCadenceActions }" alternativeText="Show menu" disabled = "{!v.isDisabled}">
                         <aura:iteration items="{!v.actionTypeList}" var= "actionType">
                             <lightning:menuItem value="{!actionType}" label="{!actionType}" />
                         </aura:iteration>
@@ -127,7 +135,7 @@
             </div>
         </aura:if>
         <aura:if isTrue="{!v.createAction}">
-            <c:DynamicActionDetails aura:id="dynamicActionId" createAction="{!v.createAction}" actionTypeList="{!v.actionTypeList}" actionList ="{!v.actionList}" />
+            <c:DynamicActionDetails aura:id="dynamicActionId" createAction="{!v.createAction}" isEnabled="{!v.isEnabled}" actionTypeList="{!v.actionTypeList}" actionList ="{!v.actionList}" />
         </aura:if>
     </div>
 </aura:component>

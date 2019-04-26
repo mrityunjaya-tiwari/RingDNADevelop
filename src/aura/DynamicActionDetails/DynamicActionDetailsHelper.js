@@ -20,8 +20,7 @@
             var state = response.getState();
             if (state === "SUCCESS") {
                 var actionId  = response.getReturnValue();                	
-                helper.addNewActionList(component, event, actionId);  
-                //component.set('v.createAction', false);
+                helper.addNewActionList(component, event, actionId);                 
             }
           
         });        
@@ -52,6 +51,7 @@
                     var actionlst = component.get("v.actionList");
                     actionlst.push(object);
                     component.set('v.actionList',actionlst);
+                    component.set('v.isEnabled', true);
                     component.set('v.createAction', false);
                 }                
             });            
@@ -140,7 +140,7 @@
         else if(myUserContext == undefined) {
             var evt = $A.get("e.force:navigateToComponent");
             evt.setParams({
-                componentDef : "c:ActionDetailView" ,
+                componentDef : "RDNACadence5:ActionDetailView" ,
                 componentAttributes : {
                     "recordId" : id
                 }
@@ -178,6 +178,5 @@
             isValid = dynamicROw.validateDynamicRowForm();
         }
         return isValid;
-        
     },
 })

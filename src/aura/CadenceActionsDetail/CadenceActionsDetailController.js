@@ -1,12 +1,14 @@
 ({
     doInit: function(component, event, helper) {
+        var isNewAction = component.get("v.isNewAction");
         var cadenceAction = component.get("v.cadenceAction");
         if(!(cadenceAction.id)){           
-            helper.sectionToggle(component, event,'detailDiv');
-            
+            helper.sectionToggle(component, event,'detailDiv');            
         }
-        // To add a row by default
-        
+        if(isNewAction ==  true){         
+         helper.setActionObject(component, event, helper);           
+        }
+        // To add a row by default        
         helper.createRowToFieldsUpdate(component, event, helper);
         // Set contact felds data
         helper.setContactFieldsList(component, event, helper);
@@ -129,7 +131,5 @@
     cancelActionDeletion : function(cmp, event, helper) {
         cmp.set('v.showModal', false);
         
-    },
-    
-    
+    },   
 })
