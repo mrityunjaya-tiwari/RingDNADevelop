@@ -514,7 +514,7 @@ global  without sharing class CadenceService {
         return objList; 
     }
     
-    public static Map<Id, List<Sequence_Action__c>> getRemainingParticipantActions(Set<Id> objIds, String objName) {
+    public static Map<Id, List<Sequence_Action__c>> getRemainingParticipantActions(Set<Id> objIds, String objName) { 
         Map<Id, List<Sequence_Action__c>> objToParticipantActionsMap = new Map<Id, List<Sequence_Action__c>>(); 
         List<Sequence_Action__c> participantActions;
         if(objName.equals(CadenceConstants.LEAD_OBJECT_NAME)) {
@@ -523,14 +523,13 @@ global  without sharing class CadenceService {
                                   CadenceAction_Id__r.Action_Id__r.Activation_Type__c, CadenceAction_Id__r.Trigger_Type__c,
                                   CadenceAction_Id__r.Action_Id__r.Task_Description__c, CadenceAction_Id__r.Action_Id__r.Template_Id__c From Sequence_Action__c 
                                   where Lead_Id__c IN :objIds AND isActionPerformed__c = false 
-                                  order by CadenceAction_Id__r.Day__c, CadenceAction_Id__r.Hour__c];
+                              	  order by CreatedDate];
         } else {  
             participantActions = [Select Id, Name, CadenceAction_ID__c, Expected_Execution_Date__c, Show_on_Target_List__c, Lead_Id__c, Contact_Id__c, isActionPerformed__c, CadenceAction_Id__r.Day__c,
                                   CadenceAction_Id__r.Hour__c, CadenceAction_Id__r.Action_Id__r.Type__c, CadenceAction_Id__r.Fields_To_Update_Action__c,
                                   CadenceAction_Id__r.Action_Id__r.Activation_Type__c, CadenceAction_Id__r.Trigger_Type__c,
                                   CadenceAction_Id__r.Action_Id__r.Task_Description__c, CadenceAction_Id__r.Action_Id__r.Template_Id__c From Sequence_Action__c 
-                                  where Contact_Id__c IN :objIds AND isActionPerformed__c = false 
-                                  order by CadenceAction_Id__r.Day__c, CadenceAction_Id__r.Hour__c];
+                                  where Contact_Id__c IN :objIds AND isActionPerformed__c = false  order by CreatedDate];
         }
         for(Sequence_Action__c partAct : participantActions) {
             if(objName.equals(CadenceConstants.LEAD_OBJECT_NAME)) {
@@ -1609,5 +1608,11 @@ global  without sharing class CadenceService {
         if(sfdcEmailMessageList.isEmpty() == false) {
             Messaging.SendEmailResult[] results = Messaging.sendEmail(sfdcEmailMessageList, false);
         }                                        
+    }
+    
+    public static void createandUpdateActionOnPart(List<Sequence_Action__c> listOfSeqActionToUpdate){
+       if(listOfSeqActionToUpdate != null && listOfSeqActionToUpdate.size() > 0){
+            Database.UpsertResult[] results = Database.upsert(listOfSeqActionToUpdate);
+        }
     }
 }

@@ -3,45 +3,52 @@ public class CadenceProgressIndicatorController {
     
     @AuraEnabled
     public static String saveCadence(string cadenceObjString,  string listCadenceActionString, List<String> caIdsList){
-        Cadence__c cadenceObj ;
+        Cadence__c cadenceObj;
         List<CadenceAction__c> listCadenceAction = New  List<CadenceAction__c>();
-        try{
-            Sequence sequence = (Sequence)System.JSON.deserialize(cadenceObjString, Sequence.class); 
-            List<SequenceAction> sequenceActionList = (List<SequenceAction>)System.JSON.deserialize(listCadenceActionString, List<SequenceAction>.class); 
-            for (SequenceAction sequenceAction : sequenceActionList){
-                listCadenceAction.add(getCadenceAction(sequenceAction));
-            }
-            cadenceObj = getCadence(sequence);
-            if (sequence.id != null && string.valueOf(sequence.id) != '' ){
-                cadenceObj.Id = Id.valueOf(sequence.id);
-            }
-        	populatePostFixExpressions(cadenceObj);   
-        	upsert cadenceObj;
-            deleteCadenceAction(cadenceObj, caIdsList);
-        	List<CadenceAction__c> caListToInsert = new List<CadenceAction__c>();
-        	for (CadenceAction__c caObj : listCadenceAction){
-            	if (caObj.Cadence_Id__c == null){
-            	    caObj.Cadence_Id__c = cadenceObj.Id;
-            	}
-           		populateCadActionPostFixExpression(caObj); 
-            	caListToInsert.add(caObj);
-        	}
-        	Database.UpsertResult[] results = Database.upsert(caListToInsert);
-        	Map<Id, String> caIdsToCreatePa = new Map<Id, String>();
-        	Map<Id, CadenceAction__c> caToInsertMap = new Map<Id, CadenceAction__c>();
-        	for(Integer index = 0, size = results.size(); index < size; index++) {
-            	if(results[index].isSuccess()) {
-                	if(results[index].isCreated()) {
-                    	caToInsertMap.put(caListToInsert[index].Id, caListToInsert[index]);
-                    	caIdsToCreatePa.put(caListToInsert[index].Id, caListToInsert[index].Name);
-                	} 
-            	}
-        	}
-            addActionOnParticipant(cadenceObj, caToInsertMap);
+        Sequence sequence = (Sequence)System.JSON.deserialize(cadenceObjString, Sequence.class); 
+        List<SequenceAction> sequenceActionList = (List<SequenceAction>)System.JSON.deserialize(listCadenceActionString, List<SequenceAction>.class); 
+        for (SequenceAction sequenceAction : sequenceActionList){
+            listCadenceAction.add(getCadenceAction(sequenceAction));
         }
-        catch(Exception e){
-            
+        cadenceObj = getCadence(sequence);
+        if (sequence.id != null && string.valueOf(sequence.id) != '' ){
+            cadenceObj.Id = Id.valueOf(sequence.id);
         }
+        populatePostFixExpressions(cadenceObj);   
+        upsert cadenceObj;
+        Map<Id,CadenceAction__c> mapofOldCadenceAction = CadenceSelector.getCadenceActionsByIds(New set<Id>{cadenceObj.Id});
+        deleteCadenceAction(cadenceObj, caIdsList);
+        List<CadenceAction__c> caListToInsert = new List<CadenceAction__c>();
+        for (CadenceAction__c caObj : listCadenceAction){
+            if (caObj.Cadence_Id__c == null){
+                caObj.Cadence_Id__c = cadenceObj.Id;
+            }
+            populateCadActionPostFixExpression(caObj); 
+            if(mapofOldCadenceAction.containskey(caObj.id)){ 
+                If(mapofOldCadenceAction.get(caObj.id) != null && (mapofOldCadenceAction.get(caObj.id).Day__c != caObj.Day__c || (mapofOldCadenceAction.get(caObj.id) != null && (mapofOldCadenceAction.get(caObj.id).Hour__c != caObj.Hour__c)))){
+                    caListToInsert.add(caObj);
+                }
+            }
+            else{
+                caListToInsert.add(caObj);
+            }
+        }
+        Database.UpsertResult[] results = Database.upsert(caListToInsert);
+        Map<Id, Boolean> caIdsToCreatePa = new Map<Id, Boolean>();
+        Map<Id, CadenceAction__c> caToInsertMap = new Map<Id, CadenceAction__c>();
+        for(Integer index = 0, size = results.size(); index < size; index++) {
+            if(results[index].isSuccess()) {
+                if(results[index].isCreated()) {
+                    caToInsertMap.put(caListToInsert[index].Id, caListToInsert[index]);
+                    caIdsToCreatePa.put(caListToInsert[index].Id, true);
+                } 
+                else{
+                    caToInsertMap.put(caListToInsert[index].Id, caListToInsert[index]);
+                    caIdsToCreatePa.put(caListToInsert[index].Id, false);
+                }
+            }
+        }
+        addActionOnParticipant(cadenceObj, caToInsertMap,caIdsToCreatePa,mapofOldCadenceAction);
         return String.valueOf(cadenceObj.Id);
     }
     
@@ -207,67 +214,88 @@ public class CadenceProgressIndicatorController {
         }
     }
     /*********************Updated logic for add  AOP*******************/
-    public static void addActionOnParticipant(Cadence__c cadence, Map<Id, CadenceAction__c> caToInsertMap){
-        List<Sequence_Action__c> saToInsert = New List<Sequence_Action__c>();
+    public static void addActionOnParticipant(Cadence__c cadence, Map<Id, CadenceAction__c> caToInsertMap,Map<Id,Boolean> caIdsToCreatePa,Map<Id, CadenceAction__c> mapofOldCadenceAction){
+      	List<Sequence_Action__c> saToInsert = New List<Sequence_Action__c>();
         Set<Id> participantIdsList = New Set<Id>();
-        list<SObject> participantList = CadenceSelector.getParticipantsOfCadence(cadence.Id, cadence.Record_Type__c); 
-        Map<Id, SObject> participantMap = New Map<Id, SObject>(participantList);
+       	list<SObject> participantList = CadenceSelector.getParticipantsOfCadence(cadence.Id, cadence.Record_Type__c);
+      	Map<Id, SObject> participantMap = New Map<Id, SObject>(participantList);
         participantIdsList = participantMap.keySet();
         Map<Id, List<Sequence_Action__c>> participantSequenceActionMap = New Map<Id, List<Sequence_Action__c>>();
 
         participantSequenceActionMap = CadenceService.getRemainingParticipantActions(participantIdsList, cadence.Record_Type__c);
-        
-        for (Id sobjID : participantIdsList ){
+      	for (Id sobjID : participantIdsList ){
             List<Sequence_Action__c> saList = new List<Sequence_Action__c>();
             saList = participantSequenceActionMap.get(sobjID);
             Integer lastIndex = 0;
             if (saList != null){
                 lastIndex = saList.size() - 1;
-                Sequence_Action__c sa = saList.get(lastIndex);
-                DateTime entranceDate =  sa.Expected_Execution_Date__c ;
-                for (Id caId : caToInsertMap.keySet()){
-                    CadenceAction__c ca = caToInsertMap.get(caId);
-                    Sequence_Action__c newSA = New Sequence_Action__c();
-                    newSA.CadenceAction_ID__c = caId;
-                    newSA.Name = ca.Name;
-                    if (cadence.Record_Type__c == CadenceConstants.LEAD_OBJECT_NAME){
-                        newSA.Lead_Id__c = (String)sobjID;
-                    } else {
-                        newSA.Contact_Id__c = (String)sobjID;
+                Sequence_Action__c sa = saList.get(0);
+                DateTime entranceDate =  sa.Expected_Execution_Date__c;
+                Boolean isupdate=false;
+                for(Sequence_Action__c seqAction : saList){
+                	if(caToInsertMap.containskey(seqAction.CadenceAction_ID__c) || isupdate){
+                      	CadenceAction__c ca = mapofOldCadenceAction.containskey(seqAction.CadenceAction_ID__c) ? mapofOldCadenceAction.get(seqAction.CadenceAction_ID__c) : New CadenceAction__c();
+                        Sequence_Action__c updateSA =seqAction;
+                        if (cadence.Record_Type__c == CadenceConstants.LEAD_OBJECT_NAME){
+                            updateSA.Lead_Id__c = (String)sobjID;
+                        } else {
+                            updateSA.Contact_Id__c = (String)sobjID;
+                        }
+                        Integer day = 0, hour = 0;
+                        if(!isupdate && caToInsertMap.get(seqAction.CadenceAction_ID__c) != null){
+                           day = (Integer)(caToInsertMap.get(seqAction.CadenceAction_ID__c).Day__c != null ?caToInsertMap.get(seqAction.CadenceAction_ID__c).Day__c :0  -(ca.Day__c != null ? ca.Day__c :0));
+                           hour =(Integer)(caToInsertMap.get(seqAction.CadenceAction_ID__c).Hour__c != null ?caToInsertMap.get(seqAction.CadenceAction_ID__c).Hour__c :0-(ca.Hour__c != null ? ca.Hour__c :0));
+                        }
+                        else{
+                             day = updateSA.CadenceAction_Id__r.Day__c != null ? (Integer)ca.Day__c : 0;
+                        	 hour = updateSA.CadenceAction_Id__r.Hour__c != null ? (Integer)ca.Hour__c : 0;
+                        }
+                        entranceDate = CadenceUtil.addTimeInDate(entranceDate, day, hour);
+                        updateSA.Expected_Execution_Date__c =  entranceDate;
+                        saToInsert.add(updateSA);
+                        isupdate =true;
                     }
-                    Integer day = 0, hour = 0;
-                    day = sa.CadenceAction_Id__r.Day__c != null ? (Integer)ca.Day__c : 0;
-                    hour = sa.CadenceAction_Id__r.Hour__c != null ? (Integer)ca.Hour__c : 0;
-                    
-                    entranceDate = CadenceUtil.addTimeInDate(entranceDate, day, hour);
-                    newSA.Expected_Execution_Date__c =  entranceDate;
-                    saToInsert.add(newSA);
                 }
-            }else{ 
+                if(!isupdate){
+                    entranceDate =  saList.get(lastIndex).Expected_Execution_Date__c;
+                }
+                saToInsert.addAll(createNewSA(caToInsertMap,entranceDate,sobjID,cadence,caIdsToCreatePa));
+            }
+            else{ 
                 DateTime entranceDate =  system.now() ;
-                for (Id caId : caToInsertMap.keySet()){
-                    CadenceAction__c ca = caToInsertMap.get(caId);
-                    Sequence_Action__c newSA = New Sequence_Action__c();
-                    newSA.CadenceAction_ID__c = caId;
-                    newSA.Name = ca.Name;
-                    if (cadence.Record_Type__c == CadenceConstants.LEAD_OBJECT_NAME){
-                        newSA.Lead_Id__c = (String)sobjID;
-                    } else {
-                        newSA.Contact_Id__c = (String)sobjID;
-                    }
-                    Integer day = 0, hour = 0;
-                    day = ca.Day__c != null ? (Integer)ca.Day__c : 0;
-                    hour = ca.Hour__c != null ? (Integer)ca.Hour__c : 0;
-                    
-                    entranceDate = CadenceUtil.addTimeInDate(entranceDate, day, hour);
-                    newSA.Expected_Execution_Date__c =  entranceDate;
-                    saToInsert.add(newSA);
-                }
+                saToInsert.addAll(createNewSA(caToInsertMap,entranceDate,sobjID,cadence,caIdsToCreatePa));
             }
         }
-
-        if (saToInsert.size() > 0){
-            insert saToInsert;
+		if (saToInsert != null && saToInsert.Size() > 9500){
+        	Create_Action_On_Participant_Batch actionPartBatch = new Create_Action_On_Participant_Batch(saToInsert);
+            Database.executeBatch(actionPartBatch);
+        }else{
+            CadenceService.createandUpdateActionOnPart(saToInsert);
         }
+    }
+    
+    private static List<Sequence_Action__c> createNewSA(Map<Id,CadenceAction__c> caToInsertMap,DateTime entranceDate,Id sobjID,Cadence__c cadence ,Map<Id,Boolean> caIdsToCreatePa){
+        List<Sequence_Action__c> listOfNewSA = new List<Sequence_Action__c>();
+        for (Id caId : caToInsertMap.keySet()){
+            if(caIdsToCreatePa.containskey(caId) && caIdsToCreatePa.get(caId)){
+                CadenceAction__c ca = caToInsertMap.get(caId);
+                Sequence_Action__c newSA = New Sequence_Action__c();
+                newSA.CadenceAction_ID__c = caId;
+                newSA.Name = ca.Name;
+                if (cadence.Record_Type__c == CadenceConstants.LEAD_OBJECT_NAME){
+                    newSA.Lead_Id__c = (String)sobjID;
+                } else {
+                    newSA.Contact_Id__c = (String)sobjID;
+                }
+                Integer day = 0, hour = 0;
+                day = ca.Day__c != null ? (Integer)ca.Day__c : 0;
+                hour = ca.Hour__c != null ? (Integer)ca.Hour__c : 0;
+                
+                entranceDate = CadenceUtil.addTimeInDate(entranceDate, day, hour);
+                newSA.Expected_Execution_Date__c =  entranceDate;
+                listOfNewSA.add(newSA);
+            }
+        }
+        return listOfNewSA;
     }
 }
