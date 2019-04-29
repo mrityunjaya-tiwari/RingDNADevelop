@@ -227,8 +227,7 @@ public class CadenceActionListController {
     
    public static void deleteActionOnpartcipants(List<Id> cadIds){  
         String query = 'SELECT Id FROM Sequence_Action__c WHERE isActionPerformed__c = false AND CadenceAction_ID__r.Cadence_Id__c  IN ' + CadenceUtil.getWhereClauseForListOfIds(cadIds);
-        System.debug('query%%%%='+query);
-       	Integer dmlLimits = CadenceConstants.DMLOPERATION;
+        Integer dmlLimits = CadenceConstants.DMLOPERATION;
         Integer  actionOnParticipantsCount = [select COUNT() from Sequence_Action__c where CadenceAction_ID__r.Cadence_Id__c  IN :cadIds and isActionPerformed__c=false];
         if(actionOnParticipantsCount >= dmlLimits){
             PerformDMLActionBatch dmlOperation=new PerformDMLActionBatch(query,CadenceConstants.DMLDELETE,'');
