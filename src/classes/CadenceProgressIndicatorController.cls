@@ -250,6 +250,9 @@ public class CadenceProgressIndicatorController {
                             decimal OldHourOfCadenceAction = ca.Hour__c != null ? ca.Hour__c : 0.0;
                             day = (Integer)(updateDayOfCadenceAction - OldDayOfCadenceAction);
                             hour = (Integer)(updateHourOfCadenceAction - OldHourOfCadenceAction);
+                            if(seqAction.Expected_Execution_Date__c != null){
+                            	entranceDate = seqAction.Expected_Execution_Date__c;  
+                            }
                         } else {
                             day = updateSA.CadenceAction_Id__r.Day__c != null ? (Integer) ca.Day__c : 0;
                             hour = updateSA.CadenceAction_Id__r.Hour__c != null ? (Integer) ca.Hour__c : 0;
@@ -299,7 +302,12 @@ public class CadenceProgressIndicatorController {
                 hour = cadenceAction.Hour__c != null ? (Integer) cadenceAction.Hour__c : 0;
 
                 entranceDate = CadenceUtil.addTimeInDate(entranceDate, day, hour);
-                newSequenceAction.Expected_Execution_Date__c = entranceDate;
+              	if(entranceDate >=System.now()){
+                    newSequenceAction.Expected_Execution_Date__c = entranceDate;
+                }
+                else{
+                   newSequenceAction.Expected_Execution_Date__c = System.now(); 
+                }
                 listOfNewSequenceActions.add(newSequenceAction);
             }
         }
