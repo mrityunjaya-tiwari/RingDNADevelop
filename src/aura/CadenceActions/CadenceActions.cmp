@@ -42,7 +42,6 @@
     <!-- onchange -->
     <aura:handler name="change" value="{!v.createAction}" action="{!c.oncreateActionAttributeChange}"/>
     <aura:attribute name = "showDetail" type = "Boolean" default = "false"/>
-    <aura:attribute name= "isChanged" type="boolean" default="false"/>
     <aura:attribute name="isNewAction" type="Boolean" default="false"/>
     <aura:attribute name="ISLoad" type="boolean" default="false"/>
     <aura:attribute name="SaveDisable" type="Boolean" default= "false"/>
