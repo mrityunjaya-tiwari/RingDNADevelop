@@ -343,7 +343,7 @@ public class TargetListController {
         PushTopic pushTopic = new PushTopic();
         pushTopic.Name = 'actionperform';
         pushTopic.Query = 'SELECT Id, '+nameSpace+'isActionPerformed__c, Name FROM '+nameSpace+'Sequence_Action__c Where '+nameSpace+'show_on_Target_List__c = true';
-        pushTopic.ApiVersion = 30.0;
+        pushTopic.ApiVersion = 39.0;
         pushTopic.NotifyForOperationCreate = true;
         pushTopic.NotifyForOperationUpdate = true;
         pushTopic.NotifyForOperationUndelete = true;
