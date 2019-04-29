@@ -39,18 +39,40 @@
             }
         }
     },
+    addNewCadenceActions: function (component, event, helper, actionName, actionType) {        
+        component.set('v.isValidationError', false);        
+        var rowList = component.get("v.cadenceActionList");
+        rowList.push({
+            'sobjectType': 'SequenceAction'
+        });       
+        var actionTypeListForCadenceAction = component.get("v.actionTypeListForCadenceAction");
+        var showDetail = component.get('v.showDetail');
+        if(showDetail == true){            
+            actionTypeListForCadenceAction.push(actionType);
+            component.set('v.isNewAction', true);
+            component.set("v.actionTypeListForCadenceAction",actionTypeListForCadenceAction);           
+            component.set("v.actionType", actionType);
+            component.set("v.actionName", actionName);
+            component.set("v.cadenceActionList", rowList);           
+        }
+        else{
+            var selectedActionType = event.getParam("value");
+            actionTypeListForCadenceAction.push(selectedActionType);
+            component.set("v.actionTypeListForCadenceAction",actionTypeListForCadenceAction);
+            component.set("v.actionType", selectedActionType);
+            component.set("v.cadenceActionList", rowList);             
+        }        
+    },
     // Used to edit cadence
     setDataToEdit:function(component, event, helper){
-        var cadenceActionList = component.get("v.cadenceActionList");
-     
+        var cadenceActionList = component.get("v.cadenceActionList");    
         if (cadenceActionList.length > 0){
-            var actionTypeListForCadenceAction = component.get("v.actionTypeListForCadenceAction");
-           
+            var actionTypeListForCadenceAction = component.get("v.actionTypeListForCadenceAction");            
             for (var index in cadenceActionList){
                 var cadenceActionObj = cadenceActionList[index];
                 var actionId = cadenceActionObj.actionId;
                 var actionList =  component.get('v.actionList');
-               
+                
                 for(var index in actionList){
                     if(actionList[index].id == actionId){
                         component.set("v.actionType", actionList[index].type);
@@ -58,11 +80,9 @@
                     }
                 }
             }
-            component.set("v.actionTypeListForCadenceAction",actionTypeListForCadenceAction);
-           
+            component.set("v.actionTypeListForCadenceAction",actionTypeListForCadenceAction);            
         }
-    },
-    
+    },    
     getCadenceActionsData :  function(component, event, helper){
         component.set('v.spinner',true);
         component.set('v.SaveDisable', true);
@@ -77,20 +97,13 @@
                 component.set('v.actionList', actionWrapper.actionClsList);
                 component.set('v.actionTypeList', actionWrapper.actionTypeList); 
                 //Data Sorting
-                for(var i=0;actionWrapper.fieldList.length > i;i++){
-                    //actionWrapper.fieldList[i]["fieldsDetail"].sort((a, b) => a['fieldLabel'].localeCompare(b['fieldLabel']));
+                for(var i=0;actionWrapper.fieldList.length > i;i++){                   
                     actionWrapper.fieldList[i]["fieldsDetail"].sort((a, b) => a.fieldLabel.localeCompare(b.fieldLabel));
-                }
-                
+                }                
                 component.set('v.UpdateFieldList', actionWrapper.fieldList[0]);
-                //console.log('actionWrapper.fieldList[0]:'+ JSON.stringify(actionWrapper.fieldList[0]));
                 helper.setDataToEdit(component, event, helper);
-                //component.set('v.spinner',false);
             } else{
-                //component.set('v.spinner',false);
             }
-            
-            
             window.setTimeout(
                 $A.getCallback(function() {
                     component.set('v.SaveDisable', false);
@@ -99,9 +112,18 @@
             component.set('v.ISLoad', true);
             component.set('v.spinner',false);
         });
-        //Sprint198-What is the use of this: newCadence
-        //var newCadence = component.get("v.newCadence");
         $A.enqueueAction(action)
-    }
-    
+    },
+    oncreateActionAttributeChange : function(component, event, helper){    
+        var currentValue = event.getParam("value");
+        var isEnabled = component.get('v.isEnabled');                
+        if (currentValue == false && isEnabled == true){
+            var actionlist = component.get('v.actionList');
+            var element = actionlist.slice(-1);            
+            var actionName = element[0].name;
+            var actionType = element[0].type;
+            component.set('v.showDetail', true);           
+            helper.addNewCadenceActions(component, event, helper, actionName, actionType);
+        }
+    }    
 })

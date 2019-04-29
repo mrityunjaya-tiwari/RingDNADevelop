@@ -9,58 +9,92 @@
     },
     // Added new row for set fields to update
     createRowToFieldsUpdate: function(component, event, helper){
-       var rowList = component.get("v.rowToCreateFieldsToUpdate");        
-            rowList.push({
-                'sobjectType': 'wrapperTaskField',
-                'key': '',
-                'value': ''
-            });        
+        var rowList = component.get("v.rowToCreateFieldsToUpdate");        
+        rowList.push({
+            'sobjectType': 'wrapperTaskField',
+            'key': '',
+            'value': ''
+        });        
         component.set("v.rowToCreateFieldsToUpdate", rowList);
     },
     // Set action object according to cadenceAction object 
-    setActionObject : function(component, event, helper){
+    setActionObject : function(component, event, helper){       
+        var isNewAction = component.get("v.isNewAction"); 
         var cadenceActionObj = component.get("v.cadenceAction");
         var actionList = component.get("v.allActionsList");
         var currentIndex = component.get('v.currentIndex');
         cadenceActionObj.index = currentIndex;
         
-        for(var index in actionList){
-            var actionObj = actionList[index];
-            var actionId = actionObj.id;
-            
-            
-            if (cadenceActionObj.actionId == actionId){
-                component.set("v.actionObject", actionObj);
-                cadenceActionObj.name = actionObj.name;
+        if(isNewAction ==  true){ 
+            component.set('v.showNewActionName', true);
+            var element = actionList.slice(-1);
+            var elementId = element[0].id;    
+            var actionName = element[0].name;
+            var activationType = element[0].activationType;        
+            if (cadenceActionObj != undefined && (cadenceActionObj.name === undefined || cadenceActionObj.name == '' )){                  
+                cadenceActionObj.actionId = elementId;
+                component.set("v.actionObject", element);   
+                cadenceActionObj.name = actionName;                 
+            }  
+            component.set("v.cadenceAction", cadenceActionObj);    
+            if (activationType == 'Manual'){
+                component.set('v.showPriority', 'True');
+                var cmpTarget = component.find('updatePriorityChanges');
+                $A.util.removeClass(cmpTarget, 'slds-size_1-of-3');
+                $A.util.addClass(cmpTarget, 'slds-size_1-of-4');
                 
-                if (actionObj.activationType == 'Manual'){
-                    component.set('v.showPriority', 'True');
-                    var cmpTarget = component.find('updatePriorityChanges');
-                    $A.util.removeClass(cmpTarget, 'slds-size_1-of-3');
-                    $A.util.addClass(cmpTarget, 'slds-size_1-of-4');
-                     
-                    var pList= component.get('v.pList');
-                    var cAct = component.get('v.cadenceAction');
-                    if (cAct != undefined && (cAct.priority === undefined ||cAct.priority == '' )){                      
-                        cAct.priority = pList[1];
-                        cAct.priorityNumber = 2;
-                    }
-                    
-                    component.set('v.cadenceAction', cAct);
-                }else{
-                   
-                    var cAct = component.get('v.cadenceAction');
-                    cAct.priority = '';
-                    cAct.priorityNumber = 0;
-                    component.set('v.cadenceAction', cAct);
-                    component.set('v.showPriority', 'false');
-                    var cmpTarget = component.find('updatePriorityChanges');
-                    $A.util.removeClass(cmpTarget, 'slds-size_1-of-4');
-                    $A.util.addClass(cmpTarget, 'slds-size_1-of-3');
-                }
+                var pList= component.get('v.pList');
+                var cAct = component.get('v.cadenceAction');
+                if (cAct != undefined && (cAct.priority === undefined ||cAct.priority == '' )){                      
+                    cAct.priority = pList[1];
+                    cAct.priorityNumber = 2;
+                }                   
+                component.set('v.cadenceAction', cAct);
+            }else{                   
+                var cAct = component.get('v.cadenceAction');
+                cAct.priority = '';
+                cAct.priorityNumber = 0;
+                component.set('v.cadenceAction', cAct);
+                component.set('v.showPriority', 'false');
+                var cmpTarget = component.find('updatePriorityChanges');
+                $A.util.removeClass(cmpTarget, 'slds-size_1-of-4');
+                $A.util.addClass(cmpTarget, 'slds-size_1-of-3');
             }
-            
         }
+        else{          
+            for(var index in actionList){
+                var actionObj = actionList[index];           
+                var actionId = actionObj.id;                
+                if (cadenceActionObj.actionId == actionId){
+                    component.set("v.actionObject", actionObj);                
+                    cadenceActionObj.name = actionObj.name; 
+                    
+                    if (actionObj.activationType == 'Manual'){
+                        component.set('v.showPriority', 'True');
+                        var cmpTarget = component.find('updatePriorityChanges');
+                        $A.util.removeClass(cmpTarget, 'slds-size_1-of-3');
+                        $A.util.addClass(cmpTarget, 'slds-size_1-of-4');
+                        
+                        var pList= component.get('v.pList');
+                        var cAct = component.get('v.cadenceAction');
+                        if (cAct != undefined && (cAct.priority === undefined ||cAct.priority == '' )){                      
+                            cAct.priority = pList[1];
+                            cAct.priorityNumber = 2;
+                        }                   
+                        component.set('v.cadenceAction', cAct);
+                    }else{                   
+                        var cAct = component.get('v.cadenceAction');
+                        cAct.priority = '';
+                        cAct.priorityNumber = 0;
+                        component.set('v.cadenceAction', cAct);
+                        component.set('v.showPriority', 'false');
+                        var cmpTarget = component.find('updatePriorityChanges');
+                        $A.util.removeClass(cmpTarget, 'slds-size_1-of-4');
+                        $A.util.addClass(cmpTarget, 'slds-size_1-of-3');
+                    }
+                }
+                
+            }}
     },
     // used to remove rows from fields to update
     handleCadDynamicRowEvent: function(component, event, helper){
@@ -161,7 +195,7 @@
         helper.createActionTypeList(component, event, actionTypeListForCadenceAction[index]);
         helper.setActionObject(component, event, helper);
         helper.disablUnitInput(component, event, helper);
-       
+        
     },
     // Create a list of action for selected action type
     createActionTypeList: function(component, event, actionType){
@@ -248,17 +282,17 @@
     createListForInput : function (component){
         var fieldList = component.get("c.createListForUIInput");      
         component.set('v.spinner', true);
-		fieldList.setCallback(this, function(response){
-			var state = response.getState();
-			if(state === 'SUCCESS'){
-				var result = response.getReturnValue();
+        fieldList.setCallback(this, function(response){
+            var state = response.getState();
+            if(state === 'SUCCESS'){
+                var result = response.getReturnValue();
                 var pList = result.pList;
-				component.set('v.pList', pList);
+                component.set('v.pList', pList);
                 //component.get(pList[1]).set(selected,true);
                 component.set('v.spinner', true);                
                 window.setTimeout(
                     $A.getCallback(function() {
-                       
+                        
                         try {
                             var cAct = component.get('v.cadenceAction');
                             if(cAct != undefined || cAct != ''){
@@ -278,11 +312,11 @@
                         component.set('v.spinner', false);
                     }), 500
                 );
-               
-			}else{
-				console.log('failed with status:',response);
-			}
-		});
-		$A.enqueueAction(fieldList);
+                
+            }else{
+                console.log('failed with status:',response);
+            }
+        });
+        $A.enqueueAction(fieldList);
     },
 })

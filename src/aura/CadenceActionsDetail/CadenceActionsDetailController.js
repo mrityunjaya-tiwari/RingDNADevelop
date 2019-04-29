@@ -1,12 +1,14 @@
 ({
     doInit: function(component, event, helper) {
+        var isNewAction = component.get("v.isNewAction");
         var cadenceAction = component.get("v.cadenceAction");
         if(!(cadenceAction.id)){           
-            helper.sectionToggle(component, event,'detailDiv');
-            
+            helper.sectionToggle(component, event,'detailDiv');            
         }
-        // To add a row by default
-        
+        if(isNewAction ==  true){         
+         helper.setActionObject(component, event, helper);           
+        }
+        // To add a row by default        
         helper.createRowToFieldsUpdate(component, event, helper);
         // Set contact felds data
         helper.setContactFieldsList(component, event, helper);
@@ -22,14 +24,11 @@
     // Toggle details section 
     sectionToggle : function(component, event, helper) {
         helper.sectionToggle(component,event,'detailDiv');
-    },
-    
+    },    
     // remove cadenceActions row
     removeRow : function(component, event, helper){
-         component.set('v.showModal', true);
-         
-    },
-    
+         component.set('v.showModal', true);         
+    },  
     // Used to set cadence action object
     setActionObject : function(component, event, helper){       
         helper.setActionObject(component, event, helper);
@@ -91,8 +90,7 @@
     // used to disable input for immediate cadence actions.
     disablUnitInput:function(component, event, helper){
         helper.disablUnitInput(component, event, helper);
-    },
-    
+    },   
     updatePriorityNumber:function(component, event, helper){        
         var cadenceAction= component.get("v.cadenceAction");             
         if(cadenceAction.priority == 'High' ){          
@@ -110,8 +108,7 @@
         var cadenceActionObj = component.get("v.cadenceAction");
         var currentIndex = component.get('v.currentIndex');
         cadenceActionObj.index = currentIndex;
-    },
-    
+    },   
     deleteActions: function(component, event, helper) {
         var pageIndex = component.get("v.currentIndex");
         var eventObj = component.getEvent("cadDynamicRowEvent");
@@ -124,12 +121,8 @@
         eventObj.setParams({
             ronIndex: pageIndex
         }).fire();
-    },
-    
+    },   
     cancelActionDeletion : function(cmp, event, helper) {
-        cmp.set('v.showModal', false);
-        
-    },
-    
-    
+        cmp.set('v.showModal', false);        
+    },   
 })
