@@ -140,7 +140,7 @@
         else if(myUserContext == undefined) {
             var evt = $A.get("e.force:navigateToComponent");
             evt.setParams({
-                componentDef : "RDNACadence5:ActionDetailView" ,
+                componentDef : "c:ActionDetailView" ,
                 componentAttributes : {
                     "recordId" : id
                 }

@@ -42,5 +42,5 @@
     },
     oncreateActionAttributeChange : function(component, event, helper){
         helper.oncreateActionAttributeChange(component, event, helper);
-    }    
+    }
 })

@@ -61,15 +61,13 @@
             component.set("v.actionTypeListForCadenceAction",actionTypeListForCadenceAction);
             component.set("v.actionType", selectedActionType);
             component.set("v.cadenceActionList", rowList);             
-        }
-        
+        }        
     },
     // Used to edit cadence
     setDataToEdit:function(component, event, helper){
         var cadenceActionList = component.get("v.cadenceActionList");    
         if (cadenceActionList.length > 0){
-            var actionTypeListForCadenceAction = component.get("v.actionTypeListForCadenceAction");
-            
+            var actionTypeListForCadenceAction = component.get("v.actionTypeListForCadenceAction");            
             for (var index in cadenceActionList){
                 var cadenceActionObj = cadenceActionList[index];
                 var actionId = cadenceActionObj.actionId;
@@ -82,8 +80,7 @@
                     }
                 }
             }
-            component.set("v.actionTypeListForCadenceAction",actionTypeListForCadenceAction);
-            
+            component.set("v.actionTypeListForCadenceAction",actionTypeListForCadenceAction);            
         }
     },    
     getCadenceActionsData :  function(component, event, helper){
@@ -100,17 +97,12 @@
                 component.set('v.actionList', actionWrapper.actionClsList);
                 component.set('v.actionTypeList', actionWrapper.actionTypeList); 
                 //Data Sorting
-                for(var i=0;actionWrapper.fieldList.length > i;i++){
-                    //actionWrapper.fieldList[i]["fieldsDetail"].sort((a, b) => a['fieldLabel'].localeCompare(b['fieldLabel']));
+                for(var i=0;actionWrapper.fieldList.length > i;i++){                   
                     actionWrapper.fieldList[i]["fieldsDetail"].sort((a, b) => a.fieldLabel.localeCompare(b.fieldLabel));
-                }
-                
+                }                
                 component.set('v.UpdateFieldList', actionWrapper.fieldList[0]);
-                //console.log('actionWrapper.fieldList[0]:'+ JSON.stringify(actionWrapper.fieldList[0]));
                 helper.setDataToEdit(component, event, helper);
-                //component.set('v.spinner',false);
             } else{
-                //component.set('v.spinner',false);
             }
             window.setTimeout(
                 $A.getCallback(function() {
@@ -120,8 +112,6 @@
             component.set('v.ISLoad', true);
             component.set('v.spinner',false);
         });
-        //Sprint198-What is the use of this: newCadence
-        //var newCadence = component.get("v.newCadence");
         $A.enqueueAction(action)
     },
     oncreateActionAttributeChange : function(component, event, helper){    
@@ -135,5 +125,5 @@
             component.set('v.showDetail', true);           
             helper.addNewCadenceActions(component, event, helper, actionName, actionType);
         }
-    }   
+    }    
 })
