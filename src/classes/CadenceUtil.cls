@@ -265,4 +265,23 @@ public with sharing class CadenceUtil {
         }
         return sObjectList;
     }
+    
+    /**
+     * @description - This method return set of ids in comma seprated for where clause in SOQL.
+     * @param List<Id> - List of Ids
+     * @return String - Condition for where clause.
+     */
+    public static String getWhereClauseForListOfIds(List<Id> ids){
+        string  whereClause = '(';
+        for(Id obj : ids){
+           whereClause = whereClause + '\'' + String.valueOf(obj)  + '\',' ;
+        }
+        if(whereClause.length() > 1){
+            whereClause = whereClause.removeEnd(',') + ')';
+        }
+        if(whereClause == '('){
+            whereClause = '';
+        }
+        return whereClause;
+    }
 }
