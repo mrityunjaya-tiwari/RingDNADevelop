@@ -235,7 +235,7 @@ public class CadenceActionListController {
             for(Contact con : contactList){
                 con.Opportunity_Id__c = null;
             }
-            update contactList;
+            Database.SaveResult[] results = Database.update(contactList, false);
         }
     }
 }

@@ -137,7 +137,7 @@ public class Contacts  extends SObjectDomain {
         }
         
 		if(contsToUpdate != null && !contsToUpdate.isEmpty()) {
-        	update contsToUpdate; 
+        	Database.SaveResult[] results = Database.update(contsToUpdate, false);
         }
 
     }

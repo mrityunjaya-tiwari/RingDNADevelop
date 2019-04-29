@@ -294,6 +294,91 @@ public class CadenceServiceTest {
          System.assertEquals(opportunity.IsPrivate,false);
          Test.stopTest(); 
         
+    }
+
+    @isTest
+    static void OpportunityExitTest(){
+        Opportunity opportunity = TestDataFactory.createOpp('Test-opp-01');
+        
+        insert New List<opportunity>{opportunity};
+        System.assertNotEquals(null, opportunity.Id); 
+        
+ 		Contact c1= new Contact();
+        c1.FirstName='Test';
+        c1.LastName='Contact for Role1';
+        c1.Department='IT';
+        c1.Opportunity_Id__c = opportunity.Id;
+        
+        
+        insert new List<Contact>{c1};
+        System.assertNotEquals(null, c1.Id);
+        
+        OpportunityContactRole oppRol = new OpportunityContactRole(Role='Decision Maker',ContactId=c1.Id,OpportunityId=opportunity.id);
+        insert new List<OpportunityContactRole>{oppRol};
+        System.assertNotEquals(null, oppRol.Id);
+        
+        Cadence__c cadence1 = TestDataFactory.createCadence(CadenceConstants.OPPORTUNITY_OBJECT_NAME);
+        cadence1.matching_priority__c= 'P1';
+        cadence1.Record_Type__c=CadenceConstants.OPPORTUNITY_OBJECT_NAME;
+        String entryJson = TestDataFactory.createCadJsonWithNameCriterionsForOppRole('Decision Maker', CadenceConstants.CONDITION_AND, '');
+        String exitJson = TestDataFactory.createCadJsonWithNameCriterionsForOppRole('Business User', CadenceConstants.CONDITION_AND, '');
+        cadence1.Entrance_Criteria__c = entryJson;
+        cadence1.Exit_Criteria__c = exitJson;
+         
+        insert cadence1;
+        System.assertNotEquals(null, cadence1);
+       
+        c1.Cadence_ID__c = cadence1.Id;
+        update c1; 
+        
+        action1= TestDataFactory.createAction('Email');
+        System.runAs ( new User(Id = UserInfo.getUserId()) ) {
+           EmailTemplate validEmailTemplate = new EmailTemplate();
+            validEmailTemplate.isActive = true;
+            validEmailTemplate.Name = 'name';
+            validEmailTemplate.DeveloperName = 'unique_name_addSomethingSpecialHere';
+            validEmailTemplate.TemplateType = 'text';
+            validEmailTemplate.FolderId = UserInfo.getUserId();
+            insert validEmailTemplate;
+            System.assertNotEquals(null, validEmailTemplate);
+            action1.Template_Id__c= validEmailTemplate.id;
+        }
+        action1= TestDataFactory.createAction('Email');
+        action1.Template_Id__c= null;
+        action1.Activation_Type__c = 'Automatic';
+        
+        insert action1;
+        System.assertNotEquals(null, action1);
+
+        CadenceAction__c cadenceAction = TestDataFactory.createCadenceAction(cadence1.Id, action1.Id);
+        cadenceAction.Day__c= 0;
+        cadenceAction.Hour__c= 0;
+        cadenceAction.Trigger_Type__c = 'Immediate';
+        cadenceAction.Fields_To_Update_Action__c = '{"sobjectType":"Lead","IsPrivate":"true"}';
+        insert cadenceAction;
+        System.assertNotEquals(null, cadenceAction.Id);
+        
+        
+        Sequence_Action__c seqAction  =  new Sequence_Action__c();
+        seqAction.CadenceAction_Id__c = cadenceAction.id;
+        seqAction.isActionPerformed__c =false;
+        seqAction.Contact_Id__c = c1.Id;
+        insert seqAction;
+        
+        Map<Id, List<Sequence_Action__c>> partActionsMap =  CadenceService.getRemainingParticipantAction(new Set<Id>{c1.Id}, CadenceConstants.OPPORTUNITY_OBJECT_NAME);
+        System.debug('partActionsMap='+partActionsMap);
+        Test.startTest();
+        // Schedule batch for opportunity
+        PerformCadenceActionBatch oppBatch =new PerformCadenceActionBatch(new List<string>{CadenceConstants.OPPORTUNITY_OBJECT_NAME, CadenceConstants.ACCOUNT_OBJECT_NAME,CadenceConstants.CONTRACT_OBJECT_NAME,CadenceConstants.PRICE_BOOK_OBJECT_NAME});
+        Database.executeBatch(oppBatch,500);
+        
+        CadenceService.updateSObjectFields(New List<Contact>{c1}, partActionsMap, CadenceConstants.OPPORTUNITY_OBJECT_NAME , false);
+        System.assertNotEquals(opportunity.IsPrivate, true);
+        
+        CadenceActionListController.deleteCadences(new List<Id>{cadence1.Id});
+        System.assertNotEquals(null, cadence1.Id);
+        
+        Test.stopTest();
     }    
     
     @isTest
