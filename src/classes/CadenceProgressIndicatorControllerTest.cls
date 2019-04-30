@@ -15,7 +15,7 @@ public class CadenceProgressIndicatorControllerTest {
         insert action1;
         
         List<Criterion> criterionList = new List<Criterion>();
-        Cadence__c cadenceObj= TestDataFactory.createCadence(RECORD_TYPE_LEAD);        
+        Cadence__c cadenceObj= TestDataFactory.createCadence('Contact');        
         Criterion c = TestDataFactory.createCriterion(1, 'Status', 'PICKLIST', 'equals', 'Open - Not Contacted');
         criterionList.add(c);
         jsonString = TestDataFactory.createCadenceJSON(criterionList, CadenceConstants.CONDITION_AND, CUSTOM_LOGIC);
@@ -35,7 +35,22 @@ public class CadenceProgressIndicatorControllerTest {
         cadenceActionobj2.Action_Criterion__c = jsonString;
         cadenceActionobj2.Cadence_Id__c=cadenceobj.Id;
         
-       	Sequence sequence = TestDataFactory.createSequence(cadenceobj);
+         Contact c1= new Contact();
+        c1.FirstName='Test';
+        c1.LastName='Contact for Role1';
+        c1.Department='IT';
+        c1.Cadence_Id__c = cadenceObj.id;
+        insert c1;
+        
+        Sequence_Action__c seqAction  =  new Sequence_Action__c();
+        seqAction.CadenceAction_Id__c = cadenceActionobj.id;
+        seqAction.isActionPerformed__c =false;
+        seqAction.Contact_Id__c = c1.Id;
+        insert seqAction;
+        System.assertNotEquals(null, seqAction.Id);
+        
+       
+        Sequence sequence = TestDataFactory.createSequence(cadenceobj);
         SequenceAction sequenceAction= TestDataFactory.createSequenceAction(cadenceActionobj);
         SequenceAction sequenceAction1= TestDataFactory.createSequenceAction(cadenceActionobj1);
         SequenceAction sequenceAction2= TestDataFactory.createSequenceAction(cadenceActionobj2);
@@ -44,6 +59,10 @@ public class CadenceProgressIndicatorControllerTest {
         CadenceProgressIndicatorController.saveCadence(system.JSON.serialize(sequence), system.JSON.serialize(new List<SequenceAction> {sequenceAction}), New List<String>());  
   //      Lead testLead = TestDataFactory.createLead(cadenceObj.Id);
 //        insert testLead;
+        CadenceProgressIndicatorController.saveCadence(system.JSON.serialize(sequence), system.JSON.serialize(new List<SequenceAction> {sequenceAction, sequenceAction1, sequenceAction2}), New List<String>());  
+        cadenceActionobj.Day__c =1;
+        cadenceActionobj.Hour__c =1; 
+        update cadenceActionobj;
         CadenceProgressIndicatorController.saveCadence(system.JSON.serialize(sequence), system.JSON.serialize(new List<SequenceAction> {sequenceAction, sequenceAction1, sequenceAction2}), New List<String>());  
         
         List<String> idListString = New List<String>();
@@ -61,6 +80,15 @@ public class CadenceProgressIndicatorControllerTest {
         CadenceProgressIndicatorController.updateCadenceActionAndDelete(cadenceobj, new list<Id>{cadenceActionobj.Id} );
         //List<CadenceAction__c> caListToInsert = new List<CadenceAction__c>();
        // caListToInsert.add(cadenceActionobj);
+       Sequence_Action__c seqAction2  =  new Sequence_Action__c();
+        seqAction2.CadenceAction_Id__c = cadenceActionobj.id;
+        seqAction2.isActionPerformed__c =false;
+        seqAction2.Contact_Id__c = c1.Id;
+        insert seqAction2;
+        System.assertNotEquals(null, seqAction2.Id);
+        
+        Create_Action_On_Participant_Batch actionPartBatch = new Create_Action_On_Participant_Batch(New List<Sequence_Action__c>{seqAction2});
+       Database.executeBatch(actionPartBatch);
     }
     
     @isTest
