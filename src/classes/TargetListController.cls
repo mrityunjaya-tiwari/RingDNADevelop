@@ -337,7 +337,7 @@ public class TargetListController {
     public static void createPushTopic() {
         List<PushTopic> pt = [Select Id from PushTopic where Name='actionperform'];
         if(pt.size() > 0) {
-            return;
+			delete pt;
         }
         
         PushTopic pushTopic = new PushTopic();

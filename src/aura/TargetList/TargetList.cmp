@@ -1,10 +1,10 @@
 <aura:component controller="TargetListController" implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction,force:appHostable" access="global">
     
     <ltng:require scripts="{!join(',',
-            $Resource.RDNACadence__StreamingAPI + '/cometd.js',
-            $Resource.RDNACadence__StreamingAPI + '/jquery-1.5.1.js',
-            $Resource.RDNACadence__StreamingAPI + '/json2.js',
-            $Resource.RDNACadence__StreamingAPI + '/jquery.cometd.js')}"
+            $Resource.StreamingAPI + '/cometd.js',
+            $Resource.StreamingAPI + '/jquery-1.5.1.js',
+            $Resource.StreamingAPI + '/json2.js',
+            $Resource.StreamingAPI + '/jquery.cometd.js')}"
                   afterScriptsLoaded="{!c.refreshData}"
     />
     <aura:attribute name="sessionId" type="String"/>
