@@ -282,7 +282,6 @@ public class CadenceProgressIndicatorController {
         }
     }
     
-    private static List < Sequence_Action__c > createNewSequenceAction(Map < Id, CadenceAction__c > cadenceActionsToInsertMap, DateTime entranceDate, Id sobjID, Cadence__c cadence, Map < Id, Boolean > caIdsToCreatePa) {
     private static List < Sequence_Action__c > createNewSequenceAction(Map < Id, CadenceAction__c > cadenceActionsToInsertMap, DateTime entranceDate, Id sobjID, Cadence__c cadence, Map < Id, Boolean > createdAndUpdateCadenceActions) {
         List < Sequence_Action__c > listOfNewSequenceActions = new List < Sequence_Action__c > ();
         for (Id cadenceActionId: cadenceActionsToInsertMap.keySet()) {
