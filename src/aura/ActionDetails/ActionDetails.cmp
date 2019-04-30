@@ -31,7 +31,8 @@
 <aura:attribute name="activationtypeList" type="List" default="['Automatic', 'Manual']" />
 <aura:attribute name="currentStep" type="string" default="1"/>
 <aura:attribute name="isNextEnable" type="boolean" default="false"/>
-<aura:attribute type="List" name="rowActionTemplateList"/>      
+<aura:method name="actionDetailsMethod" action="{!c.createAction}">
+</aura:method>
 <!-- Body Start -->
 <div class="slds-box_xx-small" style="height : 450px">
 	<fieldset class="slds-form-element slds-form_compound">
@@ -52,7 +53,7 @@
 									 value="{!v.newAction.name}"
 									 placeholder = "Enter Action Name"
 									 messageWhenBadInput = "Please Enter Name"
-									 required="true"/> 
+									 required="true" onchange="{!c.isNextStepEnable}"/> 
 				</div>                                                
 			</div>                    
 			<span class="rdna-template-bold slds-p-top_medium slds-m-top_large slds-page-header__row slds-text-title_bold slds-truncate slds-align_absolute-center">Action Types</span>
