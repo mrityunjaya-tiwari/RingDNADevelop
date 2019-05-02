@@ -29,12 +29,6 @@
         helper.onCancel(component, event);
     },
     onNext: function(component, event, helper){
-        var isValid = helper.validateEmailActionBuilder(component, event,helper);
-        if (isValid){
-            component.set('v.isNextEnable' , false);
-            component.set('v.isEmailTemplateList' , true);
-        } else {
-            component.set('v.isValidationError',true);
         var currentStep = component.get('v.currentStep');
        	if(currentStep =='1' || currentStep==1){
             var childCmp = component.find("newActionDetails");
