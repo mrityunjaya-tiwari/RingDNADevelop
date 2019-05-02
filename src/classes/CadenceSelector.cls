@@ -267,6 +267,6 @@ public with sharing class CadenceSelector {
     * @param objIds - Set of Ids
     */
     public static void DeleteParticipantAction(Set<Id> objIds) {
-        Delete [Select Id,Contact_Id__r.Cadence_ID__c  from Sequence_Action__c where (Contact_Id__c IN :objIds and (Contact_Id__r.Cadence_ID__c = null or  Contact_Id__r.Cadence_ID__c = '')) or ( Lead_Id__c IN : objIds and ( Lead_Id__r.Cadence_Id__c  = null or   Lead_Id__r.Cadence_Id__c  = '') )];
+        Delete [Select Id from Sequence_Action__c where (Contact_Id__c IN :objIds and (Contact_Id__r.Cadence_ID__c = null or  Contact_Id__r.Cadence_ID__c = '')) or ( Lead_Id__c IN : objIds and ( Lead_Id__r.Cadence_Id__c  = null or   Lead_Id__r.Cadence_Id__c  = '') )];
     }
 }
