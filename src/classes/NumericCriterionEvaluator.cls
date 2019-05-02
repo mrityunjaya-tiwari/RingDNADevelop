@@ -13,22 +13,26 @@ public with sharing class NumericCriterionEvaluator implements ICriterionEvaluat
     }
 
     public Boolean greater(Object a, Object b) {
-        if (a == null || b == null) { b = 0; }
+        if (a == null) { return false; }
+        if (b == null) { b = 0; }
         return Decimal.valueOf(String.valueOf(a)) > Decimal.valueOf(String.valueOf(b));
     }
 
     public Boolean lessThan(Object a, Object b) {
-        if (a == null || b == null) { b = 0; }
+        if (a == null) { return false; }
+        if (b == null) { b = 0; }
         return Decimal.valueOf(String.valueOf(a)) < Decimal.valueOf(String.valueOf(b));
     }
 
     public Boolean lessOrEquals(Object a, Object b) {
-        if (a == null || b == null) { b = 0; }
+        if (a == null) { return false; }
+        if (b == null) { b = 0; }
         return Decimal.valueOf(String.valueOf(a)) <= Decimal.valueOf(String.valueOf(b));
     }
 
     public Boolean greaterOrEquals(Object a, Object b) {
-        if (a == null || b == null) { b = 0; }
+        if (a == null) { return false; }
+        if (b == null) { b = 0; }
         return Decimal.valueOf(String.valueOf(a)) >= Decimal.valueOf(String.valueOf(b));
     }
 

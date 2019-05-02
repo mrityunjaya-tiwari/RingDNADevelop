@@ -238,7 +238,7 @@ public with sharing class CadenceController {
                                     } 
                                     else{
                                         decimal numb = decimal.valueOf(mapofCriterion.get(num).value);
-                                        query += ' !=' + NULL + ' AND '+ mapofCriterion.get(num).fieldName;
+                                        query += ' != NULL AND '+ mapofCriterion.get(num).fieldName;                                        
                                         query += ' >'+  numb;
                                     }
                                 } 
@@ -255,7 +255,7 @@ public with sharing class CadenceController {
                                     } 
                                     else{
                                         decimal numb = decimal.valueOf(mapofCriterion.get(num).value);
-                                        query += ' !=' + NULL + ' AND '+ mapofCriterion.get(num).fieldName;
+                                        query += ' != NULL AND '+ mapofCriterion.get(num).fieldName;
                                         query += ' >='+  numb;
                                     }
                                 } 
@@ -269,12 +269,12 @@ public with sharing class CadenceController {
                                     {
                                     if(isEntry){
                                         decimal numb = decimal.valueOf(mapofCriterion.get(num).value);
-                                        query += ' =' + NULL + ' OR '+ mapofCriterion.get(num).fieldName;
+                                        query += ' = NULL OR '+ mapofCriterion.get(num).fieldName;
                                         query += ' <='+  numb;                                                                          
                                     } 
                                     else{
                                         decimal numb = decimal.valueOf(mapofCriterion.get(num).value);
-                                        query += ' !=' + NULL + ' AND '+ mapofCriterion.get(num).fieldName;
+                                        query += ' != NULL AND '+ mapofCriterion.get(num).fieldName;
                                         query += ' <='+  numb;                                     
                                     }
                                 }   
@@ -288,12 +288,12 @@ public with sharing class CadenceController {
                                    {
                                     if(isEntry){
                                         decimal numb = decimal.valueOf(mapofCriterion.get(num).value);
-                                        query += ' =' + NULL + ' OR '+ mapofCriterion.get(num).fieldName;
+                                        query += ' = NULL OR '+ mapofCriterion.get(num).fieldName;
                                         query += ' <'+  numb;                                  
                                     } 
                                     else{
                                         decimal numb = decimal.valueOf(mapofCriterion.get(num).value);
-                                        query += ' !=' + NULL + ' AND '+ mapofCriterion.get(num).fieldName;
+                                        query += ' != NULL AND '+ mapofCriterion.get(num).fieldName;
                                         query += ' <'+  numb;
                                     }
                                 }                                    

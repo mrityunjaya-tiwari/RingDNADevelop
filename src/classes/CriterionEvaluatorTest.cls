@@ -39,13 +39,17 @@ public with sharing class CriterionEvaluatorTest {
     	NumericCriterionEvaluator numEvaluator = new NumericCriterionEvaluator();
     	System.assertEquals(true, numEvaluator.equals(4, 4));
     	System.assertEquals(true, numEvaluator.notEquals(4, 3));
+        System.assertEquals(false, numEvaluator.greater(null, 3 ));
     	System.assertEquals(true, numEvaluator.greater(4, null ));
         System.assertEquals(true, numEvaluator.greater(4, 3 ));
+        System.assertEquals(false, numEvaluator.lessThan(null, 4));
     	System.assertEquals(true, numEvaluator.lessThan(3, 4));
         System.assertEquals(false, numEvaluator.lessThan(3, null));
+        System.assertEquals(false, numEvaluator.lessOrEquals(null, 4));
     	System.assertEquals(true, numEvaluator.lessOrEquals(4, 4));
         System.assertEquals(false, numEvaluator.lessOrEquals(4, null));
         System.assertEquals(true, numEvaluator.lessOrEquals(0, null));
+        System.assertEquals(false, numEvaluator.greaterOrEquals(null, 4));
     	System.assertEquals(true, numEvaluator.greaterOrEquals(4, 4));
         System.assertEquals(true, numEvaluator.greaterOrEquals(0, null));
         System.assertEquals(true, numEvaluator.greaterOrEquals(4, null));
