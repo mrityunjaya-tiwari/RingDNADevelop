@@ -31,8 +31,8 @@
     line-height: normal;
     letter-spacing: normal;
     text-align: center;
-    background: #0066ff;
-    color: #ffffff;
+    background: #0066ff !important;
+    color: #ffffff !important;
 }
 
 .THIS .email-builder-button-toggle {
