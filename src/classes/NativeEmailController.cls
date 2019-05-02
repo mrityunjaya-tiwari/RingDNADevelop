@@ -24,7 +24,6 @@ public class NativeEmailController {
             List<Sequence_Action__c> sequenceActionList = CadenceSelector.getParticipantActions(new Set<Id>{sequenceActionId});
             createTasks(participantId,sequenceActionList,templateId);
             updateSequenceAction(sequenceActionList,participantId);
-            return sendNativeEmail;
         }
         return sendNativeEmail;
     }
@@ -99,8 +98,7 @@ public class NativeEmailController {
                 return sendNativeEmail;
             }else{
                 sendNativeEmail.Success =false;
-                sendNativeEmail.Message =results != null ? results.get(0).getErrors()[0].getMessage():'';  
-                return sendNativeEmail;
+                sendNativeEmail.Message =results != null ? results.get(0).getErrors()[0].getMessage():'';
             }
         }
         return sendNativeEmail;
