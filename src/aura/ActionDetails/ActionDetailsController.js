@@ -17,8 +17,11 @@
     },
     isNextStepEnable  : function(component, event,helper) {
         var action = component.get('v.newAction');
-     	if(action.type != undefined && action.type !=''){
+        if(action.type != undefined && action.type !='' && action.name != undefined && action.name !='' ){
             component.set('v.isNextEnable' , true); 
+        }
+        else{
+            component.set('v.isNextEnable' , false);  
         }
     },
     createAction :function(component, event,helper) {
