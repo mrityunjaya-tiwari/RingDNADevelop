@@ -51,6 +51,8 @@
             component.set('v.isNextEnable', true);
         }
         else{
+            component.set('v.currentStep','1'); 
+            component.set('v.isNextEnable', true);
         }
     },
     createAction: function(component, event, helper) {
