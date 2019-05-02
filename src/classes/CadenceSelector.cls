@@ -261,4 +261,12 @@ public with sharing class CadenceSelector {
        
        return participantActions;
    }
+    
+    /**
+    * @description - Delete all Sequence Action which do not have Cadence Id
+    * @param objIds - Set of Ids
+    */
+    public static void DeleteParticipantAction(Set<Id> objIds) {
+        Delete [Select Id,Contact_Id__r.Cadence_ID__c  from Sequence_Action__c where (Contact_Id__r.Cadence_ID__c = null or  Contact_Id__r.Cadence_ID__c = '') and (Contact_Id__c IN :objIds or Lead_Id__c IN : objIds )];
+    }
 }
