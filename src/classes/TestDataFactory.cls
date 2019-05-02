@@ -1,6 +1,6 @@
 @isTest
 public class TestDataFactory {
-
+public static String nameSpace = CadenceConstants.NAMESPACE;
     public static Account createAccount() {
     	Account acc = new Account();
         acc.Name = 'Test Account';
@@ -143,11 +143,26 @@ public class TestDataFactory {
     
     public static String createCadJsonWithNameCriterionsForOpp(String firstName, String condition, String priorityFormula) {
         List<Criterion> criterionList = new List<Criterion>();
-        Criterion c1 = TestDataFactory.createCriterion(1, 'Name', 'STRING', 'equals', firstName);
+        Criterion c1 = TestDataFactory.createCriterion(1, 'FirstName', 'STRING', 'equals', firstName);
         criterionList.add(c1);
         return createCadenceJSON(criterionList, condition, priorityFormula);
     }
     
+    public static String createCadJsonWithSmallerOperatorCriterions(String firstName, String lastName, String condition, String priorityFormula) {
+        String priority = nameSpace+'Priority__c';
+        List<Criterion> criterionList = new List<Criterion>();
+        Criterion c1 = TestDataFactory.createCriterion(1, priority , 'Number', 'less_than', '8');
+        criterionList.add(c1);
+        return createCadenceJSON(criterionList, condition, priorityFormula);
+    }
+    
+    public static String createCadJsonWithGreaterOperatorCriterions(String firstName, String lastName, String condition, String priorityFormula) {
+        String priority = nameSpace+'Priority__c';
+        List<Criterion> criterionList = new List<Criterion>();
+        Criterion c1 = TestDataFactory.createCriterion(1, priority , 'Number', 'greater', '5');
+        criterionList.add(c1);
+        return createCadenceJSON(criterionList, condition, priorityFormula);
+    }
     public static String createCadJsonWithNameCriterionsForOppRole(String values, String condition, String  priorityFormula) {
         List<Criterion> criterionList = new List<Criterion>(); 
         Criterion c1 = TestDataFactory.createCriterion(1, 'OpportunityContactRole.Role', 'PICKLIST', 'equals', values);

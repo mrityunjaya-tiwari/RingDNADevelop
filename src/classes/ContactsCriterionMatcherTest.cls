@@ -1,6 +1,6 @@
 @isTest
 public class ContactsCriterionMatcherTest {
-    
+    public static String nameSpace = CadenceConstants.NAMESPACE;
     public static final String CUSTOM_LOGIC = '1 AND (2 OR 3)';
     Public static Final String ACTION_TYPE_CALL = 'Call';
     Public static Final String ACTION_TYPE_Email = 'Email';
@@ -8,6 +8,8 @@ public class ContactsCriterionMatcherTest {
     public static final String CUSTOM_LOGIC2 = '1 OR (2 OR 3)';
     
     public static Cadence__c cadContactAND;
+    public static Cadence__c cadContactAND2;
+    public static Cadence__c cadContactGreaterAND;
     public static Cadence__c cadContactOR;
     public static Cadence__c cadContactOR2;
     public static Cadence__c cadContactCUSTOM;
@@ -17,6 +19,8 @@ public class ContactsCriterionMatcherTest {
     public static Action__c action3;
         
     public static CadenceAction__c cadenceActionContactAND;
+    public static CadenceAction__c cadenceActionContactGreaterAND;
+    public static CadenceAction__c cadenceActionContactAND2;
     public static CadenceAction__c cadenceActionContactOR;
     public static CadenceAction__c cadenceActionCUSTOM;
     
@@ -24,7 +28,9 @@ public class ContactsCriterionMatcherTest {
     
     public static String cadJsonAND;
     public static String cadJsonAND2;
-    
+    public static String cadJsonEntryAND;
+    public static String cadJsonExitAND;
+    public static String cadJsonEntryGreaterAND;
     public static String cadJsonOR;
     public static String cadJsonOR2;
     
@@ -33,8 +39,9 @@ public class ContactsCriterionMatcherTest {
     
     
     static {
-        
+        cadContactGreaterAND = TestDataFactory.createCadence(CadenceConstants.CONTACT_OBJECT_NAME);
         cadContactAND = TestDataFactory.createCadence(CadenceConstants.CONTACT_OBJECT_NAME);
+        cadContactAND2 = TestDataFactory.createCadence(CadenceConstants.CONTACT_OBJECT_NAME);
         cadContactOR = TestDataFactory.createCadence(CadenceConstants.CONTACT_OBJECT_NAME);
         cadContactCUSTOM = TestDataFactory.createCadence(CadenceConstants.CONTACT_OBJECT_NAME);
         
@@ -54,6 +61,25 @@ public class ContactsCriterionMatcherTest {
         criterionList2.add(c5);
         criterionList2.add(c6);
         
+        List<Criterion> entryCriterionList = new List<Criterion>();
+        String priority = nameSpace+'Priority__c';
+        Criterion entryC1 = TestDataFactory.createCriterion(1, priority , 'Number', 'less_than', '8');
+        entrycriterionList.add(entryc1);
+        
+        List<Criterion> exitCriterionList = new List<Criterion>();
+        Criterion exitC1 = TestDataFactory.createCriterion(2, 'LastName', 'STRING', 'equals', 'test');
+        exitcriterionList.add(exitc1);
+        
+        List<Criterion> entryGreaterCriterionList = new List<Criterion>();
+        String priority2 = nameSpace+'Priority__c';
+        Criterion entryGreaterC1 = TestDataFactory.createCriterion(1, priority2, 'Number', 'greater', '5');
+        entryGreatercriterionList.add(entryGreaterc1);
+        
+        cadJsonEntryAND = TestDataFactory.createCadenceJSON(entryCriterionList, CadenceConstants.CONDITION_AND, '');
+        cadJsonExitAND = TestDataFactory.createCadenceJSON(exitCriterionList, CadenceConstants.CONDITION_AND, '');
+        
+        cadJsonEntryGreaterAND = TestDataFactory.createCadenceJSON(entryGreaterCriterionList, CadenceConstants.CONDITION_AND, '');
+        
         cadJsonAND = TestDataFactory.createCadenceJSON(criterionList, CadenceConstants.CONDITION_AND, '');
         cadJsonAND2 = TestDataFactory.createCadenceJSON(criterionList2, CadenceConstants.CONDITION_AND, '');
         
@@ -61,12 +87,20 @@ public class ContactsCriterionMatcherTest {
         cadJsonOR2= TestDataFactory.createCadenceJSON(criterionList2, CadenceConstants.CONDITION_OR, '');
         cadJsonCUSTOM = TestDataFactory.createCadenceJSON(criterionList, CadenceConstants.CONDITION_CUSTOM, CUSTOM_LOGIC);
         
-        
         cadContactAND.Entrance_Criteria__c = cadJsonAND;
         cadContactAND.Exit_Criteria__c=cadJsonAND2;
-        
         cadContactAND.matching_priority__c='P1';
-        cadContactAND.Participent_Activation__c='Automatic';
+        cadContactAND.Participent_Activation__c='Automatic'; 
+        
+        cadContactGreaterAND.Entrance_Criteria__c = cadJsonEntryGreaterAND;
+        cadContactGreaterAND.Exit_Criteria__c=cadJsonExitAND;
+        cadContactGreaterAND.matching_priority__c='P1';
+        cadContactGreaterAND.Participent_Activation__c='Automatic'; 
+        
+        cadContactAND2.Entrance_Criteria__c = cadJsonEntryAND;
+        cadContactAND2.Exit_Criteria__c = cadJsonExitAND;        
+        cadContactAND2.matching_priority__c='P1';
+        cadContactAND2.Participent_Activation__c='Automatic';
         
         
         cadContactOR.Entrance_Criteria__c = cadJsonOR2;
@@ -84,8 +118,9 @@ public class ContactsCriterionMatcherTest {
         cadContactCUSTOM.matching_priority__c='P3';
         cadContactCUSTOM.Participent_Activation__c='Automatic';
        
-        
+        insert cadContactGreaterAND;
         insert cadContactAND;
+        insert cadContactAND2;
         insert cadContactOR;
         insert cadContactCUSTOM;
         
@@ -106,19 +141,24 @@ public class ContactsCriterionMatcherTest {
         insert action3; 
         
         cadenceActionContactAND=TestDataFactory.createCadenceAction(cadContactAND.Id, action1.Id);
+        cadenceActionContactGreaterAND=TestDataFactory.createCadenceAction(cadContactGreaterAND.Id, action1.Id);
+        cadenceActionContactAND2=TestDataFactory.createCadenceAction(cadContactAND2.Id, action1.Id);
         cadenceActionContactOR=TestDataFactory.createCadenceAction(cadContactOR.Id, action2.Id);
         cadenceActionCUSTOM=TestDataFactory.createCadenceAction(cadContactCUSTOM.Id, action3.Id);
         
+        cadenceActionContactGreaterAND.Trigger_Type__c = 'Immediate';
         cadenceActionContactAND.Trigger_Type__c = 'Immediate';
+        cadenceActionContactAND2.Trigger_Type__c = 'Immediate';
         cadenceActionContactOR.Trigger_Type__c = 'Immediate';
         cadenceActionCUSTOM.Trigger_Type__c = 'Immediate';
+        insert cadenceActionContactGreaterAND;
         insert cadenceActionContactAND;
+        insert cadenceActionContactAND2;
         insert cadenceActionContactOR;
         insert cadenceActionCUSTOM;
       
     }
-        
-       
+              
     @isTest 
        static void contactMatchesEntryCriterionTest() {
         Contact c1= new Contact();
@@ -128,6 +168,15 @@ public class ContactsCriterionMatcherTest {
         c1.LastName='lname';
         c1.Department='Sales';
         insert c1;
+        
+        c2.FirstName='firstname';   
+        c2.LastName='lastname';          
+        insert c2;   
+         
+        c3.FirstName='firstname';   
+        c3.LastName='lastname'; 
+        insert c3;   
+           
         Test.startTest();
         c1.Salutation = 'Mr.';
         c1.Description = 'Hindi';
@@ -136,13 +185,29 @@ public class ContactsCriterionMatcherTest {
         Test.stopTest();
         // Activate cadence
         CadenceService.setParticipantsActivation(cadContactAND.Id,true);
-        c2 = [Select Id, Cadence_Id__c, isActivated__c, EntranceCriteria_Matched_Date__c, CreatedDate from Contact where Id = :c1.Id];
-        //System.assertEquals(c2.CreatedDate, c2.EntranceCriteria_Matched_Date__c, 'Entrance Criteria matches');
-        System.assertEquals(true, c2.isActivated__c, 'contact activated through cadence');        
-        //System.assertEquals(cadContactAND.Id, c2.Cadence_Id__c, 'Cadence lookup will populate as its criterion matches');
+        CadenceService.setParticipantsActivation(cadContactAND2.Id,true); 
+        c2 = [Select Id, Cadence_Id__c, isActivated__c, EntranceCriteria_Matched_Date__c, CreatedDate from Contact where Id = :c1.Id];   
+        c3 = [Select Id, Cadence_Id__c, isActivated__c, EntranceCriteria_Matched_Date__c, CreatedDate from Contact where Id = :c2.Id];
+        
+        System.assertEquals(c2.CreatedDate, c2.EntranceCriteria_Matched_Date__c, 'Entrance Criteria matches');
+        System.assertEquals(true, c2.isActivated__c, 'contact activated through cadence');
+        System.assertEquals(true, c3.isActivated__c, 'contact activated through cadence');  
+        //System.assertEquals(cadContactAND2.Id, c3.Cadence_Id__c, 'Cadence lookup will populate as its criterion matches');
         //c3 = [Select Id, Cadence_Id__c, CadencePerformed__c from Contact where Id = :c2.Id];  
         //System.assertEquals(true, c3.CadencePerformed__c, 'Exit Criterias matches,CadencePerformed set to true ');
            
+    }
+     @isTest 
+    static void greaterCriterionTest() {
+       Contact contact = new Contact();
+        contact.FirstName = 'Test';
+        contact.LastName = 'Last';
+        insert contact;
+        Test.startTest();
+        CadenceService.setParticipantsActivation(cadContactAND2.Id,true);
+        Test.stopTest();
+        
+        
     }
     @isTest 
     static void contactNotMatchesCriterionTest() {
@@ -182,9 +247,7 @@ public class ContactsCriterionMatcherTest {
        
 	    }
     
-          	
 
-    
     @isTest 
     static void contactNotMatchesEntryCustomCriterionTest() {
 		
