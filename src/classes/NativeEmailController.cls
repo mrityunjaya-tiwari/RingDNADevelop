@@ -15,7 +15,6 @@ public class NativeEmailController {
             }
             else if((!responseMap.isEmpty() && (responseMap.get('success') == true || responseMap.get('success') == 'true'))){
                 sendNativeEmail.Success =true;
-                sendNativeEmail.Message =''; 
             }
         }else{
             sendNativeEmail.Success =false;
@@ -26,9 +25,8 @@ public class NativeEmailController {
             createTasks(participantId,sequenceActionList,templateId);
             updateSequenceAction(sequenceActionList,participantId);
             return sendNativeEmail;
-        }else{
-            return sendNativeEmail;
         }
+        return sendNativeEmail;
     }
     
     public class NativeEmailWrapper {
@@ -98,18 +96,14 @@ public class NativeEmailController {
             Messaging.SendEmailResult[] results = Messaging.sendEmail(emailsToSend, false);
             if (results != null && results.get(0).isSuccess()) {
                 sendNativeEmail.Success =true;
-                sendNativeEmail.Message =''; 
                 return sendNativeEmail;
             }else{
                 sendNativeEmail.Success =false;
                 sendNativeEmail.Message =results != null ? results.get(0).getErrors()[0].getMessage():'';  
                 return sendNativeEmail;
             }
-        }else {
-            sendNativeEmail.Success =false;
-            sendNativeEmail.Message ='';
-            return sendNativeEmail;
         }
+        return sendNativeEmail;
     }
     
     private static void createTasks(String participantId,List<Sequence_Action__c> sequenceActionList,String templateId){
