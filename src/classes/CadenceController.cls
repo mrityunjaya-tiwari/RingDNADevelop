@@ -121,6 +121,11 @@ public with sharing class CadenceController {
             if(sObjectListToUpdate !=  null && sObjectListToUpdate.size() > 0) {
                 Database.SaveResult[] results = Database.update(sObjectListToUpdate, false);
                 Set<Id> resultIds = (new Map<Id,SObject>(sObjectListToUpdate)).keySet();
+                for(Database.saveResult r: results){
+                    if(r.isSuccess()){
+                        resultIds.remove(r.getId());
+                    }
+                }
                 CadenceSelector.DeleteParticipantAction(resultIds);
             }
         }
