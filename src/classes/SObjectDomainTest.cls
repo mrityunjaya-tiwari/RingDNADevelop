@@ -22,7 +22,7 @@
  *  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  *  OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-**/
+ **/
 
 @IsTest
 private with sharing class SObjectDomainTest 
@@ -41,7 +41,7 @@ private with sharing class SObjectDomainTest
 		System.assertEquals('You must provide an Account for Opportunities for existing Customers.', SObjectDomain.Errors.getAll()[0].message);
 		System.assertEquals(Opportunity.AccountId, ((SObjectDomain.FieldError)SObjectDomain.Errors.getAll()[0]).field);		
 	}
-	
+
 	@IsTest
 	private static void testInsertValidationFailedWithoutDML()
 	{
@@ -72,7 +72,7 @@ private with sharing class SObjectDomainTest
 		System.assertEquals('You cannot change the Opportunity type once it has been created.', SObjectDomain.Errors.getAll()[0].message);
 		System.assertEquals(Opportunity.Type, ((SObjectDomain.FieldError)SObjectDomain.Errors.getAll()[0]).field); 		
 	}
-	
+
 	@IsTest
 	private static void testOnBeforeDeleteWithoutDML()
 	{
@@ -86,7 +86,7 @@ private with sharing class SObjectDomainTest
 		System.assertEquals(1, SObjectDomain.Errors.getAll().size());		
 		System.assertEquals('You cannot delete this Opportunity.', SObjectDomain.Errors.getAll()[0].message);
 	}
-	
+
 	@IsTest
 	private static void testOnAfterUndeleteWithoutDML()
 	{
@@ -98,7 +98,7 @@ private with sharing class SObjectDomainTest
 		System.assertEquals(true, SObjectDomain.Test.Database.hasRecords());				
 		SObjectDomain.triggerHandler(SObjectDomain.TestSObjectDomainConstructor.class);		
 	}
-	
+
 	@IsTest
 	private static void testObjectSecurity()
 	{
@@ -117,7 +117,7 @@ private with sharing class SObjectDomainTest
 			} catch (Exception e) {
 				System.assertEquals('Permission to create an Opportunity denied.', e.getMessage());
 			}		
-			
+
 			// Test Update object security
 			Opportunity existingOpp = (Opportunity) Opportunity.sObjectType.newSObject('006E0000006mkRQ');
 			existingOpp.Name = 'Test';
@@ -129,7 +129,7 @@ private with sharing class SObjectDomainTest
 			} catch (Exception e) {
 				System.assertEquals('Permission to udpate an Opportunity denied.', e.getMessage());
 			}		
-			
+
 			// Test Delete object security
 			SObjectDomain.Test.Database.onDelete(new Map<Id, Opportunity> { opp.Id => opp });
 			try {
@@ -140,7 +140,7 @@ private with sharing class SObjectDomainTest
 			}		
 		}			
 	}
-	
+
 	@IsTest
 	private static void testErrorLogging()
 	{	
@@ -155,7 +155,7 @@ private with sharing class SObjectDomainTest
 		SObjectDomain.Errors.clearAll();		
 		System.assertEquals(0, SObjectDomain.Errors.getAll().size());		
 	}
-	
+
 	@IsTest
 	private static void testTriggerState()
 	{
@@ -207,7 +207,7 @@ private with sharing class SObjectDomainTest
 			System.assertEquals('onValidate called', e.getMessage());
 		}
 	}	
-	
+
 	/**
 	 * Create test user
 	 **/
@@ -276,7 +276,6 @@ private with sharing class SObjectDomainTest
 		catch (Exception e)
 		{
 			sErrorMessage = e.getMessage();
-			System.Debug('Exception Fired :' + e.getMEssage());
 		}
 
 		System.AssertEquals('onAfterInsert called', sErrorMessage, 'Error - After Insert Event is enabled but did not run');
@@ -390,6 +389,6 @@ private with sharing class SObjectDomainTest
 		} catch (Exception e) {
 			System.assertEquals('onValidate called', e.getMessage());
 		}
-		*/
+		 */
 	}
 }

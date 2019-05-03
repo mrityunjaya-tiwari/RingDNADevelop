@@ -61,7 +61,6 @@ public class CadenceProgressIndicatorController {
         if (sequenceAction.id != null && string.valueOf(sequenceAction.id) != '' ){
             cadenceAction.Id = ID.valueOf(sequenceAction.id);
         }
-        //cadenceAction.Id = sequenceAction.id;
         cadenceAction.Action_Criterion__c = sequenceAction.actionCriterion;
         cadenceAction.Action_Id__c = Id.valueOf(sequenceAction.actionId);
         if (sequenceAction.day != null && sequenceAction.day != '')
@@ -85,8 +84,6 @@ public class CadenceProgressIndicatorController {
         cadence.matching_priority__c = sequence.matchingPriority;
         cadence.Participent_Activation__c = sequence.participentActivation;
         cadence.Record_Type__c = sequence.recordType;
-        //cadence.Status__c = Boolean.valueOf(sequence.status);
-        //cadence.Total_Participants__c = Integer.valueOf(sequence.totalParticipants);
         return cadence;
     }
     public static void populatePostFixExpressions(Cadence__c cadenceObj) {
@@ -112,9 +109,9 @@ public class CadenceProgressIndicatorController {
         }
     }
     /**
-* @description - Used to create ParticipantActions by CadenceActions.
-* @param cadenceObj - cadence object , caIds - CadenceActions id list
-*/
+	 * @description - Used to create ParticipantActions by CadenceActions.
+	 * @param cadenceObj - cadence object , caIds - CadenceActions id list
+	 */
     public static void createParticipantActionsByCadenceActions(Cadence__c cadenceObj, Map<Id, String> caIds){
         List<SObject> soList = CadenceSelector.getParticipantsOfCadence(cadenceObj.Id , cadenceObj.Record_Type__c);
         List<Sequence_Action__c> paList = New List<Sequence_Action__c>();
@@ -147,7 +144,6 @@ public class CadenceProgressIndicatorController {
         if (ListOfCadenceActionToDelete.size() > 0){
             updateCadenceActionAndDelete(cadence, caIdList);
             delete ListOfCadenceActionToDelete;
-            // deleteParticipantActionsByCadenceActions(caIdList);
         }
     }
     

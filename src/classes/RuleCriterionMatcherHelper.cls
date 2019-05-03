@@ -1,8 +1,8 @@
 public with sharing class RuleCriterionMatcherHelper {
-     
-    public static Map<Id, CriterionSet> getCadenceWiseCriterions(List<Cadence__c> cadences, String criterionType) {
 
-    	Map<Id, CriterionSet> cadenceCriterions = new Map<Id, CriterionSet>();
+	public static Map<Id, CriterionSet> getCadenceWiseCriterions(List<Cadence__c> cadences, String criterionType) {
+
+		Map<Id, CriterionSet> cadenceCriterions = new Map<Id, CriterionSet>();
 		for(Cadence__c cad : cadences) {
 			CriterionSet csObj;
 			if(criterionType.equalsIgnoreCase(CadenceConstants.CRITERION_TYPE_ENTRY)) {
@@ -14,11 +14,11 @@ public with sharing class RuleCriterionMatcherHelper {
 			}  
 			cadenceCriterions.put(cad.Id, csObj);
 		}						
-    	return cadenceCriterions;
-    }
-    
-    public static Map<Id, CriterionSet> getActionWiseCriterions(List<CadenceAction__c> cadActions) {
-    	Map<Id, CriterionSet> cadActionCriterions = new Map<Id, CriterionSet>();
+		return cadenceCriterions;
+	}
+
+	public static Map<Id, CriterionSet> getActionWiseCriterions(List<CadenceAction__c> cadActions) {
+		Map<Id, CriterionSet> cadActionCriterions = new Map<Id, CriterionSet>();
 		for(CadenceAction__c cadAction : cadActions) {
 			if(cadAction == null) {
 				continue;
@@ -31,10 +31,10 @@ public with sharing class RuleCriterionMatcherHelper {
 				cadActionCriterions.put(cadAction.Id, null);
 			}
 		}						
-    	return cadActionCriterions;
-    }
+		return cadActionCriterions;
+	}
 
-   public static Boolean cadenceCriterionMatches(SObject obj, SObject parent, CriterionSet cs) {
+	public static Boolean cadenceCriterionMatches(SObject obj, SObject parent, CriterionSet cs) {
 
 		Boolean cadCriteriaMatched = false; 
 		FormulaSObjectValue fsv = new FormulaSObjectValue(obj, parent);
@@ -48,8 +48,8 @@ public with sharing class RuleCriterionMatcherHelper {
 		}
 		return cadCriteriaMatched;
 	}
-	
-	
+
+
 	public static Boolean matchEntryCriteria(CriterionSet cs, FormulaSObjectValue fsv){
 		Boolean isAllCriteriasMatched = false;
 		if(cs.executionCriterion.contains(CadenceConstants.EXECUTION_CRITERION_NO_CRITERION)){
@@ -60,7 +60,7 @@ public with sharing class RuleCriterionMatcherHelper {
 				isAllCriteriasMatched = matchCustomLogic(cs.criterions, cs.postFixExpression, fsv);
 			}else if(operator.equals('AND')){
 				isAllCriteriasMatched = matchANDOperatorCriterias(cs.criterions.values(), fsv);
-				
+
 			}else if(operator.equals('OR')){
 				isAllCriteriasMatched = matchOROperatorCriterias(cs.criterions.values(), fsv);
 			}
@@ -68,86 +68,85 @@ public with sharing class RuleCriterionMatcherHelper {
 		return isAllCriteriasMatched;
 	}
 
-	
+
 	public static Boolean matchCustomLogic(Map<Integer, Criterion> criteriaMap, String postFixExp, FormulaSObjectValue fsv){
 		List<String> postFixExpression = (List<String>)System.JSON.deserialize(postFixExp, List<String>.class);
 		return evalutePostfixExpression(criteriaMap, postFixExpression, fsv); 
 	}
-	
-   
-    public static Boolean evalutePostfixExpression(Map<Integer, Criterion> criteriaMap, List<String> postFixExpression, 
-		FormulaSObjectValue fsv){
-    	
-    	Stack stack = new Stack();
-    	Boolean result = false;
-    	for(String s: postFixExpression){
-    		if(s.isNumeric()) {
-    			stack.push(Integer.valueOf(s));
-    		} else {
-    			if(stack.size()>=2) {
-    				Object op1 = stack.pop();
-    				Object op2 = stack.pop();
-    				Boolean tempResult = calculateExpression(op1, op2, criteriaMap, fsv, s);
-    				stack.push(tempResult);
-    			} else {
-                    return false;
-    			}
-    		}
-       	}
-    	if(stack.size()==1 && (stack.peek() instanceOf Boolean)) {
-    		result = Boolean.valueOf(stack.pop());
-    	} else {
-            return false;
-    	}
-    	
-    	return result;
-    	
-    }
-    
-    
-    public static Boolean calculateExpression(Object op1, Object op2, 
-    											Map<Integer, Criterion> criteriaMap, 
-    											FormulaSObjectValue fsv, String operator){
-    	Boolean result = false;
-    	Boolean matchResult1 = getCriteriaMatchResult(op1, criteriaMap, fsv);
-    	Boolean matchResult2 = getCriteriaMatchResult(op2, criteriaMap, fsv);
-    	
-    	if(operator.equalsIgnoreCase('AND')){
-    		result=matchResult1 && matchResult2;
-    	}else if(operator.equalsIgnoreCase('OR')){
-    		result = matchResult1 || matchResult2;
-    	}
-    	return result;
-    }
-     
-    
-    public static Boolean getCriteriaMatchResult(Object op, Map<Integer, Criterion> criteriaMap,
-													FormulaSObjectValue fsv){
+
+
+	public static Boolean evalutePostfixExpression(Map<Integer, Criterion> criteriaMap, List<String> postFixExpression, 
+			FormulaSObjectValue fsv){
+
+		Stack stack = new Stack();
+		Boolean result = false;
+		for(String s: postFixExpression){
+			if(s.isNumeric()) {
+				stack.push(Integer.valueOf(s));
+			} else {
+				if(stack.size()>=2) {
+					Object op1 = stack.pop();
+					Object op2 = stack.pop();
+					Boolean tempResult = calculateExpression(op1, op2, criteriaMap, fsv, s);
+					stack.push(tempResult);
+				} else {
+					return false;
+				}
+			}
+		}
+		if(stack.size()==1 && (stack.peek() instanceOf Boolean)) {
+			result = Boolean.valueOf(stack.pop());
+		} else {
+			return false;
+		}
+
+		return result;
+
+	}
+
+
+	public static Boolean calculateExpression(Object op1, Object op2, 
+			Map<Integer, Criterion> criteriaMap, 
+			FormulaSObjectValue fsv, String operator){
+		Boolean result = false;
+		Boolean matchResult1 = getCriteriaMatchResult(op1, criteriaMap, fsv);
+		Boolean matchResult2 = getCriteriaMatchResult(op2, criteriaMap, fsv);
+
+		if(operator.equalsIgnoreCase('AND')){
+			result=matchResult1 && matchResult2;
+		}else if(operator.equalsIgnoreCase('OR')){
+			result = matchResult1 || matchResult2;
+		}
+		return result;
+	}
+
+
+	public static Boolean getCriteriaMatchResult(Object op, Map<Integer, Criterion> criteriaMap,
+			FormulaSObjectValue fsv){
 		Boolean matchResult = false;
 		if(op instanceOf Integer){
 			Criterion c = criteriaMap.get(Integer.valueOf(op));
-            
-            if(c.fieldName.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_ROLE_OBJECT_NAME+'.Role')){
-               matchResult = IsCriteriasMatched((String)fsv.getId(),matchResult,c,fsv,'Custom');
-            } else if(c.matches(fsv)){
-                matchResult = true;
-            }else {
-                matchResult = false;
-            }
-            
-    		//matchResult = ?true:false;
-    	}else if(op instanceOf Boolean){
-    		matchResult = Boolean.valueOf(op);
-    	}
+
+			if(c.fieldName.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_ROLE_OBJECT_NAME+'.Role')){
+				matchResult = IsCriteriasMatched((String)fsv.getId(),matchResult,c,fsv,'Custom');
+			} else if(c.matches(fsv)){
+				matchResult = true;
+			}else {
+				matchResult = false;
+			}
+
+		}else if(op instanceOf Boolean){
+			matchResult = Boolean.valueOf(op);
+		}
 		return matchResult;												
 	}
-    
-    public static Boolean matchANDOperatorCriterias(List<Criterion> criteriaList, FormulaSObjectValue fsv){
+
+	public static Boolean matchANDOperatorCriterias(List<Criterion> criteriaList, FormulaSObjectValue fsv){
 		Boolean isAllCriteriasMatched = true;
 		for(Criterion c: criteriaList){
-            if(c.fieldName.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_ROLE_OBJECT_NAME+'.Role')){
-               isAllCriteriasMatched = IsCriteriasMatched((String)fsv.getId(),isAllCriteriasMatched,c,fsv,'AND');
-            } else if(c.matches(fsv)){
+			if(c.fieldName.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_ROLE_OBJECT_NAME+'.Role')){
+				isAllCriteriasMatched = IsCriteriasMatched((String)fsv.getId(),isAllCriteriasMatched,c,fsv,'AND');
+			} else if(c.matches(fsv)){
 				isAllCriteriasMatched = isAllCriteriasMatched && true;
 			} else {
 				isAllCriteriasMatched = false;
@@ -155,43 +154,43 @@ public with sharing class RuleCriterionMatcherHelper {
 		}
 		return isAllCriteriasMatched;
 	}
-  
-    public static Boolean IsCriteriasMatched(String oppId,Boolean isAllCriteriasMatched,Criterion c,FormulaSObjectValue fsv,String operator){
-        Set<String> listOfRoleMatchContacts = new Set<String>();
-        if(CadenceService.mapOfOppContactRoles.containskey(oppId)){
-            for(OpportunityContactRole OppContactRole : CadenceService.mapOfOppContactRoles.get(oppId)){
-                if(c.value.equalsIgnoreCase(OppContactRole.Role)){
-                    listOfRoleMatchContacts.add(OppContactRole.ContactId);
-                }
-            }
-            CadenceService.mapOfOpportunityRole.put((String)fsv.getId(),listOfRoleMatchContacts);
-            if(listOfRoleMatchContacts.size() > 0){
-                if(operator == 'AND'){
-                    isAllCriteriasMatched = isAllCriteriasMatched && true;
-                }else{
-                    isAllCriteriasMatched = true;
-                }
-            } else {
-                isAllCriteriasMatched = false;
-            }
-        }
-        return isAllCriteriasMatched;
-    }
-	
+
+	public static Boolean IsCriteriasMatched(String oppId,Boolean isAllCriteriasMatched,Criterion c,FormulaSObjectValue fsv,String operator){
+		Set<String> listOfRoleMatchContacts = new Set<String>();
+		if(CadenceService.mapOfOppContactRoles.containskey(oppId)){
+			for(OpportunityContactRole OppContactRole : CadenceService.mapOfOppContactRoles.get(oppId)){
+				if(c.value.equalsIgnoreCase(OppContactRole.Role)){
+					listOfRoleMatchContacts.add(OppContactRole.ContactId);
+				}
+			}
+			CadenceService.mapOfOpportunityRole.put((String)fsv.getId(),listOfRoleMatchContacts);
+			if(listOfRoleMatchContacts.size() > 0){
+				if(operator == 'AND'){
+					isAllCriteriasMatched = isAllCriteriasMatched && true;
+				}else{
+					isAllCriteriasMatched = true;
+				}
+			} else {
+				isAllCriteriasMatched = false;
+			}
+		}
+		return isAllCriteriasMatched;
+	}
+
 	public static Boolean matchOROperatorCriterias(List<Criterion> criteriaList, FormulaSObjectValue fsv){
 		Boolean isAllCriteriasMatched = false;
 		for(Criterion c: criteriaList){
 			if(c.fieldName.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_ROLE_OBJECT_NAME+'.Role')){
-               isAllCriteriasMatched = IsCriteriasMatched((String)fsv.getId(),isAllCriteriasMatched,c,fsv,'OR');
-            } else if(c.matches(fsv)){
+				isAllCriteriasMatched = IsCriteriasMatched((String)fsv.getId(),isAllCriteriasMatched,c,fsv,'OR');
+			} else if(c.matches(fsv)){
 				isAllCriteriasMatched = true;
 			}
 		}
 		return isAllCriteriasMatched;
 	}
-	
+
 	public static Cadence__c getPriorityCadence(List<Cadence__c> cadList) {
-		
+
 		Cadence__c mostRecent = cadList.get(0);
 		Map<String, List<Cadence__c>> cadMap = new Map<String, List<Cadence__c>>();
 		for(Cadence__c cad : cadList) {
@@ -204,7 +203,7 @@ public with sharing class RuleCriterionMatcherHelper {
 				mostRecent = cad;
 			} 
 		}
-		
+
 		for(Integer i=1 ; i<=5; i++) {
 			String key = 'P'+i;
 			if(cadMap.containsKey(key)) {
@@ -217,5 +216,5 @@ public with sharing class RuleCriterionMatcherHelper {
 		} 
 		return null;
 	}
-    
+
 }
