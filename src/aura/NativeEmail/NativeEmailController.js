@@ -30,7 +30,7 @@
                 var state = response.getState();
                 if (state == "SUCCESS") { 
                     var isredirect = response.getReturnValue();
-                    if(isredirect ==true){
+                    if(isredirect.Success =='true' || isredirect.Success ==true){
                         var themeName = component.get("v.themeName");
                         if(themeName == 'Theme3'  || themeName == 'Theme4t' || themeName == 'Theme4d') {
                              window.location = '/apex/TargetList';
@@ -45,6 +45,7 @@
                         }
                     }
                     else{
+                        component.set('v.sendEmailErrorMsg',isredirect.Message);
                         component.set('v.emailRequired',true);
                     }
                 }
