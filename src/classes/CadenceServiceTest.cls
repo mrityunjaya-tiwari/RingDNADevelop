@@ -406,7 +406,6 @@ public class CadenceServiceTest {
         Test.startTest();
         CadenceService.createNativeEmailMessage('test@gmail.com',emailTemplate.Id, c1.Id, c1.Id, 'testName', c1.Id );
         //nativeEmailMsgList = CadenceService.updateNativeEmailMessage(nativeEmailMsgList, emailTemplateIdList);
-        CadenceService.sendNativeEmailTroughTrigger(new List<String>());
         Test.stopTest(); 
     }
     
@@ -457,5 +456,19 @@ public class CadenceServiceTest {
         CadenceService.setParticipantsActivation(cadence1.Id,true);
         CadenceService.getCadenceParticipants(cadence1.Id,CadenceConstants.OPPORTUNITY_OBJECT_NAME);
         Test.stopTest(); 
+    }
+    
+    @IsTest
+    public static void sendNativeEmailTroughTriggerTest(){
+        RingDNAApiCallouts obj = new RingDNAApiCallouts();
+        List<NativeEmailMessage> nativeEmailMessageList = new List<NativeEmailMessage>();
+        NativeEmailMessage nativeEmailMessage = new NativeEmailMessage();
+        nativeEmailMessage.ActionId = action1.Id;
+        nativeEmailMessage.MailTo = 'subhashchander02@gmail.com';
+        nativeEmailMessage.Body = 'body mail 1';
+        nativeEmailMessage.UserId = action1.Id;
+        nativeEmailMessageList.add(nativeEmailMessage);
+        CadenceService.SendNativeEmail(nativeEmailMessageList);
+        CadenceService.sendNativeEmailTroughTrigger(JSON.serialize(nativeEmailMessageList));
     }
 }
