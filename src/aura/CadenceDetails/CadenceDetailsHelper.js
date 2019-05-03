@@ -23,10 +23,7 @@
                         component.set('v.newCadence', cadence);
                         component.set('v.spinner', false);
                     }), 500
-                );
-               
-			}else{
-			}
+                );}
 		});
 		$A.enqueueAction(fieldList);
     },
