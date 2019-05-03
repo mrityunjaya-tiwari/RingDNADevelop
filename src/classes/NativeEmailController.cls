@@ -36,6 +36,7 @@ public class NativeEmailController {
         @AuraEnabled public String emailTemplateSubject;
     }
     
+    @TestVisible
     private class SendNativeEmailResult{
         @AuraEnabled public Boolean Success;
         @AuraEnabled public String Message;
