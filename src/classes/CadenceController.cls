@@ -29,7 +29,6 @@ public with sharing class CadenceController {
             sequenceAction.actiontype = cadenceAction.Action_Id__r.Type__c;
             sequenceActionList.add(sequenceAction);
         }
-        //sequence.cadenceActions = cObj.CadenceActions__r;
         sequence.cadenceActions =sequenceActionList;
         adWObj.sObj  = sequence;
         return adWObj;
@@ -65,6 +64,7 @@ public with sharing class CadenceController {
         List<CriterionWrapper> criterions = CadenceService.getFieldsWithLabels(objectList);
         return criterions;
     }
+    
     @AuraEnabled
     public static List<CriterionWrapper> getFieldsForSA(String objectStr){
         List<String> objectList = new List<String>(); 
@@ -128,12 +128,14 @@ public with sharing class CadenceController {
             }
         }      
     }   
+    
     @AuraEnabled
     public static void deactivateCadence(Id cadId) {
         Cadence__c cad = new Cadence__c(Id=cadId, Status__c=false);
         upsert cad;
         CadenceService.setParticipantsActivation(cadId, false);
     }   
+    
     public Static String formQuery2(String objName,Cadence__c cadence){
         String query = 'Select Cadence_ID__c,isActivated__c,EntranceCriteria_Matched_Date__c from '+ objName +' Where (Cadence_ID__c = null) AND ';
         Set<String> allowedFields = new Set<String>();
@@ -382,6 +384,7 @@ public with sharing class CadenceController {
             List<Opportunity> listOfopprtunity = Database.query(opporQuery);
             CadenceService.mapOfOppcontact = CadenceService.opporContactMap(listOfopprtunity);
             String oppContactRoleQuery;
+            
             if(contactRole!='')
             	oppContactRoleQuery='Select ContactId,OpportunityId From OpportunityContactRole Where OpportunityId In :listOfopprtunity and Role =\''+String.escapeSingleQuotes(contactRole)+'\'';    
             else{
@@ -398,16 +401,17 @@ public with sharing class CadenceController {
                     }
                 }
             }          
+            
             if(listOfopprtunityToUpdate != null && listOfopprtunityToUpdate.size() > 0){
                 update listOfopprtunityToUpdate;
             }
+            
             if(listOfOppContactIds != null && listOfOppContactIds.size() > 0){
                 objName =CadenceConstants.CONTACT_OBJECT_NAME;
                 query = 'Select Cadence_ID__c,isActivated__c,EntranceCriteria_Matched_Date__c from '+ objName +' Where (Cadence_ID__c = null) AND Id In :listOfOppContactIds';
                 return  query;
             }
-        }  
-        else{
+        } else {
             query = 'Select Cadence_ID__c,isActivated__c,EntranceCriteria_Matched_Date__c from '+ objName +' Where (Cadence_ID__c = null) AND ';
             Set<String> allowedFields = new Set<String>();
             Map<Id, CriterionSet> mapofCadenceWiseEntryCriterions =  new Map<Id, CriterionSet>();
@@ -431,12 +435,7 @@ public with sharing class CadenceController {
                     query = query+ +' AND (NOT('+criteriaFilters(mapofCadenceWiseExitCriterions,cadence,false) +')))';
             }
         }
-        
-        if(query == null){
-            //query = 'Select Cadence_ID__c,isActivated__c,EntranceCriteria_Matched_Date__c from '+ objName +' Where (Cadence_ID__c = null)';
-        	query='';
-        }
-        
+        query = query = null ? '' : query;
         return query;
     }
     
@@ -481,7 +480,6 @@ public with sharing class CadenceController {
                 }
             }
         }
-
         return query;
     }
 }
