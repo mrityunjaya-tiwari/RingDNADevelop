@@ -244,5 +244,5 @@
     border-radius: none;
 }
 .THIS .rdna-classic-search{
-    margin-top: 15px;
+    margin-top: auto !important;
 }
