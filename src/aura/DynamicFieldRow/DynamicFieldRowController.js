@@ -1,51 +1,6 @@
 // latest working
 ({
      doInit: function(component, event, helper) {
-        /*helper.getuserWrapperList(component, event, helper);
-        var fields = component.get("v.fieldList");
-        var newObj = component.get("v.objectInstance");
-         console.log('newObj:'+ JSON.stringify(newObj));
-        var parentFieldList = component.get("v.parentFieldList");
-        var childFieldList = component.get("v.childFieldList");
-        if (newObj && newObj.fieldDataType){
-            component.set("v.fieldDataType", newObj.fieldDataType);
-        }
-        if(newObj){
-            try {
-                for(var fieldObj in fields){
-                    var field = fields[fieldObj];
-                    if (field.fieldName == newObj.fieldName){
-                        component.set("v.listPicklistValues", field.listPicklistValues);
-                        component.set("v.fieldDataType", field.fieldDataType);
-                    }
-                    var fieldLabel =  field.fieldLabel;
-                    if (fieldLabel.indexOf(".") != -1) {
-                        var pos = fieldLabel.indexOf("."); 
-                        component.set("v.childRecordType" , fieldLabel.slice(0, pos));
-                        var newLabel  = fieldLabel.slice(pos + 1, fieldLabel.length);
-                        childFieldList.push({
-                            'fieldName': field.fieldName,
-                            'fieldLabel': newLabel, 
-                        });
-                    }else{
-                        parentFieldList.push({
-                            'fieldName': field.fieldName,
-                            'fieldLabel': field.fieldLabel, 
-                        });
-                    }
-                }
-                component.set("v.parentFieldList", parentFieldList);
-                component.set("v.childFieldList", childFieldList);
-            }
-            catch(err) {
-                
-            }
-            
-        }else{
-            
-        }
-        helper.getOperatorList(component, event, helper);
-        */
         var AllFieldList = component.get("v.AllFieldList");
         helper.getuserAndDnBWrapperList(component, event, helper);		
         for(var i=0;AllFieldList.length > i;i++){

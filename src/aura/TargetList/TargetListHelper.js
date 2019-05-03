@@ -53,7 +53,6 @@
                     component.set('v.data', records.tlWList);
                 }
                 component.set('v.totalNumberOfRows', records.tlWList.length);
-//                var setPL = component.get('v.setPhoneLink');
                 component.set('v.setPhoneLink', true);
                 
                 component.set('v.selectedGroup', records.selectedGroup);
@@ -65,7 +64,6 @@
                 helper.setFilterData(component, event, helper);
                 component.set('v.spinner', false);
             } else {
-                console.log('got an error in fething data');
                 component.set('v.spinner', false);
             }
         });
@@ -110,17 +108,11 @@
         action.setParams({
             "ids" : ids
         });
-        console.log('Hello');
+	    
         action.setCallback(this, function(response) {
-            console.log('Deletion performed');
             var state = response.getState();
             if(state === "SUCCESS") {
-                
-                //helper.getData(component, event, helper);
-                console.log('Deletion performed');
                 $A.get('e.force:refreshView').fire();
-            } else {
-                console.log('Deletion not done');
             }
         });
         $A.enqueueAction(action);
@@ -134,7 +126,6 @@
     
     viewParticipant : function(component, event, helper, id) {
         var myUserContext = component.get("v.themeName");
-        console.log('viewParticipant',myUserContext);
         if(myUserContext == 'Theme3' ) {
             window.location = '/'+id;
         } 
@@ -147,6 +138,7 @@
             sObectEvent.fire();
         }
     },
+	
     setPhoneLink : function(component, event, helper){
         helper.setPhoneRow(component, event, helper); 
         helper.setCompanyRow(component, event, helper);
@@ -175,6 +167,7 @@
                         var ActionLink = '<a href="/' + rawData[index].nextAction  +'" target="_self" tabindex="-1">'+ rawData[index].linkActionName + '</a>';
                         rdpElement.innerHTML = '<div class="slds-truncate">' + innerHtml + ' ' + ActionLink + '</div>';
                     }
+			
                     if(rawData[index].actionClass == 'ringdna-email-td'){
                         var url = $A.get('$Resource.cadence_icons')+ '/email/email-icon@3x.png';
                         if (rawData[index].actionPerformDay == 'Previous'){
@@ -202,6 +195,7 @@
                         var ActionLink = '<a href="/' + rawData[index].nextAction + '" target="_self" tabindex="-1">'+ rawData[index].linkActionName + '</a>';
                         rdpElement.innerHTML = '<div class="slds-truncate">' + innerHtml + ' ' + ActionLink + '</div>';
                     }
+			
                     if(rawData[index].actionClass == 'ringdna-sms-td'){
                         var url = $A.get('$Resource.cadence_icons') + '/message/msg-icon@3x.png' ;
                         if (rawData[index].actionPerformDay == 'Previous'){
@@ -217,6 +211,7 @@
                         var ActionLink = '<a href="/' + rawData[index].nextAction + '" target="_self" tabindex="-1">'+ rawData[index].linkActionName + '</a>';
                         rdpElement.innerHTML =  '<div class="slds-truncate">' + innerHtml + ' ' + ActionLink + '</div>';
                     }
+			
                     if(rawData[index].actionClass == 'ringdna-task-td'){
                         var url = $A.get('$Resource.cadence_icons') + '/task-icon/task-icon@3x.png' ;
                         if (rawData[index].actionPerformDay == 'Previous'){
@@ -233,12 +228,12 @@
             }
         }
     },
+	
     setPhoneRow : function(component, event, helper){
         var phRow = document.getElementsByClassName('ringdna-phone-row');    
         var rawData = component.get('v.data');
         for (var index = 0; index < phRow.length ; index++){
-            try {      
-                
+            try {                      
                 var rdpElement = phRow[index];
                 if (rdpElement){
                     if (rawData[index].phone){
@@ -262,6 +257,7 @@
             }
         }
     },
+	
     setCompanyRow : function(component, event, helper){
         var phRow = document.getElementsByClassName('ringdna-company-td');  
         var rawData = component.get('v.data');
@@ -282,8 +278,8 @@
             }catch(err){
             }
         }
-        //helper.removeRingDNAIcons(component, event, helper);
     },
+	
     removeRingDNAIcons:function(component, event, helper){
         window.setTimeout(
             $A.getCallback(function() {
@@ -294,6 +290,7 @@
             }), 500
         );
     },
+	
     /*Filters*/
     applyMultipleFilters : function(component, event, helper){
         helper.getInputResult(component, event, helper);
@@ -303,6 +300,7 @@
         var records = component.get("v.rawData");
         component.set('v.totalNumberOfRows', records.length);
     },
+	
     getInputResult:function(component, event, helper){
         var tData = component.get('v.rawDataForFilter');
         var data = component.get("v.rawDataForFilter");
@@ -313,9 +311,9 @@
             results = data.filter(row=>helper.serchResult(row, regex));
         } catch(e) {
         }
-        component.set("v.rawData", results);
-        
+        component.set("v.rawData", results);        
     },
+	
     serchResult:function(row, regex){
         var strPriproty = (row.priority ? row.priority.toString() : "");
         var strCompany = (row.company ? row.company.toString() : "");
@@ -323,15 +321,10 @@
         var strEmail = (row.email ? row.email.toString() : "");
         var strPhone = (row.phone ? row.phone.toString() : "");
         var strLinkActionName = (row.linkActionName ? row.linkActionName.toString() : "");
-        return ( (row.name.search(regex) == -1 ? false : true) 
-               // || (strPriproty.search(regex) == -1 ? false : true) 
-               // || (strCompany.search(regex) == -1 ? false : true) 
-               // || (strType.search(regex) == -1 ? false : true) 
-              //  || (strEmail.search(regex) == -1 ? false : true) 
-              //  || (strPhone.search(regex) == -1 ? false : true) 
-              //  || (strLinkActionName.search(regex) == -1 ? false : true) 
+        return ( (row.name.search(regex) == -1 ? false : true)  
                ) ;
     },
+	
     filterObjectType:function(component, event, helper){
         var data = component.get("v.rawData");
         var term = component.get("v.otFilter");
@@ -341,9 +334,9 @@
             results = data.filter(row=>! row.type.search(regex) );
         } catch(e) {
         }
-        component.set("v.rawData", results);
-        
+        component.set("v.rawData", results);        
     },
+	
     filterCadenceType:function(component, event, helper){
         var data = component.get("v.rawData");
         var term = component.get("v.ctFilter");
@@ -353,9 +346,9 @@
             results = data.filter(row=> (row.cadenceName == term || term =='') );
         } catch(e) {
         }
-        component.set("v.rawData", results);
-        
+        component.set("v.rawData", results);        
     },
+	
     filterActionType:function(component, event, helper){
         var data = component.get("v.rawData");
         var term = component.get("v.atFilter");
@@ -367,6 +360,7 @@
         }
         component.set("v.rawData", results);
     },
+	
     setFilterData:function(component, event, helper){
         var rawData = component.get('v.rawData');
         var otList = component.get('v.otList');
@@ -388,6 +382,7 @@
         component.set('v.cList', cList);
         component.set('v.atList', atList);
     },
+	
     clearFilter:function (component){
         component.set('v.sStr', '');
         component.set('v.otFilter', '');
@@ -395,14 +390,12 @@
         component.set('v.atFilter', '');
     },
     
-    refresh : function(component, event, helper) {
-        		
+    refresh : function(component, event, helper) {       		
         var action = component.get("c.retrieveSesstionId");
         action.setCallback(this, function(response){
             var state = response.getState();
             
             if(state === "SUCCESS") {
-                console.log(response.getReturnValue());
                 component.set("v.sessionId", response.getReturnValue());
                 // Connect to the CometD endpoint
 		        $.cometd.init({
@@ -413,13 +406,8 @@
 		       // Subscribe to a topic. JSON-encoded update will be returned
 		       // in the callback
 		       $.cometd.subscribe('/topic/actionperform', function(message) {
-				   console.log('Hello This is fine');
-                   console.log(message);
-                   console.log('Hello This is fine', message.data.sobject);
-		           var pt = component.get('v.pushTopic');
-                   component.set('v.pushTopic', !pt);
-                   //helper.getData(component, event, helper);
-                   
+				var pt = component.get('v.pushTopic');
+				component.set('v.pushTopic', !pt);                  
 		        });
             }
         });
@@ -427,15 +415,7 @@
     }, 
     
     startPushTopic : function(component, event, helper) {
-        console.log('IN start pushh');
-    	var action = component.get('c.createPushTopic'); 
-        action.setCallback(this, function(response){
-            var state = response.getState();
-            if(state === "SUCCESS") {
-                console.log('Created PushTopic');        
-            }
-        });
+    	var action = component.get('c.createPushTopic');         
         $A.enqueueAction(action);
-    }
-    
+    }    
 })

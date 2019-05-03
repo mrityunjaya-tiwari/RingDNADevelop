@@ -1,6 +1,5 @@
 ({
 	doInit: function(component, event, helper) {
-       // helper.updateCriteriaList(component, event, helper);
 		helper.initializeCriteriaList(component,helper);
     },
 	
@@ -35,10 +34,6 @@
 			}
 		} else {
 			for(var i=0; i<criterions.length; i++) {
-                /*if(criterions[i]== criterions[i+1]){
-                    console.log('equal');
-                    isValid = false;
-                }*/
 				var temp1 = criterions[i].validateForm();
                 
 				if(!temp1) {
