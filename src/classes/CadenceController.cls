@@ -1,6 +1,6 @@
 public with sharing class CadenceController {
     public static String nameSpace = CadenceConstants.NAMESPACE;
-    public static Set<String>  listOfOppContactIds;
+    public static Set<Id>  listOfOppContactIds;
     private static string contactRole ='';
     
     @AuraEnabled
@@ -374,10 +374,12 @@ public with sharing class CadenceController {
     
     public Static String formQueryOpportunity(String objName, Cadence__c cadence){
         String query;
+        Map<Id,List<Id>> opportunityContactMap = new Map<Id,List<Id>>();
+        List<Id> contactIds = new List<Id>();
         if(objName.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_OBJECT_NAME)){
             String opporQuery = getOpportunityQuery(objName,cadence);
             
-            listOfOppContactIds = new set<String>();
+            listOfOppContactIds = new set<Id>();
             List<Opportunity> listOfopprtunityToUpdate = new List<Opportunity>();
             List<Opportunity> listOfopprtunity = Database.query(opporQuery);
             CadenceService.mapOfOppcontact = CadenceService.opporContactMap(listOfopprtunity);
@@ -390,16 +392,41 @@ public with sharing class CadenceController {
             Set<String> setForDuplicateCheck =  new Set<String>();
             for(OpportunityContactRole oppCont : Database.query(oppContactRoleQuery)){
                 if(oppCont.ContactId != null){
-                    listOfOppContactIds.add(String.valueOf(oppCont.ContactId));
+                    contactIds =  new List<Id>();
+                    if(opportunityContactMap.containsKey(oppCont.OpportunityId) ){
+                        contactIds = opportunityContactMap.get(oppCont.OpportunityId);
+                    }
+                    contactIds.add(oppCont.ContactId);
+                    opportunityContactMap.put(oppCont.OpportunityId,contactIds);
+                    listOfOppContactIds.add(oppCont.ContactId);
                     if(!setForDuplicateCheck.contains(oppCont.OpportunityId)){
                         Opportunity opp= new Opportunity(id=oppCont.OpportunityId,Cadence_Id__c=cadence.Id);
                     	listOfopprtunityToUpdate.add(opp);
                     	setForDuplicateCheck.add(oppCont.OpportunityId);
                     }
                 }
-            }          
+            }
+            System.debug('listOfopprtunityToUpdate'+listOfopprtunityToUpdate);
+            Set<Id> resultIds = new Set<Id>();
+            
             if(listOfopprtunityToUpdate != null && listOfopprtunityToUpdate.size() > 0){
-                update listOfopprtunityToUpdate;
+                Database.SaveResult[] results = Database.update(listOfopprtunityToUpdate, false);
+                for (Database.SaveResult sr : results) {
+                    if (sr.isSuccess()) {
+                         resultIds.add(sr.getId());
+                    }
+                 }
+
+            }
+            
+            contactIds =  new List<Id>();
+            listOfOppContactIds = new set<Id>();
+            if(opportunityContactMap != null && opportunityContactMap.size() > 0){
+                for(Id opportunityId : resultIds){
+                    if(opportunityContactMap.containsKey(opportunityId) ){
+                        listOfOppContactIds.addAll(opportunityContactMap.get(opportunityId));
+                    }
+                }
             }
             if(listOfOppContactIds != null && listOfOppContactIds.size() > 0){
                 objName =CadenceConstants.CONTACT_OBJECT_NAME;
