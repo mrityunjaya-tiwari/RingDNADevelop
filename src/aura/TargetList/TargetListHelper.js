@@ -415,12 +415,7 @@
     }, 
     
     startPushTopic : function(component, event, helper) {
-    	var action = component.get('c.createPushTopic'); 
-        action.setCallback(this, function(response){
-            var state = response.getState();
-            if(state === "SUCCESS") {
-            }
-        });
+    	var action = component.get('c.createPushTopic');         
         $A.enqueueAction(action);
     }    
 })
