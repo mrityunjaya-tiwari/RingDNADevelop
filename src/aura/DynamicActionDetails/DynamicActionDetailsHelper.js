@@ -117,10 +117,6 @@
         rowList.splice([listSize-1], 1);
         component.set("v.listTask", rowList);
     },
-    
-    getData : function(component, event, helper, id) {
-        
-    },
     handleCadDynamicRowEvent: function(component, event, helper){
         var ronIndex = event.getParam("ronIndex");
         var rowList = component.get("v.listTask");
@@ -129,26 +125,10 @@
     },
     
     onCancel: function(component, event){
+        component.set('v.isEnabled', false);
         component.set('v.createAction', false);
     },
-    
-    viewDetails : function(cmp, event, id) {        
-        var myUserContext = cmp.get("v.themeName");
-        if(myUserContext == 'Theme3' || myUserContext == 'Theme4t' || myUserContext == 'Theme4d') {
-            window.location = '/apex/ActionDetailView?id='+id;
-        } 
-        else if(myUserContext == undefined) {
-            var evt = $A.get("e.force:navigateToComponent");
-            evt.setParams({
-                componentDef : "c:ActionDetailView" ,
-                componentAttributes : {
-                    "recordId" : id
-                }
-            });
-            evt.fire()  
-        }
-    },
-     selectTemplateName: function(component, event, helper){
+    selectTemplateName: function(component, event, helper){
         var newAct = component.get("v.newAction");
         if (newAct.type != 'Task' && component.get("v.listToShowInTemplateType").length > 0 && newAct.templateId){
             var index = newAct.templateId;
