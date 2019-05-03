@@ -7,7 +7,6 @@
 			if(state === 'SUCCESS'){
 				var result = response.getReturnValue();
 				component.set("v.fieldList", result);
-			}else{
 			}
 		});
 		$A.enqueueAction(fieldList);
@@ -34,22 +33,22 @@
     	if(criteriaSet!=null){
     		var criteriaList = Object.values(criteriaSet.criterions);
     		component.set("v.criteriaList", criteriaList);
-            component.set("v.criteriaListCount", criteriaList.length); 
+            	component.set("v.criteriaListCount", criteriaList.length); 
         }else{
     		var criteriaList = [];
     		criteriaList.push(helper.initializeCriteriaArray());
     		component.set("v.criteriaList", criteriaList);
-            component.set("v.criteriaListCount", criteriaList.length);
-			var newCriteriaSet = helper.initializeCriteriaSet();
-			newCriteriaSet.criterions = helper.prepareCriterions(criteriaList)
-			component.set("v.criteriaSet", newCriteriaSet);
+            	component.set("v.criteriaListCount", criteriaList.length);
+		var newCriteriaSet = helper.initializeCriteriaSet();
+		newCriteriaSet.criterions = helper.prepareCriterions(criteriaList)
+		component.set("v.criteriaSet", newCriteriaSet);
     	}
     },
     
     createObjectData: function(component, helper, event) {
     	var criteriaSet = component.get("v.criteriaSet");
     	if(criteriaSet==null){
-			component.set("v.criteriaSet", helper.initializeCriteriaSet());
+		component.set("v.criteriaSet", helper.initializeCriteriaSet());
     	}
         var rowList = component.get("v.criteriaList");
         var max=0;
@@ -68,32 +67,31 @@
     prepareCriterions: function(criteriaList){
     	var criterions={}; 
         for(var i=0;i<criteriaList.length;i++){
-        	criterions[i+1]= criteriaList[i];
+		criterions[i+1]= criteriaList[i];
         }
         return criterions;	
     },
     
     initializeCriteriaSet: function(){
     	return {
-				'criterionPriorityFormula': '',
-				'condition': 'All of the conditions are met (AND)',
-				'executionCriterion': 'Conditions are met',
-				'criterions': {
-					
-				}
+			'criterionPriorityFormula': '',
+			'condition': 'All of the conditions are met (AND)',
+			'executionCriterion': 'Conditions are met',
+			'criterions': {}
 			};
     },
     
     initializeCriteriaArray : function(){
     	return {
-				'fieldDataType': '',
-				'fieldName': '',
-				'fieldLabel':'',
-				'operation': '',
-				'value': '',
-				'id': 1
+			'fieldDataType': '',
+			'fieldName': '',
+			'fieldLabel':'',
+			'operation': '',
+			'value': '',
+			'id': 1
 			};
     },
+	
     updateCriteriaList: function(component, event, helper){
         var cfList = component.get("v.contactFieldList");
         var afList = component.get("v.accountFieldList");
@@ -108,9 +106,9 @@
             });
         }
         component.set("v.contactFieldList", cfList)
-        var lfList = component.get("v.leadFieldList");
-        
+        var lfList = component.get("v.leadFieldList");        
         var dbList = component.get("v.dbFieldList");
+	    
         for(var j in dbList){
             var dbObj = dbList[j];
             lfList.push({
@@ -122,7 +120,5 @@
             });
         }
         component.set("v.leadFieldList", lfList);
-    },
-    
-    
+    },        
 })
