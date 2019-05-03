@@ -460,7 +460,7 @@ global  without sharing class CadenceService {
             }
             // Create map of actionId and nativeEmailMessage
             Map<Id, NativeEmailMessage> actionIdNativeEmailMessageMap = new Map<Id, NativeEmailMessage>();
-            for(NativeEmailMessage nativeEmailMessage : nativeEmailMessageList ){
+            for(NativeEmailMessage nativeEmailMessage : nativeEmailToSend ){
                 actionIdNativeEmailMessageMap.put(NativeEmailMessage.ActionId, NativeEmailMessage);
             }
             if (nativeEmailResposeList != null && nativeEmailResposeList.size() > 0 ) {
