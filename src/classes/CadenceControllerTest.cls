@@ -30,16 +30,61 @@ private class CadenceControllerTest {
         Test.stopTest();
     }
    @isTest
-    public static void activateCadenceTest(){
-        /*Cadence__c cadLeadAND = TestDataFactory.createCadence(CadenceConstants.LEAD_OBJECT_NAME);
-        String entryJson = TestDataFactory.createCadJsonWithNameCriterions('Test', 'Test', CadenceConstants.CONDITION_AND, '');
-        String exitJson = TestDataFactory.createCadJsonWithNameCriterions('Test1', 'Test1', CadenceConstants.CONDITION_AND, '');
-    	cadLeadAND.Entrance_Criteria__c = entryJson;
-        cadLeadAND.Exit_Criteria__c = exitJson;
-        insert cadLeadAND;*/
+    public static void activateSmallerOperationCadenceTest(){
         Cadence__c cadenceobj = TestDataFactory.createCadence('Lead');
-        String entryJson = TestDataFactory.createCadJsonWithNameCriterions('Test', 'Test', CadenceConstants.CONDITION_AND, '');
+        String entryJson = TestDataFactory.createCadJsonWithSmallerOperatorCriterions('Test', 'Test', CadenceConstants.CONDITION_AND, '');
         String exitJson = TestDataFactory.createCadJsonWithNameCriterions('Test1', 'Test1', CadenceConstants.CONDITION_AND, '');
+    	cadenceobj.Entrance_Criteria__c = entryJson;
+        cadenceobj.Exit_Criteria__c = exitJson;
+    	insert cadenceobj;  
+        cadenceobj.Status__c=true;
+        upsert cadenceobj;
+        Test.startTest();
+        CadenceController.activateCadence(cadenceobj.Id);
+        CadenceController.updateParticipants(cadenceobj.Id);
+        Test.stopTest();
+        cadenceobj=[select Id, Status__c from Cadence__c where id =: cadenceobj.Id];
+        System.assertEquals(True, cadenceobj.Status__c, 'Cadence Activated');
+    } 
+     @isTest
+    public static void activateGreaterOperationCadenceTest(){
+        Cadence__c cadenceobj = TestDataFactory.createCadence('Lead');
+        String entryJson = TestDataFactory.createCadJsonWithGreaterOperatorCriterions('Test', 'Test', CadenceConstants.CONDITION_AND, '');
+        String exitJson = TestDataFactory.createCadJsonWithNameCriterions('Test1', 'Test1', CadenceConstants.CONDITION_AND, '');
+    	cadenceobj.Entrance_Criteria__c = entryJson;
+        cadenceobj.Exit_Criteria__c = exitJson;
+    	insert cadenceobj;  
+        cadenceobj.Status__c=true;
+        upsert cadenceobj;
+        Test.startTest();
+        CadenceController.activateCadence(cadenceobj.Id);
+        CadenceController.updateParticipants(cadenceobj.Id);
+        Test.stopTest();
+        cadenceobj=[select Id, Status__c from Cadence__c where id =: cadenceobj.Id];
+        System.assertEquals(True, cadenceobj.Status__c, 'Cadence Activated');
+    } 
+     @isTest
+    public static void activateSmallOperationCadenceTest(){
+        Cadence__c cadenceobj = TestDataFactory.createCadence('Lead');
+        String exitJson = TestDataFactory.createCadJsonWithSmallerOperatorCriterions('Test', 'Test', CadenceConstants.CONDITION_AND, '');
+        String entryJson = TestDataFactory.createCadJsonWithNameCriterions('Test1', 'Test1', CadenceConstants.CONDITION_AND, '');
+    	cadenceobj.Entrance_Criteria__c = entryJson;
+        cadenceobj.Exit_Criteria__c = exitJson;
+    	insert cadenceobj;  
+        cadenceobj.Status__c=true;
+        upsert cadenceobj;
+        Test.startTest();
+        CadenceController.activateCadence(cadenceobj.Id);
+        CadenceController.updateParticipants(cadenceobj.Id);
+        Test.stopTest();
+        cadenceobj=[select Id, Status__c from Cadence__c where id =: cadenceobj.Id];
+        System.assertEquals(True, cadenceobj.Status__c, 'Cadence Activated');
+    } 
+     @isTest
+    public static void activateGrtrOperationCadenceTest(){
+        Cadence__c cadenceobj = TestDataFactory.createCadence('Lead');
+        String exitJson = TestDataFactory.createCadJsonWithGreaterOperatorCriterions('Test', 'Test', CadenceConstants.CONDITION_AND, '');
+        String entryJson = TestDataFactory.createCadJsonWithNameCriterions('Test1', 'Test1', CadenceConstants.CONDITION_AND, '');
     	cadenceobj.Entrance_Criteria__c = entryJson;
         cadenceobj.Exit_Criteria__c = exitJson;
     	insert cadenceobj;  

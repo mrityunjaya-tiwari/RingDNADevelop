@@ -15,6 +15,7 @@
     <aura:attribute name="EmailWrappercls" type="Sobject"/>
     <aura:attribute name="themeName" type="String"/>
     <aura:attribute name="emailRequired" type="Boolean"/>
+    <aura:attribute name="sendEmailErrorMsg" type="String"/>
     <!-- PAGE HEADER -->
     <div class="slds-page-header" style="background-color: #fafafa">       
         <div class="slds-grid">
@@ -38,7 +39,7 @@
         </div> 
         <div>
             <aura:if isTrue="{!v.emailRequired}">
-                <p class="slds-align_absolute-center slds-m-bottom_large rdna-required">Invalid email address.</p>
+                <p class="slds-align_absolute-center slds-m-bottom_large rdna-required">{!v.sendEmailErrorMsg}</p>
             </aura:if>
         </div>
         <div class="slds-form form-align slds-p-top_x-large" >

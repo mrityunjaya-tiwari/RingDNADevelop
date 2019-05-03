@@ -12,15 +12,19 @@
             } 
         }else if(getCurrentStep == 2){
             var criterionValid = helper.validateCriterion(component, event, helper, 'entryCriterionComponent');
-        	component.set('v.hasError', !(criterionValid));
-        	if (criterionValid){
+        	var hasDuplicates=helper.checkDuplicates(component,event,helper,component.get("v.entranceCriteriaSet").criterions);
+            component.set('v.hasError', (!criterionValid || hasDuplicates));
+            component.set("v.duplicateEntranceCriteria",hasDuplicates);
+            if (criterionValid && !(hasDuplicates)){
                 component.set("v.currentStep", "3");
                 component.set("v.currentStepChanged", "3");
             }
         }else if(getCurrentStep == 3){
             var criterionValid = helper.validateCriterion(component, event, helper, 'exitCriterionComponent');
-            component.set('v.hasError', !(criterionValid));
-            if (criterionValid){
+            var hasDuplicates=helper.checkDuplicates(component,event,helper,component.get("v.exitCriteriaSet").criterions);
+            component.set('v.hasError', (!criterionValid || hasDuplicates));
+            component.set("v.duplicateExitCriteria",hasDuplicates);
+            if (criterionValid && !(hasDuplicates)){
                 component.set("v.currentStep", "4");
                 component.set("v.currentStepChanged", "4");
             }
@@ -124,21 +128,41 @@
     	}
     	if(step>2) {
         	var criterionValid = helper.validateCriterion(component, event, helper, 'entryCriterionComponent');
-        	component.set('v.hasError', !(criterionValid));
-        	if(!criterionValid) {
+			var hasDuplicates=helper.checkDuplicates(component,event,helper,component.get("v.entranceCriteriaSet").criterions);
+            component.set('v.hasError', (!criterionValid || hasDuplicates));
+            component.set("v.duplicateEntranceCriteria",hasDuplicates);
+            if (!criterionValid || hasDuplicates){
         		component.set("v.currentStep", "2");
         		return false;
         	}
     	}
     	if(step>3) {
         	var criterionValid = helper.validateCriterion(component, event, helper, 'exitCriterionComponent');
-        	component.set('v.hasError', !(criterionValid));
-        	if(!criterionValid) {
+        	var hasDuplicates=helper.checkDuplicates(component,event,helper,component.get("v.exitCriteriaSet").criterions);
+            component.set('v.hasError', (!criterionValid || hasDuplicates));
+            component.set("v.duplicateExitCriteria",hasDuplicates);
+            if (!criterionValid || hasDuplicates){
         		component.set("v.currentStep", "3");
         		return false;
         	}
     	}
     	return true;
+    },
+	checkDuplicates : function(component, event, helper, criteriaSet) {
+        var criteriaSet2=criteriaSet; 
+        var criterions=JSON.stringify(criteriaSet).split("},");
+        var size=criterions.length;
+        var criteriaSetIndex=1, criteriaSet2Index;
+        for(criteriaSetIndex=1;criteriaSetIndex<=size;criteriaSetIndex++){
+            for(criteriaSet2Index=criteriaSetIndex+1;criteriaSet2Index<=size;criteriaSet2Index++){
+                if(criteriaSet[criteriaSetIndex].fieldName==criteriaSet2[criteriaSet2Index].fieldName &&
+                   criteriaSet[criteriaSetIndex].operation==criteriaSet2[criteriaSet2Index].operation &&
+                   criteriaSet[criteriaSetIndex].value==criteriaSet2[criteriaSet2Index].value){
+                    return true;
+                }
+            }
+        }
+        return false;
     },
     
 })

@@ -225,17 +225,31 @@ public class CadenceActionListController {
         return actionWiseParticipants;
     }
     
-    public static void deleteActionOnpartcipants(List<Id> cadIds){      
-        List<Sequence_Action__c> actionOnParticipants = [select Id from Sequence_Action__c where CadenceAction_ID__r.Cadence_Id__c  IN :cadIds and isActionPerformed__c=false];
-        List<Contact> contactList = [select Id,Opportunity_Id__c from Contact where Cadence_ID__c  IN :cadIds and Opportunity_Id__c != null];
-        if(!actionOnParticipants.isEmpty()) {
-            delete actionOnParticipants;
+   public static void deleteActionOnpartcipants(List<Id> cadIds){  
+        String query = 'SELECT Id FROM Sequence_Action__c WHERE isActionPerformed__c = false AND CadenceAction_ID__r.Cadence_Id__c  IN ' + CadenceUtil.getWhereClauseForListOfIds(cadIds);
+        Integer dmlLimits = CadenceConstants.DMLOPERATION;
+        Integer  actionOnParticipantsCount = [select COUNT() from Sequence_Action__c where CadenceAction_ID__r.Cadence_Id__c  IN :cadIds and isActionPerformed__c=false];
+        if(actionOnParticipantsCount >= dmlLimits){
+            PerformDMLActionBatch dmlOperation=new PerformDMLActionBatch(query,CadenceConstants.DMLDELETE,'');
+            Database.executeBatch(dmlOperation,200);
+        }else{
+            Database.delete([select Id from Sequence_Action__c where CadenceAction_ID__r.Cadence_Id__c  IN :cadIds and isActionPerformed__c=false], false);
+        	dmlLimits = dmlLimits - actionOnParticipantsCount;
         }
-        if(contactList != null && contactList.size() > 0){
-            for(Contact con : contactList){
-                con.Opportunity_Id__c = null;
+        
+        query = 'select Id,Opportunity_Id__c from Contact where Cadence_ID__c  IN '+CadenceUtil.getWhereClauseForListOfIds(cadIds)+' and Opportunity_Id__c != null';
+        Integer contactCount = [select COUNT() from Contact where Cadence_ID__c  IN :cadIds and Opportunity_Id__c != null];
+        if(contactCount >= dmlLimits){
+            PerformDMLActionBatch dmlOperation=new PerformDMLActionBatch(query,CadenceConstants.DMLUPDATE,CadenceConstants.SETCONTACTOPPNULL);
+            Database.executeBatch(dmlOperation,200);
+        }else{
+            List<Contact> contactList = [select Id,Opportunity_Id__c from Contact where Cadence_ID__c  IN :cadIds and Opportunity_Id__c != null];
+            if(contactList != null && contactList.size() > 0){
+                for(Contact con : contactList){
+                    con.Opportunity_Id__c = null;
+                }
+                Database.update(contactList, false);
             }
-            Database.SaveResult[] results = Database.update(contactList, false);
         }
     }
 }

@@ -46,8 +46,6 @@ public with sharing class CadenceController {
         @AuraEnabled public Sequence sObj;
         @AuraEnabled public List<CriterionWrapper> fieldList = New List<CriterionWrapper>{New CriterionWrapper()};
     }
-    
-   
     @AuraEnabled
     public static Cadence__c getCadenceDetail(Id cadenceId){
         List<Cadence__c> cadence = [Select Id, Name, Entrance_Criteria__c, Exit_Criteria__c, 
@@ -128,17 +126,14 @@ public with sharing class CadenceController {
                 }
                 CadenceSelector.DeleteParticipantAction(resultIds);
             }
-        }
-        
-    }
-    
+        }      
+    }   
     @AuraEnabled
     public static void deactivateCadence(Id cadId) {
         Cadence__c cad = new Cadence__c(Id=cadId, Status__c=false);
         upsert cad;
         CadenceService.setParticipantsActivation(cadId, false);
-    }
-    
+    }   
     public Static String formQuery2(String objName,Cadence__c cadence){
         String query = 'Select Cadence_ID__c,isActivated__c,EntranceCriteria_Matched_Date__c from '+ objName +' Where (Cadence_ID__c = null) AND ';
         Set<String> allowedFields = new Set<String>();
@@ -163,7 +158,6 @@ public with sharing class CadenceController {
                 query = query+ +' AND (NOT('+criteriaFilters(mapofCadenceWiseExitCriterions,cadence,false) +')))';
             
         }
-        System.debug('Query = '+ query);
         return query;
     }
     
@@ -192,7 +186,6 @@ public with sharing class CadenceController {
                             query += '(';
                         }
                          if(mapofCriterion.get(num).fieldName.equalsIgnoreCase('OpportunityContactRole.Role') && cadence != null && cadence.Record_Type__c.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_OBJECT_NAME)){
-                             System.debug('test query'+query);
                              if(query.endsWithIgnoreCase(' AND '))
                                  query = query.removeEndIgnoreCase(' AND ');
                                  else if(query.endsWithIgnoreCase(' OR '))
@@ -201,7 +194,6 @@ public with sharing class CadenceController {
                             	contactRole = mapofCriterion.get(num).value;
                         }else{
                              query = query + mapofCriterion.get(num).fieldName;
-                        
                         if(mapofCriterion.get(num).operation == 'contains'){
                             if(mapofCriterion.get(num).fieldDataType =='picklist' )
                                 query =query+' LIKE  \'%' +mapofCriterion.get(num).value + '%\'';
@@ -247,7 +239,16 @@ public with sharing class CadenceController {
                         else if(mapofCriterion.get(num).fieldDataType =='Number' || mapofCriterion.get(num).fieldDataType =='Date' || mapofCriterion.get(num).fieldDataType =='DateTime'){ 
                             if(mapofCriterion.get(num).operation =='greater'){
                                 if(mapofCriterion.get(num).fieldDataType =='Number')
-                                	query =query+' >'+  decimal.valueOf(mapofCriterion.get(num).value);
+                                {
+                                    if(isEntry){
+                                       query =query+' >'+  decimal.valueOf(mapofCriterion.get(num).value); 
+                                    } 
+                                    else{
+                                        decimal numb = decimal.valueOf(mapofCriterion.get(num).value);
+                                        query += ' != NULL AND '+ mapofCriterion.get(num).fieldName;                                        
+                                        query += ' >'+  numb;
+                                    }
+                                } 
                                 if(mapofCriterion.get(num).fieldDataType =='Date')
                                 	query =query+' >'+  getDateFormat(Date.valueOf((String)mapofCriterion.get(num).value));
                                 if(mapofCriterion.get(num).fieldDataType =='DateTime')
@@ -255,7 +256,16 @@ public with sharing class CadenceController {
                             }
                             else  if(mapofCriterion.get(num).operation =='greater_or_equals'){ 
                                 if(mapofCriterion.get(num).fieldDataType =='Number')
-	                                query =query+' >='+  decimal.valueOf(mapofCriterion.get(num).value);
+                                    {
+                                    if(isEntry){
+                                       query =query+' >='+  decimal.valueOf(mapofCriterion.get(num).value); 
+                                    } 
+                                    else{
+                                        decimal numb = decimal.valueOf(mapofCriterion.get(num).value);
+                                        query += ' != NULL AND '+ mapofCriterion.get(num).fieldName;
+                                        query += ' >='+  numb;
+                                    }
+                                } 
                                 if(mapofCriterion.get(num).fieldDataType =='Date')
                                 	query =query+' >='+  getDateFormat(Date.valueOf((String)mapofCriterion.get(num).value));
                                 if(mapofCriterion.get(num).fieldDataType =='DateTime')
@@ -263,7 +273,18 @@ public with sharing class CadenceController {
                             }
                             else if(mapofCriterion.get(num).operation =='less_or_equals'){ 
                                 if(mapofCriterion.get(num).fieldDataType =='Number')
-    	                            query =query+' <='+  decimal.valueOf(mapofCriterion.get(num).value);
+                                    {
+                                    if(isEntry){
+                                        decimal numb = decimal.valueOf(mapofCriterion.get(num).value);
+                                        query += ' = NULL OR '+ mapofCriterion.get(num).fieldName;
+                                        query += ' <='+  numb;                                                                          
+                                    } 
+                                    else{
+                                        decimal numb = decimal.valueOf(mapofCriterion.get(num).value);
+                                        query += ' != NULL AND '+ mapofCriterion.get(num).fieldName;
+                                        query += ' <='+  numb;                                     
+                                    }
+                                }   
                                 if(mapofCriterion.get(num).fieldDataType =='Date')
                                 	query =query+' <='+  getDateFormat(Date.valueOf((String)mapofCriterion.get(num).value));
                                 if(mapofCriterion.get(num).fieldDataType =='DateTime')
@@ -271,7 +292,18 @@ public with sharing class CadenceController {
                             }
                             else  if(mapofCriterion.get(num).operation =='less_than'){ 
                                 if(mapofCriterion.get(num).fieldDataType =='Number')
-	                                query =query+' <'+  decimal.valueOf(mapofCriterion.get(num).value);
+                                   {
+                                    if(isEntry){
+                                        decimal numb = decimal.valueOf(mapofCriterion.get(num).value);
+                                        query += ' = NULL OR '+ mapofCriterion.get(num).fieldName;
+                                        query += ' <'+  numb;                                  
+                                    } 
+                                    else{
+                                        decimal numb = decimal.valueOf(mapofCriterion.get(num).value);
+                                        query += ' != NULL AND '+ mapofCriterion.get(num).fieldName;
+                                        query += ' <'+  numb;
+                                    }
+                                }                                    
                                 if(mapofCriterion.get(num).fieldDataType =='Date')
                                 	query =query+' <'+ getDateFormat(Date.valueOf((String)mapofCriterion.get(num).value));
                                 if(mapofCriterion.get(num).fieldDataType =='DateTime')
@@ -355,7 +387,6 @@ public with sharing class CadenceController {
             else{
                  oppContactRoleQuery='Select ContactId,OpportunityId From OpportunityContactRole Where OpportunityId In :listOfopprtunity';   
 			}
-            System.debug('oppContactRoleQuery'+oppContactRoleQuery);
             Set<String> setForDuplicateCheck =  new Set<String>();
             for(OpportunityContactRole oppCont : Database.query(oppContactRoleQuery)){
                 if(oppCont.ContactId != null){
@@ -366,13 +397,10 @@ public with sharing class CadenceController {
                     	setForDuplicateCheck.add(oppCont.OpportunityId);
                     }
                 }
-            }
-            System.debug('listOfopprtunityToUpdate'+listOfopprtunityToUpdate);
-            
+            }          
             if(listOfopprtunityToUpdate != null && listOfopprtunityToUpdate.size() > 0){
                 update listOfopprtunityToUpdate;
             }
-             System.debug('listOfOppContactIds'+listOfOppContactIds);
             if(listOfOppContactIds != null && listOfOppContactIds.size() > 0){
                 objName =CadenceConstants.CONTACT_OBJECT_NAME;
                 query = 'Select Cadence_ID__c,isActivated__c,EntranceCriteria_Matched_Date__c from '+ objName +' Where (Cadence_ID__c = null) AND Id In :listOfOppContactIds';

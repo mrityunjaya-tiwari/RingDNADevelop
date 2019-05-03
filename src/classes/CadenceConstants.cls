@@ -58,4 +58,12 @@ public with sharing class CadenceConstants {
 	public static final String MISSED = 'Missed';
 	public static final String CONNECTED = 'Connected';
     
+    //Salesforce actual Limits 10000 DML
+	public static final Integer DMLOPERATION = 9000;
+    public static final String  DMLDELETE = 'delete';
+    public static final String  DMLINSERT = 'insert';
+    public static final String  DMLUPDATE = 'update';
+
+    //Other Operations name in batch
+	public static final String SETCONTACTOPPNULL = 'SetContactOppNull';
 }
