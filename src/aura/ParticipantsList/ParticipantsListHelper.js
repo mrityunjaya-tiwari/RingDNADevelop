@@ -39,7 +39,6 @@
     			var childCmp = component.find("datatable1");
     			childCmp.clearRowSelection();
     		} else {
-    			console.log(response.getError()); 
     		}
     	});
     	$A.enqueueAction(action);

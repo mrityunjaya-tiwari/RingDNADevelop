@@ -53,7 +53,6 @@
                 isValid = helper.validatePrevForms(component,event,helper, 3);
             }else {
                 isValid = true;
-                //component.set('v.isEdit', false);
             }
             if(isValid) {
                 component.set("v.currentStep", "3");
@@ -71,7 +70,6 @@
                 isValid = helper.validatePrevForms(component,event,helper, 4);
             }else {
                 isValid = true;
-                //component.set('v.isEdit', false);
             }
             if(isValid) {
                 component.set("v.currentStep", "4");
@@ -113,7 +111,6 @@
     },
     
     onChangeOfRecordType: function(component,event,helper){
-        //component.set("v.entranceCriteriaSet",component.get("v.entranceCriteriaSet"));
         component.set("v.newCadence", component.get("v.newCadence"));
         component.set("v.cadenceActionList", component.get("v.cadenceActionList"));
     },

@@ -8,7 +8,6 @@
 				var result = response.getReturnValue();
 				component.set("v.fieldList", result);
 			}else{
-				console.log('failed with status:',response);
 			}
 		});
 		$A.enqueueAction(fieldList);

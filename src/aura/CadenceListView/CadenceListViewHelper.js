@@ -83,7 +83,6 @@
                 cmp.set('v.rawData', allRows);
                 helper.setData(cmp);	                
             } else {
-                console.log(response.errors);
             }
         });
         $A.enqueueAction(action);
