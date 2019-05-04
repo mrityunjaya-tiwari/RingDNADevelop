@@ -154,7 +154,6 @@ public class Leads  extends SObjectDomain {
                     List<Sequence_Action__c> actions=leadToSequenceActionsMap.get(sequenceAction.Lead_Id__c);
                     actions.add(sequenceAction);
                     leadToSequenceActionsMap.put(sequenceAction.Lead_Id__c,actions);
-		    convertedContactIds.add(convertedLeads.get(leadId).ConvertedContactId);
                 } 
             }
             List<Sequence_Action__c> actionsToUpdate=new List<Sequence_Action__c>();
@@ -165,6 +164,7 @@ public class Leads  extends SObjectDomain {
                     sequenceAction.Lead_Id__c=null;
                     sequenceAction.Contact_Id__c=convertedLeads.get(leadId).ConvertedContactId;
                     actionsToUpdate.add(sequenceAction);
+				convertedContactIds.add(convertedLeads.get(leadId).ConvertedContactId);
                 }
             }
 	    List<Task> tasks = [SELECT id from Task where WHoId IN :convertedContactIds AND Status != 'Completed'];
