@@ -160,11 +160,13 @@ public class Leads  extends SObjectDomain {
             //update sequence actions for lead to contact
             for(Id leadId:leadIds){
                 List<Sequence_Action__c> leadSequenceActions=leadToSequenceActionsMap.get(leadId);
-                for(Sequence_Action__c sequenceAction:leadSequenceActions){
-                    sequenceAction.Lead_Id__c=null;
-                    sequenceAction.Contact_Id__c=convertedLeads.get(leadId).ConvertedContactId;
-                    actionsToUpdate.add(sequenceAction);
-		    convertedContactIds.add(convertedLeads.get(leadId).ConvertedContactId);
+                if(leadSequenceActions!=null){
+                    for(Sequence_Action__c sequenceAction:leadSequenceActions){
+                        sequenceAction.Lead_Id__c=null;
+                        sequenceAction.Contact_Id__c=convertedLeads.get(leadId).ConvertedContactId;
+                        actionsToUpdate.add(sequenceAction);
+                        convertedContactIds.add(convertedLeads.get(leadId).ConvertedContactId);
+                    }
                 }
             }
 	    List<Task> tasks = [SELECT id from Task where WHoId IN :convertedContactIds AND Status != 'Completed'];
@@ -172,8 +174,4 @@ public class Leads  extends SObjectDomain {
             update actionsToUpdate; 
         }
     }
-    
-    
-
-  
 }
