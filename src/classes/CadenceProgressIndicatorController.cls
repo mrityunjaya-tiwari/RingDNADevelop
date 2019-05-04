@@ -28,7 +28,15 @@ public class CadenceProgressIndicatorController {
             populateCadActionPostFixExpression(caObj);
             if (mapofOldCadenceAction.containskey(caObj.id)) {
                 If(mapofOldCadenceAction.get(caObj.id) != null && (mapofOldCadenceAction.get(caObj.id).Day__c != caObj.Day__c || mapofOldCadenceAction.get(caObj.id).Hour__c != caObj.Hour__c)){
-                    caListToInsert.add(caObj);
+                    if(caObj.Trigger_Type__c =='Immediate' && (caObj.Day__c != null || caObj.Hour__c != null)){	
+                      	caObj.Day__c=0;
+                        caObj.Hour__c =0;
+                        caListToInsert.add(caObj);
+                    }
+                    else{
+                      caListToInsert.add(caObj);  
+                    }
+                    
                 }
             } else {
                 caListToInsert.add(caObj);
@@ -242,7 +250,7 @@ public class CadenceProgressIndicatorController {
                             updateSequenceAction.Contact_Id__c = (String) sobjID;
                         }
                         Integer day = 0, hour = 0;
-                        if (!isupdate && cadenceActionsToInsertMap.get(seqAction.CadenceAction_ID__c) != null) {
+                        if (cadenceActionsToInsertMap.get(seqAction.CadenceAction_ID__c) != null) {
                             decimal updateDayOfCadenceAction = cadenceActionsToInsertMap.get(seqAction.CadenceAction_ID__c).Day__c != null ? cadenceActionsToInsertMap.get(seqAction.CadenceAction_ID__c).Day__c : 0.0;
                             decimal updateHourOfCadenceAction = cadenceActionsToInsertMap.get(seqAction.CadenceAction_ID__c).Hour__c != null ? cadenceActionsToInsertMap.get(seqAction.CadenceAction_ID__c).Hour__c : 0.0;
                             decimal OldDayOfCadenceAction = cadenceAction.Day__c != null ? cadenceAction.Day__c : 0.0;
