@@ -408,14 +408,14 @@ public with sharing class CadenceController {
             
             Set<Id> resultIds = new Set<Id>();
             
-            if(listOfopprtunityToUpdate != null && listOfopprtunityToUpdate.size() > 0){
+            if (listOfopprtunityToUpdate != null && listOfopprtunityToUpdate.size() > 0) {
                 Database.SaveResult[] results = Database.update(listOfopprtunityToUpdate, false);
-                for (Database.SaveResult sr : results) {
+                for (Database.SaveResult sr: results) {
                     if (sr.isSuccess()) {
-                         resultIds.add(sr.getId());
+                        resultIds.add(sr.getId());
                     }
-                 }
-			}
+                }
+            }
             listOfOppContactIds = new set<Id>();
             if(opportunityContactMap != null && opportunityContactMap.size() > 0){
                 for(Id opportunityId : resultIds){
