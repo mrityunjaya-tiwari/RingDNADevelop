@@ -270,13 +270,14 @@ public with sharing class CadenceSelector {
     public static void DeleteParticipantAction(Set<Id> objIds) {
         Delete [Select Id from Sequence_Action__c where (Contact_Id__c IN :objIds and (Contact_Id__r.Cadence_ID__c = null or  Contact_Id__r.Cadence_ID__c = '')) or ( Lead_Id__c IN : objIds and ( Lead_Id__r.Cadence_Id__c  = null or   Lead_Id__r.Cadence_Id__c  = '') )];
     }
+  
     public static Map<Id,CadenceAction__c> getCadenceActionsByIds(Set<Id> setOfCadenceIds){
-          Map<Id,CadenceAction__c> mapOfCadenceAction = new Map<Id,CadenceAction__c>([SELECT Id, Name, Action_Criterion__c, Action_Criteria_PE__c, Action_Id__c,
-                                           Cadence_Id__c, Day__c, Hour__c, Trigger_Type__c, Fields_To_Update_Action__c, Action_Id__r.Activation_Type__c, 
-                                           Action_Id__r.Task_Description__c, Action_Id__r.Template_Id__c, Action_Id__r.Type__c  
-                                           FROM CadenceAction__c order by Index__c]);
-
-          return mapOfCadenceAction;
+        Map<Id,CadenceAction__c> mapOfCadenceAction = new Map<Id,CadenceAction__c>([SELECT Id, Name, Action_Criterion__c, Action_Criteria_PE__c, Action_Id__c,
+                                         Cadence_Id__c, Day__c, Hour__c, Trigger_Type__c, Fields_To_Update_Action__c, Action_Id__r.Activation_Type__c, 
+                                         Action_Id__r.Task_Description__c, Action_Id__r.Template_Id__c, Action_Id__r.Type__c  
+                                         FROM CadenceAction__c Where Cadence_Id__c In :setOfCadenceIds]); 
+        
+        return mapOfCadenceAction;
     }
   
 }
