@@ -164,7 +164,7 @@ public class Leads  extends SObjectDomain {
                     sequenceAction.Lead_Id__c=null;
                     sequenceAction.Contact_Id__c=convertedLeads.get(leadId).ConvertedContactId;
                     actionsToUpdate.add(sequenceAction);
-				convertedContactIds.add(convertedLeads.get(leadId).ConvertedContactId);
+		    convertedContactIds.add(convertedLeads.get(leadId).ConvertedContactId);
                 }
             }
 	    List<Task> tasks = [SELECT id from Task where WHoId IN :convertedContactIds AND Status != 'Completed'];
