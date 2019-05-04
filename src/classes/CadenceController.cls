@@ -391,7 +391,7 @@ public with sharing class CadenceController {
             Set<String> setForDuplicateCheck =  new Set<String>();
             for(OpportunityContactRole oppCont : Database.query(oppContactRoleQuery)){
                 if(oppCont.ContactId != null){
-                    contactIds =  new List<Id>();
+                    contactIds.clear();
                     if(opportunityContactMap.containsKey(oppCont.OpportunityId) ){
                         contactIds = opportunityContactMap.get(oppCont.OpportunityId);
                     }
@@ -415,10 +415,7 @@ public with sharing class CadenceController {
                          resultIds.add(sr.getId());
                     }
                  }
-
-            }
-            
-            contactIds =  new List<Id>();
+			}
             listOfOppContactIds = new set<Id>();
             if(opportunityContactMap != null && opportunityContactMap.size() > 0){
                 for(Id opportunityId : resultIds){
