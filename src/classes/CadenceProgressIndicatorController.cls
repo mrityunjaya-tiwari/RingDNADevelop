@@ -231,6 +231,7 @@ public class CadenceProgressIndicatorController {
                 lastIndex = saList.size() - 1;
                 Sequence_Action__c sa = saList.get(0);
                 DateTime entranceDate = sa.Expected_Execution_Date__c;
+                DateTime prevSequenceActionDate ;
                 Boolean isupdate = false;
                 for (Sequence_Action__c seqAction: saList) {
                     if (cadenceActionsToInsertMap.containskey(seqAction.CadenceAction_ID__c) || isupdate) {
@@ -256,11 +257,15 @@ public class CadenceProgressIndicatorController {
                             day = updateSequenceAction.CadenceAction_Id__r.Day__c != null ? (Integer) cadenceAction.Day__c : 0;
                             hour = updateSequenceAction.CadenceAction_Id__r.Hour__c != null ? (Integer) cadenceAction.Hour__c : 0;
                         }
-                        entranceDate = CadenceUtil.addTimeInDate(entranceDate, day, hour);
+                        DateTime updatedDateTime = CadenceUtil.addTimeInDate(entranceDate, day, hour);
+                        if(prevSequenceActionDate <= updatedDateTime){
+                           entranceDate = updatedDateTime;
+                        }
                         updateSequenceAction.Expected_Execution_Date__c = entranceDate;
                         saToInsert.add(updateSequenceAction);
                         isupdate = true;
                     }
+                     prevSequenceActionDate = seqAction.Expected_Execution_Date__c;
                 }
                 if (!isupdate) {
                     entranceDate = saList.get(lastIndex).Expected_Execution_Date__c;
