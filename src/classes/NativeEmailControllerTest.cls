@@ -73,10 +73,10 @@ public class NativeEmailControllerTest {
     
     @isTest
     public static void testSendEmail(){
-        Boolean result;
-        Test.startTest();
-        result=NativeEmailController.sendEmail((String)testLead.Id,null,null,'Test Subject','test this body',(String)testLead.Id,(String)template.Id,(String)sequenceActionLead.Id);
+        NativeEmailController.SendNativeEmailResult result = new NativeEmailController.SendNativeEmailResult();
+        Test.startTest(); 
+        result =NativeEmailController.sendEmail((String)testLead.Id,null,null,'Test Subject','test this body',(String)testLead.Id,(String)template.Id,(String)sequenceActionLead.Id);
         Test.stopTest();
-        System.assertEquals(true, result);
+        System.assertEquals(true, result.Success);
     }
 }

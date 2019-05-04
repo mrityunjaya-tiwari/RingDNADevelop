@@ -1,8 +1,8 @@
 public class NativeEmailController {
     @AuraEnabled
-    public static Boolean sendEmail(String mailTo, String mailCc, String mailBcc, String subject, String body,String participantId,String templateId,String sequenceActionId){
-        Boolean isMailSent = true;
-        RingDNAApiCallouts ringDNAApiCallout = new RingDNAApiCallouts(true);
+    public static SendNativeEmailResult sendEmail(String mailTo, String mailCc, String mailBcc, String subject, String body,String participantId,String templateId,String sequenceActionId){
+        SendNativeEmailResult sendNativeEmail= new SendNativeEmailResult();
+        RingDNAApiCallouts ringDNAApiCallout = new RingDNAApiCallouts(true); 
         Id  sObjectId = Id.valueOf(participantId);
         String objName = sObjectId.getSObjectType().getDescribe().getName();
         Sobject participant =  Database.query('Select Id,OwnerId,Email,Name from '+objName +' where Id = :sObjectId');
@@ -11,19 +11,21 @@ public class NativeEmailController {
             String participantOwnerId = String.valueOf(participant.get('OwnerId'));
             Map<String, Object> responseMap = ringDNAApiCallout.sendNativeEmail(mailTo, '', body, String.valueOf(sequenceActionId),  subject,  participantOwnerId);
             if (responseMap.isEmpty()  || (!responseMap.isEmpty() && (responseMap.get('success') == false || responseMap.get('success') == 'false')) ){
-                isMailSent = sendSfdcEmail(participantId,templateId,sequenceActionId, mailCc, mailBcc);
-            } 
+                sendNativeEmail = sendSfdcEmail(participantId,templateId,sequenceActionId, mailCc, mailBcc);
+            }
+            else if((!responseMap.isEmpty() && (responseMap.get('success') == true || responseMap.get('success') == 'true'))){
+                sendNativeEmail.Success =true;
+            }
         }else{
-            isMailSent = false;
+            sendNativeEmail.Success =false;
+            sendNativeEmail.Message ='Invalid email address.'; 
         }
-        if (isMailSent){
+        if (sendNativeEmail.Success){
             List<Sequence_Action__c> sequenceActionList = CadenceSelector.getParticipantActions(new Set<Id>{sequenceActionId});
             createTasks(participantId,sequenceActionList,templateId);
             updateSequenceAction(sequenceActionList,participantId);
-            return true;
-        }else{
-            return false;
         }
+        return sendNativeEmail;
     }
     
     public class NativeEmailWrapper {
@@ -32,6 +34,12 @@ public class NativeEmailController {
         @AuraEnabled public String recordTypeAPI;
         @AuraEnabled public String emailTemplateBody;
         @AuraEnabled public String emailTemplateSubject;
+    }
+    
+    @TestVisible
+    private class SendNativeEmailResult{
+        @AuraEnabled public Boolean Success;
+        @AuraEnabled public String Message;
     }
     
     @AuraEnabled
@@ -80,19 +88,21 @@ public class NativeEmailController {
         return emailMessage;
     }
     
-    private static Boolean sendSfdcEmail(String participantId,string templateId,string sequenceActionId,string mailCc,string mailBcc){
+    private static SendNativeEmailResult sendSfdcEmail(String participantId,string templateId,string sequenceActionId,string mailCc,string mailBcc){
+        SendNativeEmailResult sendNativeEmail= new SendNativeEmailResult();
         List<Messaging.SingleEmailMessage> emailsToSend = new  List<Messaging.SingleEmailMessage>();
         emailsToSend.add(createEmailMessage(Id.valueOf(participantId),templateId,mailCc,mailBcc));
         if(!emailsToSend.isEmpty()) {
             Messaging.SendEmailResult[] results = Messaging.sendEmail(emailsToSend, false);
             if (results != null && results.get(0).isSuccess()) {
-                return true;
+                sendNativeEmail.Success =true;
+                return sendNativeEmail;
             }else{
-                return false;
+                sendNativeEmail.Success =false;
+                sendNativeEmail.Message =results != null ? results.get(0).getErrors()[0].getMessage():'';
             }
-        }else {
-            return false;
         }
+        return sendNativeEmail;
     }
     
     private static void createTasks(String participantId,List<Sequence_Action__c> sequenceActionList,String templateId){

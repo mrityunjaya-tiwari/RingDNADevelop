@@ -191,28 +191,30 @@ public class CadenceProgressIndicatorController {
             List<Sequence_Action__c> saList = participantSequenceActionMap.get(sobjID);
             Integer day = 0, hour = 0;
             DateTime entranceDate;  
-            for (Sequence_Action__c sa : saList){
-                if (deletedAOPIds.contains(sa.Id)){ 
-                    aopToDeleteRelatedToCadence.add(sa);
-                    if (entranceDate == null && sa.Expected_Execution_Date__c != null){
-                        if (sa.Expected_Execution_Date__c <  system.now()){
-                            entranceDate = system.now();
-                        }else{
-                            day = sa.CadenceAction_Id__r.Day__c != null ? -(Integer)sa.CadenceAction_Id__r.Day__c : 0;
-                            hour = sa.CadenceAction_Id__r.Hour__c != null ? -(Integer)sa.CadenceAction_Id__r.Hour__c : 0;
-                            entranceDate = sa.Expected_Execution_Date__c;
-                            entranceDate = CadenceUtil.addTimeInDate(entranceDate, day, hour);
-                            if (entranceDate < system.now()){
+            if(saList != null && saList.size() > 0){
+                for (Sequence_Action__c sa : saList){
+                    if (deletedAOPIds.contains(sa.Id)){ 
+                        aopToDeleteRelatedToCadence.add(sa);
+                        if (entranceDate == null && sa.Expected_Execution_Date__c != null){
+                            if (sa.Expected_Execution_Date__c <  system.now()){
                                 entranceDate = system.now();
+                            }else{
+                                day = sa.CadenceAction_Id__r.Day__c != null ? -(Integer)sa.CadenceAction_Id__r.Day__c : 0;
+                                hour = sa.CadenceAction_Id__r.Hour__c != null ? -(Integer)sa.CadenceAction_Id__r.Hour__c : 0;
+                                entranceDate = sa.Expected_Execution_Date__c;
+                                entranceDate = CadenceUtil.addTimeInDate(entranceDate, day, hour);
+                                if (entranceDate < system.now()){
+                                    entranceDate = system.now();
+                                }
                             }
                         }
+                    }else if (entranceDate != null){
+                        day = sa.CadenceAction_Id__r.Day__c != null ? (Integer)sa.CadenceAction_Id__r.Day__c : 0;
+                        hour = sa.CadenceAction_Id__r.Hour__c != null ? (Integer)sa.CadenceAction_Id__r.Hour__c : 0;
+                        entranceDate = CadenceUtil.addTimeInDate(entranceDate, day, hour);
+                        sa.Expected_Execution_Date__c = entranceDate;
+                        aopToUpdateList.add(sa);
                     }
-                }else if (entranceDate != null){
-                    day = sa.CadenceAction_Id__r.Day__c != null ? (Integer)sa.CadenceAction_Id__r.Day__c : 0;
-                    hour = sa.CadenceAction_Id__r.Hour__c != null ? (Integer)sa.CadenceAction_Id__r.Hour__c : 0;
-                    entranceDate = CadenceUtil.addTimeInDate(entranceDate, day, hour);
-                    sa.Expected_Execution_Date__c = entranceDate;
-                    aopToUpdateList.add(sa);
                 }
             }
         }

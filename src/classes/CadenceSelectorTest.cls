@@ -91,4 +91,42 @@ public class CadenceSelectorTest {
         List<SObject> lstSObj = CadenceSelector.getParticipantsWithCadenceActionsOfPublicGroup(objType, pgId);
         Test.stopTest();
     }
+    
+    @isTest
+    static void deleteparticipantsActionsTest(){
+        Contact c1= new Contact();
+        c1.FirstName='fname';
+        c1.LastName='lname';
+        c1.Department='IT';
+        insert c1;
+        
+        
+        Action__c action1= TestDataFactory.createAction(ACTION_TYPE_Task);
+        insert action1;
+        
+        Cadence__c cadence1 = TestDataFactory.createCadence(CadenceConstants.LEAD_OBJECT_NAME);
+        cadence1.Participent_Activation__c='Automatic';
+        cadence1.Status__c=true;
+        cadence1.matching_priority__c= 'P1';
+        cadence1.Record_Type__c= CadenceConstants.CONTACT_OBJECT_NAME;
+        insert cadence1;        
+        
+        CadenceAction__c cadenceAction =TestDataFactory.createCadenceAction(cadence1.Id, action1.Id);
+        cadenceAction.Name='democadenceaction';
+        cadenceAction.Trigger_Type__c= 'Immediate';       
+        insert cadenceAction;
+        
+        Sequence_Action__c  actionOnParticipant = new Sequence_Action__c();
+        actionOnParticipant.Name= 'demoname';
+        actionOnParticipant.Contact_Id__c = c1.Id;
+        actionOnParticipant.CadenceAction_ID__c=cadenceAction.Id;
+        actionOnParticipant.isActionPerformed__c=false;
+        insert actionOnParticipant;
+        
+        Test.startTest();
+        CadenceSelector.DeleteParticipantAction(new set<Id>{c1.id});
+        Integer records = [Select COUNT() from Sequence_Action__c];
+        System.assertEquals(0,records);
+        Test.stopTest();
+    }
 }

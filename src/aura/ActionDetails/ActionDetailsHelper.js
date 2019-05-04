@@ -90,6 +90,12 @@
         }else{
             return true;
         }
-    },  
+    },
+    actionNextBtnEnable: function(component, event, helper){
+        var action = component.get('v.newAction');
+        if(action.name != undefined && action.name !='' ){
+            component.set('v.isNextEnable' , true); 
+        }
+    }  
     
 })

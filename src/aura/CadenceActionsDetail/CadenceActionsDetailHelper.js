@@ -25,8 +25,7 @@
         var currentIndex = component.get('v.currentIndex');
         cadenceActionObj.index = currentIndex;
         
-        if(isNewAction ==  true){ 
-            component.set('v.showNewActionName', true);
+        if(isNewAction ==  true){            
             var element = actionList.slice(-1);
             var elementId = element[0].id;    
             var actionName = element[0].name;
@@ -35,7 +34,8 @@
                 cadenceActionObj.actionId = elementId;
                 component.set("v.actionObject", element);   
                 cadenceActionObj.name = actionName;                 
-            }  
+            }
+            component.set('v.actionList', actionList);
             component.set("v.cadenceAction", cadenceActionObj);    
             if (activationType == 'Manual'){
                 component.set('v.showPriority', 'True');
@@ -60,6 +60,7 @@
                 $A.util.removeClass(cmpTarget, 'slds-size_1-of-4');
                 $A.util.addClass(cmpTarget, 'slds-size_1-of-3');
             }
+             component.set('v.showNewActionName', true);
         }
         else{          
             for(var index in actionList){
@@ -105,11 +106,11 @@
     },
     // Used to validate cadenceAction detail.
     validateCADetail:function(component, event, helper){
-        var isValidActioin = component.find('formValidationId').reduce(function (validSoFar, inputCmp) {
+        var isValidAction = component.find('formValidationId').reduce(function (validSoFar, inputCmp) {
             inputCmp.showHelpMessageIfInvalid();
             return validSoFar && inputCmp.get('v.validity').valid;
         }, true);
-        return isValidActioin;
+        return isValidAction;
     },
     // Check Validation for sub component - ActionDetailsDynamicRow
     validateFieldsToUpdateComponent:function(component, event, helper){
