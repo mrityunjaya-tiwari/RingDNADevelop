@@ -21,6 +21,7 @@ public class CadenceProgressIndicatorController {
         });
         deleteCadenceAction(cadenceObj, caIdsList);
         List < CadenceAction__c > caListToInsert = new List < CadenceAction__c > ();
+        List < CadenceAction__c > caListToupdate = new List < CadenceAction__c > ();
         for (CadenceAction__c caObj: listCadenceAction) {
             if (caObj.Cadence_Id__c == null) {
                 caObj.Cadence_Id__c = cadenceObj.Id;
@@ -28,7 +29,14 @@ public class CadenceProgressIndicatorController {
             populateCadActionPostFixExpression(caObj);
             if (mapofOldCadenceAction.containskey(caObj.id)) {
                 If(mapofOldCadenceAction.get(caObj.id) != null && (mapofOldCadenceAction.get(caObj.id).Day__c != caObj.Day__c || mapofOldCadenceAction.get(caObj.id).Hour__c != caObj.Hour__c)){
-                    caListToInsert.add(caObj);
+                   if(caObj.Trigger_Type__c =='Immediate' && (caObj.Day__c == null || caObj.Hour__c == null)){	
+                        caObj.Day__c=0;
+                        caObj.Hour__c =0;
+                    }
+                    caListToInsert.add(caObj);                    
+                }
+                else{
+                    caListToupdate.add(caObj);
                 }
             } else {
                 caListToInsert.add(caObj);
@@ -47,6 +55,9 @@ public class CadenceProgressIndicatorController {
                     createdAndUpdateCadenceActions.put(caListToInsert[index].Id, false);
                 }
             }
+        }
+        if(caListToupdate != null && caListToupdate.size() > 0){
+             Database.update(caListToupdate,false);
         }
         addActionOnParticipant(cadenceObj, cadenceActionsToInsertMap, createdAndUpdateCadenceActions, mapofOldCadenceAction);
         return String.valueOf(cadenceObj.Id);
