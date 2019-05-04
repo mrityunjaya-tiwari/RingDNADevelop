@@ -11,9 +11,10 @@ public class RingDNAApiCallouts {
     private final String SMS_TEMPLATES_PATH = 'smsTemplates';
     private final String VOICEMAIL_DROPS_PATH = 'voicemailDrops';
     
-	private final String HTTP_METHOD_POST = 'POST';
+    private final String HTTP_METHOD_POST = 'POST';
     private final String BASE_URL_SEQUENCE = 'api/v2/sequence';
     private final String SEND_EMAIL_PATH = 'messages/send';  
+    private final String SEND_MASS_EMAIL_PATH = 'messages/sendMultiple';  
     private final String API_KEY ;
     private final String API_SECRET;
     
@@ -161,9 +162,7 @@ public class RingDNAApiCallouts {
     
     public Map<String, Object> sendNativeEmail(String toEmail, String toName, String body, String actionId, String subject, String userId) {
         String uri = host + '/' + BASE_URL_SEQUENCE + '/' + SEND_EMAIL_PATH;
-        if (toName == null){
-            toName = '';
-        }
+        toName = toName == null ? '' : toName;
         //Adding parameters in endpoint
         String endpoint = uri 
             + '?toEmail=' + toEmail 
@@ -174,7 +173,7 @@ public class RingDNAApiCallouts {
             + '&sfOrgId=' + CadenceConstants.ORANIZATION_ID
             + '&sfUserId=' + userId
             + '&actionId=' + EncodingUtil.urlEncode(actionId, 'UTF-8');
-        if(host == '' || API_KEY == '' || API_SECRET == '' || (userId == null || (userId != null && userId == ''))) {
+        if(! Test.isRunningTest() && (host == '' || API_KEY == '' || API_SECRET == '' || (userId == null || (userId != null && userId == ''))) ) {
             return New Map<String, Object>();
         }
                
@@ -190,7 +189,24 @@ public class RingDNAApiCallouts {
         }
         return objMap;
     }
-    
+    public List<NativeEmailRespose> sendNativeMassEmail(List<NativeEmailMessage> nativeEmailMessageList) {
+        List<NativeEmailRespose> nativeEmailResposeList = new List<NativeEmailRespose>();
+        String endpoint = host + '/' + BASE_URL_SEQUENCE + '/' + SEND_MASS_EMAIL_PATH;
+        if(! Test.isRunningTest() && (host == '' || API_KEY == '' || API_SECRET == '') ) {
+            return nativeEmailResposeList;
+        }
+        
+        HttpRequest httpRequest = new HttpRequest();        
+        httpRequest.setEndpoint(endpoint);
+        httpRequest.setHeader('Content-Type', 'application/json');
+        httpRequest.setHeader('Accept', 'application/json');
+        httpRequest.setBody(RingDNAApiCalloutsHelper.getMessageClauseToSentNativeEmail(nativeEmailMessageList,API_KEY, API_SECRET));
+        HTTPResponse httpResponse = postResponse(httpRequest);
+        if (httpResponse != null && httpResponse.getStatusCode() == 200){
+            nativeEmailResposeList = RingDNAApiCalloutsHelper.processApiResponse(httpResponse);
+        }
+        return nativeEmailResposeList;
+    }
     private HTTPResponse postResponse(HttpRequest httpRequest) {
         try {            
             httpRequest.setMethod(HTTP_METHOD_POST);
