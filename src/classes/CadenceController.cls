@@ -406,7 +406,7 @@ public with sharing class CadenceController {
                     }
                 }
             }
-            System.debug('listOfopprtunityToUpdate'+listOfopprtunityToUpdate);
+            
             Set<Id> resultIds = new Set<Id>();
             
             if(listOfopprtunityToUpdate != null && listOfopprtunityToUpdate.size() > 0){
