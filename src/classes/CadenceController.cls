@@ -379,7 +379,6 @@ public with sharing class CadenceController {
         if(objName.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_OBJECT_NAME)){
             String opporQuery = getOpportunityQuery(objName,cadence);
             
-            listOfOppContactIds = new set<Id>();
             List<Opportunity> listOfopprtunityToUpdate = new List<Opportunity>();
             List<Opportunity> listOfopprtunity = Database.query(opporQuery);
             CadenceService.mapOfOppcontact = CadenceService.opporContactMap(listOfopprtunity);
@@ -398,7 +397,7 @@ public with sharing class CadenceController {
                     }
                     contactIds.add(oppCont.ContactId);
                     opportunityContactMap.put(oppCont.OpportunityId,contactIds);
-                    listOfOppContactIds.add(oppCont.ContactId);
+                    
                     if(!setForDuplicateCheck.contains(oppCont.OpportunityId)){
                         Opportunity opp= new Opportunity(id=oppCont.OpportunityId,Cadence_Id__c=cadence.Id);
                     	listOfopprtunityToUpdate.add(opp);
