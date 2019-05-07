@@ -427,8 +427,8 @@ global  without sharing class CadenceService {
     }
     
     /* Method to create email message
-* @Param : sObjectId - List of sobject having email Ids,EmailTemplateId - Email Template Id
-*/
+	 * @Param : sObjectId - List of sobject having email Ids,EmailTemplateId - Email Template Id
+	 */
     public static Messaging.MassEmailMessage createEmailMessage(Id sObjectId,Id EmailTemplateId){
         Messaging.MassEmailMessage mail = new Messaging.MassEmailMessage();
         mail.setSaveAsActivity(false);
@@ -490,9 +490,9 @@ global  without sharing class CadenceService {
     }
     
     /* 
-* Method to perform Task Actions
-* @Param : Id - Id of sobject (Lead/Contact),taskDescription - Json OfTaskObj
-*/
+	* Method to perform Task Actions
+	* @Param : Id - Id of sobject (Lead/Contact),taskDescription - Json OfTaskObj
+	*/
     public static Task performTaskAction(Id sObjectId, String taskDescription){
         Task taskObj = (Task)JSON.deserialize(taskDescription, Task.class);
         taskObj.WhoId = sObjectId;
@@ -1066,6 +1066,7 @@ global  without sharing class CadenceService {
         
         //Getting objList to process (for perform cadence actions on it)
         Map<Id, SObject> objMap = new Map<Id, SObject>(CadenceService.getSObjectsToProcess(objList, parentMap, cadMap, objName));
+        
 
         //Getting non performed participant actions 
         Map<Id, List<Sequence_Action__c>> partActionsMap = CadenceService.getRemainingParticipantAction(objMap.keySet(), objName);
@@ -1442,7 +1443,6 @@ global  without sharing class CadenceService {
     }
     
     public static Sobject UpdateSequenceOnParticipant(Sobject partObj,Cadence__c cadToUpdate){
-        //After matching criteria setting matching cadence data to participant
             partObj.put(nameSpace+'Cadence_Id__c', cadToUpdate.Id); 
             if(cadToUpdate.Participent_Activation__c.equalsIgnoreCase(CadenceConstants.PARTICIPANT_ACTIVATION_AUTOMATIC)) {
                 partObj.put(nameSpace+'isActivated__c', true);

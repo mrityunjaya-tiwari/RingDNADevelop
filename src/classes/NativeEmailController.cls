@@ -1,5 +1,4 @@
 public class NativeEmailController {
-
 	@AuraEnabled
 	public static SendNativeEmailResult sendEmail(String mailTo, String mailCc, String mailBcc, String subject, String body,String participantId,String templateId,String sequenceActionId){
 		SendNativeEmailResult sendNativeEmail= new SendNativeEmailResult();
@@ -7,7 +6,6 @@ public class NativeEmailController {
 		Id  sObjectId = Id.valueOf(participantId);
 		String objName = sObjectId.getSObjectType().getDescribe().getName();
 		Sobject participant =  Database.query('Select Id,OwnerId,Email,Name from '+objName +' where Id = :sObjectId');
-
 		if (participant.get('Email') != null){
 			mailTo = String.valueOf(participant.get('Email'));
 			String participantOwnerId = String.valueOf(participant.get('OwnerId'));
@@ -22,7 +20,6 @@ public class NativeEmailController {
 			sendNativeEmail.Success =false;
 			sendNativeEmail.Message ='Invalid email address.'; 
 		}
-
 		if (sendNativeEmail.Success){
 			List<Sequence_Action__c> sequenceActionList = CadenceSelector.getParticipantActions(new Set<Id>{sequenceActionId});
 			createTasks(participantId,sequenceActionList,templateId);
@@ -157,4 +154,5 @@ public class NativeEmailController {
 		singleEmail.setTemplateId(EmailTemplateId);
 		return singleEmail; 
 	}
+
 }

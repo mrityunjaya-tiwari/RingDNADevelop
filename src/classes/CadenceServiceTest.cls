@@ -51,6 +51,7 @@ public class CadenceServiceTest {
 		cadLeadOR.Exit_Criteria__c = cadLeadOR.Entrance_Criteria__c;
 
 		cadLeadCUSTOM.Entrance_Criteria__c = cadJsonCUSTOM;
+
 		cadLeadOR.Participent_Activation__c = 'Automatic';
 
 		insert cadLeadOR;
@@ -62,10 +63,10 @@ public class CadenceServiceTest {
 		action2.Activation_Type__c = 'Automatic';
 		insert action2;
 		insert action3; 
+
 		cadenceActionLeadOR=TestDataFactory.createCadenceAction(cadLeadOR.Id, action2.Id);
 		cadenceActionLeadOR.Trigger_Type__c = 'Immediate';
 		insert cadenceActionLeadOR;
-
 	}
 	@isTest
 	public static void testMethod1(){

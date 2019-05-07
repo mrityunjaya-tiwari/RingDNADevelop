@@ -30,10 +30,13 @@
         var newAct = component.get("v.newAction");
         var name = newAct.name;
         if (name){
-           newAct.name = name.trim();
-       }
-        newAct.emailType = 'SFDC';
-        newAct.deliveryPreference = 'Immediate';
+            newAct.name = name.trim();
+        }
+        var emailType = newAct.emailType;
+        if(emailType ){
+            newAct.emailType = 'SFDC';
+            newAct.deliveryPreference = 'Immediate';
+        }
         component.set("v.newAction", newAct);
         var isValidAction = component.find('formValidationId').reduce(function (validSoFar, inputCmp) {
             inputCmp.showHelpMessageIfInvalid();

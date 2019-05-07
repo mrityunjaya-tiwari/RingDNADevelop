@@ -8,6 +8,7 @@ private class CadenceControllerTest {
 		CadenceController.getCadenceDetail(cadenceRecord.Id);
 		Test.stopTest();  
 	}
+	
 	@isTest
 	public static void getFieldsTest(){
 		Contact c1= new Contact();
@@ -29,6 +30,7 @@ private class CadenceControllerTest {
 		System.assertEquals(actualOutput, expectedOutput);
 		Test.stopTest();
 	}
+	
 	@isTest
 	public static void activateSmallerOperationCadenceTest(){
 		Cadence__c cadenceobj = TestDataFactory.createCadence('Lead');
@@ -45,7 +47,8 @@ private class CadenceControllerTest {
 		Test.stopTest();
 		cadenceobj=[select Id, Status__c from Cadence__c where id =: cadenceobj.Id];
 		System.assertEquals(True, cadenceobj.Status__c, 'Cadence Activated');
-	} 
+	}
+	
 	@isTest
 	public static void activateGreaterOperationCadenceTest(){
 		Cadence__c cadenceobj = TestDataFactory.createCadence('Lead');
@@ -62,7 +65,8 @@ private class CadenceControllerTest {
 		Test.stopTest();
 		cadenceobj=[select Id, Status__c from Cadence__c where id =: cadenceobj.Id];
 		System.assertEquals(True, cadenceobj.Status__c, 'Cadence Activated');
-	} 
+	}
+	
 	@isTest
 	public static void activateSmallOperationCadenceTest(){
 		Cadence__c cadenceobj = TestDataFactory.createCadence('Lead');

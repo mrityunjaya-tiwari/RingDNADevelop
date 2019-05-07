@@ -1,6 +1,5 @@
 @isTest
 public class NativeEmailControllerTest {
-
 	public static Action__c action;
 	public static EmailTemplate template;
 	public static Lead testLead;
@@ -52,7 +51,6 @@ public class NativeEmailControllerTest {
 		sequenceActionLead=new Sequence_Action__c(CadenceAction_Id__c=cadenceActionLead.Id,Lead_Id__c=testLead.Id);
 		insert sequenceActionLead;
 	} 
-
 	@isTest
 	public static void testGetData(){
 		Test.startTest();
@@ -63,7 +61,6 @@ public class NativeEmailControllerTest {
 		System.assertEquals('Test Body for Test Lead',emailWrapper.emailTemplateBody);
 		body=emailWrapper.emailTemplateBody;
 	}
-
 	@isTest
 	public static void testResolveMergeFields(){
 		NativeEmailMessage message;

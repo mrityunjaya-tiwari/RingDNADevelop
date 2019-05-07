@@ -69,7 +69,7 @@ public class RingDNAApiCallouts_test {
 		List<NativeEmailMessage> nativeEmailMessageList = new List<NativeEmailMessage>();
 		NativeEmailMessage nativeEmailMessage = new NativeEmailMessage();
 		nativeEmailMessage.ActionId = accountId;
-		nativeEmailMessage.MailTo = 'test02@gmail.com';
+		nativeEmailMessage.MailTo = 'test@gmail.com';
 		nativeEmailMessage.Body = 'body mail 1';
 		nativeEmailMessage.UserId = userId;
 		nativeEmailMessageList.add(nativeEmailMessage);

@@ -151,17 +151,19 @@ public class Leads  extends SObjectDomain {
 					List<Sequence_Action__c> actions=leadToSequenceActionsMap.get(sequenceAction.Lead_Id__c);
 					actions.add(sequenceAction);
 					leadToSequenceActionsMap.put(sequenceAction.Lead_Id__c,actions);
-					convertedContactIds.add(convertedLeads.get(leadId).ConvertedContactId);
 				} 
 			}
 			List<Sequence_Action__c> actionsToUpdate=new List<Sequence_Action__c>();
 			//update sequence actions for lead to contact
 			for(Id leadId:leadIds){
 				List<Sequence_Action__c> leadSequenceActions=leadToSequenceActionsMap.get(leadId);
-				for(Sequence_Action__c sequenceAction:leadSequenceActions){
-					sequenceAction.Lead_Id__c=null;
-					sequenceAction.Contact_Id__c=convertedLeads.get(leadId).ConvertedContactId;
-					actionsToUpdate.add(sequenceAction);
+				if(leadSequenceActions!=null){
+					for(Sequence_Action__c sequenceAction:leadSequenceActions){
+						sequenceAction.Lead_Id__c=null;
+						sequenceAction.Contact_Id__c=convertedLeads.get(leadId).ConvertedContactId;
+						actionsToUpdate.add(sequenceAction);
+						convertedContactIds.add(convertedLeads.get(leadId).ConvertedContactId);
+					}
 				}
 			}
 			List<Task> tasks = [SELECT id from Task where WHoId IN :convertedContactIds AND Status != 'Completed'];
