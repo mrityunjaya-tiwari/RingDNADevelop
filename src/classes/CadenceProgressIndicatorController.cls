@@ -259,8 +259,13 @@ public class CadenceProgressIndicatorController {
                             	entranceDate = seqAction.Expected_Execution_Date__c;  
                             }
                         } else {
-                            day = updateSequenceAction.CadenceAction_Id__r.Day__c != null ? (Integer) cadenceAction.Day__c : 0;
-                            hour = updateSequenceAction.CadenceAction_Id__r.Hour__c != null ? (Integer) cadenceAction.Hour__c : 0;
+                            day = updateSequenceAction.CadenceAction_Id__r.Day__c != null ? (Integer) updateSequenceAction.CadenceAction_Id__r.Day__c : 0;
+                            hour = updateSequenceAction.CadenceAction_Id__r.Hour__c != null ? (Integer) updateSequenceAction.CadenceAction_Id__r.Hour__c : 0;
+                        }
+                        DateTime updatedDateTime = CadenceUtil.addTimeInDate(entranceDate, day, hour);
+                        prevSequenceActionDate= prevSequenceActionDate == null ?updatedDateTime: prevSequenceActionDate;
+                        if(updatedDateTime >= prevSequenceActionDate){
+                           entranceDate = updatedDateTime;
                         }
                         entranceDate = CadenceUtil.addTimeInDate(entranceDate, day, hour);
                         updateSequenceAction.Expected_Execution_Date__c = entranceDate;
