@@ -267,7 +267,6 @@ public class CadenceProgressIndicatorController {
                         if(updatedDateTime >= prevSequenceActionDate){
                            entranceDate = updatedDateTime;
                         }
-                        entranceDate = CadenceUtil.addTimeInDate(entranceDate, day, hour);
                         updateSequenceAction.Expected_Execution_Date__c = entranceDate;
                         saToInsert.add(updateSequenceAction);
                         isupdate = true;
