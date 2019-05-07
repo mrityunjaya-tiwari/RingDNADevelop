@@ -17,21 +17,10 @@
             component.set('v.ISLoad', true);
             component.set('v.spinner',false);
         }
-    },
-    
+    },   
     // Use to set action type according to button input and add new cadenceAction for cadence
-    AddNewCadenceActions: function (component, event, helper) {
-        component.set('v.isValidationError', false);
-        var selectedActionType = event.getParam("value");
-        var rowList = component.get("v.cadenceActionList");
-        rowList.push({
-            'sobjectType': 'SequenceAction'
-        });
-        var actionTypeListForCadenceAction = component.get("v.actionTypeListForCadenceAction");
-        actionTypeListForCadenceAction.push(selectedActionType);
-        component.set("v.actionTypeListForCadenceAction",actionTypeListForCadenceAction);
-        component.set("v.actionType", selectedActionType);
-        component.set("v.cadenceActionList", rowList);
+    addNewCadenceActions: function (component, event, helper) {
+        helper.addNewCadenceActions(component, event, helper);        
     },
     handleCadDynamicRowEvent: function(component, event, helper){
         var ronIndex = event.getParam("ronIndex");
@@ -49,6 +38,9 @@
         return isValid;
     },
     createNewAction : function(component, event, helper){
-        component.set('v.createAction', true); 
+        component.set('v.createAction', true);        
+    },
+    oncreateActionAttributeChange : function(component, event, helper){
+        helper.oncreateActionAttributeChange(component, event, helper);
     }
 })

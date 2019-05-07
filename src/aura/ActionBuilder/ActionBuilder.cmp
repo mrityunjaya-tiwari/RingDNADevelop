@@ -59,10 +59,17 @@
             <div>
                 <lightning:button class="rdna-button rdna-button-text slds-text-align_center slds-m-top_large  slds-m-right_medium slds-p-left_large slds-p-right_large" aura:id="cancel" label="Cancel" onclick="{!c.onCancel}"/>
             </div>
-            <aura:if isTrue = "{!and(or(v.currentStep == '2' , v.currentStep == 2), v.isNextEnable)}">
+            <aura:if isTrue = "{!and(or(or(v.currentStep == '1' , v.currentStep == 1),or(v.currentStep == '2' , v.currentStep == 2)), v.isNextEnable)}">
                 <div>
                     <lightning:button class="rdna-button-save rdna-button-text-save slds-text-align_center slds-m-top_large slds-p-left_large slds-p-right_large slds-m-right_large" aura:id="Next" label="Next" onclick="{!c.onNext}"/>
                 </div>
+                <aura:set attribute="else">
+                    <aura:if isTrue = "{!and(or(v.currentStep == '1' , v.currentStep == 1) , not(v.isNextEnable) ) }" >
+                        <div>
+                            <lightning:button class="rdna-button rdna-button-text slds-text-align_center slds-m-top_large  slds-m-right_medium slds-p-left_large slds-p-right_large" aura:id="nextDisable" label="Next"/>
+                        </div>
+                    </aura:if>
+                </aura:set>  
             </aura:if>
             <aura:if isTrue = "{!and(or(v.currentStep == '2' , v.currentStep == 2) , not(v.isNextEnable) ) }" >
             <div>
@@ -74,7 +81,7 @@
         <!-- Body Start -->
        <!-- CREATE NEW ACTION FORM -->
         <aura:if isTrue = "{!v.currentStep == '1' || v.currentStep == 1}" >          
-            <c:ActionDetails aura:id="newActionDetail" newAction = "{!v.newAction}" disableActionType = "{!v.disableActionType}" isNextEnable="{!v.isNextEnable}" currentStep ="{!v.currentStep}"  rowActionTemplateList="{!v.rowActionTemplateList}" recordId="{!v.recordId}"/>       
+            <c:ActionDetails aura:id="newActionDetails" newAction = "{!v.newAction}" disableActionType = "{!v.disableActionType}" isNextEnable="{!v.isNextEnable}" currentStep ="{!v.currentStep}"  rowActionTemplateList="{!v.rowActionTemplateList}" recordId="{!v.recordId}"/>       
         </aura:if>
         <aura:if isTrue = "{!v.currentStep == '2' || v.currentStep == 2}" >
             <aura:if isTrue="{!v.newAction.type == 'Task'}">

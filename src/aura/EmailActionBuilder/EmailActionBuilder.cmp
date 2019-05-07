@@ -59,7 +59,12 @@
                                 sequence action record owner.
                             </div>
                             <div class="slds-text-align_center">
-                                <lightning:button class="email-builder-button email-builder-button-text slds-text-align_center slds-m-top_small slds-p-left_large slds-p-right_large" aura:id="deleteActions" label="Select" onclick="{!c.createSFDCEmail}"/>
+                                <aura:if isTrue="{!v.newAction.emailType == 'SFDC'}">
+                                    <lightning:button class="email-builder-button-toggle email-builder-button-text-toggle slds-text-align_center slds-m-top_small slds-p-left_large slds-p-right_large" aura:id="deleteActions" label="Select" onclick="{!c.createSFDCEmail}"/>
+                                    <aura:set attribute="else">
+                                        <lightning:button class="email-builder-button email-builder-button-text slds-text-align_center slds-m-top_small slds-p-left_large slds-p-right_large" aura:id="deleteActions" label="Select" onclick="{!c.createSFDCEmail}"/>
+                                    </aura:set>
+                                </aura:if>
                             </div>
                         </div>
                         <div class="slds-p-horizontal_medium">
@@ -78,9 +83,13 @@
                                 a connected ringDNA email account.
                             </div>
                             <div class="slds-text-align_center">
-                                <lightning:button class="email-builder-button email-builder-button-text slds-text-align_center slds-m-top_small slds-p-left_large slds-p-right_large" aura:id="deleteActions" label="Select" onclick="{!c.createNativeEmail}"/>
-                            </div>
-                            
+                                <aura:if isTrue="{!v.newAction.emailType == 'NATIVE'}">
+                                    <lightning:button class="email-builder-button-toggle email-builder-button-text-toggle slds-text-align_center slds-m-top_small slds-p-left_large slds-p-right_large" aura:id="deleteActions" label="Select" onclick="{!c.createNativeEmail}"/>
+                                    <aura:set attribute="else">
+                                        <lightning:button class="email-builder-button email-builder-button-text slds-text-align_center slds-m-top_small slds-p-left_large slds-p-right_large" aura:id="deleteActions" label="Select" onclick="{!c.createNativeEmail}"/>
+                                    </aura:set>
+                                </aura:if>
+                            </div>    
                         </div>
                     </div> 
                 </div>
@@ -114,7 +123,12 @@
                                 a sequence action as part of a sequence.
                             </div>
                             <div class="slds-text-align_center">
-                                <lightning:button class="email-builder-button email-builder-button-text slds-text-align_center slds-m-top_small slds-p-left_large slds-p-right_large" aura:id="deleteActions" label="Select" onclick="{!c.createAutomaticEmail}"/>
+                                <aura:if isTrue="{!v.newAction.activationType == 'Automatic'}">
+                                    <lightning:button class="email-builder-button-toggle email-builder-button-text-toggle slds-text-align_center slds-m-top_small slds-p-left_large slds-p-right_large" aura:id="deleteActions" label="Select" onclick="{!c.createAutomaticEmail}"/>
+                                    <aura:set attribute="else">
+                                        <lightning:button class="email-builder-button email-builder-button-text slds-text-align_center slds-m-top_small slds-p-left_large slds-p-right_large" aura:id="deleteActions" label="Select" onclick="{!c.createAutomaticEmail}"/>
+                                    </aura:set>
+                                </aura:if>
                             </div>
                         </div>
                         <div class="slds-p-horizontal_medium">
@@ -133,7 +147,12 @@
                                 users the ability to customize the email as necessary.</p>
                             </div>
                             <div class="slds-text-align_center">
-                                <lightning:button class="email-builder-button email-builder-button-text slds-text-align_center slds-m-top_small slds-p-left_large slds-p-right_large" aura:id="deleteActions" label="Select" onclick="{!c.createManualEmail}"/>
+                                <aura:if isTrue="{!v.newAction.activationType == 'Manual'}">
+                                    <lightning:button class="email-builder-button-toggle email-builder-button-text-toggle slds-text-align_center slds-m-top_small slds-p-left_large slds-p-right_large" aura:id="deleteActions" label="Select" onclick="{!c.createManualEmail}"/>
+                                    <aura:set attribute="else">
+                                        <lightning:button class="email-builder-button email-builder-button-text slds-text-align_center slds-m-top_small slds-p-left_large slds-p-right_large" aura:id="deleteActions" label="Select" onclick="{!c.createManualEmail}"/>
+                                    </aura:set>
+                                </aura:if>
                             </div>
                         </div>
                     </div> 
@@ -169,7 +188,12 @@
                                     time-dependent action resolving to true.
                                 </div>
                                 <div class="slds-text-align_center">
-                                    <lightning:button class="email-builder-button email-builder-button-text slds-text-align_center slds-m-top_small slds-p-left_large slds-p-right_large" aura:id="deleteActions" label="Select" onclick="{!c.createImmediateAction}"/>
+                                    <aura:if isTrue="{!v.newAction.deliveryPreference == 'Immediate'}">
+                                        <lightning:button class="email-builder-button-toggle email-builder-button-text-toggle slds-text-align_center slds-m-top_small slds-p-left_large slds-p-right_large" aura:id="deleteActions" label="Select" onclick="{!c.createImmediateAction}"/>
+                                        <aura:set attribute="else">
+                                            <lightning:button class="email-builder-button email-builder-button-text slds-text-align_center slds-m-top_small slds-p-left_large slds-p-right_large" aura:id="deleteActions" label="Select" onclick="{!c.createImmediateAction}"/>
+                                        </aura:set>
+                                    </aura:if>
                                 </div>
                             </div>
                             <div class="slds-p-horizontal_medium">
@@ -183,9 +207,10 @@
                                 </div>
                                 <p class="slds-page-header__row slds-truncate slds-align_absolute-center SFDC-Email-List-SFDF-bold" >Business Hours</p>
                                 <div class = "SFDC-Email-List-Manual">
-                                    Lorem ipsum dolor sit amet, consectetur
-                                    adipiscing elit, sed do eiusmod tempor incididunt
-                                    ut labore et dolore magna aliqua.
+                                    Only send emails between business
+                                    hours set for the user who is sending the email.
+                                    Business hours are defined for each user with
+                                    their Salesforce profile.
                                 </div>
                                 <div class="slds-text-align_center">
                                     <aura:if isTrue="{!v.newAction.deliveryPreference == 'Weekdays'}">

@@ -21,12 +21,11 @@
     <aura:attribute name="criteriaListCount" type="Integer" default="1"/>
     <aura:attribute name="spinner" type="boolean"/>
     <aura:attribute name="AllFieldList" type="List"/> 
+	<aura:attribute name="hasError" type="Boolean" default="false"/>
     <aura:method name="setCriteriaList" description="" action="{!c.getCriteriaList}" access="PUBLIC">
         <aura:attribute name="criteriaSet" type="Object"/>
     </aura:method>
-    
     <aura:method name="validateCriterion" action="{!c.validateCriterion}" access="public" />
-    
     <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
     <aura:handler name="DynamicFieldRowEvent" event="c:DynamicFieldRowEvent" action="{!c.handleDynamicRowEvent}"/>
     <fieldset class="slds-form-element slds-form_compound">
@@ -37,7 +36,10 @@
                         <aura:if isTrue="{!not(v.isViewMode)}" >
                             <p class="slds-page-header__row slds-truncate rdna-sub-header-bold slds-align_absolute-center slds-m-top_medium" >Sequence {!v.criteriaType}</p>
                             <p class="slds-align_absolute-center rdna-sub-header" style="padding-top:15px;">Set condition for your sequence {!v.criteriaType}</p>
-                            <aura:set attribute="else">
+                            <aura:if isTrue="{!v.hasError}">
+                                <p class="slds-align_absolute-center" style="color:red;">Duplicate criteria found..!</p>
+                            </aura:if>
+							<aura:set attribute="else">
                                 <p class="slds-page-header__row slds-truncate rdna-field-values-bold  slds-m-top_medium rdna-link-height" >Sequence {!v.criteriaType}</p>
                                 <p class=" rdna-field-values rdna-link-height">Set condition for your sequence {!v.criteriaType}</p>
                             </aura:set>

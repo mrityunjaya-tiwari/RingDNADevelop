@@ -25,19 +25,22 @@
             }
         });
         $A.enqueueAction(action)
-    },
-    
+    },    
     clickCreate: function(component, event, helper) { 
         var newAct = component.get("v.newAction");
         var name = newAct.name;
-        newAct.name = name.trim();
-        newAct.emailType = 'SFDC';
-        newAct.deliveryPreference = 'Immediate';
+        if (name){
+            newAct.name = name.trim();
+        }
+        var emailType = newAct.emailType;
+        if(emailType ){
+            newAct.emailType = 'SFDC';
+            newAct.deliveryPreference = 'Immediate';
+        }
         component.set("v.newAction", newAct);
         var isValidAction = component.find('formValidationId').reduce(function (validSoFar, inputCmp) {
             inputCmp.showHelpMessageIfInvalid();
-            return validSoFar && inputCmp.get('v.validity').valid;
-            
+            return validSoFar && inputCmp.get('v.validity').valid;            
         }, true);
         if(isValidAction && newAct.type == 'Task'){
             isValidAction = helper.validateFieldsToUpdateComponent(component, event, helper);
@@ -45,8 +48,7 @@
         if(isValidAction){
             helper.createAction(component, event,helper);
         }
-    },
-    
+    },   
     createAction : function(component, event,helper) {
         helper.createAction(component, event,helper);
     },

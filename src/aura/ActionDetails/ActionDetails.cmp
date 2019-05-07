@@ -31,7 +31,9 @@
 <aura:attribute name="activationtypeList" type="List" default="['Automatic', 'Manual']" />
 <aura:attribute name="currentStep" type="string" default="1"/>
 <aura:attribute name="isNextEnable" type="boolean" default="false"/>
-<aura:attribute type="List" name="rowActionTemplateList"/>      
+<aura:attribute type="List" name="rowActionTemplateList"/> 
+<aura:method name="actionDetailsMethod" action="{!c.createAction}">
+</aura:method>
 <!-- Body Start -->
 <div class="slds-box_xx-small" style="height : 450px">
 	<fieldset class="slds-form-element slds-form_compound">
@@ -52,7 +54,7 @@
 									 value="{!v.newAction.name}"
 									 placeholder = "Enter Action Name"
 									 messageWhenBadInput = "Please Enter Name"
-									 required="true"/> 
+									 required="true" onchange="{!c.isNextStepEnable}"/> 
 				</div>                                                
 			</div>                    
 			<span class="rdna-template-bold slds-p-top_medium slds-m-top_large slds-page-header__row slds-text-title_bold slds-truncate slds-align_absolute-center">Action Types</span>
@@ -65,7 +67,7 @@
                 <div class="slds-form-element__row">
 				
 				<div class="rdna-div slds-align_absolute-center" required="true" messageWhenValueMissing="Please Select Action Type." disabled = "{!v.disableActionType}">
-						<div><a onclick="{!c.createCallAction}" disabled = "{!v.disableActionType}">              
+						<div><a onclick="{!c.selectCallAction}" disabled = "{!v.disableActionType}">              
 						<aura:if isTrue="{!v.newAction.type == 'Call'}">
 							<img class = "actions-icon" src="{!$Resource.cadence_icons + '/action-icons/select/call.png'}"/> 
 							<aura:set attribute="else">
@@ -76,7 +78,7 @@
 						<p class="slds-m-left-xx_large slds-p-top_small rdna-name">Call</p>
 					</div>
 					<div>
-						<a onclick="{!c.createEmailAction}" disabled = "{!v.disableActionType}">
+						<a onclick="{!c.selectEmailAction}" disabled = "{!v.disableActionType}">
 							<aura:if isTrue="{!v.newAction.type == 'Email'}">
 								<img class = "actions-icon rdna-icon" src="{!$Resource.cadence_icons + '/action-icons/select/email.png'}"/> 
 								<aura:set attribute="else">
@@ -87,7 +89,7 @@
 						<p class="slds-m-left-x_large slds-p-top_small rdna-name-styling">Email</p>
 					</div>
 					<div>
-						<a onclick="{!c.createSMSAction}" disabled = "{!v.disableActionType}">
+						<a onclick="{!c.selectSMSAction}" disabled = "{!v.disableActionType}">
 							<aura:if isTrue="{!v.newAction.type == 'SMS'}">
 								<img class = "actions-icon rdna-icon" src="{!$Resource.cadence_icons + '/action-icons/select/sms.png'}"/> 
 								<aura:set attribute="else">
@@ -98,7 +100,7 @@
 						<p class="slds-m-left-xx_large slds-p-top_small rdna-name-styling">SMS</p>
 					</div>
 					<div>
-						<a onclick="{!c.createTaskAction}" disabled = "{!v.disableActionType}">
+						<a onclick="{!c.selectTaskAction}" disabled = "{!v.disableActionType}">
 							<aura:if isTrue="{!v.newAction.type == 'Task'}">
 								<img class = "actions-icon rdna-icon" src="{!$Resource.cadence_icons + '/action-icons/select/task.png'}"/> 
 								<aura:set attribute="else">

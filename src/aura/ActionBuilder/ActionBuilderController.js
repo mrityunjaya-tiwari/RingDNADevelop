@@ -14,7 +14,8 @@
                 if(id != null) {
                     if(id != '') {
                         component.set('v.disableActionType' , true);
-                        helper.getData(component, event, helper, id);                       
+                        helper.getData(component, event, helper, id); 
+                        component.set('v.isNextEnable' , true); 
                     }
                 }
                 component.set('v.spinner', false);
@@ -28,22 +29,30 @@
         helper.onCancel(component, event);
     },
     onNext: function(component, event, helper){
-        var isValid = helper.validateEmailActionBuilder(component, event,helper);
-        if (isValid){
-            component.set('v.isNextEnable' , false);
-            component.set('v.isEmailTemplateList' , true);
-        } else {
-            component.set('v.isValidationError',true);
+        var currentStep = component.get('v.currentStep');
+       	if(currentStep =='1' || currentStep==1){
+            var childCmp = component.find("newActionDetails");
+            childCmp.actionDetailsMethod();  
         }
+        else{
+            var isValid = helper.validateEmailActionBuilder(component, event,helper);
+            if (isValid){
+                component.set('v.isNextEnable' , false);
+                component.set('v.isEmailTemplateList' , true);
+            } else {
+                component.set('v.isValidationError',true);
+            }
+        } 
     },
     clickBack: function(component, event, helper){
-       var EmailTemplateList = component.get('v.isEmailTemplateList'); 
+       	var EmailTemplateList = component.get('v.isEmailTemplateList');
         if(EmailTemplateList == true){
             component.set('v.isEmailTemplateList', false);
             component.set('v.isNextEnable', true);
         }
         else{
-           component.set('v.currentStep','1'); 
+            component.set('v.currentStep','1'); 
+            component.set('v.isNextEnable', true);
         }
     },
     createAction: function(component, event, helper) {

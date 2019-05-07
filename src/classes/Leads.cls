@@ -129,10 +129,49 @@ public class Leads  extends SObjectDomain {
     }
     
     public override void onafterUpdate(Map<Id,SObject> existingRecords){
-
+		List<Lead> oldRecords=existingRecords.values();
+        List<Lead> newRecords=(List<Lead>) records;
+        Map<Id,Lead> convertedLeads = new Map<Id,Lead>();
+        //to check for leads that are converted to contact
+        for (Integer i = 0; i < newRecords.size(); i++){
+            if (newRecords[i].IsConverted == true && oldRecords[i].isConverted == false) {
+                convertedLeads.put(newRecords[i].Id,newRecords[i]);
+            }
+        }
+        if( convertedLeads.size() > 0 ) {
+            Set<Id> leadIds = convertedLeads.keySet();
+            List<Sequence_Action__c> sequenceActions=[SELECT Id, Lead_Id__c, Contact_Id__c, Participant_Type__c FROM Sequence_Action__c
+                                                      WHERE isActionPerformed__c=True AND Lead_Id__c IN :leadIds];
+	    List<Id> convertedContactIds = new List<Id>();
+            Map<Id,List<Sequence_Action__c>> leadToSequenceActionsMap=new Map<Id,List<Sequence_Action__c>>();
+            //to create a map for lead with its sequence actions
+            for(Sequence_Action__c sequenceAction:sequenceActions){
+                if(leadToSequenceActionsMap.get(sequenceAction.Lead_Id__c)==null){
+                    List<Sequence_Action__c> actions=new List<Sequence_Action__c>();
+                    actions.add(sequenceAction);
+                    leadToSequenceActionsMap.put(sequenceAction.Lead_Id__c,actions);
+                }else{
+                    List<Sequence_Action__c> actions=leadToSequenceActionsMap.get(sequenceAction.Lead_Id__c);
+                    actions.add(sequenceAction);
+                    leadToSequenceActionsMap.put(sequenceAction.Lead_Id__c,actions);
+                } 
+            }
+            List<Sequence_Action__c> actionsToUpdate=new List<Sequence_Action__c>();
+            //update sequence actions for lead to contact
+            for(Id leadId:leadIds){
+                List<Sequence_Action__c> leadSequenceActions=leadToSequenceActionsMap.get(leadId);
+                if(leadSequenceActions!=null){
+                    for(Sequence_Action__c sequenceAction:leadSequenceActions){
+                        sequenceAction.Lead_Id__c=null;
+                        sequenceAction.Contact_Id__c=convertedLeads.get(leadId).ConvertedContactId;
+                        actionsToUpdate.add(sequenceAction);
+                        convertedContactIds.add(convertedLeads.get(leadId).ConvertedContactId);
+                    }
+                }
+            }
+	    List<Task> tasks = [SELECT id from Task where WHoId IN :convertedContactIds AND Status != 'Completed'];
+            delete tasks;
+            update actionsToUpdate; 
+        }
     }
-    
-    
-
-  
 }

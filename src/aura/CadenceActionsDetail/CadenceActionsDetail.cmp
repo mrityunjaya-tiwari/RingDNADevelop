@@ -5,6 +5,7 @@
     <aura:attribute name="pList" type="List"/>
     <!-- action type -->
     <aura:attribute name="actionType" type="String"/>
+    <aura:attribute name="actionName" type="String"/>
     <!-- Action List-->
     <aura:attribute name="actionList" type = "List" /> 
     <!-- All Actions List-->
@@ -71,8 +72,8 @@
     <aura:attribute name="caIdsList" type="List"/>
     <aura:attribute name="showModal" type="Boolean" default="false"/>
     <aura:attribute name="UpdateFieldList" type="List"/>
-    
-    
+    <aura:attribute name="isNewAction" type="Boolean" default="false"/>
+    <aura:attribute name="showNewActionName" type="Boolean" default="false"/>
     <tr  class = "slds-m-around--large " >
         <td class="rdna-table-rows rdna-field-values">
             <div class="rdna-div">
@@ -91,9 +92,13 @@
                 {!' ' + v.actionType} 
             </div>  
         </td>
-        <td class="rdna-table-rows rdna-field-values">  
+        <td class="rdna-table-rows rdna-field-values"> 
+            <aura:if isTrue="{!v.showNewActionName}">
+             <div class="slds-truncate rdna-div" aura:id="detailDiv1" title="Name">{!v.actionName}</div>  
+            <aura:set attribute="else">
             <div class="slds-truncate rdna-div" aura:id="detailDiv1" title="Name">{!v.actionObject.name}</div>
-        </td>
+            </aura:set></aura:if>
+            </td>
         <td class="rdna-table-rows rdna-field-values">
             <aura:if isTrue="{!v.cadenceAction.triggerType == 'Immediate'}">
                 <span   aura:id="detailDiv1"> Immediate </span>

@@ -51,6 +51,7 @@ public class RingDNAApiCallouts_test {
         RingDNAApiCallouts testRingDNAApiCallout = new RingDNAApiCallouts();
         Test.setMock(HttpCalloutMock.class, new CallNoteTemplatesMockCallout());
         testRingDNAApiCallout.getCallNoteTemplates();
+        testRingDNAApiCallout.getCallNoteTemplatesUpdated();
         test.stopTest();
     }
     static testMethod void SendNativeEmailTest(){
@@ -58,6 +59,23 @@ public class RingDNAApiCallouts_test {
         RingDNAApiCallouts testRingDNAApiCallout = new RingDNAApiCallouts();
         Test.setMock(HttpCalloutMock.class, new SendNativeEmailMockCallout());
         testRingDNAApiCallout.sendNativeEmail('test@gmail.com','Test Name','Test body',accountId,'Test Subject', 'UserId');
+        test.stopTest();
+    }
+    static testMethod void SendNativeMassEmailTest(){
+        test.startTest();
+        RingDNAApiCallouts testRingDNAApiCallout = new RingDNAApiCallouts(true);
+        Test.setMock(HttpCalloutMock.class, new SendNativeMassEmailMockCallout());
+        
+        List<NativeEmailMessage> nativeEmailMessageList = new List<NativeEmailMessage>();
+        NativeEmailMessage nativeEmailMessage = new NativeEmailMessage();
+        nativeEmailMessage.ActionId = accountId;
+        nativeEmailMessage.MailTo = 'subhashchander02@gmail.com';
+        nativeEmailMessage.Body = 'body mail 1';
+        nativeEmailMessage.UserId = userId;
+        nativeEmailMessageList.add(nativeEmailMessage);
+        List<NativeEmailRespose> sendNativeMassEmailList = testRingDNAApiCallout.sendNativeMassEmail(nativeEmailMessageList);
+        
+        system.assertEquals(1, sendNativeMassEmailList.size());
         test.stopTest();
     }
 }
