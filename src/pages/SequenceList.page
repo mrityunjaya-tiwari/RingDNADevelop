@@ -1,0 +1,17 @@
+<apex:page standardController="Lead" extensions="ManualCadenceSelectorController,GetNamespace" sidebar="false" showHeader="true" recordSetVar="selectedRecords">
+    <script src="/lightning/lightning.out.js"/>
+    <apex:slds />
+    <apex:includeLightning />
+    <div id="cmpDiv" />
+    <script>
+        var myUserContext = "{!$User.UITheme}";
+        $Lightning.use("{!namespace}:ManualCadenceSelectorApp", function() {
+        $Lightning.createComponent(
+            "{!namespace}:ManualCadenceSelector",
+            {themeName: myUserContext, participants: "{!participants}", recordType:"{!recordType}"},
+            "cmpDiv",
+            function(cmp) {
+            });
+        });
+    </script>
+</apex:page>
