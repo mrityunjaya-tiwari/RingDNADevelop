@@ -53,9 +53,9 @@
             component.set("v.actionTypeListForCadenceAction",actionTypeListForCadenceAction);           
             component.set("v.actionType", actionType);
             component.set("v.actionName", actionName);
-            component.set("v.cadenceActionList", rowList);           
+            component.set("v.cadenceActionList", rowList);
         }
-        else{
+        else{component.set('v.isNewAction', false);
             var selectedActionType = event.getParam("value");
             actionTypeListForCadenceAction.push(selectedActionType);
             component.set("v.actionTypeListForCadenceAction",actionTypeListForCadenceAction);
@@ -125,5 +125,6 @@
             component.set('v.showDetail', true);           
             helper.addNewCadenceActions(component, event, helper, actionName, actionType);
         }
+        component.set('v.showDetail', false);
     }    
 })

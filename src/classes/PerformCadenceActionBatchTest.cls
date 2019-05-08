@@ -105,8 +105,6 @@ public class PerformCadenceActionBatchTest {
         l1 = [Select Id, Cadence_Id__c from Lead where Id = :l1.Id];
         l2 = [Select Id, Cadence_Id__c from Lead where Id = :l2.Id];
         
-        //System.assertNotEquals(null, l1.Cadence_Id__c, 'Cadence lookup will populate as its criterion matches');
-        //System.assertNotEquals(null, l2.Cadence_Id__c, 'Cadence lookup will not populate as its criterion not matches');
     }  
      @isTest 
     static void OpportunityRoleTest(){

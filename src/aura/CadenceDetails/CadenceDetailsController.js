@@ -21,7 +21,6 @@
             if(!component.get('v.disableCadenceType')){
                 helper.fireRecordTypeChangedEvent(component, event, helper);
             }
-            //helper.fireRecordTypeChangedEvent(component, event, helper);
             component.set('v.disableCadenceType' , true);
         }
         return isValid;

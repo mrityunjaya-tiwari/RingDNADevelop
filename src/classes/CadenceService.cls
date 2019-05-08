@@ -4,8 +4,6 @@ global  without sharing class CadenceService {
     public static map<String,set<String>> mapOfOpportunityRole = new map<String,set<String>>();
     public Static map<String,List<OpportunityContactRole>> mapOfOppContactRoles = new map<String,list<OpportunityContactRole>>();
     public Static map<string,List<String>> mapOfOppcontact = new map<string,List<String>>();
-    // mapOfOppContactRoles= new map<String,List<OpportunityContactRole>>();
-    //mapOfOppContactRoles.put('test',new List<OpportunityContactRole>());
     
     public static List<EmailTemplate> getEmailTemplates(){ 
         List<EmailTemplate> listEmailTemplate = [Select Id, Name, Subject, Body, IsActive, Description,UIType,TemplateType,FolderId,Folder.Name,Folder.Type From EmailTemplate Where IsActive = true]; 
@@ -429,8 +427,8 @@ global  without sharing class CadenceService {
     }
     
     /* Method to create email message
-* @Param : sObjectId - List of sobject having email Ids,EmailTemplateId - Email Template Id
-*/
+	 * @Param : sObjectId - List of sobject having email Ids,EmailTemplateId - Email Template Id
+	 */
     public static Messaging.MassEmailMessage createEmailMessage(Id sObjectId,Id EmailTemplateId){
         Messaging.MassEmailMessage mail = new Messaging.MassEmailMessage();
         mail.setSaveAsActivity(false);
@@ -445,37 +443,39 @@ global  without sharing class CadenceService {
         return nativeEmail; 
     }
     
-    public static List<Id> SendNativeEmail(List<NativeEmailMessage> nativeEmailToSend ,Map<Id, Messaging.MassEmailMessage> emailsToSend ){
-        List<Id> failedActionIds = New List<Id>();
+    public static List<Messaging.MassEmailMessage> SendNativeEmail(List<NativeEmailMessage> nativeEmailToSend ){
         RingDNAApiCallouts ringDNAApiCallout = new RingDNAApiCallouts(true);
-        List<string> nativeEmailMessageJsonList = new List<String>();
-        
-        for(NativeEmailMessage nativeEmailMessage :nativeEmailToSend ){
-            Map<String, Object> responseMap = new Map<String, Object>();
-            if (System.isBatch()){
-                try{
-                    responseMap = ringDNAApiCallout.sendNativeEmail(nativeEmailMessage.MailTo, nativeEmailMessage.NameTo, nativeEmailMessage.Body, 
-                                                                    string.valueOf(nativeEmailMessage.ActionId),
-                                                                    nativeEmailMessage.Subject, string.valueOf(nativeEmailMessage.UserId));
-                }catch(exception ex){
-                    failedActionIds.add(nativeEmailMessage.ActionId);
+        List<NativeEmailMessage> nativeEmailMessageList = new List<NativeEmailMessage>();
+        List<Messaging.MassEmailMessage> sfdcEmailMessageList = New List<Messaging.MassEmailMessage>(); 
+        if (System.isBatch()){
+            List<NativeEmailRespose> nativeEmailResposeList = new List<NativeEmailRespose>();
+            try{
+            	nativeEmailResposeList = ringDNAApiCallout.sendNativeMassEmail(nativeEmailToSend);    
+            }catch(exception ex){
+                for(NativeEmailMessage nativeEmailMessage :nativeEmailToSend ){
+                    sfdcEmailMessageList.add(createEmailMessage(nativeEmailMessage.ParticipantId, nativeEmailMessage.TemplateId));
                 }
-                if (responseMap.isEmpty()  || (!responseMap.isEmpty() && (responseMap.get('success') == false || responseMap.get('success') == 'false')) ){
-                    failedActionIds.add(nativeEmailMessage.ActionId);
-                }else {
-                    emailsToSend.remove(nativeEmailMessage.ActionId);
-                }
-            }else{
-                emailsToSend.remove(nativeEmailMessage.ActionId);                
-                nativeEmailMessageJsonList.add(JSON.serialize(nativeEmailMessage));
             }
+            // Create map of actionId and nativeEmailMessage
+            Map<Id, NativeEmailMessage> actionIdNativeEmailMessageMap = new Map<Id, NativeEmailMessage>();
+            for(NativeEmailMessage nativeEmailMessage : nativeEmailToSend ){
+                actionIdNativeEmailMessageMap.put(NativeEmailMessage.ActionId, NativeEmailMessage);
+            }
+            if (nativeEmailResposeList != null && nativeEmailResposeList.size() > 0 ) {
+                for (NativeEmailRespose nativeEmailRespose : nativeEmailResposeList){
+                    if (nativeEmailRespose.success == false){
+                        NativeEmailMessage nativeEmailMessage = actionIdNativeEmailMessageMap.get(nativeEmailRespose.actionId);
+                        sfdcEmailMessageList.add(createEmailMessage(nativeEmailMessage.ParticipantId, nativeEmailMessage.TemplateId));
+                    }
+                }
+            }
+        }else{
+            nativeEmailMessageList = nativeEmailToSend;
         }
-        
-        if(nativeEmailMessageJsonList != null && nativeEmailMessageJsonList.size() > 0){
-            sendNativeEmailTroughTrigger(nativeEmailMessageJsonList);
+        if(nativeEmailMessageList != null && nativeEmailMessageList.size() > 0){
+            sendNativeEmailTroughTrigger(JSON.serialize(nativeEmailMessageList));
         }
-        
-        return failedActionIds;
+        return sfdcEmailMessageList;
     }
     
     public static Task getEmailTask(Id sequenceActionId, String actionName, Id sObjectId, Id templateId) {
@@ -490,9 +490,9 @@ global  without sharing class CadenceService {
     }
     
     /* 
-* Method to perform Task Actions
-* @Param : Id - Id of sobject (Lead/Contact),taskDescription - Json OfTaskObj
-*/
+	* Method to perform Task Actions
+	* @Param : Id - Id of sobject (Lead/Contact),taskDescription - Json OfTaskObj
+	*/
     public static Task performTaskAction(Id sObjectId, String taskDescription){
         Task taskObj = (Task)JSON.deserialize(taskDescription, Task.class);
         taskObj.WhoId = sObjectId;
@@ -674,10 +674,8 @@ global  without sharing class CadenceService {
             } else {
                 Id cadId = (Id)obj.get(nameSpace+'Cadence_Id__c'); 
                 
-                //SObject sObj = RuleCriterionMatcher.matchExitCriterion(cadMapNew.get((Id)obj.get(nameSpace+'Cadence_Id__c')), obj, parentMap.get((Id)obj.get('Id')), objName);
                 SObject sObj;
                 Boolean isexitMatchOpp=false;
-                //List<SObject> sObjList = new List<SObject>() ;
                 if(objName.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_OBJECT_NAME)){
                     isexitMatchOpp = RuleCriterionMatcher.matchExitCriterionOpp(cadMapNew.get(cadId), obj, parentMap.get((Id)obj.get('Id')), objName);
                     if(isexitMatchOpp){
@@ -776,7 +774,6 @@ global  without sharing class CadenceService {
                     }else{
                         sObjectsToProcess.add(obj);
                      }
-                    //sObjectsToProcess.add(obj);
                 }
             }
         }
@@ -867,7 +864,7 @@ global  without sharing class CadenceService {
         Map<Id, SObject> objMap = new Map<Id, SObject>(objList); 
         List<Sequence_Action__c> partActToUpdate = new List<Sequence_Action__c>();
         List<Task> tasksToCreate = new List<Task>();
-        Map<Id, Messaging.MassEmailMessage> emailsToSend = new Map<Id, Messaging.MassEmailMessage>();
+        List<Messaging.MassEmailMessage> emailsToSend = new List<Messaging.MassEmailMessage>();
         List<NativeEmailMessage> nativeEmailToSend = new List<NativeEmailMessage>();
         List<Id> emailTemplateIdList = new List<Id>();
         //Return if no unperformed participant actions 
@@ -879,17 +876,9 @@ global  without sharing class CadenceService {
             for(Sequence_Action__c partAct : partActionsMap.get(objId)) {
                 Boolean performed = false,IsTaskNotCompleted = false;
                 if(partAct.CadenceAction_Id__r.Action_Id__r.Activation_Type__c.equals(CadenceConstants.PARTICIPANT_ACTIVATION_AUTOMATIC)) {
-                    //Processing task type of participant action
-                   /* if(partAct.CadenceAction_Id__r.Action_Id__r.Type__c.equals(CadenceConstants.ACTION_TYPE_TASK)) {
-                        Task tsk = performTaskAction(objId, partAct.CadenceAction_Id__r.Action_Id__r.Task_Description__c);
-                        tsk.Sequence_Action__c = partAct.Id; 
-                        tasksToCreate.add(tsk);
-                        performed = true;
-                    }*/
                     //Processing email type of participant action
                     if(partAct.CadenceAction_Id__r.Action_Id__r.Type__c != null && partAct.CadenceAction_Id__r.Action_Id__r.Type__c.equals(CadenceConstants.ACTION_TYPE_EMAIL)) {
                         if(objMap.containsKey(objId) && objMap.get(objId).get('Email')!=null) {
-                            emailsToSend.put(partAct.Id, createEmailMessage(objId, partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c));
                             String nativeMailTo = String.valueOf(objMap.get(objId).get('Email'));
                             String nativeNameTo = String.valueOf(objMap.get(objId).get('Name'));
                             String participantOwnerId = String.valueOf(objMap.get(objId).get('OwnerId'));
@@ -897,10 +886,9 @@ global  without sharing class CadenceService {
                             if(partAct.CadenceAction_Id__r.Action_Id__r.Email_Type__c != null && partAct.CadenceAction_Id__r.Action_Id__r.Email_Type__c.equals(CadenceConstants.NATIVE_EMAIL_TYPE)){
                                 nativeEmailToSend.add(createNativeEmailMessage(nativeMailTo, partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c, 
                                                                                objId, partAct.Id, nativeNameTo, userId));
-                                //emailTemplateIdList.add(partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c);
-                            }//else{
-                                //emailTemplateIdList.add(partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c);
-                            //}
+                            }else{
+                                emailsToSend.add(createEmailMessage(objId, partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c));
+                            }
                             tasksToCreate.add(getEmailTask(partAct.Id, partAct.Name, objId, partAct.CadenceAction_Id__r.Action_Id__r.Template_Id__c));
                             performed = true;
                         } 
@@ -948,25 +936,16 @@ global  without sharing class CadenceService {
                         performedPartActions.put(objId, new List<Sequence_Action__c>{partAct});
                     }
                 }
-                
            } 
         }
-	    
         if(!nativeEmailToSend.isEmpty()) {
-            //List<NativeEmailMessage> updatedNativeEmailToSend = updateNativeEmailMessage(nativeEmailToSend, emailTemplateIdList);
-            List<Id> failedActionIds = SendNativeEmail(nativeEmailToSend, emailsToSend);
-            if (!failedActionIds.isEmpty()){
-                List<Messaging.MassEmailMessage> sfdcMailToSent = New List<Messaging.MassEmailMessage>();
-                for(Id actionId : failedActionIds){
-                    sfdcMailToSent.add(emailsToSend.get(actionId));
-                    emailsToSend.remove(actionId);
-                }
-                Messaging.SendEmailResult[] results = Messaging.sendEmail(sfdcMailToSent, false);
+            List<Messaging.MassEmailMessage> failedNativeEmailList =  SendNativeEmail(nativeEmailToSend);
+            if (!failedNativeEmailList.isEmpty()){
+                emailsToSend.addAll(failedNativeEmailList);
             }
         }
-	    
-	if(!emailsToSend.isEmpty()) {
-            Messaging.SendEmailResult[] results = Messaging.sendEmail(emailsToSend.values(), false);
+        if(!emailsToSend.isEmpty()) {
+            Messaging.SendEmailResult[] results = Messaging.sendEmail(emailsToSend, false);
         }
 	    
         if(!tasksToCreate.isEmpty()) {
@@ -1051,7 +1030,6 @@ global  without sharing class CadenceService {
                 Map<String, Object> fieldMap = (Map<String, Object>)(JSON.deserializeUntyped(fieldsToUpdate));
                 fieldMap.remove('sobjectType');
                 Id objId;
-                //Pankaj-478
                 if(partAct.Cadence_Type__c.equals(CadenceConstants.OPPORTUNITY_OBJECT_NAME) && String.isNotBlank(partAct.Opportunity_Id__c)){
                     objId = partAct.Opportunity_Id__c;
                 } else if(partAct.Lead_Id__c != null) {
@@ -1353,10 +1331,7 @@ global  without sharing class CadenceService {
             update saToUpdate;
         }
     }
-    
-    
-    
-    
+        
     //This method mark action as IsPerformed = True if this is task and Task status is completed. 
    public static void updateIsPerformedOnActionOnParticipant(Set<Id> ids) {
         List<Task> taskList = CadenceSelector.getActionOnParticipantId(ids);   
@@ -1437,7 +1412,6 @@ global  without sharing class CadenceService {
                 fieldList.add(criterionWrapper);
                 
                 if(IsPartnerAccount && Schema.getGlobalDescribe().get('Opportunity').getDescribe().fields.getMap().get('PartnerAccountId') != null){
-                    //Schema.sObjectType sObjectName = Schema.getGlobalDescribe().get(partnerAccountAPIName);
                     for(Criterion c : fieldsWithLabels){
                         String[] fields = c.fieldName.split('\\.');
                         if(fields.size() > 0){
@@ -1469,8 +1443,6 @@ global  without sharing class CadenceService {
     }
     
     public static Sobject UpdateSequenceOnParticipant(Sobject partObj,Cadence__c cadToUpdate){
-        //After matching criteria setting matching cadence data to participant
-        //for(SObject partObj :  partList){
             partObj.put(nameSpace+'Cadence_Id__c', cadToUpdate.Id); 
             if(cadToUpdate.Participent_Activation__c.equalsIgnoreCase(CadenceConstants.PARTICIPANT_ACTIVATION_AUTOMATIC)) {
                 partObj.put(nameSpace+'isActivated__c', true);
@@ -1478,12 +1450,10 @@ global  without sharing class CadenceService {
             } else {
                 partObj.put(nameSpace+'isActivated__c', false);
             }
-        //}
         return partObj;
 		
     }
     public static map<string,List<String>> opporContactMap(List<sobject> sobjectList){
-        //map<String,List<Sobject>> mapofOppContact = new Map<String,List<Sobject>>();
         map<string,List<String>> mapOfoppcontactIds= new map<String,List<string>>();
         List<String> setOfcontactstring = new List<string>();
         List<String> allcontacts = new List<string>();
@@ -1535,7 +1505,6 @@ global  without sharing class CadenceService {
     
     public static void getMapOpporContactRole(List<sobject> sobjectList){
         List<OpportunityContactRole> listOfContactRole = new List<OpportunityContactRole>();
-        //CadenceService.mapOfOppContactRoles
         map<String,list<OpportunityContactRole>> mapOfOppContRole=new map<String,list<OpportunityContactRole>>();
         for(OpportunityContactRole oppCont : [Select ContactId,OpportunityId,Role From OpportunityContactRole Where OpportunityId In :(sobjectList)]){
             if(mapOfOppContRole.containskey(oppCont.OpportunityId)){
@@ -1552,8 +1521,6 @@ global  without sharing class CadenceService {
     }
     
     public static List<Contact> RemoveSequenceFromParticempant(string opportunityId, map<string,List<String>> mapOfOppcontact,map<String,Sobject> mapOfContacts){
-        //map<string,List<String>> mapOfOppcontact =  new map<string,List<String>>();
-        //map<String,Sobject> mapOfContacts= new Map<String,Sobject>();
         List<Contact> contactList = new List<Contact>();
         Contact contactObj = new Contact();
         if(mapOfOppcontact != null && mapOfOppcontact.containsKey(opportunityId) && mapOfOppcontact.get(opportunityId) != null){
@@ -1586,25 +1553,33 @@ global  without sharing class CadenceService {
     }
     
     @future(callout=true)
-    public static void sendNativeEmailTroughTrigger(List<String> nativeEmailMessageJsonList)
+    public static void sendNativeEmailTroughTrigger(String serializeNativeEmailMessageList)
     {   
         RingDNAApiCallouts ringDNAApiCallout = new RingDNAApiCallouts(true);
         Map<String, Object> responseMap = new Map<String, Object>();
         List<Messaging.MassEmailMessage> sfdcEmailMessageList = New List<Messaging.MassEmailMessage>();        
-        
-        for(String nativeEmailMessageJson :nativeEmailMessageJsonList ){
-            NativeEmailMessage nativeEmailMessage = (NativeEmailMessage) JSON.deserialize(nativeEmailMessageJson, NativeEmailMessage.class);
-            
-            try{
-                responseMap = ringDNAApiCallout.sendNativeEmail(nativeEmailMessage.MailTo, nativeEmailMessage.NameTo, nativeEmailMessage.Body, string.valueOf(nativeEmailMessage.ActionId),  nativeEmailMessage.Subject, nativeEmailMessage.UserId);
-                if (responseMap.isEmpty()  || (!responseMap.isEmpty() && (responseMap.get('success') == false || responseMap.get('success') == 'false')) ){
+        List<NativeEmailMessage> nativeEmailMessageList = (List<NativeEmailMessage>) JSON.deserialize(serializeNativeEmailMessageList, List<NativeEmailMessage>.class);
+        List<NativeEmailRespose> nativeEmailResposeList = new List<NativeEmailRespose>();
+        try{
+            nativeEmailResposeList = ringDNAApiCallout.sendNativeMassEmail(nativeEmailMessageList);    
+        }catch(exception ex){
+            for(NativeEmailMessage nativeEmailMessage : nativeEmailMessageList ){
+                sfdcEmailMessageList.add(createEmailMessage(nativeEmailMessage.ParticipantId, nativeEmailMessage.TemplateId));
+            }
+        }
+        // Create map of actionId and nativeEmailMessage
+        Map<Id, NativeEmailMessage> actionIdNativeEmailMessageMap = new Map<Id, NativeEmailMessage>();
+        for(NativeEmailMessage nativeEmailMessage : nativeEmailMessageList ){
+            actionIdNativeEmailMessageMap.put(NativeEmailMessage.ActionId, NativeEmailMessage);
+        }
+        if (nativeEmailResposeList != null && nativeEmailResposeList.size() > 0 ) {
+            for (NativeEmailRespose nativeEmailRespose : nativeEmailResposeList){
+                if (nativeEmailRespose.success == false){
+                    NativeEmailMessage nativeEmailMessage = actionIdNativeEmailMessageMap.get(nativeEmailRespose.actionId);
                     sfdcEmailMessageList.add(createEmailMessage(nativeEmailMessage.ParticipantId, nativeEmailMessage.TemplateId));                    
                 }
-            }catch(exception ex){                
-                sfdcEmailMessageList.add(createEmailMessage(nativeEmailMessage.ParticipantId, nativeEmailMessage.TemplateId));
-            }            
+            }
         }
-        
         if(sfdcEmailMessageList.isEmpty() == false) {
             Messaging.SendEmailResult[] results = Messaging.sendEmail(sfdcEmailMessageList, false);
         }                                        

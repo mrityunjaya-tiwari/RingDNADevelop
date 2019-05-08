@@ -77,7 +77,7 @@
                 </span>
             </div>
             
-            <div class= "slds-col slds-size_1-of-6 topHeaderSmall slds-m-top_small slds-p-left_x-small rdna-classic-search">
+            <div class= "slds-col slds-size_1-of-6 topHeaderSmall slds-p-left_x-small rdna-classic-search">
                 <lightning:input type="search" 
                                  variant = "label-hidden"  
                                  label="Search" 

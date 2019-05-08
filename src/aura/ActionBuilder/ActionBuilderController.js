@@ -14,9 +14,9 @@
                 if(id != null) {
                     if(id != '') {
                         component.set('v.disableActionType' , true);
-                        helper.getData(component, event, helper, id);                       
+                        helper.getData(component, event, helper, id); 
+                        component.set('v.isNextEnable' , true); 
                     }
-                    component.set('v.isNextEnable' , true); 
                 }
                 component.set('v.spinner', false);
             }else {

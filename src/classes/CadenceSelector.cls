@@ -130,7 +130,6 @@ public with sharing class CadenceSelector {
         String query = getQueryForObject(objType);
         String subQuery = getQueryForObject(nameSpace+'Sequence_Action__c');
         subQuery = '( ' + subQuery.replace(nameSpace+'Sequence_Action__c', nameSpace+'Sequence_Actions__r') + ' WHERE '+nameSpace+'isActionPerformed__c = false AND '+nameSpace+'Show_on_Target_List__c = true AND ' + nameSpace+'isDeferred__c = false' +' ) ';
-        //subQuery = subQuery.replace('FROM', ','+nameSpace+'CadenceAction_ID__r.'+nameSpace+'Action_Id__r.'+nameSpace+'Type__c FROM');
         String queryWithSubQuery = query.replace('Select', subQuery);
         if (objType == CadenceConstants.CONTACT_OBJECT_NAME){
             queryWithSubQuery = 'Select Account.Name, Account.Id,'+nameSpace+'Cadence_ID__r.name, ' + queryWithSubQuery ;
@@ -262,6 +261,15 @@ public with sharing class CadenceSelector {
        return participantActions;
    }
     
+
+    /**
+    * @description - Delete all Sequence Action which do not have Cadence Id
+    * @param objIds - Set of Ids
+    */
+    public static void DeleteParticipantAction(Set<Id> objIds) {
+        Delete [Select Id from Sequence_Action__c where (Contact_Id__c IN :objIds and (Contact_Id__r.Cadence_ID__c = null or  Contact_Id__r.Cadence_ID__c = '')) or ( Lead_Id__c IN : objIds and ( Lead_Id__r.Cadence_Id__c  = null or   Lead_Id__r.Cadence_Id__c  = '') )];
+    }
+  
     public static Map<Id,CadenceAction__c> getCadenceActionsByIds(Set<Id> setOfCadenceIds){
         Map<Id,CadenceAction__c> mapOfCadenceAction = new Map<Id,CadenceAction__c>([SELECT Id, Name, Action_Criterion__c, Action_Criteria_PE__c, Action_Id__c,
                                          Cadence_Id__c, Day__c, Hour__c, Trigger_Type__c, Fields_To_Update_Action__c, Action_Id__r.Activation_Type__c, 
@@ -270,4 +278,5 @@ public with sharing class CadenceSelector {
         
         return mapOfCadenceAction;
     }
+  
 }
