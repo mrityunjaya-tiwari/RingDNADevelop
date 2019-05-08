@@ -97,6 +97,7 @@ public class Leads  extends SObjectDomain {
 		List<Sequence_Action__c> saToUpdate = new List<Sequence_Action__c>();
 		for(Id objId : performedPartAct.keySet()) {
 			for(Sequence_Action__c sa : performedPartAct.get(objId)) {
+				System.debug('SA:'+sa);
 				saToUpdate.addAll(CadenceService.updateActionOnParticipantExpectedDate(sa.Actual_Execution_Date__c, (Integer)sa.CadenceAction_Id__r.Index__c, partActionsMap.get(sa.Lead_Id__c)));    
 			}
 		}
