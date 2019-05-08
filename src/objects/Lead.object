@@ -854,6 +854,7 @@ IF(ringdna100__Last_Outbound_Call__c &gt; ringdna100__Last_Email_Attempt__c, (NO
     <webLinks>
         <fullName>Add_to_Sequence</fullName>
         <availability>online</availability>
+		<description>On selection, users can associate a lead to an active lead sequence.</description>
         <displayType>button</displayType>
         <height>600</height>
         <linkType>page</linkType>
