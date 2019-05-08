@@ -1,6 +1,5 @@
 ({
     setCurrentStepIndex : function(component, event, helper) {
-        //alert('setCurrentStepIndex');
         helper.setCurrentStepIndex(component, event, helper);
     },
     init : function(component, event, helper) {
