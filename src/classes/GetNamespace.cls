@@ -6,6 +6,10 @@ public class GetNamespace {
 		namespace = orgNamespace == null ? 'c' : orgNamespace;
 	} 
 
+	public GetNamespace(ApexPages.StandardSetController stdController) {
+        namespace = orgNamespace == null ? 'c' : orgNamespace;
+    }
+	
 	public GetNamespace() {
 		namespace = orgNamespace == null ? 'c' : orgNamespace;
 	}
