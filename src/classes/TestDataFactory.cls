@@ -93,6 +93,19 @@ public class TestDataFactory {
 
 		return sequenceAction;
 	}
+	
+	public static Sequence_Action__c createParticipantAction(Id participantId, Id sequenceActionId, String participantType) {
+		Sequence_Action__c  participantAction = new Sequence_Action__c();
+		participantAction.Name= 'demoname';
+		if(participantType == 'Contact') {
+			participantAction.Contact_Id__c = participantId;
+		} else {
+			participantAction.Lead_Id__c = participantId;
+		}
+		participantAction.CadenceAction_ID__c=sequenceActionId;
+		participantAction.isActionPerformed__c=false;
+		return participantAction;
+	}
 
 	public static String createCadenceJSON(List<Criterion> criterionList, String condition, String priorityFormula) {
 
