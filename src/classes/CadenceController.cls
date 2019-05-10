@@ -510,17 +510,6 @@ public with sharing class CadenceController {
         return RemoveBraces(query);
     }
     
-    public Static String getQueryPart(String criterionPriorityFormula,Integer num){
-        String conditionLogic = criterionPriorityFormula != null ? criterionPriorityFormula.trim():'';
-        String temp ='';
-        if(conditionLogic.containsIgnoreCase(String.valueof(num+1))){
-            temp = conditionLogic.substringBetween(String.valueof(num)+'',String.valueof(num+1)); 
-        }else{
-            temp = conditionLogic.substringAfter(String.valueof(num));    
-        }
-        return temp;
-    }
-    
     public Static string RemoveBraces(string query){
         Integer open,close ;
         open = query.countMatches('(');

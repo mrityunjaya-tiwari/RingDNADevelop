@@ -1042,17 +1042,17 @@ global  without sharing class CadenceService {
                 } else {
                     objId = partAct.Contact_Id__c;
                 }
-				Object valuesToUpdate = ''; 
+				Object valueToUpdate = '';
                 for(String fieldName : fieldMap.keySet()) {
                     List<String> apiList;
                     if(partAct.Cadence_Type__c == CadenceConstants.OPPORTUNITY_OBJECT_NAME){
                         apiList = opportunityFieldDataTypeMap.get(fieldName);
-						valuesToUpdate = GetUpdateValue(fieldMap.get(fieldName), apiList[1],valuesToUpdate);
-                        CadenceUtil.updateFieldValue(opportunityMap.get(objId), apiList[0], valuesToUpdate, apiList[1]);
+				        valueToUpdate = GetUpdateValue(fieldMap.get(fieldName), apiList[1], valueToUpdate);
+				        CadenceUtil.updateFieldValue(opportunityMap.get(objId), apiList[0], valueToUpdate, apiList[1]);
                     }else{
                         apiList = objfieldDataTypeMap.get(fieldName);
-						valuesToUpdate = GetUpdateValue(fieldMap.get(fieldName), apiList[1],valuesToUpdate);
-                        CadenceUtil.updateFieldValue(objMap.get(objId), apiList[0], valuesToUpdate, apiList[1]);
+				        valueToUpdate = GetUpdateValue(fieldMap.get(fieldName), apiList[1], valueToUpdate);
+				        CadenceUtil.updateFieldValue(objMap.get(objId), apiList[0], valueToUpdate, apiList[1]);
                     }
                     
                 }

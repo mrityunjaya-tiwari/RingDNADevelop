@@ -2,8 +2,7 @@ public with sharing class MultipicklistCriterionEvaluator implements ICriterionE
     private static final String VALUE_SEPARATOR = ';';
 
     public MultipicklistCriterionEvaluator() {
-
-    }
+	}
 
     public Boolean equals(Object a, Object b) {
         if (a == null || b == null) {
