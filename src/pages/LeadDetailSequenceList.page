@@ -1,4 +1,4 @@
-<apex:page standardController="Lead" extensions="ManualSequenceAssociateController,GetNamespace" recordSetVar="selectedRecords" sidebar="false" showHeader="true">
+<apex:page standardController="Lead" extensions="ManualSequenceAssociateController,GetNamespace" sidebar="false" showHeader="true">
     <script src="/lightning/lightning.out.js"/>
     <apex:slds />
     <apex:includeLightning />
