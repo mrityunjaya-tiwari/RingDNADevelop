@@ -7,6 +7,9 @@
     
     getOperatorListFromMap : function(datatype){
         var dataTypeOperatorsMap={};
+	    dataTypeOperatorsMap['MULTIPICKLIST']=[{'label':'Does not equal','value':'not_equals'},
+                                               {'label':'Equals','value':'equals'}];
+											
         dataTypeOperatorsMap['PICKLIST']=[{'label':'Does not equal','value':'not_equals'},
                                           {'label':'Equals','value':'equals'}];
         

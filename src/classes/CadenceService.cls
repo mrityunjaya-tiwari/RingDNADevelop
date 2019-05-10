@@ -617,7 +617,7 @@ global  without sharing class CadenceService {
             }
           
             if(listOfContactids.size() > 0){
-                for(Contact con : [Select id,Cadence_Id__c,isActivated__c,EntranceCriteria_Matched_Date__c,Email from Contact Where Id In :listOfContactids]){
+                for(Contact con : [Select id,Cadence_Id__c,isActivated__c,EntranceCriteria_Matched_Date__c,Email,Name,OwnerId,Opportunity_Id__c from Contact Where Id In :listOfContactids]){
                     mapOfContacts.put(con.id,(Sobject)con);
                     if(con.Cadence_ID__c == null){
                         mapOfContactsWithSequenceIsNull.put(con.id,(Sobject)con);
@@ -1042,23 +1042,25 @@ global  without sharing class CadenceService {
                 } else {
                     objId = partAct.Contact_Id__c;
                 }
-
+				Object valuesToUpdate = ''; 
                 for(String fieldName : fieldMap.keySet()) {
                     List<String> apiList;
                     if(partAct.Cadence_Type__c == CadenceConstants.OPPORTUNITY_OBJECT_NAME){
                         apiList = opportunityFieldDataTypeMap.get(fieldName);
-                        CadenceUtil.updateFieldValue(opportunityMap.get(objId), apiList[0], fieldMap.get(fieldName), apiList[1]);
+						valuesToUpdate = GetUpdateValue(fieldMap.get(fieldName), apiList[1],valuesToUpdate);
+                        CadenceUtil.updateFieldValue(opportunityMap.get(objId), apiList[0], valuesToUpdate, apiList[1]);
                     }else{
                         apiList = objfieldDataTypeMap.get(fieldName);
-                        CadenceUtil.updateFieldValue(objMap.get(objId), apiList[0], fieldMap.get(fieldName), apiList[1]);
+						valuesToUpdate = GetUpdateValue(fieldMap.get(fieldName), apiList[1],valuesToUpdate);
+                        CadenceUtil.updateFieldValue(objMap.get(objId), apiList[0], valuesToUpdate, apiList[1]);
                     }
                     
                 }
                 sObjsToUpdate.put(objId, objMap.get(objId));					
             }
         }
-        if(opportunityList != null && opportunityList.size() > 0){
-           Database.SaveResult[] results = Database.update(opportunityList, false);
+        if(opportunityMap != null && opportunityMap.size() > 0){
+           Database.SaveResult[] results = Database.update(opportunityMap.values(), false);
         }
         return sObjsToUpdate.values();
         
@@ -1595,4 +1597,11 @@ global  without sharing class CadenceService {
             Database.UpsertResult[] results = Database.upsert(listOfSeqActionToUpdate);
         }
     }
+    public static Object GetUpdateValue(Object value, String fieldType,Object multipicklistvalues){
+        if(fieldType == CadenceConstants.MultiPickList){
+            return (Object)((string)multipicklistvalues + (string)value + ';');
+        }else{
+            return value;
+        }
+    } 																								   
 }

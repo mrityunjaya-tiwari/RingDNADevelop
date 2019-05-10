@@ -61,7 +61,7 @@
             </lightning:select>
         </td>
         <td class="rdna-field-label slds-size_1-of-3">
-            <aura:if isTrue="{!v.fieldDataType == 'Picklist'}">
+            <aura:if isTrue="{!or( v.fieldDataType =='MultiPickList', v.fieldDataType == 'Picklist')}">
                 <lightning:select aura:id="criterion" disabled="{!v.isViewMode}" name="selectPicklistType" 
                                   label="Values" class="rdna-field-values"  variant = "label-hidden"  required="true" value="{!v.objectInstance.value}" 
                                   messageWhenValueMissing="Please Select Field Value">

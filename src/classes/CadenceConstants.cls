@@ -66,4 +66,7 @@ public with sharing class CadenceConstants {
 
 	//Other Operations name in batch
 	public static final String SETCONTACTOPPNULL = 'SetContactOppNull';
+	
+	//Multi Pick List
+    public static final string MultiPickList = 'MultiPickList';
 }
