@@ -2,6 +2,11 @@
     fetchData: function (cmp, helper) {
         cmp.set('v.spinner' , true);
         var type=cmp.get('v.recordType');
+        if(type == null || type == undefined || type == ''){
+            cmp.set('v.showAssociationAlert' , true);
+        }else{
+            cmp.set('v.showAssociationAlert' , false);
+        }
         var action = cmp.get('c.getCadenceDataByRecordType'); 
         action.setParams({ recordType : type });
         action.setCallback(this, function(response) {

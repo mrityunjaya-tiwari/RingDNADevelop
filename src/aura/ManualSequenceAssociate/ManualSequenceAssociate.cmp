@@ -3,6 +3,7 @@
     <aura:attribute name="participants" type="List"/>
     <aura:attribute name="sequenceNotSelected" type="Boolean" default="false"/>
     <aura:attribute name="showModalMessage" type="Boolean" default="false"/>
+    <aura:attribute name="showAssociationAlert" type="Boolean" default="false"/>
     <aura:attribute name="recordType" type="String"/>
     <aura:attribute name="columns" type="List"/>
     <aura:attribute name="keyField" type="String" default="id"/>
@@ -82,6 +83,24 @@
                     </div>
                     <footer class="slds-modal__footer">
                         <lightning:button variant="brand" label="OK" onclick="{!c.okMessage}"/>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </div>
+    </aura:if>  
+    <aura:if isTrue="{!v.showAssociationAlert}">
+        <div class="demo-only" >
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Sequence Association Error!</h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <p>  Select at least one record to associate it with a Sequence and try again. </p>
+                    </div>
+                    <footer class="slds-modal__footer">
+                        <lightning:button variant="brand" label="OK" onclick="{!c.onCancel}"/>
                     </footer>
                 </div>
             </section>
