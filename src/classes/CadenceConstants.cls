@@ -68,5 +68,5 @@ public with sharing class CadenceConstants {
 	public static final String SETCONTACTOPPNULL = 'SetContactOppNull';
 	
 	//Multi Pick List
-    public static final string MultiPickList = 'MultiPickList';
+	public static final string MultiPickList = 'MultiPickList';
 }

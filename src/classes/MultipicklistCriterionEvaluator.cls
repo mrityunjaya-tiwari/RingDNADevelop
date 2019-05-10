@@ -1,4 +1,4 @@
-public with sharing class MultipicklistCriterionEvaluator implements ICriterionEvaluator{
+public with sharing class MultipicklistCriterionEvaluator implements ICriterionEvaluator {
     private static final String VALUE_SEPARATOR = ';';
 
     public MultipicklistCriterionEvaluator() {
@@ -6,14 +6,18 @@ public with sharing class MultipicklistCriterionEvaluator implements ICriterionE
     }
 
     public Boolean equals(Object a, Object b) {
-        if (a == null || b == null) { return false; }
-        Set<String> patternValues = this.prepareValueSet((String) a);
+        if (a == null || b == null) {
+            return false;
+        }
+        Set < String > patternValues = this.prepareValueSet((String) a);
         return patternValues.contains((String) b);
     }
 
     public Boolean notEquals(Object a, Object b) {
-        if (a == null || b == null) { return false; }
-        Set<String> patternValues = this.prepareValueSet((String) a);
+        if (a == null || b == null) {
+            return false;
+        }
+        Set < String > patternValues = this.prepareValueSet((String) a);
         return !patternValues.contains((String) b);
     }
 
@@ -45,11 +49,11 @@ public with sharing class MultipicklistCriterionEvaluator implements ICriterionE
         return false;
     }
 
-    private Set<String> prepareValueSet(String val) {
-        List<String> patValues = val.split(VALUE_SEPARATOR);
-        for(Integer i = 0; i < patValues.size(); i++) {
+    private Set < String > prepareValueSet(String val) {
+        List < String > patValues = val.split(VALUE_SEPARATOR);
+        for (Integer i = 0; i < patValues.size(); i++) {
             patValues[i] = patValues[i].trim();
         }
-        return new Set<String> (patValues);
+        return new Set < String > (patValues);
     }
 }
