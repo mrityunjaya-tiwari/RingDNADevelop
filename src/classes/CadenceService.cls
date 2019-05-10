@@ -585,7 +585,7 @@ global  without sharing class CadenceService {
         }	     
     }
     
-    public static List<SObject> getSObjectsToProcess(List<SObject> objList, Map<Id, SObject> parentMap, Map<Id, Cadence__c> cadMap, String objName) {
+    public static ParticipantsToProcess getSObjectsToProcess(List<SObject> objList, Map<Id, SObject> parentMap, Map<Id, Cadence__c> cadMap, String objName) {
         //Initializing the soject list as per obj
         List<SObject> sObjectsToProcess;
 		List<SObject> sObjectsForOpportunity = new List<SObject>();
@@ -597,6 +597,7 @@ global  without sharing class CadenceService {
             sObjectsToProcess = new List<Contact>();
         }  
         
+        List<Sobject> unmatchedParticipantsList = new List<Sobject>();
         Map<Id, Id> oldPartActionToDelete = new Map<Id, Id>();
         Map<Id, List<CadenceAction__c>> objIdToAllCadActListMap = new Map<Id, List<CadenceAction__c>>();
         Map<Id,List<Id>> sequenceHistoryMap = getParticipantSequenceHistory((new Map<Id,SObject>(objList)).keySet(),objName);
@@ -772,7 +773,7 @@ global  without sharing class CadenceService {
                             }
                         }
                     }else{
-                        sObjectsToProcess.add(obj);
+                         unmatchedParticipantsList.add(obj);
                      }
                 }
             }
@@ -795,8 +796,12 @@ global  without sharing class CadenceService {
         CadenceService.deleteUnperformedPartActions(oldPartActionToDelete, objName);
         //Creating new participant actions for new cadence  
         CadenceService.createActionParticipants(objIdToAllCadActListMap, new Map<Id, SObject>(sObjectsToProcess), objName); 
-        
-        return sObjectsToProcess;
+        ParticipantsToProcess participantsToProcess = new ParticipantsToProcess();
+        participantsToProcess.participantsToUpdate = New Set<SObject>(sObjectsToProcess);
+        sObjectsToProcess.addAll(unmatchedParticipantsList);
+        participantsToProcess.allParticipantsToProcess = sObjectsToProcess;
+
+        return participantsToProcess;
     }     
     
     public static Map<Id,List<Id>> getParticipantSequenceHistory(Set<Id> objIds,String objName){
@@ -1061,13 +1066,11 @@ global  without sharing class CadenceService {
     
     public static void processParticipantsWithCadences(List<SObject> objList, Map<Id, SObject> parentMap, String objName, Boolean isTrigger) {
         Map<Id, Cadence__c> cadMap = CadenceSelector.getActiveCadencesByRecordType(New List<String> {objName});
-        
         Map<Id, List<Sequence_Action__c>> partActToPerform = new Map<Id, List<Sequence_Action__c>>();
         
         //Getting objList to process (for perform cadence actions on it)
-        Map<Id, SObject> objMap = new Map<Id, SObject>(CadenceService.getSObjectsToProcess(objList, parentMap, cadMap, objName));
-        
-
+        ParticipantsToProcess participantsToProcess = CadenceService.getSObjectsToProcess(objList, parentMap, cadMap, objName);
+        Map<Id, SObject> objMap = new Map<Id, SObject>(participantsToProcess.allParticipantsToProcess);
         //Getting non performed participant actions 
         Map<Id, List<Sequence_Action__c>> partActionsMap = CadenceService.getRemainingParticipantAction(objMap.keySet(), objName);
         
@@ -1093,28 +1096,30 @@ global  without sharing class CadenceService {
        Map<Id, List<Sequence_Action__c>> performedPartAct = CadenceService.performParticipantActions(objMap.values(), partActToPerform);
         
         //perform participant field update
+        List<SObject> fieldsUpdatedParticipants = New List<SObject>(); 
         if(objName.equals(CadenceConstants.OPPORTUNITY_OBJECT_NAME)){
             CadenceService.updateSObjectFields(objList, performedPartAct, objName, false);
         }else{
-            CadenceService.updateSObjectFields(objMap.values(), performedPartAct, objName, false);
+            fieldsUpdatedParticipants = CadenceService.updateSObjectFields(objMap.values(), performedPartAct, objName, false);
         }
         
         if(!isTrigger) {
             Database.UpsertResult [] upsertResult;
             try{
-                //update objList;
-                upsertResult = Database.upsert(objList, false);
-                if(objMap.keyset().size() > 0 && objMap.values().size()>0) {
-                    Contacts.flag = false;
-                    Database.SaveResult[] results = Database.update(objMap.values(), false);
+                Set<SObject> listToUpdateParticipants = new Set<SObject>();
+                listToUpdateParticipants.addAll(participantsToProcess.participantsToUpdate);
+                if(fieldsUpdatedParticipants != null){
+                    listToUpdateParticipants.addAll(New Set<SObject>(fieldsUpdatedParticipants));
                 }
-            }catch(exception e){ 
-                
-            Contacts.flag =false;
+                if(listToUpdateParticipants.size() > 0) {
+                    Contacts.flag = false;
+                    Database.SaveResult[] results = Database.update(New List<SObject>(listToUpdateParticipants), false); 
+                }
+           	}catch(exception e){    
+            	Contacts.flag =false;
             }
             
-        }
-            
+        }  
         updateRemainingParticipantAction(performedPartAct,partActionsMap);
     }
     
