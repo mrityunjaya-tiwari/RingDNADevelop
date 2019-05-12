@@ -1099,11 +1099,7 @@ global  without sharing class CadenceService {
         
         //perform participant field update
         List<SObject> fieldsUpdatedParticipants = New List<SObject>(); 
-        if(objName.equals(CadenceConstants.OPPORTUNITY_OBJECT_NAME)){
-            CadenceService.updateSObjectFields(objList, performedPartAct, objName, false);
-        }else{
-            fieldsUpdatedParticipants = CadenceService.updateSObjectFields(objMap.values(), performedPartAct, objName, false);
-        }
+        fieldsUpdatedParticipants = CadenceService.updateSObjectFields(objMap.values(), performedPartAct, objName, false);
         
         if(!isTrigger) {
             Database.UpsertResult [] upsertResult;
