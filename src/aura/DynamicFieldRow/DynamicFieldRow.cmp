@@ -113,6 +113,7 @@
                                                                          name="inputString"  type="tel"
                                                                          value="{!v.objectInstance.value}"
                                                                          placeholder = "Enter Phone no."
+																		 onblur='{!c.validateEmptyInput}'
                                                                          messageWhenBadInput = "Please Enter Phone no."
                                                                          required="true"/>
                                                         <aura:set attribute="else">
@@ -136,6 +137,7 @@
                                                                                              name="inputString" 
                                                                                              value="{!v.objectInstance.value}"
                                                                                              placeholder = "Enter Details"
+																							 onblur='{!c.validateEmptyInput}'
                                                                                              messageWhenBadInput = "Please Enter Detail"
                                                                                              required="true"/>
                                                                         </aura:set>
