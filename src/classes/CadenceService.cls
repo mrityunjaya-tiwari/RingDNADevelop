@@ -1059,8 +1059,8 @@ global  without sharing class CadenceService {
                 sObjsToUpdate.put(objId, objMap.get(objId));					
             }
         }
-        if(opportunityMap != null && opportunityMap.size() > 0){
-           Database.SaveResult[] results = Database.update(opportunityMap.values(), false);
+        if(opportunityList != null && opportunityList.size() > 0){
+           Database.SaveResult[] results = Database.update(opportunityList, false);
         }
         return sObjsToUpdate.values();
         
