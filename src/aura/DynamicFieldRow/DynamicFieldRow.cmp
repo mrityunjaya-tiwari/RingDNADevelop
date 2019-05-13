@@ -109,12 +109,13 @@
                                                 </div>
                                                 <aura:set attribute="else">
                                                     <aura:if isTrue="{!v.fieldDataType == 'Phone'}">
-                                                        <lightning:input aura:id="criterion" class="rdna-field-values"  disabled="{!v.isViewMode}" label=" "
-                                                                         name="inputString"  type="tel"
-                                                                         value="{!v.objectInstance.value}"
-                                                                         placeholder = "Enter Phone no."
-                                                                         messageWhenBadInput = "Please Enter Phone no."
-                                                                         required="true"/>
+                                                        <lightning:input aura:id="criterion" class="rdna-field-values"
+                                                            disabled="{!v.isViewMode}" label=" " name="inputString"
+                                                            type="tel" value="{!v.objectInstance.value}"
+                                                            placeholder="Enter Phone no."
+                                                            onblur="{!c.validateEmptyInput}"
+                                                            messageWhenBadInput="Please Enter Phone no."
+                                                            required="true" />
                                                         <aura:set attribute="else">
                                                             <aura:if isTrue="{!v.fieldDataType == 'Date'}">
                                                                 <lightning:input aura:id="criterion" class="rdna-field-values"  disabled="{!v.isViewMode}" label=" "
@@ -132,12 +133,15 @@
                                                                                          messageWhenBadInput = "Please Select Date Time"
                                                                                          required="true"/>
                                                                         <aura:set attribute="else">
-                                                                            <lightning:input aura:id="criterion" class="rdna-field-values"  disabled="{!v.isViewMode}" label=" "
-                                                                                             name="inputString" 
-                                                                                             value="{!v.objectInstance.value}"
-                                                                                             placeholder = "Enter Details"
-                                                                                             messageWhenBadInput = "Please Enter Detail"
-                                                                                             required="true"/>
+                                                                            <lightning:input aura:id="criterion"
+                                                                                class="rdna-field-values"
+                                                                                disabled="{!v.isViewMode}" label=" "
+                                                                                name="inputString"
+                                                                                value="{!v.objectInstance.value}"
+                                                                                onblur="{!c.validateEmptyInput}"
+                                                                                placeholder="Enter Details"
+                                                                                messageWhenBadInput="Please Enter Detail"
+                                                                                required="true" />
                                                                         </aura:set>
                                                                     </aura:if>
                                                                 </aura:set>
