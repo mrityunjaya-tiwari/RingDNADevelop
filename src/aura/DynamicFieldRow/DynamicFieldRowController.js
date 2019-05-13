@@ -99,4 +99,9 @@
         helper.disablUnitInput(component, event, helper);
     },
     
+	validateEmptyInput: function (component, event, helper) {
+        var inputcomponent = event.getSource();
+        var inputValue = inputcomponent.get('v.value').trim();
+        inputcomponent.set('v.value', inputValue);
+    }
 })
