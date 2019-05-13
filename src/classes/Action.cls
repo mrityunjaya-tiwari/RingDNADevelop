@@ -10,7 +10,6 @@ public class Action {
 	@AuraEnabled public string deliveryPreference {get; set;}
 
 	public Action (){
-
 	}
 
 	public Action (Id actionId, string actionActivationType, string actionName, string actionTaskDescription, 

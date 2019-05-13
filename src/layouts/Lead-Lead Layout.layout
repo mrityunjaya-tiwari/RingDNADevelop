@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Layout xmlns="http://soap.sforce.com/2006/04/metadata">
     <excludeButtons>Submit</excludeButtons>
+	<customButtons>Add_to_Sequence</customButtons>
     <layoutSections>
         <customLabel>false</customLabel>
         <detailHeading>false</detailHeading>
@@ -311,6 +312,11 @@
             <actionName>Delete</actionName>
             <actionType>StandardButton</actionType>
             <sortOrder>14</sortOrder>
+        </platformActionListItems>
+		<platformActionListItems>
+            <actionName>Add_to_Sequence</actionName>
+            <actionType>CustomButton</actionType>
+            <sortOrder>23</sortOrder>
         </platformActionListItems>
     </platformActionList>
     <quickActionList>
