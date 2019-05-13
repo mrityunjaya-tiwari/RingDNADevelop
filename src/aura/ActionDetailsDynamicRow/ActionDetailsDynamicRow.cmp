@@ -56,7 +56,7 @@
             <label class="slds-form-element__label" for="input-01" >Values</label>
             </div>     
         </aura:if>
-        <aura:if isTrue="{!v.dataType == 'Picklist'}">
+        <aura:if isTrue="{!or(v.dataType == 'Picklist',v.dataType == 'MultiPickList')}">
             <div class="rdna-value-padding">
             <lightning:select aura:id="formValidationId" name="selectPicklistType" 
                               variant = "label-hidden"  required="true" value="{!v.taskObj.value}" 
