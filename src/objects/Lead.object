@@ -834,6 +834,7 @@ IF(ringdna100__Last_Outbound_Call__c &gt; ringdna100__Last_Email_Attempt__c, (NO
         <customTabListAdditionalFields>FULL_NAME</customTabListAdditionalFields>
         <customTabListAdditionalFields>LEAD.COMPANY</customTabListAdditionalFields>
         <customTabListAdditionalFields>LEAD.PHONE</customTabListAdditionalFields>
+        <listViewButtons>Add_to_Sequence_ListView</listViewButtons>
         <lookupDialogsAdditionalFields>FULL_NAME</lookupDialogsAdditionalFields>
         <lookupDialogsAdditionalFields>LEAD.COMPANY</lookupDialogsAdditionalFields>
         <lookupPhoneDialogsAdditionalFields>FULL_NAME</lookupPhoneDialogsAdditionalFields>
@@ -848,6 +849,32 @@ IF(ringdna100__Last_Outbound_Call__c &gt; ringdna100__Last_Email_Attempt__c, (NO
         <searchResultsAdditionalFields>LEAD.EMAIL</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>LEAD.STATUS</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>CORE.USERS.ALIAS</searchResultsAdditionalFields>
+        <searchResultsCustomButtons>Add_to_Sequence_ListView</searchResultsCustomButtons>
     </searchLayouts>
     <sharingModel>ReadWriteTransfer</sharingModel>
+    <webLinks>
+        <fullName>Add_to_Sequence</fullName>
+        <availability>online</availability>
+        <description>On selection, users can associate a lead to an active lead sequence.</description>
+        <displayType>button</displayType>
+        <height>600</height>
+        <linkType>page</linkType>
+        <masterLabel>Add to Sequence</masterLabel>
+        <openType>noSidebar</openType>
+        <page>LeadDetailSequenceList</page>
+        <protected>false</protected>
+    </webLinks>
+    <webLinks>
+        <fullName>Add_to_Sequence_ListView</fullName>
+        <availability>online</availability>
+        <description>On selection, users can associate a lead to an active lead sequence.</description>
+        <displayType>massActionButton</displayType>
+        <height>600</height>
+        <linkType>page</linkType>
+        <masterLabel>Add to Sequence</masterLabel>
+        <openType>noSidebar</openType>
+        <page>LeadSequenceList</page>
+        <protected>false</protected>
+        <requireRowSelection>true</requireRowSelection>
+    </webLinks>
 </CustomObject>
