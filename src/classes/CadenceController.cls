@@ -101,7 +101,7 @@ public with sharing class CadenceController {
 
 		List<SObject> sObjectListToUpdate = new List<SObject>();
 		if(query2 != null && query2 != ''){
-			for(Sobject obj : Database.query(query2 + ' order by lastmodifieddate limit 100')){
+			for(Sobject obj : Database.query(RemoveBraces(query2) + ' order by lastmodifieddate limit 100')){
 				obj.put(nameSpace+'Cadence_Id__c', cadence.Id);
 				if(cadence.Participent_Activation__c.equalsIgnoreCase(CadenceConstants.PARTICIPANT_ACTIVATION_AUTOMATIC)) {
 					obj.put(nameSpace+'isActivated__c', true);
@@ -215,7 +215,9 @@ public with sharing class CadenceController {
 									query =query+' !='+  getDateFormat(Date.valueOf((String)mapofCriterion.get(num).value));
 								} else if(mapofCriterion.get(num).fieldDataType =='DateTime') {
 									query =query+' !='+  dt.getDateTime(mapofCriterion.get(num).value).formatGMT('yyyy-MM-dd\'T\'HH:mm:ss\'Z\'');
-								} else 
+								}else if(mapofCriterion.get(num).fieldDataType == CadenceConstants.MultiPickList )
+                                	query =query+' EXCLUDES (  \'' + mapofCriterion.get(num).value + '\')';   
+								else 
 									query =query+' !=\''+  mapofCriterion.get(num).value +'\''; 
 							}
 							else if(mapofCriterion.get(num).operation =='equals'){
@@ -232,7 +234,9 @@ public with sharing class CadenceController {
 									query =query+' ='+ getDateFormat(Date.valueOf((String)mapofCriterion.get(num).value));
 								} else if(mapofCriterion.get(num).fieldDataType =='DateTime') { 
 									query =query+' ='+  dt.getDateTime(mapofCriterion.get(num).value).formatGMT('yyyy-MM-dd\'T\'HH:mm:ss\'Z\'');
-								} else
+								} else if(mapofCriterion.get(num).fieldDataType == CadenceConstants.MultiPickList )
+                                	query =query+' INCLUDES (  \'' + mapofCriterion.get(num).value + '\')'; 
+								 else
 									query =query+' =\''+  mapofCriterion.get(num).value +'\'';  
 							}
 							else if(mapofCriterion.get(num).fieldDataType =='Number' || mapofCriterion.get(num).fieldDataType =='Date' || mapofCriterion.get(num).fieldDataType =='DateTime'){ 
@@ -503,6 +507,16 @@ public with sharing class CadenceController {
 			}
 		}
 
-		return query;
-	}
+        return RemoveBraces(query);
+    }
+    
+    public Static string RemoveBraces(string query){
+        Integer open,close ;
+        open = query.countMatches('(');
+        close = query.countMatches(')');
+        if(close > open	)
+            query = query.removeEnd(')');
+        
+        return query;
+    }
 }

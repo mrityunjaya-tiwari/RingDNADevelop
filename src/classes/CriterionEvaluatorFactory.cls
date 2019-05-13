@@ -6,7 +6,7 @@ public with sharing class CriterionEvaluatorFactory {
 
 		evaluatorInstanceMap.put('DATETIME', new DateTimeCriterionEvaluator());
 		evaluatorInstanceMap.put('DATE', new DateCriterionEvaluator());
-
+		evaluatorInstanceMap.put('MULTIPICKLIST', new MultipicklistCriterionEvaluator());
 		evaluatorInstanceMap.put('PICKLIST', new PicklistCriterionEvaluator());
 
 		evaluatorInstanceMap.put('BOOLEAN', new BooleanCriterionEvaluator());
