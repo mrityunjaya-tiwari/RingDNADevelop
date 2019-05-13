@@ -172,7 +172,8 @@ public class Contacts  extends SObjectDomain {
 		Map<Id, List<Sequence_Action__c>> partActToPerform = new Map<Id, List<Sequence_Action__c>>();
 
 		//Getting leadList to process
-		Map<Id, Contact> contMap = new Map<Id, Contact>((List<Contact>)CadenceService.getSObjectsToProcess(records, parentMap, cadMap, CadenceConstants.CONTACT_OBJECT_NAME));
+		ParticipantsToProcess participantsToProcess = CadenceService.getSObjectsToProcess(records, parentMap, cadMap, CadenceConstants.CONTACT_OBJECT_NAME);
+        Map<Id, Contact> contMap = new Map<Id, Contact>((List<Contact>)participantsToProcess.allParticipantsToProcess);
 
 		//Getting non performed participant actions 
 		Map<Id, List<Sequence_Action__c>> partActionsMap;

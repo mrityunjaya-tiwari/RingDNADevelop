@@ -1,0 +1,110 @@
+<aura:component controller="ManualSequenceAssociateController" implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction,force:appHostable" access="global">
+    <aura:attribute name="data" type="List"/>
+    <aura:attribute name="participants" type="List"/>
+    <aura:attribute name="sequenceNotSelected" type="Boolean" default="false"/>
+    <aura:attribute name="showAssociationAlert" type="Boolean" default="false"/>
+    <aura:attribute name="showModalMessage" type="Boolean" default="false"/>
+    <aura:attribute name="recordType" type="String"/>
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="keyField" type="String" default="id"/>
+    <aura:attribute name="rawData" type="Object" access="PRIVATE" />
+    <aura:attribute name="noOfErrorRecords" type="Integer" default="0"/>
+    <aura:attribute name="rowLoaded" type="Integer" default="0"/><!--Number of Rows been loaded-->
+    <aura:attribute name="rowsToLoad" type="Integer" default="10"/> 			<!--Rows per page-->
+    <aura:attribute name="loadMoreOffset" type="Integer" default="10"/>			
+    <aura:attribute name="totalNumberOfRows" type="Integer" default="0"/>		<!--Total Number of Rows-->
+    <aura:attribute name="currentPage" type="Integer" default="1"/>
+    <aura:attribute name="selectedRows" type="List" default=""/>
+    <aura:attribute name="sortedBy" type="String" default="Name"/>
+    <aura:attribute name="sortBy" type="String" default="Created Date"/>
+    <aura:attribute name="sortedDirection" type="String" default="asc"/>
+    
+    <!--handlers-->
+    <aura:handler name="init" value="{! this }" action="{! c.init }"/>
+    <aura:handler name="cadencePagination" event="c:CadPagination" action="{!c.handleComponentEvent}"/>
+    
+    <!--create a component attributs -->
+    <aura:attribute name="spinner" type="boolean" default="false"/>
+    <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>
+    
+    <!-- Theme Name Attribute -->
+    <aura:attribute name="themeName" type="String"/>
+    <!-- PAGE HEADER -->
+    <div class="slds-page-header" style="background-color: #fafafa"> 
+        <div class="slds-grid">
+            <div>
+                <img class = "rdna-logo" src="{!$Resource.cadence_icons + '/rdna-logo/rdna-logo@2x.png'}"/>
+            </div>
+            <div class="slds-col-7 slds-has-flexi-truncate slds-m-left_small">
+                <!-- HEADING AREA -->
+                <p class="slds-line-height_reset rdna-header-small slds-p-left_xx-small">Sequence</p>
+                <h1 class="slds-page-header__title slds-m-right_small slds-align-middle slds-truncate rdna-header-large"  title="All Actions">New Sequence</h1>
+                <!-- / HEADING AREA -->
+            </div>
+            <div class="slds-col-3 slds-m-top_medium slds-align--absolute-center slds-float_right slds-m-right_small">
+                <lightning:button class="rdna-button-cancel rdna-button-cancel-text slds-m-right_small slds-text-align_center" aura:id="cancel" label="Cancel" onclick="{!c.onCancel}"/>
+                <lightning:button class="rdna-button-send rdna-button-send-text slds-m-right_small slds-text-align_center" aura:id="send" label="Save" onclick="{!c.saveCadence}"/>
+            </div>
+        </div>        
+        <div class="heading slds-m-top--small" style="font-weight:bold;">Select Sequence
+        </div>
+        <div class="heading">Associate participants to a sequence.
+        </div>
+        <aura:if isTrue="{!v.sequenceNotSelected}">
+            <p class="slds-align_absolute-center slds-m-bottom_large" style="color:red;">Please select a sequence.</p>
+        </aura:if>
+        <!-- the container element determine the height of the datatable -->
+        <div class="slds-m-top_x-large slds-m-left_x-small slds-m-right_x-small" style="height : 500px">    
+            <lightning:datatable
+                                 data="{! v.data }"
+                                 class= "cols-table"
+                                 columns="{! v.columns }"
+                                 keyField="cadId"
+                                 maxRowSelection="1"
+                                 onrowselection="{!c.setSelectedRow}"
+                                 loadMoreOffset="{!v.loadMoreOffset}" 
+                                 onsort="{!c.updateColumnSorting}"
+                                 sortedBy="{!v.sortedBy}"  
+                                 sortedDirection="{!v.sortedDirection}"/>      
+        </div>
+        <div class="slds-m-bottom_medium">
+            <c:Pagination total="{!v.totalNumberOfRows}" pageOffset="{!v.rowsToLoad}"/>	
+        </div>
+    </div>
+    <aura:if isTrue="{!v.showModalMessage}">
+        <div class="demo-only" >
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Sequence Association Information!</h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <p>{!v.noOfErrorRecords} record(s) cannot be associated to a sequence as they have an active sequence already associated.</p>
+                    </div>
+                    <footer class="slds-modal__footer">
+                        <lightning:button variant="brand" label="OK" onclick="{!c.okMessage}"/>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </div>
+    </aura:if> 
+    <aura:if isTrue="{!v.showAssociationAlert}">
+        <div class="demo-only" >
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Sequence Association Error!</h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <p>  Select at least one record to associate it with a Sequence and try again. </p>
+                    </div>
+                    <footer class="slds-modal__footer">
+                        <lightning:button variant="brand" label="OK" onclick="{!c.onCancel}"/>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </div>
+    </aura:if>
+</aura:component>
