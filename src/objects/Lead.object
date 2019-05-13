@@ -873,7 +873,7 @@ IF(ringdna100__Last_Outbound_Call__c &gt; ringdna100__Last_Email_Attempt__c, (NO
         <linkType>page</linkType>
         <masterLabel>Add to Sequence</masterLabel>
         <openType>noSidebar</openType>
-        <page>SequenceList</page>
+        <page>LeadSequenceList</page>
         <protected>false</protected>
         <requireRowSelection>true</requireRowSelection>
     </webLinks>
