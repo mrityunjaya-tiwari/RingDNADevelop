@@ -22,8 +22,9 @@ public class ManualSequenceAssociateController {
     }
     @AuraEnabled 
     public static List<CadenceActionListController.CadenceWrapper> getCadenceDataByRecordType(String recordType) {
-        //getting all the sequence and their types
-        List<Cadence__c> sequenceList = [SELECT Id, Name, Status__c, Record_Type__c, Participent_Activation__c FROM Cadence__c WHERE Record_Type__c=:recordType AND Status__c=true Order by CreatedDate desc];
+        //getting all the sequence of particular type
+        Map<Id,Cadence__c> sequenceMap = CadenceSelector.getActiveCadencesByRecordType(new List<String>{recordType});
+        List<Cadence__c> sequenceList=sequenceMap.values();
         //Getting cadence wise participants 
         Map<Id, Integer> cadWiseParts = CadenceActionListController.getCadenceWiseParticipants();
         List<CadenceActionListController.CadenceWrapper> cadWrapList = new List<CadenceActionListController.CadenceWrapper>();
