@@ -100,8 +100,8 @@
     },
     
 	validateEmptyInput: function (component, event, helper) {
-        var inp = event.getSource();
-        var val = inp.get('v.value').trim();
-        inp.set('v.value', val);
+        var inputcomponent = event.getSource();
+        var inputValue = inputcomponent.get('v.value').trim();
+        inputcomponent.set('v.value', inputValue);
     }
 })
