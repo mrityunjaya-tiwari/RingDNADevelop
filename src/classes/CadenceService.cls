@@ -443,16 +443,16 @@ global  without sharing class CadenceService {
         return nativeEmail; 
     }
     
-    public static List < Messaging.MassEmailMessage > SendNativeEmail(List < NativeEmailMessage > nativeEmailToSend) {
+    public static List<Messaging.MassEmailMessage> SendNativeEmail(List<NativeEmailMessage> nativeEmailToSend ){
         RingDNAApiCallouts ringDNAApiCallout = new RingDNAApiCallouts(true);
-        List < NativeEmailMessage > nativeEmailMessageList = new List < NativeEmailMessage > ();
-        List < Messaging.MassEmailMessage > sfdcEmailMessageList = New List < Messaging.MassEmailMessage > ();
-        if (System.isBatch()) {
+        List<NativeEmailMessage> nativeEmailMessageList = new List<NativeEmailMessage>();
+        List<Messaging.MassEmailMessage> sfdcEmailMessageList = New List<Messaging.MassEmailMessage>(); 
+        if (System.isBatch()){
             System.enqueueJob(new sendNativeEmailQueue(nativeEmailToSend));
-        } else {
+        }else{            
             nativeEmailMessageList = nativeEmailToSend;
         }
-        if (nativeEmailMessageList != null && nativeEmailMessageList.size() > 0) {
+        if(nativeEmailMessageList != null && nativeEmailMessageList.size() > 0){
             sendNativeEmailTroughTrigger(JSON.serialize(nativeEmailMessageList));
         }
         return sfdcEmailMessageList;
