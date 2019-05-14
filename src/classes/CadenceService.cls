@@ -443,32 +443,12 @@ global  without sharing class CadenceService {
         return nativeEmail; 
     }
     
-    public static List<Messaging.MassEmailMessage> SendNativeEmail(List<NativeEmailMessage> nativeEmailToSend ){
+	public static List<Messaging.MassEmailMessage> SendNativeEmail(List<NativeEmailMessage> nativeEmailToSend ){
         RingDNAApiCallouts ringDNAApiCallout = new RingDNAApiCallouts(true);
         List<NativeEmailMessage> nativeEmailMessageList = new List<NativeEmailMessage>();
         List<Messaging.MassEmailMessage> sfdcEmailMessageList = New List<Messaging.MassEmailMessage>(); 
         if (System.isBatch()){
-            List<NativeEmailRespose> nativeEmailResposeList = new List<NativeEmailRespose>();
-            try{
-            	nativeEmailResposeList = ringDNAApiCallout.sendNativeMassEmail(nativeEmailToSend);    
-            }catch(exception ex){
-                for(NativeEmailMessage nativeEmailMessage :nativeEmailToSend ){
-                    sfdcEmailMessageList.add(createEmailMessage(nativeEmailMessage.ParticipantId, nativeEmailMessage.TemplateId));
-                }
-            }
-            // Create map of actionId and nativeEmailMessage
-            Map<Id, NativeEmailMessage> actionIdNativeEmailMessageMap = new Map<Id, NativeEmailMessage>();
-            for(NativeEmailMessage nativeEmailMessage : nativeEmailToSend ){
-                actionIdNativeEmailMessageMap.put(NativeEmailMessage.ActionId, NativeEmailMessage);
-            }
-            if (nativeEmailResposeList != null && nativeEmailResposeList.size() > 0 ) {
-                for (NativeEmailRespose nativeEmailRespose : nativeEmailResposeList){
-                    if (nativeEmailRespose.success == false){
-                        NativeEmailMessage nativeEmailMessage = actionIdNativeEmailMessageMap.get(nativeEmailRespose.actionId);
-                        sfdcEmailMessageList.add(createEmailMessage(nativeEmailMessage.ParticipantId, nativeEmailMessage.TemplateId));
-                    }
-                }
-            }
+            System.enqueueJob(new sendNativeEmailQueue(nativeEmailToSend));
         }else{
             nativeEmailMessageList = nativeEmailToSend;
         }
