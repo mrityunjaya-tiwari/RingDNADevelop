@@ -1,48 +1,54 @@
 public class SequenceEngine {
 	
-	public static void processSequences(string participantType, List<string> participantTypeAndParantGroupsList, List<SObject> participantList, boolean isTrigger)
+	public static void processSequences(string participantType, List<SObject> participantList, boolean isTrigger)
 	{
+		List<string> participantTypeAndParantGroupsList;
+		Map<Id, SObject> participantIdToParentRecordMap;
+		
 		//Created a factory map using all participant types.
-		Map<String, Type> sequenceEngineFactory = new Map<String, Type> {'Contact' => ContactService.class, 'Lead' => LeadService.class };
+		Map<String, Type> sequenceEngineFactory = new Map<String, Type> {CadenceConstants.CONTACT_OBJECT_NAME => ContactService.class, CadenceConstants.LEAD_OBJECT_NAME => LeadService.class };
 			
 		//Initiation of service class	
-		IPatricipant participantService = (IPatricipant)sequenceEngineFactory.get(participantType).newInstance();
-		
+		IParticipant participantService = (IParticipant)sequenceEngineFactory.get(participantType).newInstance();
+		 
 		//Fetch all the Active sequences 
-		Map<Id, Cadence__c> activeSequencesMap  = participantService.getActiveSequences(participantType);
+		Map<Id, Cadence__c> activeSequenceIdToSequenceMap  = SequenceEngineHelper.getActiveSequenceIdToSequenceMap(new List<String> {participantType}); 
 		
 		//Fetch participant list which have exit criteria matched in sequence(further those participant will be unassociated.)
-		List<SObject> participantListWithMatchedCriteria = participantService.checkExitCriteria(participantType, participantList, activeSequencesMap, participantTypeAndParantGroupsList);
-		
-		
-		List<SObject> unAssociatedParticipantList = SequenceEngineHelper.unAssociateParticipants(participantListWithMatchedCriteria);
-				
-		SequenceEngineHelper.deleteUnPerformedParticipantActions(unAssociatedParticipantList);
+		List<SObject> participantListWithMatchedCriteria = participantService.checkExitCriteria(participantType, participantList, activeSequenceIdToSequenceMap); 
+			
+		List<SObject> unAssociatedParticipantList = new List<SObject>();
+			
+		If(participantListWithMatchedCriteria != null && participantListWithMatchedCriteria.size() > 0)	
+		{ 
+			unAssociatedParticipantList = participantService.unAssociateParticipants(participantListWithMatchedCriteria, participantType); 
+					
+			SequenceEngineHelper.deleteUnPerformedParticipantActions(unAssociatedParticipantList);
+		}
 		
 		List<SObject> participantListToCreateParticipantActions = new List<SObject>();
 		List<SObject> participantListToPerformParticipantAction = new List<SObject>();
 		
 		if (isTrigger) {
-			 Map<Id, Set<Id>> participantIdToSequenceIdSetMap = SequenceEngineHelper.getSequenceHistory();
+			 Map<Id, Set<Id>> participantIdToSequenceIdHistorySetMap = participantService.getSequenceHistory(); 			 
+			 Map<Id, List<SObject>> sequenceIdToParticipantListMap =  participantService.checkEntryCriteria(participantList, activeSequenceIdToSequenceMap, participantIdToSequenceIdHistorySetMap);
 			 
-			 Map<Id, List<SObject>> sequenceIdToParticipantListMap =  participantService.checkEntryCriteria(participantList, activeSequencesMap);
-			 
-			 participantListToCreateParticipantActions = participantService.associateParticipant(sequenceIdToParticipantListMap, participantIdToSequenceIdSetMap);
-			 participantListToPerformParticipantAction = participantList;			  			 
+			 participantListToCreateParticipantActions = participantService.associateParticipant(sequenceIdToParticipantListMap, participantIdToSequenceIdHistorySetMap);
+			 participantListToPerformParticipantAction = participantList; 	 		  			 
 		}
 		else {
 		   participantListToPerformParticipantAction = SequenceEngineHelper.removeChildListItemsFromParentList(participantList, unAssociatedParticipantList);
-		   
-		   participantListToCreateParticipantActions = SequenceEngineHelper.getParticipantListToCreateParticipantActions(participantListToPerformParticipantAction, activeSequencesMap, participantType);		   
-		}	
+		   participantListToCreateParticipantActions = SequenceEngineHelper.getParticipantListToCreateParticipantActions(participantListToPerformParticipantAction, activeSequenceIdToSequenceMap, participantType);	   
+		}
 			
-		participantService.createParticipantActions(participantListToCreateParticipantActions, activeSequencesMap);
+		participantService.createParticipantActions(participantListToCreateParticipantActions, activeSequenceIdToSequenceMap);
 		
-		Map<Id, List<Sequence_Action__c>> participantIdToParticipantActionsMap = SequenceEngineHelper.getRemainingParticipantAction(participantListToPerformParticipantAction, participantType);
+		Map<Id, List<Sequence_Action__c>> participantIdToUnperformedParticipantActionsMap = SequenceEngineHelper.getUnPerformedParticipantActions(participantListToPerformParticipantAction, participantType);
+				
+		Map<Id, List<Sequence_Action__c>> participantIdToPerformedParticipantActionsMap = participantService.performParticipantActions(participantListToPerformParticipantAction, participantIdToUnperformedParticipantActionsMap, activeSequenceIdToSequenceMap, participantType);
 		
-		Map<Id, List<Sequence_Action__c>> mapParticipantIdToPerformedParticipantActions = participantService.performParticipantActions(participantListToPerformParticipantAction, participantIdToParticipantActionsMap);
+		List<SObject> participantListToUpdateFields = participantService.getParticipantListForFieldsUpdate(participantListToPerformParticipantAction, participantIdToPerformedParticipantActionsMap, participantType, isTrigger);
 		
-		participantService.updateSObjectFields(participantListToPerformParticipantAction, mapParticipantIdToPerformedParticipantActions, participantType, isTrigger);
-		
-	}    
+		participantService.updateParticipantFields(participantListToPerformParticipantAction, participantListToUpdateFields, isTrigger);
+	}     
 }
