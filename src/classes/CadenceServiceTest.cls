@@ -457,4 +457,72 @@ public class CadenceServiceTest {
 		CadenceService.SendNativeEmail(nativeEmailMessageList);
 		CadenceService.sendNativeEmailTroughTrigger(JSON.serialize(nativeEmailMessageList));
 	}
+	
+	@IsTest
+	public static void showOnTargetListActionTimeUpdateTest() {
+		Cadence__c cadence1 = TestDataFactory.createCadence(CadenceConstants.CONTACT_OBJECT_NAME);
+		cadence1.matching_priority__c = 'P1';
+		cadence1.Record_Type__c = CadenceConstants.CONTACT_OBJECT_NAME;
+		String entryJson = TestDataFactory.createCadJsonWithNameCriterions('Test', 'Test', CadenceConstants.CONDITION_AND, '');
+		String exitJson = TestDataFactory.createCadJsonWithNameCriterions('Test1', 'Test1', CadenceConstants.CONDITION_AND, '');
+		cadence1.Entrance_Criteria__c = entryJson;
+		cadence1.Exit_Criteria__c = exitJson;
+		insert cadence1;
+
+		Contact c1 = new Contact();
+		c1.FirstName = 'Test';
+		c1.LastName = 'Test';
+		c1.Department = 'IT';
+		insert c1;
+
+		action1 = TestDataFactory.createAction('Task');
+		insert action1;
+		System.assertNotEquals(null, action1);
+
+		action2 = TestDataFactory.createAction(ACTION_TYPE_CALL);
+		insert action2;
+		System.assertNotEquals(null, action2);
+
+		CadenceAction__c cadenceAction = TestDataFactory.createCadenceAction(cadence1.Id, action1.Id);
+		cadenceAction.Day__c = 0;
+		cadenceAction.Hour__c = 0;
+		cadenceAction.Trigger_Type__c = 'Immediate';
+		insert cadenceAction;
+		System.assertNotEquals(null, cadenceAction.Id);
+
+
+		CadenceAction__c cadenceAction1 = TestDataFactory.createCadenceAction(cadence1.Id, action2.Id);
+		cadenceAction1.Day__c = 0;
+		cadenceAction1.Hour__c = 0;
+		cadenceAction1.Trigger_Type__c = 'Immediate';
+		insert cadenceAction1;
+		System.assertNotEquals(null, cadenceAction1.Id);
+
+
+		Sequence_Action__c seqAction = new Sequence_Action__c();
+		seqAction.CadenceAction_Id__c = cadenceAction.id;
+		seqAction.isActionPerformed__c = false;
+		seqAction.Contact_Id__c = c1.Id;
+		insert seqAction;
+
+		Sequence_Action__c seqAction1 = new Sequence_Action__c();
+		seqAction1.CadenceAction_Id__c = cadenceAction1.id;
+		seqAction1.isActionPerformed__c = false;
+		seqAction1.Contact_Id__c = c1.Id;
+		insert seqAction1;
+
+
+		Test.startTest();
+		//Schedule batch for contact
+		PerformCadenceActionBatch con = new PerformCadenceActionBatch(new List < string > {
+			CadenceConstants.CONTACT_OBJECT_NAME,
+			CadenceConstants.ACCOUNT_OBJECT_NAME
+		});
+		Database.executeBatch(con, 100);
+		CadenceService.updateActionOnParticipantExpectedDate(seqAction.Actual_Execution_Date__c, (Integer) seqAction.CadenceAction_Id__r.Index__c, new List < Sequence_Action__c > {
+			seqAction
+		});
+		Test.stopTest();
+	}
+	
 }

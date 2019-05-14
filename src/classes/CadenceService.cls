@@ -1280,6 +1280,10 @@ global  without sharing class CadenceService {
         List<Sequence_Action__c> saToUpdate = new List<Sequence_Action__c>();
         Integer day = 0, hour = 0;
         DateTime executionDate = lastExecutionDate,nextDate;
+
+        if (lastExecutionDate == null) {
+            return saToUpdate;
+        }
         
         if(updateActions == null) {
             return saToUpdate;
