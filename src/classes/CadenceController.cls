@@ -77,7 +77,8 @@ public with sharing class CadenceController {
 		List<CriterionWrapper> criterions = CadenceService.getFieldsWithLabelsForUpdate(objectList);
 		return criterions;
 	}
-
+	
+	//Deprecated in new architecture - activateSequences
 	@AuraEnabled
 	public static void activateCadence(Id cadId) {
 		Cadence__c cad = new Cadence__c(Id=cadId, Status__c=true);
@@ -85,7 +86,12 @@ public with sharing class CadenceController {
 		updateParticipants(cadId); 
 		CadenceService.setParticipantsActivation(cadId, true);
 	}
-
+	
+	@AuraEnabled
+	public static void activateSequences(List<Id> sequenceIdList) {
+		SequenceEngineService.activateSequences(sequenceIdList); 
+	} 
+	
 	@AuraEnabled
 	public static void updateParticipants(Id cadId) {
 		Cadence__c cadence = CadenceSelector.getCadenceById(cadId);

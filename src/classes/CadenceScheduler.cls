@@ -9,7 +9,7 @@ global class CadenceScheduler implements schedulable {
 			batchClassNameSet.add(batchJob.ApexClass.Name);
 		}
 		
-		// Schedule batch for Contact
+		/*// Schedule batch for Contact
 		if(batchClassNameSet.size() == 0 ||  !batchClassNameSet.contains('PerformContactActionBatch')) {
 			PerformContactActionBatch con = new PerformContactActionBatch(); 
 			Database.executeBatch(con,100);
@@ -25,7 +25,7 @@ global class CadenceScheduler implements schedulable {
 		if(batchClassNameSet.size() == 0 ||  !batchClassNameSet.contains('PerformOpportunityActionBatch')) {
 			PerformOpportunityActionBatch opportunity = new PerformOpportunityActionBatch();
 			Database.executeBatch(opportunity,100);
-		}
+		} */
 			
 		// Schedule next cadence scheduler
 		CadenceUtil.scheduleNextCadenceScheduler(nextScheduleTime);

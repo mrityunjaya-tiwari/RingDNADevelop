@@ -17,25 +17,25 @@ public class LeadService implements IParticipant {
            }                       
            leadIdToSequenceActionsIdSetMap.get(sequenceAction.Lead_Id__c).add(sequenceAction.Id);             
         }  
-        
     	return leadIdToSequenceActionsIdSetMap;
     }
 			
 	//return participant with matching criteria
 	public List<SObject> checkExitCriteria(string participantType, List<SObject> participnatList, Map<Id, Cadence__c> sequenceMap)
 	{
-		List<SObject> lstParticipants;	
-		lstParticipants = SequenceEngineHelper.getLeadsWithMatchingExitCriteria(participantType, participnatList, sequenceMap);		
+		List<SObject> lstParticipants = new List<Sobject>();
+		lstParticipants = SequenceEngineHelper.getParticipantsWithMatchingExitCriteria(participantType, participnatList, sequenceMap);	
 		return lstParticipants;		
 	}	
 		
-	public static List<SObject> unAssociateParticipants(List<SObject> participantList, string participantType)
+	public static List<SObject> unAssociateParticipants(List<SObject> participantListWithMatchedExitCriteria, string participantType)
     {
     	List<Participant_Sequence_History__c> newSequenceHistory = new List<Participant_Sequence_History__c>();
     	List<SObject> unAssociatedParticipantList = new List<Sobject>(); 
     	
-    	for(SObject participant : participantList)
+    	for(SObject participant : participantListWithMatchedExitCriteria)
     	{
+    		System.Debug('SequenceId: ' + (Id)participant.get(nameSpace+'Cadence_Id__c'));
     		Id sequenceId = (Id)participant.get(nameSpace+'Cadence_Id__c'); 
     		newSequenceHistory.add(SequenceEngineHelper.createHistoryObject(sequenceId, (Id)participant.get('Id'), participantType));          
             
@@ -64,6 +64,7 @@ public class LeadService implements IParticipant {
 		**/
 				
 		Map<Id, CriterionSet> sequenceIdToSequenceCriteriasMap = RuleCriterionMatcherHelper.getCadenceWiseCriterions(sequenceIdToSequenceMap.values(), CadenceConstants.CRITERION_TYPE_ENTRY);
+		Map<Id, CriterionSet> sequenceIdToExitSequenceCriteriasMap = RuleCriterionMatcherHelper.getCadenceWiseCriterions(sequenceIdToSequenceMap.values(), CadenceConstants.CRITERION_TYPE_EXIT);
 		Boolean isCriterionMatches = false;
 		for(SObject participant : participantList)
 		{	
@@ -73,6 +74,12 @@ public class LeadService implements IParticipant {
 				{
 				  continue;
 				}
+				
+				If(RuleCriterionMatcherHelper.cadenceCriterionMatches(participant, null, sequenceIdToExitSequenceCriteriasMap.get(sequenceId)))
+				{
+				  continue;
+				}
+				
 				if(sequenceIdToSequenceCriteriasMap.containsKey(sequenceId))
 				{
 					isCriterionMatches = RuleCriterionMatcherHelper.cadenceCriterionMatches(participant, null, sequenceIdToSequenceCriteriasMap.get(sequenceId));
@@ -91,8 +98,9 @@ public class LeadService implements IParticipant {
 		return sequenceIdToParticipationListMap;
 	}
 	
-	public List<SObject> associateParticipant(Map<Id, List<SObject>> sequenceIdToParticipantListMap, Map<Id, Set<Id>> participantIdToSequenceIdSetMap)
+	public List<SObject> associateParticipant(Map<Id, List<SObject>> sequenceIdToParticipantListMap)
 	{
+		
 		List<SObject> lstParticipant = new List<SObject>();
 		for(Id sequenceId : sequenceIdToParticipantListMap.keySet())
 		{
@@ -152,10 +160,9 @@ public class LeadService implements IParticipant {
 	{	 
 		//List<SObject>, Map<Id,List<Sequence_Action__c>>, Map<Id,SObject>, Map<Id,Cadence__c>, String)
 		//List<sObject>  Map<Id, List<Sequence_Action__c>> , Map<Id, SObject> , Map<Id, Cadence__c>, string participantType
-		
 		Map<Id, List<Sequence_Action__c>> participantIdToSequenceActionsToPerformMap =  SequenceEngineHelper.getTopMostUnPerformedParticipantActions(participantListToPerformParticipantAction, participantIdToUnperformedParticipantActionsMap, null, activeSequenceIdToSequenceMap, participantType);
 		participantIdToUnperformedParticipantActionsMap = participantIdToSequenceActionsToPerformMap;		
-			
+		
 		Map<Id, List<Sequence_Action__c>> participantIdToPerformedParticipantActionsMap = new Map<Id, List<Sequence_Action__c>>();	
 		Map<Id, List<Sequence_Action__c>> participantIdToRemainingParticipantActionsMap = new Map<Id, List<Sequence_Action__c>>();	
         Map<Id, SObject> participantIdToParticipantMap = new Map<Id, SObject>(participantListToPerformParticipantAction);         
@@ -164,13 +171,13 @@ public class LeadService implements IParticipant {
         List<Messaging.MassEmailMessage> emailsToSend = new List<Messaging.MassEmailMessage>();
         List<NativeEmailMessage> nativeEmailToSend = new List<NativeEmailMessage>();
         List<Id> emailTemplateIdList = new List<Id>();
+        
         //Return if no unperformed participant actions 
         if(participantIdToUnperformedParticipantActionsMap == null || participantIdToUnperformedParticipantActionsMap.isEmpty()) {
             return participantIdToPerformedParticipantActionsMap;
-        } 
+        }         
         //Processing the data to perform 
         for(Id participantId : participantIdToUnperformedParticipantActionsMap.keySet()) {
-        	
         	if(!participantIdToUnperformedParticipantActionsMap.containsKey(participantId))
         	{
         		continue;
@@ -219,14 +226,17 @@ public class LeadService implements IParticipant {
                     participationAction.Actual_Execution_Date__c = System.Now();
                     participationAction.isActionPerformed__c = true;
                     participantActionToUpdate.add(participationAction);
-                    if(participantIdToPerformedParticipantActionsMap.containsKey(participantId)) {
+                    if(!participantIdToPerformedParticipantActionsMap.containsKey(participantId)) {
                        participantIdToPerformedParticipantActionsMap.put(participantId, new List<Sequence_Action__c>());
                     }
                     participantIdToPerformedParticipantActionsMap.get(participantId).add(participationAction);
                 }
                 else
                 {
-                	participantIdToRemainingParticipantActionsMap.get(participantId).add(participationAction);
+                	if(!participantIdToRemainingParticipantActionsMap.containsKey(participantId)) {
+                       participantIdToRemainingParticipantActionsMap.put(participantId, new List<Sequence_Action__c>());
+                    }
+                    participantIdToRemainingParticipantActionsMap.get(participantId).add(participationAction);
                 }
                 
                 if(isTaskNotCompleted) {

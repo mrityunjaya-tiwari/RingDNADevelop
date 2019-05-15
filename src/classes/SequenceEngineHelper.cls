@@ -1,6 +1,7 @@
 public class SequenceEngineHelper {
     
     public static String nameSpace = CadenceConstants.NAMESPACE;
+    public static Integer maxAvailableQueryRowsLimitInSOSL = 2000;
      
     public static Map<Id, Set<Id>> getSequenceHistory()
     {
@@ -29,17 +30,25 @@ public class SequenceEngineHelper {
     
     //move to util
     public static List<SObject> removeChildListItemsFromParentList(List<SObject> parentList, List<Sobject> childList)
-    {    
-    	for(Integer index = 0; index < childList.size(); index++)
+    {   
+    	Map<Id,Sobject> parentListMap = (new Map<Id,SObject>(parentList));
+    	if(parentList == null || childList == null || childList.size() == 0)
     	{
-		   if(parentList.contains(childList.get(index)))
+    		return parentList;
+    	}
+    	    	
+    	Set<Id> resultIds = (new Map<Id,SObject>(childList)).keySet();
+    	if(resultIds.size() > 0)
+    	{
+    		for(Id participantId : resultIds)
     		{
-    		   parentList.remove(index); 
+    			parentListMap.remove(participantId);
     		}
-    	}    	
-    	return parentList; 	
+    	}
+    	return parentListMap.values(); 	
     }    
     
+    // to do - Can Depricate to - getActiveSequenceIdToSequenceMapByFieldValue()
     public static Map<Id, Cadence__c> getActiveSequenceIdToSequenceMap(List<string> participantType)
     {
     	return new Map<Id, Cadence__c>([SELECT Id, Name, Entrance_Criteria__c, Entrance_Criteria_PE__c, Exit_Criteria__c, Exit_Criteria_PE__c,
@@ -50,6 +59,42 @@ public class SequenceEngineHelper {
                                         FROM CadenceActions__r order by Index__c) 
                                        FROM Cadence__c WHERE Status__c = true AND Record_Type__c in : participantType]);
     }
+    
+    public static Map<Id, Cadence__c> getActiveSequenceIdToSequenceMapByFieldValue(Map<String, Set<String>> fieldNameToFieldValueSetMap) {
+    	String query = 'SELECT Id, Name, Entrance_Criteria__c, Entrance_Criteria_PE__c, Exit_Criteria__c, Exit_Criteria_PE__c, ';
+        query += 'Participent_Activation__c, Record_Type__c, Status__c, matching_priority__c, CreatedDate,LastModifiedDate, ';
+        query += '(SELECT Id, Name, Action_Criterion__c, Action_Criteria_PE__c, Action_Id__c, ';
+        query += 'Cadence_Id__c, Day__c, Hour__c, Trigger_Type__c, Fields_To_Update_Action__c, Action_Id__r.Activation_Type__c, ';
+        query += 'Action_Id__r.Task_Description__c, Action_Id__r.Template_Id__c, Action_Id__r.Type__c ';
+        query += 'FROM CadenceActions__r order by Index__c) ';
+        query += 'FROM Cadence__c WHERE Status__c = true';
+        
+        Boolean isWhereClauseAdded = true;
+        for(String fieldName : fieldNameToFieldValueSetMap.keySet()) {
+        	String fieldValueSetStr = '(';
+            for(String fieldValue : fieldNameToFieldValueSetMap.get(fieldName)){
+                if(fieldValue != null){
+                    fieldValueSetStr += '\'' + fieldValue + '\'' + ',';
+                }
+            }
+            fieldValueSetStr = fieldValueSetStr.subString(0, fieldValueSetStr.length() - 1);
+            fieldValueSetStr += ')';
+                
+            if(String.isNotBlank(fieldName)) {
+            	fieldName = String.escapeSingleQuotes(fieldName);
+            	if(isWhereClauseAdded) {
+	                query += ' AND ' + fieldName + ' IN ' + fieldValueSetStr;
+	            } else {
+	                query += ' WHERE ' + fieldName + ' IN ' + fieldValueSetStr;
+	                isWhereClauseAdded = true;
+	            }
+            }
+        }
+        query += ' LIMIT ' + maxAvailableQueryRowsLimitInSOSL;
+        
+        return new Map<Id, Cadence__c>((List<Cadence__c>)DataBase.query(query));
+    }
+    
     
     /**
     * Name: getParticipantListToCreateParticipantActions
@@ -104,8 +149,11 @@ public class SequenceEngineHelper {
     **/
     private static Map<Id,Set<Id>> getParticipantIdToSequenceActionIdSetMap(List<SObject> participantList) {
 	   	Map<Id,Set<Id>> participantIdToSequenceActionIdSetMap = new Map<Id,Set<Id>>();
+	   	System.debug('participantList.size='+participantList.size());
+	   	Map<Id, SObject> participantIdToParticipantMap = new Map<Id, SObject>(participantList);
+	   	
 	   	List<Sequence_Action__c> participantActions = [SELECT Contact_Id__c, Lead_Id__c, CadenceAction_ID__c FROM Sequence_Action__c 
-	   										WHERE Contact_Id__c IN: participantList OR Lead_Id__c IN: participantList];
+	   										WHERE Contact_Id__c IN: participantIdToParticipantMap.keySet() OR Lead_Id__c IN: participantIdToParticipantMap.keySet()];
 	   	
 	   	Id participantId = null;
 	   	
@@ -317,6 +365,7 @@ public class SequenceEngineHelper {
                 continue;
             }
             Sequence_Action__c sequenceAction = participantIdToUnperformedParticipantActionsMap.get(participant.Id).get(0);
+         
             if((Boolean)participant.get(nameSpace+'isActivated__c') && sequenceAction.Show_on_Target_List__c == false) {
                 SObject parentParticipant;
                 if(participantIdToParentRecordMap != null && participantIdToParentRecordMap.containsKey(participant.Id)) {
@@ -331,18 +380,19 @@ public class SequenceEngineHelper {
 	   return participantIdToPerformParticipantActions;
 	}
 	
-	public static List<SObject> getLeadsWithMatchingExitCriteria(string participantType, List<SObject> participnatList, Map<Id, Cadence__c> sequenceIdToSequenceMap)
+	public static List<SObject> getParticipantsWithMatchingExitCriteria(string participantType, List<SObject> participnatList, Map<Id, Cadence__c> sequenceIdToSequenceMap)
     {
     	List<SObject> participantListWithMatchingCriteria = new List<SObject>();
     	
     	For(SObject participant : participnatList)
-    	{
-    		SObject objLead = participant;
-    		Cadence__c sequence =  sequenceIdToSequenceMap.get((Id)objLead.get(CadenceConstants.NAMESPACE + 'Cadence_Id__c'));    		  
+    	{    		
+    		SObject objParticipant = participant.clone();
+    		Cadence__c sequence =  sequenceIdToSequenceMap.get((Id)objParticipant.get(CadenceConstants.NAMESPACE + 'Cadence_Id__c'));
+    		    		
     		//return SObject if exit criteria matches otherwise sends null
-    		SObject matchedCriteria = RuleCriterionMatcher.matchExitCriterion(sequence, participant, null, participantType); //--to do  //check how to convert the participantTypeAndParantGroupsList to SObject and pass as third argument
+    		SObject matchedCriteria = RuleCriterionMatcher.matchExitCriterion(sequence, objParticipant, null, participantType); //--to do  //check how to convert the participantTypeAndParantGroupsList to SObject and pass as third argument
     		If(matchedCriteria != null)
-    		{
+    		{    			
     			participantListWithMatchingCriteria.add(participant);
     		}    		
     	}    	

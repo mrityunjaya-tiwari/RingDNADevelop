@@ -4,7 +4,7 @@ public interface IParticipant {
 				 
 	Map<Id, List<SObject>> checkEntryCriteria(List<SObject> participnatList, Map<Id, Cadence__c> sequenceIdToSequenceMap,  Map<Id, Set<Id>> participantIdToSequenceIdHistorySetMap);
 	 
-	List<SObject> associateParticipant(Map<Id, List<SObject>> sequenceIdToParticipantListMap, Map<Id, Set<Id>> participantIdToSequenceIdSetMap); 
+	List<SObject> associateParticipant(Map<Id, List<SObject>> sequenceIdToParticipantListMap); 
 	
 	List<SObject> unAssociateParticipants(List<SObject> participantList, string participantType);
 	
