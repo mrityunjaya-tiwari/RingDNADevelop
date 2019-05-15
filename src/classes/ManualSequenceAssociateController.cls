@@ -2,22 +2,25 @@ public class ManualSequenceAssociateController {
     public static String nameSpace = CadenceConstants.NAMESPACE;
     private ApexPages.StandardSetController standardSetController;
     private ApexPages.StandardController standardController;
+    public String participantId{get;set;}
+    public String listViewReturnUrl{get;set;}
     public List<SObject> participants{get;set;}
     public String recordType{get;set;}
-    public ManualSequenceAssociateController(ApexPages.StandardController standardController){
-        participants=new List<SObject>();
-        this.standardController = standardController; 
-        participants.add((SObject)standardController.getRecord());
-        if(participants.size()>0){
-           recordType=participants[0].getSObjectType().getDescribe().getName(); 
+    public ManualSequenceAssociateController(ApexPages.StandardController standardController){       
+        this.standardController = standardController;
+        participantId = String.valueOf(standardController.getRecord().Id);
+        if(participantId != null){
+            recordType=standardController.getRecord().getSObjectType().getDescribe().getName(); 
         } 
     }
     public ManualSequenceAssociateController(ApexPages.StandardSetController standardsetController){
         participants=new List<SObject>();
         this.standardSetController = standardsetController;
         participants=standardsetController.getSelected();
+        listViewReturnUrl=String.valueOf(standardsetController.cancel());
+        listViewReturnUrl=listViewReturnUrl.substringBetween('[', ']');
         if(participants.size()>0){
-        	recordType=participants[0].getSObjectType().getDescribe().getName(); 
+            recordType=participants[0].getSObjectType().getDescribe().getName(); 
         }
     }
     @AuraEnabled 
@@ -40,9 +43,10 @@ public class ManualSequenceAssociateController {
         return cadWrapList;    
     }
     @AuraEnabled
-    public static Integer saveParticipants(String sequenceId,String participantIds) {
+    public static List<Integer> saveParticipants(String sequenceId,String participantIds) {
+        List<Integer> errorRecords=new List<Integer>();
         Cadence__c cadence = CadenceSelector.getCadenceById(sequenceId);
-        Integer previouslyAssociated=0;
+        Integer previouslyAssociated=0, samePastSequence=0;
         Map<Id, List<CadenceAction__c>> objIdToAllCadActListMap = new Map<Id, List<CadenceAction__c>>();
         String recordType = cadence.Record_Type__c;
         List<SObject> participantListToUpdate = new List<SObject>();
@@ -50,10 +54,22 @@ public class ManualSequenceAssociateController {
         participantIds=participantIds.remove('[');
         participantIds=participantIds.remove(']');
         List<String> listOfParticipantIds=participantIds.split(',');
+        Set<Id> setOfParticipantIds=new Set<Id>();
+        for(String participant : listOfParticipantIds){
+            setOfParticipantIds.add(Id.valueOf(participant));
+        }
+        Map<Id,List<Id>> mapOfSequenceHistory=CadenceService.getParticipantSequenceHistory(setOfParticipantIds,recordType);
         List<SObject> participants=new List<SObject>();
-		participants=CadenceSelector.getParticipantsByRecordType(recordType, listOfParticipantIds);
-        System.debug(participants);
-        for(Sobject participant : participants){
+        participants=CadenceSelector.getParticipantsByRecordType(recordType, listOfParticipantIds);
+        for(Sobject participant : participants){            
+            List<Id> previousSequences=new List<Id>();
+            previousSequences=mapOfSequenceHistory.get((Id)participant.get('Id'));
+            if(previousSequences!=null){
+                if(previousSequences.contains(Id.valueOf(sequenceId))){
+                    samePastSequence++;
+                    continue;
+                }
+            }
             if(participant.get(nameSpace+'Cadence_Id__c') == null){
                 participant.put(nameSpace+'Cadence_Id__c', cadence.Id);
                 if(cadence.Participent_Activation__c.equalsIgnoreCase(CadenceConstants.PARTICIPANT_ACTIVATION_AUTOMATIC)) {
@@ -74,6 +90,8 @@ public class ManualSequenceAssociateController {
         if(participantListToUpdate !=  null && participantListToUpdate.size() > 0) {
             Database.SaveResult[] results = Database.update(participantListToUpdate, false);
         }
-        return previouslyAssociated;
+        errorRecords.add(previouslyAssociated);
+        errorRecords.add(samePastSequence);
+        return errorRecords;
     }
 }
