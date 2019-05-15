@@ -2,9 +2,8 @@ public class ManualSequenceAssociateController {
     public static String nameSpace = CadenceConstants.NAMESPACE;
     private ApexPages.StandardSetController standardSetController;
     private ApexPages.StandardController standardController;
-    public String lID{get;set;} 
     public String participantId{get;set;}
-    public static String listViewReturnUrl{get;set;}
+    public String listViewReturnUrl{get;set;}
     public List<SObject> participants{get;set;}
     public String recordType{get;set;}
     public ManualSequenceAssociateController(ApexPages.StandardController standardController){       
