@@ -6,7 +6,6 @@ public class SequenceEngineTest {
 		insert accountRec;
 		Action__c actionRec = TestDataFactory.createAction(CadenceConstants.ACTION_TYPE_CALL);
 		insert actionRec;
-		List<String> participantTypeAndParantGroupsList = new List<String> {'Contact'};
 		List<SObject> participantList = new List<SObject>();
 		Cadence__c seqRec = TestDataFactory.createCadence(CadenceConstants.CONTACT_OBJECT_NAME);
 		insert seqRec;
@@ -16,13 +15,11 @@ public class SequenceEngineTest {
 		insert contRec; 
 		participantList.add(contRec);
 		Test.startTest();
-		SequenceEngine.processSequences(CadenceConstants.CONTACT_OBJECT_NAME,participantTypeAndParantGroupsList,participantList,false);
+		SequenceEngine.processSequences(CadenceConstants.CONTACT_OBJECT_NAME,participantList,false);
 		Test.stopTest();
 	}
 	
 	static testMethod void processSequencesForLeadTest() {
-		
-		List<String> participantTypeAndParantGroupsList = new List<String> {'Lead'};
 		Action__c actionRec = TestDataFactory.createAction(CadenceConstants.ACTION_TYPE_CALL);
 		List<Sequence_Action__c> seqActRec = new List<Sequence_Action__c>();
 		insert actionRec;
@@ -36,9 +33,7 @@ public class SequenceEngineTest {
 		participantList.add(leadRec);
 		
 		Test.startTest();
-		SequenceEngine.processSequences(CadenceConstants.LEAD_OBJECT_NAME,participantTypeAndParantGroupsList,participantList,false);
+		SequenceEngine.processSequences(CadenceConstants.LEAD_OBJECT_NAME,participantList,false);
 		Test.stopTest();
-		
-		
 	}   
 }

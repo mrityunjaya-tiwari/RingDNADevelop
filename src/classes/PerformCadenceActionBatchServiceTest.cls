@@ -5,7 +5,6 @@ public class PerformCadenceActionBatchServiceTest {
 	Public static Final String ACTION_TYPE_CALL = 'Call';
     
     static testMethod void runSequenceEngineTest () {
-    	List<String> participantTypeAndParentGroupsList = new List<String>{'Contact'};
     	Account accountRec = TestDataFactory.createAccount();
 		insert accountRec;
 		Action__c actionRec = TestDataFactory.createAction(ACTION_TYPE_CALL);
@@ -18,6 +17,6 @@ public class PerformCadenceActionBatchServiceTest {
 		Contact contRec = TestDataFactory.createContact(accountRec.Id, seqRec.Id);
 		insert contRec; 
 		participantList.add(contRec);
-    	PerformCadenceActionBatchService.runSequenceEngine(RECORD_TYPE_CONTACT, participantTypeAndParentGroupsList, participantList);
+    	PerformCadenceActionBatchService.runSequenceEngine(RECORD_TYPE_CONTACT, participantList);
     }
 }

@@ -47,7 +47,7 @@ public class SequenceEngineHelperTest {
     	system.assertEquals(leadList.size(), 1);
     }
     
-    static testMethod void getRemainingParticipantActionTest() {
+    /*static testMethod void getRemainingParticipantActionTest() {
 		Action__c actionRec = TestDataFactory.createAction(CadenceConstants.ACTION_TYPE_CALL);
 		List<Sequence_Action__c> seqActRec = new List<Sequence_Action__c>();
 		insert actionRec;
@@ -69,7 +69,7 @@ public class SequenceEngineHelperTest {
     		seqActRec = participantIdToSequenceActionsList.get(participantId);
     	}
     	system.assertEquals(seqActRec[0].Name, 'demoname');
-    }
+    }*/
     
     static testMethod void deleteUnPerformedParticipantActionsTest() {
     	Account accountRec = TestDataFactory.createAccount();

@@ -1,7 +1,7 @@
 @isTest
 public class LeadServiceTest {
     
-    static testMethod void getParticipantIdToParentRecordMapTest() {
+    /*static testMethod void getParticipantIdToParentRecordMapTest() {
     	Action__c actionRec = TestDataFactory.createAction(CadenceConstants.ACTION_TYPE_CALL);
 		List<Sequence_Action__c> seqActRec = new List<Sequence_Action__c>();
 		insert actionRec;
@@ -63,7 +63,7 @@ public class LeadServiceTest {
     		seqList.add(sequenceRec);
     	}
     	system.assertEquals(seqList[0].Name,'Sequence Rec');
-    }
+    }*/
     
     static testMethod void unAssociateParticipantsTest() {
     	Action__c actionRec = TestDataFactory.createAction(CadenceConstants.ACTION_TYPE_CALL);

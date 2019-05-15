@@ -105,7 +105,6 @@ public class LeadService implements IParticipant {
 				lstParticipant.add(lead);
 			}
 		}
-		system.assert(false, lstParticipant);
 		update lstParticipant;
 		
 		return lstParticipant;
