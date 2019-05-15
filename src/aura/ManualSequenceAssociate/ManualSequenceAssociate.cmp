@@ -1,14 +1,17 @@
 <aura:component controller="ManualSequenceAssociateController" implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction,force:appHostable" access="global">
     <aura:attribute name="data" type="List"/>
     <aura:attribute name="participants" type="List"/>
+    <aura:attribute name="participantId" type="String"/>
     <aura:attribute name="sequenceNotSelected" type="Boolean" default="false"/>
     <aura:attribute name="showAssociationAlert" type="Boolean" default="false"/>
     <aura:attribute name="showModalMessage" type="Boolean" default="false"/>
     <aura:attribute name="recordType" type="String"/>
+    <aura:attribute name="listViewReturnUrl" type="String"/>
     <aura:attribute name="columns" type="List"/>
     <aura:attribute name="keyField" type="String" default="id"/>
     <aura:attribute name="rawData" type="Object" access="PRIVATE" />
-    <aura:attribute name="noOfErrorRecords" type="Integer" default="0"/>
+    <aura:attribute name="noOfRecordsWithActiveSequence" type="Integer" default="0"/>
+    <aura:attribute name="noOfRecordsWithSameSequencePreviously" type="Integer" default="0"/>
     <aura:attribute name="rowLoaded" type="Integer" default="0"/><!--Number of Rows been loaded-->
     <aura:attribute name="rowsToLoad" type="Integer" default="10"/> 			<!--Rows per page-->
     <aura:attribute name="loadMoreOffset" type="Integer" default="10"/>			
@@ -17,16 +20,13 @@
     <aura:attribute name="selectedRows" type="List" default=""/>
     <aura:attribute name="sortedBy" type="String" default="Name"/>
     <aura:attribute name="sortBy" type="String" default="Created Date"/>
-    <aura:attribute name="sortedDirection" type="String" default="asc"/>
-    
+    <aura:attribute name="sortedDirection" type="String" default="asc"/>    
     <!--handlers-->
     <aura:handler name="init" value="{! this }" action="{! c.init }"/>
-    <aura:handler name="cadencePagination" event="c:CadPagination" action="{!c.handleComponentEvent}"/>
-    
+    <aura:handler name="cadencePagination" event="c:CadPagination" action="{!c.handleComponentEvent}"/>    
     <!--create a component attributs -->
     <aura:attribute name="spinner" type="boolean" default="false"/>
-    <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>
-    
+    <c:SpinnerComponent spinnerSync = "{!v.spinner}"/>   
     <!-- Theme Name Attribute -->
     <aura:attribute name="themeName" type="String"/>
     <!-- PAGE HEADER -->
@@ -38,7 +38,7 @@
             <div class="slds-col-7 slds-has-flexi-truncate slds-m-left_small">
                 <!-- HEADING AREA -->
                 <p class="slds-line-height_reset rdna-header-small slds-p-left_xx-small">Sequence</p>
-                <h1 class="slds-page-header__title slds-m-right_small slds-align-middle slds-truncate rdna-header-large"  title="All Actions">New Sequence</h1>
+                <h1 class="slds-page-header__title slds-m-right_small slds-align-middle slds-truncate rdna-header-large"  title="New Sequence">New Sequence</h1>
                 <!-- / HEADING AREA -->
             </div>
             <div class="slds-col-3 slds-m-top_medium slds-align--absolute-center slds-float_right slds-m-right_small">
@@ -79,7 +79,12 @@
                         <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Sequence Association Information!</h2>
                     </header>
                     <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
-                        <p>{!v.noOfErrorRecords} record(s) cannot be associated to a sequence as they have an active sequence already associated.</p>
+                        <aura:if isTrue="{!v.noOfRecordsWithActiveSequence>0}">
+                            <p>{!v.noOfRecordsWithActiveSequence} record(s) cannot be associated to a sequence as they have an active sequence already associated.</p>
+                        </aura:if>
+                        <aura:if isTrue="{!v.noOfRecordsWithSameSequencePreviously>0}">
+                            <p>{!v.noOfRecordsWithSameSequencePreviously} record(s) cannot be associated to a sequence as they are associated with this sequence previously.</p>
+                        </aura:if>
                     </div>
                     <footer class="slds-modal__footer">
                         <lightning:button variant="brand" label="OK" onclick="{!c.okMessage}"/>

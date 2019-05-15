@@ -8,7 +8,7 @@
         $Lightning.use("{!namespace}:ManualSequenceAssociateApp", function() {
             $Lightning.createComponent(
                 "{!namespace}:ManualSequenceAssociate",
-                {themeName: myUserContext, participants: "{!participants}", recordType:"{!recordType}"},
+                {themeName: myUserContext, participants: "{!participants}", recordType:"{!recordType}", listViewReturnUrl:"{!listViewReturnUrl}"},
                 "myDivId9",
                 function(cmp) {               
                 });
