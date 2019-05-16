@@ -21,6 +21,7 @@ public class CadenceProgressIndicatorController {
 		});
 		deleteCadenceAction(cadenceObj, caIdsList);
 		List < CadenceAction__c > caListToInsert = new List < CadenceAction__c > ();
+	    List < CadenceAction__c > caListToupdate = new List < CadenceAction__c > ();
 		for (CadenceAction__c caObj: listCadenceAction) {
 			if (caObj.Cadence_Id__c == null) {
 				caObj.Cadence_Id__c = cadenceObj.Id;
@@ -34,6 +35,9 @@ public class CadenceProgressIndicatorController {
 					}
 					caListToInsert.add(caObj);                    
 				}
+				else{
+                    caListToupdate.add(caObj);
+                }
 			} else {
 				caListToInsert.add(caObj);
 			}
@@ -52,6 +56,9 @@ public class CadenceProgressIndicatorController {
 				}
 			}
 		}
+		if(caListToupdate != null && caListToupdate.size() > 0){
+             Database.update(caListToupdate,false);
+        }
 		addActionOnParticipant(cadenceObj, cadenceActionsToInsertMap, createdAndUpdateCadenceActions, mapofOldCadenceAction);
 		return String.valueOf(cadenceObj.Id);
 	}
