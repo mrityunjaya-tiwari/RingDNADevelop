@@ -195,11 +195,11 @@ public with sharing class CadenceController {
 							query = query + mapofCriterion.get(num).fieldName;
 							if(mapofCriterion.get(num).operation == 'contains'){
 								if(mapofCriterion.get(num).fieldDataType =='picklist' )
-									query =query+' LIKE  \'%' +mapofCriterion.get(num).value + '%\'';
+									query =query+' LIKE  \'%' + CadenceUtil.getStringWithSingleQuote(mapofCriterion.get(num).value) + '%\'';
 								else if (mapofCriterion.get(num).fieldDataType =='multipicklist')
-									query =query+' INCLUDES ( \''+mapofCriterion.get(num).value+ '\' )';
+									query =query+' INCLUDES ( \''+CadenceUtil.getStringWithSingleQuote(mapofCriterion.get(num).value)+ '\' )';
 								else
-									query =query+' LIKE  \'%' +mapofCriterion.get(num).value + '%\'';
+									query =query+' LIKE  \'%' +CadenceUtil.getStringWithSingleQuote(mapofCriterion.get(num).value) + '%\'';
 							} 
 							else if(mapofCriterion.get(num).operation =='not_equals'){
 								if(mapofCriterion.get(num).fieldDataType =='Number')
@@ -216,7 +216,7 @@ public with sharing class CadenceController {
 								} else if(mapofCriterion.get(num).fieldDataType =='DateTime') {
 									query =query+' !='+  dt.getDateTime(mapofCriterion.get(num).value).formatGMT('yyyy-MM-dd\'T\'HH:mm:ss\'Z\'');
 								}else if(mapofCriterion.get(num).fieldDataType == CadenceConstants.MultiPickList )
-                                	query =query+' EXCLUDES (  \'' + mapofCriterion.get(num).value + '\')';   
+                                	query =query+' EXCLUDES (  \'' + CadenceUtil.getStringWithSingleQuote(mapofCriterion.get(num).value) + '\')';   
 								else 
 									query =query+' !=\''+  mapofCriterion.get(num).value +'\''; 
 							}
@@ -235,9 +235,9 @@ public with sharing class CadenceController {
 								} else if(mapofCriterion.get(num).fieldDataType =='DateTime') { 
 									query =query+' ='+  dt.getDateTime(mapofCriterion.get(num).value).formatGMT('yyyy-MM-dd\'T\'HH:mm:ss\'Z\'');
 								} else if(mapofCriterion.get(num).fieldDataType == CadenceConstants.MultiPickList )
-                                	query =query+' INCLUDES (  \'' + mapofCriterion.get(num).value + '\')'; 
+                                	query =query+' INCLUDES (  \'' + CadenceUtil.getStringWithSingleQuote(mapofCriterion.get(num).value) + '\')'; 
 								 else
-									query =query+' =\''+  mapofCriterion.get(num).value +'\'';  
+									query =query+' =\''+  CadenceUtil.getStringWithSingleQuote(mapofCriterion.get(num).value) +'\'';  
 							}
 							else if(mapofCriterion.get(num).fieldDataType =='Number' || mapofCriterion.get(num).fieldDataType =='Date' || mapofCriterion.get(num).fieldDataType =='DateTime'){ 
 								if(mapofCriterion.get(num).operation =='greater'){
@@ -316,11 +316,11 @@ public with sharing class CadenceController {
 							else if(mapofCriterion.get(num).operation == 'start_with')
 							{
 
-								query =query+' LIKE  \'' +mapofCriterion.get(num).value + '%\'';
+								query =query+' LIKE  \'' +CadenceUtil.getStringWithSingleQuote(mapofCriterion.get(num).value) + '%\'';
 							}
 							else
 							{
-								query =query+' LIKE  \'%' +mapofCriterion.get(num).value +'\''; 
+								query =query+' LIKE  \'%' +CadenceUtil.getStringWithSingleQuote(mapofCriterion.get(num).value) +'\''; 
 
 							}
 							listcount++;
