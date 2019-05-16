@@ -75,7 +75,7 @@
                 var errorRecords = response.getReturnValue();
                 if(errorRecords[0]>0 || errorRecords[1]>0){
                     cmp.set('v.noOfRecordsWithActiveSequence', errorRecords[0]);
-                    cmp.set('v.noOfRecordsWithSameSequenceInPast', errorRecords[1]);
+                    cmp.set('v.noOfRecordsWithSameSequencePreviously', errorRecords[1]);
                     cmp.set('v.showModalMessage', true);
                 }else{
                     helper.redirectToPreviousView(cmp, event, helper);
