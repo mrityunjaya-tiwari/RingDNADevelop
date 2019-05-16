@@ -282,4 +282,15 @@ public with sharing class CadenceUtil {
 		}
 		return whereClause;
 	}
+	
+	/**
+	 * @description - This method return string if have single quote like  father's  then it will return father\'s so it will not give error in SOQL.
+	 * @param string - input sting like [father's]
+	 * @return String - expected string like [father\'s]
+	 */
+	public static string getStringWithSingleQuote(string stringForReplace) {
+		String singleQuote = '\'';
+		String replaceSingleQuote = '\\\'';
+		return stringForReplace.replace(singleQuote, replaceSingleQuote);
+	}
 }
