@@ -73,9 +73,9 @@ public class SequenceEngineService {
 		}
 		
 		// If limited records are there to update then directly update them, else run batch to process to all records to associate them 
-		if(participantListToUpdate !=  null && participantListToUpdate.size() > 0 && participantListToUpdate.size() < 9000) {
+		if(participantListToUpdate !=  null && participantListToUpdate.size() > 0 && participantListToUpdate.size() < 9900) {
 			Database.SaveResult[] saveResults = Database.update(participantListToUpdate, false);
-		} else if(participantListToUpdate !=  null && participantListToUpdate.size() > 0 && participantListToUpdate.size() >= 9000) {
+		} else if(participantListToUpdate !=  null && participantListToUpdate.size() > 0 && participantListToUpdate.size() >= 9900) {
 			AssociateParticipantsBatch associateParticipantsBatch = new AssociateParticipantsBatch(sequenceId); 
 			Database.executeBatch(associateParticipantsBatch, 200);
 		}

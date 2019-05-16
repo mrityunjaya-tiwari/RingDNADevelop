@@ -5,7 +5,7 @@
  * Description: Service class for AssociateParticipantsBatch - It will Associate participants to any sequnce - In case if (total number participants to be associated to sequence > max size)
 **/
 public class AssociateParticipantsBatchService {
-	static Integer MAX_RECORDS_UPDATE_LIMIT = 9999; 
+	static Integer MAX_RECORDS_UPDATE_LIMIT = 9900; 
 	
     public static void associateParticipantsToSequence(Id sequenceId, Map<Id, Cadence__c> sequenceIdToSequenceMap, List<SObject> participantList, List<SObject> participantListToUpdate) {
 		
@@ -23,7 +23,7 @@ public class AssociateParticipantsBatchService {
 			participantListToUpdate.add(participant);
 		}
 		
-		if(participantListToUpdate !=  null && participantListToUpdate.size() > 9999) {
+		if(participantListToUpdate !=  null && participantListToUpdate.size() < 9900) {
 			Database.update(participantListToUpdate, false);
 			participantListToUpdate = new List<SObject>();
 		} 

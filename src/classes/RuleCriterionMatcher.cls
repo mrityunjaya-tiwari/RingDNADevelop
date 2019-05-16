@@ -72,12 +72,12 @@ public with sharing class RuleCriterionMatcher {
 
 		//Removing cadence details from participnat if it matches it's exit criterion 
 		if(isCriterionMatches) {
-			partObj.put(nameSpace+'Cadence_Id__c', null);
+			/*partObj.put(nameSpace+'Cadence_Id__c', null);
 			partObj.put(nameSpace+'isActivated__c', false);
 			partObj.put(nameSpace+'EntranceCriteria_Matched_Date__c', null);
 			if(objName == CadenceConstants.CONTACT_OBJECT_NAME){
 				partObj.put(nameSpace+'Opportunity_Id__c', null);
-			}
+			}*/
 			return partObj;
 		} 
 		return null;
@@ -185,7 +185,7 @@ public with sharing class RuleCriterionMatcher {
 
 		//Getting actions criterion
 		Map<Id, CriterionSet> cadActionCriterion = RuleCriterionMatcherHelper.getActionWiseCriterions(remainingCadActions);
-
+       
 		//Getting matching criterions 
 		for(Sequence_Action__c partAct : partActions) {
 			if(partAct == null || partAct.CadenceAction_Id__r.Trigger_Type__c == null) {
@@ -194,6 +194,7 @@ public with sharing class RuleCriterionMatcher {
 			if(partAct.Expected_Execution_Date__c <= System.now()) {
 				if(cadActionCriterion.get(partAct.CadenceAction_Id__c) != null) { 
 					Boolean isCriterionMatches = RuleCriterionMatcherHelper.cadenceCriterionMatches(obj, parentObj, cadActionCriterion.get(partAct.CadenceAction_Id__c));
+					System.debug('AdditionalCriteria: isCriterionMatches:' + isCriterionMatches);
 					if(isCriterionMatches) {
 						actionsToPerform.add(partAct);
 					}

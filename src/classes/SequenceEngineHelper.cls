@@ -1,7 +1,7 @@
 public class SequenceEngineHelper {
-    
+     
     public static String nameSpace = CadenceConstants.NAMESPACE;
-    public static Integer maxAvailableQueryRowsLimitInSOSL = 2000;
+    public static Integer MAX_SOQL_QUERY_RECORD_LIMIT = 2000;
      
     public static Map<Id, Set<Id>> getSequenceHistory()
     {
@@ -90,7 +90,7 @@ public class SequenceEngineHelper {
 	            }
             }
         }
-        query += ' LIMIT ' + maxAvailableQueryRowsLimitInSOSL;
+        query += ' LIMIT ' + MAX_SOQL_QUERY_RECORD_LIMIT;
         
         return new Map<Id, Cadence__c>((List<Cadence__c>)DataBase.query(query));
     }
@@ -365,7 +365,6 @@ public class SequenceEngineHelper {
                 continue;
             }
             Sequence_Action__c sequenceAction = participantIdToUnperformedParticipantActionsMap.get(participant.Id).get(0);
-         
             if((Boolean)participant.get(nameSpace+'isActivated__c') && sequenceAction.Show_on_Target_List__c == false) {
                 SObject parentParticipant;
                 if(participantIdToParentRecordMap != null && participantIdToParentRecordMap.containsKey(participant.Id)) {
