@@ -8,10 +8,11 @@ public class PerformOpportunityActionBatch implements Database.Batchable<sObject
 		return Database.getQueryLocator(query);
 	} 
  
-	public void execute(Database.BatchableContext bc, List<SObject> participantList) {
-		PerformCadenceActionBatchService.runSequenceEngine(CadenceConstants.OPPORTUNITY_OBJECT_NAME, participantList);
+	public void execute(Database.BatchableContext bc, List<SObject> opportunityList) {
+		List<SObject> participantList = PerformCadenceActionBatchHelper.getContactsRelatedToOpportunities(opportunityList);
+		PerformCadenceActionBatchService.runSequenceEngine(CadenceConstants.OPPORTUNITY_OBJECT_NAME, participantList, opportunityList); 
 	}
-
+  
 	public void finish(Database.BatchableContext bc) {
 	}
 }
