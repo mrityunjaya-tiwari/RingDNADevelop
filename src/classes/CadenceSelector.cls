@@ -278,16 +278,4 @@ public with sharing class CadenceSelector {
         
         return mapOfCadenceAction;
     }
-    public static List<SObject> getParticipantsByRecordType(String recordType,List<String> participantIds){
-        List<SObject> participants=new List<SObject>();
-        if(recordType=='Contact'){
-            participants=[SELECT Id, Cadence_Id__c,isActivated__c,EntranceCriteria_Matched_Date__c FROM Contact
-                          WHERE Id IN :participantIds];
-        }else if(recordType=='Lead'){
-            participants=[SELECT Id, Cadence_Id__c,isActivated__c,EntranceCriteria_Matched_Date__c FROM Lead
-                          WHERE Id IN :participantIds];
-        }
-        return participants;
-    }
-  
 }

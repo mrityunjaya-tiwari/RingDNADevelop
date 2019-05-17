@@ -23,48 +23,26 @@ public class Contacts  extends SObjectDomain {
 			return new Contacts(sObjectList);
 		}
 	}
-
-
-	public override void onBeforeInsert() {        
-		Set<Id> accountIds = new Set<Id>();
-		Schema.DescribeSObjectResult dsc = Contact.sObjectType.getDescribe();           
-		Map<String, Schema.SObjectField> fieldsMap = dsc.fields.getMap();
-		for(Contact contObj : (List<Contact>)contsWithoutCadence) {
-
-			SObject obj =(SObject)contObj;
-			for (String field : fieldsMap.keySet()) {
-				Schema.sObjectField fieldAPIName = fieldsMap.get(field);
-				Schema.DisplayType fieldDataType = fieldAPIName.getDescribe().getType();
-				String fieldName = fieldAPIName.getDescribe().getName();
-				if(fieldDataType == Schema.DisplayType.Double && fieldAPIName.getDescribe().isUpdateable() && (fieldName != 'OtherLatitude' && fieldName != 'OtherLongitude' && fieldName != 'MailingLatitude' && fieldName != 'MailingLongitude')){
-					if(fieldAPIName.getDescribe().getDefaultValue() == null){
-						obj.put(fieldAPIName, 0);                    
-					}
-
-				} 
-				contObj=(contact)obj;                
-			}
-			if(contObj.AccountId != null) {
-				accountIds.add(contObj.AccountId);
-			}
-		}
-
-		String query = CadenceUtil.getSObjectQuery(CadenceConstants.ACCOUNT_OBJECT_NAME);
-		query = query + 'Where Id in : accountIds';
-
+    public override void onBeforeInsert() {        
+        Set<Id> accountIds = new Set<Id>();
+        for(Contact contObj : (List<Contact>)contsWithoutCadence) {
+            if(contObj.AccountId != null) {
+                accountIds.add(contObj.AccountId);
+            }
+        }       
+        String query = CadenceUtil.getSObjectQuery(CadenceConstants.ACCOUNT_OBJECT_NAME);
+        query = query + 'Where Id in : accountIds';        
 		List<Account> accList = Database.query(query);
-		Map<Id, Account> accMap = new Map<Id, Account>(accList);
-
-		Map<Id, Cadence__c> cadMap = CadenceSelector.getActiveCadencesByRecordType(New List<String>{CadenceConstants.CONTACT_OBJECT_NAME,'Opportunity'});
-		for(Contact contObj: (List<Contact>)contsWithoutCadence) {
+        Map<Id, Account> accMap = new Map<Id, Account>(accList);        
+    	Map<Id, Cadence__c> cadMap = CadenceSelector.getActiveCadencesByRecordType(New List<String>{CadenceConstants.CONTACT_OBJECT_NAME,'Opportunity'});
+        for(Contact contObj: (List<Contact>)contsWithoutCadence) {
 			Account parentObj;
-			if(contObj.AccountId != null) {
-				parentObj = accMap.get(contObj.AccountId);
-			}
-			Cadence__c cad = RuleCriterionMatcher.assignCadenceToNotAssignedParticipant(cadMap, contObj, parentObj, CadenceConstants.CONTACT_OBJECT_NAME);
-		}
-	}
-
+            if(contObj.AccountId != null) {
+	            parentObj = accMap.get(contObj.AccountId);
+            }
+            Cadence__c cad = RuleCriterionMatcher.assignCadenceToNotAssignedParticipant(cadMap, contObj, parentObj, CadenceConstants.CONTACT_OBJECT_NAME);
+        }
+    }
 	public override void onAfterInsert() {
 		Set<Id> accountIds = new Set<Id>();
 		Map<Id, List<CadenceAction__c>> contIdToAllCadActListMap = new Map<Id, List<CadenceAction__c>>();
