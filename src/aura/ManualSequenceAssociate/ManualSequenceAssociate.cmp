@@ -11,6 +11,7 @@
     <aura:attribute name="keyField" type="String" default="id"/>
     <aura:attribute name="rawData" type="Object" access="PRIVATE" />
     <aura:attribute name="noOfRecordsWithActiveSequence" type="Integer" default="0"/>
+    <aura:attribute name="noOfRecordsMatchingExitCriteria" type="Integer" default="0"/>
     <aura:attribute name="noOfRecordsWithSameSequencePreviously" type="Integer" default="0"/>
     <aura:attribute name="rowLoaded" type="Integer" default="0"/><!--Number of Rows been loaded-->
     <aura:attribute name="rowsToLoad" type="Integer" default="10"/> 			<!--Rows per page-->
@@ -84,6 +85,9 @@
                         </aura:if>
                         <aura:if isTrue="{!v.noOfRecordsWithSameSequencePreviously>0}">
                             <p>{!v.noOfRecordsWithSameSequencePreviously} record(s) cannot be associated to a sequence as they are associated with this sequence previously.</p>
+                        </aura:if>
+                        <aura:if isTrue="{!v.noOfRecordsMatchingExitCriteria>0}">
+                            <p>{!v.noOfRecordsMatchingExitCriteria} record(s) cannot be associated to a sequence as they matches exit criteria of sequence.</p>
                         </aura:if>
                     </div>
                     <footer class="slds-modal__footer">
