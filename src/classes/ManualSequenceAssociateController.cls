@@ -46,7 +46,7 @@ public class ManualSequenceAssociateController {
     public static List<Integer> saveParticipants(String sequenceId,String participantIds) {
         List<Integer> errorRecords=new List<Integer>();
         Cadence__c cadence = CadenceSelector.getCadenceById(sequenceId);
-        Integer previouslyAssociated=0, samePastSequence=0;
+        Integer previouslyAssociated=0, samePastSequence=0, successfullyAssociated=0,exitCriteriaMatched=0;
         Map<Id, List<CadenceAction__c>> objIdToAllCadActListMap = new Map<Id, List<CadenceAction__c>>();
         String recordType = cadence.Record_Type__c;
         List<SObject> participantListToUpdate = new List<SObject>();
@@ -58,10 +58,18 @@ public class ManualSequenceAssociateController {
         for(String participant : listOfParticipantIds){
             setOfParticipantIds.add(Id.valueOf(participant));
         }
-        Map<Id,List<Id>> mapOfSequenceHistory=CadenceService.getParticipantSequenceHistory(setOfParticipantIds,recordType);
-        List<SObject> participants=new List<SObject>();
-        participants=CadenceSelector.getParticipantsByRecordType(recordType, listOfParticipantIds);
-        for(Sobject participant : participants){            
+        Map<Id,List<Id>> mapOfSequenceHistory=CadenceService.getParticipantSequenceHistory(setOfParticipantIds,recordType); 
+        String query = 'Select Id, Cadence_ID__c,isActivated__c,EntranceCriteria_Matched_Date__c from '+ recordType +' Where Id in :listOfParticipantIds AND ';
+        Map<Id, CriterionSet> mapofCadenceWiseExitCriterions =  new Map<Id, CriterionSet>();        
+        List<Cadence__c> listOfcadence =  new List<Cadence__c>();
+        if(cadence != null){
+            listOfcadence.add(cadence);      
+            mapofCadenceWiseExitCriterions = RuleCriterionMatcherHelper.getCadenceWiseCriterions(listOfcadence,CadenceConstants.CRITERION_TYPE_EXIT);
+            // Filter condition for exit criteria  
+            if(mapofCadenceWiseExitCriterions.keyset().size() > 0)
+                query = query+ +' (NOT('+CadenceController.criteriaFilters(mapofCadenceWiseExitCriterions,cadence,false) +'))';            
+        }
+        for(Sobject participant : Database.query(query)){            
             List<Id> previousSequences=new List<Id>();
             previousSequences=mapOfSequenceHistory.get((Id)participant.get('Id'));
             if(previousSequences!=null){
@@ -72,14 +80,11 @@ public class ManualSequenceAssociateController {
             }
             if(participant.get(nameSpace+'Cadence_Id__c') == null){
                 participant.put(nameSpace+'Cadence_Id__c', cadence.Id);
-                if(cadence.Participent_Activation__c.equalsIgnoreCase(CadenceConstants.PARTICIPANT_ACTIVATION_AUTOMATIC)) {
-                    participant.put(nameSpace+'isActivated__c', true);
-                    participant.put(nameSpace+'EntranceCriteria_Matched_Date__c', System.now());
-                    objIdToAllCadActListMap.put((Id)participant.get('Id'), cadence.CadenceActions__r);
-                } else {
-                    participant.put(nameSpace+'isActivated__c', false);
-                }
+                participant.put(nameSpace+'isActivated__c', true);
+                participant.put(nameSpace+'EntranceCriteria_Matched_Date__c', System.now());
+                objIdToAllCadActListMap.put((Id)participant.get('Id'), cadence.CadenceActions__r);
                 participantListToUpdate.add(participant);
+                successfullyAssociated++;
             }else{
                 previouslyAssociated++;
             }   
@@ -90,8 +95,10 @@ public class ManualSequenceAssociateController {
         if(participantListToUpdate !=  null && participantListToUpdate.size() > 0) {
             Database.SaveResult[] results = Database.update(participantListToUpdate, false);
         }
+        exitCriteriaMatched=listOfParticipantIds.size()-successfullyAssociated-previouslyAssociated-samePastSequence;
         errorRecords.add(previouslyAssociated);
         errorRecords.add(samePastSequence);
+        errorRecords.add(exitCriteriaMatched);
         return errorRecords;
     }
 }
