@@ -21,6 +21,7 @@ public class TestDataFactory {
 		l.Company = 'Test Company';
 		l.Cadence_Id__c = cadenceId;
 		l.Priority__C = 12;
+		l.isActivated__c = true;
 		return l;
 	}
 
@@ -104,6 +105,7 @@ public class TestDataFactory {
 		}
 		participantAction.CadenceAction_ID__c=sequenceActionId;
 		participantAction.isActionPerformed__c=false;
+		participantAction.Show_on_Target_List__c = false;
 		return participantAction;
 	}
 

@@ -9,7 +9,7 @@ public class PerformContactActionBatch implements Database.Batchable<sObject>, D
 	}
   
 	public void execute(Database.BatchableContext bc, List<SObject> participantList) {
-		PerformCadenceActionBatchService.runSequenceEngine(CadenceConstants.CONTACT_OBJECT_NAME, participantList);
+		PerformCadenceActionBatchService.runSequenceEngine(CadenceConstants.CONTACT_OBJECT_NAME, participantList, null);
 	}
 
 	public void finish(Database.BatchableContext bc) {

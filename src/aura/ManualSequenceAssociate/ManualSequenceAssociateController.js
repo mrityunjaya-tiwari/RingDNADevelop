@@ -34,7 +34,6 @@
     },
     saveCadence: function(cmp, event, helper){
         var selectedRows=cmp.get('v.selectedRows');
-        console.log(selectedRows.length==0);
         if(selectedRows.length==0){
             cmp.set('v.sequenceNotSelected',true);
         }else{
@@ -45,9 +44,13 @@
         helper.setSelectedRow(cmp, event, helper);   
     },
     onCancel : function(cmp, event, helper){
-        window.history.back();
+        helper.redirectToPreviousView(cmp, event, helper);
     },
     okMessage: function(cmp, event, helper){
         cmp.set("v.showModalMessage", false);
+        helper.redirectToPreviousView(cmp, event, helper);
+    },
+    redirectToPreviousView:function(cmp, event, helper){
+       helper.redirectToPreviousView(cmp, event, helper);
     }
 })
