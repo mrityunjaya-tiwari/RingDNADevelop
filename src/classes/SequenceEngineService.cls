@@ -39,7 +39,7 @@ public class SequenceEngineService {
     * @param:  (1) sequenceId - Id - Id of sequence for which we have to associate participants
     * @return: 
     **/
-	public static void associateParticipantsToSequence(Id sequenceId) {
+	private static void associateParticipantsToSequence(Id sequenceId) {
 		Map<Id, Cadence__c> sequenceIdToSequenceMap = SequenceEngineHelper.getActiveSequenceIdToSequenceMapByFieldValue(new Map<String, Set<String>>{'Id' => new Set<String>{sequenceId}});
 		
 		if(!sequenceIdToSequenceMap.containsKey(sequenceId)) {
@@ -73,11 +73,9 @@ public class SequenceEngineService {
 		}
 		
 		// If limited records are there to update then directly update them, else run batch to process to all records to associate them 
-		if(participantListToUpdate !=  null && participantListToUpdate.size() > 0 && participantListToUpdate.size() < SequenceEngineHelper.getAvailableDMLRowsLimit()) {
-			disableParticipantTrigger(sequenceRecordType);
+		if(participantListToUpdate !=  null && participantListToUpdate.size() > 0 && participantListToUpdate.size() < 9000) {
 			Database.SaveResult[] saveResults = Database.update(participantListToUpdate, false);
-			enableParticipantTrigger();
-		} else if(participantListToUpdate !=  null && participantListToUpdate.size() > 0 && participantListToUpdate.size() >= SequenceEngineHelper.getAvailableDMLRowsLimit()) {
+		} else if(participantListToUpdate !=  null && participantListToUpdate.size() > 0 && participantListToUpdate.size() >= 9000) {
 			AssociateParticipantsBatch associateParticipantsBatch = new AssociateParticipantsBatch(sequenceId); 
 			Database.executeBatch(associateParticipantsBatch, 200);
 		}
@@ -89,7 +87,7 @@ public class SequenceEngineService {
     * @param:  (1) sequenceIdList - List<Id> - Ids of sequences for which we have to associate participants
     * @return: 
     **/
-    public static void associateParticipantsToSequences(List<Id> sequenceIdList) {
+    private static void associateParticipantsToSequences(List<Id> sequenceIdList) {
     	// to do - Handling for multiple sequences	
 	}
 	
@@ -125,20 +123,8 @@ public class SequenceEngineService {
 		return removeBraces(query);
 	}
 	
-	// to do - can move to util
-	public Static void disableParticipantTrigger(String sequenceRecordType) {
-		Contacts.fireTrigger = (sequenceRecordType == CadenceConstants.CONTACT_OBJECT_NAME) ? false : true;
-		Leads.fireTrigger = (sequenceRecordType == CadenceConstants.LEAD_OBJECT_NAME) ? false : true;
-	}
-	
-	// to do - can move to util
-	public Static void enableParticipantTrigger() {
-		Contacts.fireTrigger = true;
-		Leads.fireTrigger = true;
-	}
-	
 	// to do - move to util
-	private Static string removeBraces(string query) {
+	private Static string removeBraces(string query){
         Integer open,close ;
         open = query.countMatches('(');
         close = query.countMatches(')');

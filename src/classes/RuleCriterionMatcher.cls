@@ -23,11 +23,11 @@ public with sharing class RuleCriterionMatcher {
 
 		//Getting matching cadences	
 		for(Id cadId : cadCriterion.keySet()) {
-			Boolean isExitCriterionMatches = RuleCriterionMatcherHelper.cadenceCriterionMatches(partObj, parentObj, cadExitCriterion.get(cadId), null);
+			Boolean isExitCriterionMatches = RuleCriterionMatcherHelper.cadenceCriterionMatches(partObj, parentObj, cadExitCriterion.get(cadId));
 			if(isExitCriterionMatches) {
 				continue;
 			}
-			Boolean isCriterionMatches = RuleCriterionMatcherHelper.cadenceCriterionMatches(partObj, parentObj, cadCriterion.get(cadId), null);
+			Boolean isCriterionMatches = RuleCriterionMatcherHelper.cadenceCriterionMatches(partObj, parentObj, cadCriterion.get(cadId));
 			if(isCriterionMatches) {
 				matchingCadences.add(cadenceMap.get(cadId));
 			} 
@@ -63,21 +63,21 @@ public with sharing class RuleCriterionMatcher {
 		//Returning if given cad is null
 		if(cad == null) {
 			return null;
-		}
+		} 
 		//Getting cadence criterion for cadence		
 		Map<Id, CriterionSet> cadCriterion = RuleCriterionMatcherHelper.getCadenceWiseCriterions(new List<Cadence__c>{cad}, CadenceConstants.CRITERION_TYPE_EXIT);
 
 		//Checking for exit Cadence Criterion mathcing or not 
-		Boolean isCriterionMatches = RuleCriterionMatcherHelper.cadenceCriterionMatches(partObj, parentObj, cadCriterion.get(cad.Id), null);
+		Boolean isCriterionMatches = RuleCriterionMatcherHelper.cadenceCriterionMatches(partObj, parentObj, cadCriterion.get(cad.Id));
 
 		//Removing cadence details from participnat if it matches it's exit criterion 
 		if(isCriterionMatches) {
-			/*partObj.put(nameSpace+'Cadence_Id__c', null);
+			partObj.put(nameSpace+'Cadence_Id__c', null);
 			partObj.put(nameSpace+'isActivated__c', false);
 			partObj.put(nameSpace+'EntranceCriteria_Matched_Date__c', null);
 			if(objName == CadenceConstants.CONTACT_OBJECT_NAME){
 				partObj.put(nameSpace+'Opportunity_Id__c', null);
-			}*/
+			}
 			return partObj;
 		} 
 		return null;
@@ -90,7 +90,7 @@ public with sharing class RuleCriterionMatcher {
 		} 
 		//Getting cadence criterion for cadence		
 		Map<Id, CriterionSet> cadCriterion = RuleCriterionMatcherHelper.getCadenceWiseCriterions(new List<Cadence__c>{cad}, CadenceConstants.CRITERION_TYPE_EXIT);
-		Boolean isCriterionMatches = RuleCriterionMatcherHelper.cadenceCriterionMatches(partObj, parentObj, cadCriterion.get(cad.Id), null);
+		Boolean isCriterionMatches = RuleCriterionMatcherHelper.cadenceCriterionMatches(partObj, parentObj, cadCriterion.get(cad.Id));
 		return isCriterionMatches;
 	}
 
@@ -132,7 +132,7 @@ public with sharing class RuleCriterionMatcher {
 			if(day==0 && hour ==0) {
 				if(cadAct.Trigger_Type__c.equals(CadenceConstants.CADENCE_ACTION_TRIGGER_TYPE_IMMEDIATE)) {
 					if(cadActionCriterion.get(cadAct.Id) != null) {
-						Boolean isCriterionMatches = RuleCriterionMatcherHelper.cadenceCriterionMatches(obj, parentObj, cadActionCriterion.get(cadActId), null);
+						Boolean isCriterionMatches = RuleCriterionMatcherHelper.cadenceCriterionMatches(obj, parentObj, cadActionCriterion.get(cadActId));
 						if(isCriterionMatches) {
 							actionsToPerform.add(cadAct);
 						}
@@ -144,7 +144,7 @@ public with sharing class RuleCriterionMatcher {
 				if(cadAct.Day__c == day && cadAct.Hour__c == hour) {
 					if(cadAct.Trigger_Type__c.equals(CadenceConstants.CADENCE_ACTION_TRIGGER_TYPE_TIME_BASED)) {
 						if(cadActionCriterion.get(cadAct.Id) != null) {
-							Boolean isCriterionMatches = RuleCriterionMatcherHelper.cadenceCriterionMatches(obj, parentObj, cadActionCriterion.get(cadActId), null);
+							Boolean isCriterionMatches = RuleCriterionMatcherHelper.cadenceCriterionMatches(obj, parentObj, cadActionCriterion.get(cadActId));
 							if(isCriterionMatches) {
 								actionsToPerform.add(cadAct);
 							}	
@@ -185,7 +185,7 @@ public with sharing class RuleCriterionMatcher {
 
 		//Getting actions criterion
 		Map<Id, CriterionSet> cadActionCriterion = RuleCriterionMatcherHelper.getActionWiseCriterions(remainingCadActions);
-       
+
 		//Getting matching criterions 
 		for(Sequence_Action__c partAct : partActions) {
 			if(partAct == null || partAct.CadenceAction_Id__r.Trigger_Type__c == null) {
@@ -193,8 +193,7 @@ public with sharing class RuleCriterionMatcher {
 			}
 			if(partAct.Expected_Execution_Date__c <= System.now()) {
 				if(cadActionCriterion.get(partAct.CadenceAction_Id__c) != null) { 
-					Boolean isCriterionMatches = RuleCriterionMatcherHelper.cadenceCriterionMatches(obj, parentObj, cadActionCriterion.get(partAct.CadenceAction_Id__c), null);
-					System.debug('AdditionalCriteria: isCriterionMatches:' + isCriterionMatches);
+					Boolean isCriterionMatches = RuleCriterionMatcherHelper.cadenceCriterionMatches(obj, parentObj, cadActionCriterion.get(partAct.CadenceAction_Id__c));
 					if(isCriterionMatches) {
 						actionsToPerform.add(partAct);
 					}

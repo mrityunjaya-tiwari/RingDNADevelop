@@ -47,6 +47,30 @@ public class SequenceEngineHelperTest {
     	system.assertEquals(leadList.size(), 1);
     }
     
+    /*static testMethod void getRemainingParticipantActionTest() {
+		Action__c actionRec = TestDataFactory.createAction(CadenceConstants.ACTION_TYPE_CALL);
+		List<Sequence_Action__c> seqActRec = new List<Sequence_Action__c>();
+		insert actionRec;
+		List<SObject> participantList = new List<SObject>();
+		Cadence__c seqRec = TestDataFactory.createCadence(CadenceConstants.LEAD_OBJECT_NAME);
+		insert seqRec;
+		CadenceAction__C seqActionRec = TestDataFactory.createCadenceAction(seqRec.Id, actionRec.Id);
+		insert seqActionRec;
+		Lead leadRec = TestDataFactory.createLead();
+		insert leadRec; 
+		participantList.add(leadRec);
+		Sequence_Action__c participantAction = TestDataFactory.createParticipantAction(leadRec.Id, seqActionRec.Id, CadenceConstants.LEAD_OBJECT_NAME);
+		insert participantAction;
+		
+		Test.startTest();
+    	Map<Id, List<Sequence_Action__c>>  participantIdToSequenceActionsList = SequenceEngineHelper.getRemainingParticipantAction(participantList, CadenceConstants.LEAD_OBJECT_NAME);
+    	Test.stopTest();
+    	for (Id participantId : participantIdToSequenceActionsList.keySet()) {
+    		seqActRec = participantIdToSequenceActionsList.get(participantId);
+    	}
+    	system.assertEquals(seqActRec[0].Name, 'demoname');
+    }*/
+    
     static testMethod void deleteUnPerformedParticipantActionsTest() {
     	Account accountRec = TestDataFactory.createAccount();
 		insert accountRec;
@@ -67,49 +91,4 @@ public class SequenceEngineHelperTest {
     	SequenceEngineHelper.deleteUnPerformedParticipantActions(participantList);
     	Test.stopTest();
     }
-    
-    public static String sessionId;
-	public static String accountId;
-	public static String userId;
-	static{
-		Account acc = TestDataFactory.createAccount();
-		insert acc;
-		System.assertNotEquals(null, acc);
-		accountId = acc.id;
-		sessionId = userinfo.getSessionId();
-		userId = userinfo.getUserId();
-	}
-	
-	static testMethod void SendNativeEmailTest(){
-		test.startTest();
-		RingDNAApiCallouts testRingDNAApiCallout = new RingDNAApiCallouts(true);
-		Test.setMock(HttpCalloutMock.class, new SendNativeMassEmailMockCallout());
-
-		List<NativeEmailMessage> nativeEmailMessageList = new List<NativeEmailMessage>();
-		NativeEmailMessage nativeEmailMessage = new NativeEmailMessage();
-		nativeEmailMessage.ActionId = accountId;
-		nativeEmailMessage.MailTo = 'test@gmail.com';
-		nativeEmailMessage.Body = 'body mail 1';
-		nativeEmailMessage.UserId = userId;
-		nativeEmailMessageList.add(nativeEmailMessage);
-		SequenceEngineHelper.SendNativeEmail(nativeEmailMessageList);
-		test.stopTest();
-		//system.assertEquals(1, sendNativeMassEmailList.size());
-	}
-	
-	static testMethod void sendNativeEmailTroughTriggerTest() {
-		test.startTest();
-		RingDNAApiCallouts testRingDNAApiCallout = new RingDNAApiCallouts(true);
-		Test.setMock(HttpCalloutMock.class, new SendNativeMassEmailMockCallout());
-
-		List<NativeEmailMessage> nativeEmailMessageList = new List<NativeEmailMessage>();
-		NativeEmailMessage nativeEmailMessage = new NativeEmailMessage();
-		nativeEmailMessage.ActionId = accountId;
-		nativeEmailMessage.MailTo = 'test@gmail.com';
-		nativeEmailMessage.Body = 'body mail 1';
-		nativeEmailMessage.UserId = userId;
-		nativeEmailMessageList.add(nativeEmailMessage);
-		SequenceEngineHelper.sendNativeEmailTroughTrigger(JSON.serialize(nativeEmailMessageList));
-		test.stopTest();
-	}
 }

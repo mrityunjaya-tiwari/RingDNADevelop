@@ -1,26 +1,7 @@
 public class SequenceEngineHelper {
-     
+    
     public static String nameSpace = CadenceConstants.NAMESPACE;
-    
-    /** 
-     * Name: getAvailableQueryRowsLimit
-     * Desc: Getter method which returns available  limit of query rows which can be returned by a SOQL in the context
-     * @param:
-     * @return: Integer - Available query rows limit  
-    **/
-    public static Integer getAvailableQueryRowsLimit() {
-        return Limits.getLimitQueryRows() - Limits.getQueryRows(); 
-    }  
-    
-    /** 
-     * Name: getAvailableDMLRowsLimit
-     * Desc: Getter method which returns available  limit of DML reocrds which can be proceesed by a DML statement in the context
-     * @param:
-     * @return: Integer - Available query rows limit  
-    **/
-    public static Integer getAvailableDMLRowsLimit() {
-    	return Limits.getLimitDMLRows() - Limits.getDMLRows();
-    }
+    public static Integer maxAvailableQueryRowsLimitInSOSL = 2000;
      
     public static Map<Id, Set<Id>> getSequenceHistory()
     {
@@ -38,7 +19,7 @@ public class SequenceEngineHelper {
     {
     	Set<Id> unAssociatedParticipantsIdSet = new map<Id, SObject>(unAssociatedParticipantList).keyset();  
     	//--to do to create a common query to get unperformed participation actions  	
-    	List<Sequence_Action__c> unperformedParticipationActionList = [SELECT Id, Lead_Id__c, Contact_Id__c, CadenceAction_Id__c, CadenceAction_Id__r.Cadence_Id__c FROM Sequence_Action__c WHERE (Lead_Id__c IN :unAssociatedParticipantsIdSet OR Contact_Id__c IN :unAssociatedParticipantsIdSet) AND isActionPerformed__c=false Limit: getAvailableQueryRowsLimit()];
+    	List<Sequence_Action__c> unperformedParticipationActionList = [SELECT Id, Lead_Id__c, Contact_Id__c, CadenceAction_Id__c, CadenceAction_Id__r.Cadence_Id__c FROM Sequence_Action__c WHERE (Lead_Id__c IN :unAssociatedParticipantsIdSet OR Contact_Id__c IN :unAssociatedParticipantsIdSet) AND isActionPerformed__c=false];
         if(unperformedParticipationActionList.size() > 0)
         {
     		delete unperformedParticipationActionList;
@@ -76,7 +57,7 @@ public class SequenceEngineHelper {
                                         Cadence_Id__c, Day__c, Hour__c, Trigger_Type__c, Fields_To_Update_Action__c, Action_Id__r.Activation_Type__c, 
                                         Action_Id__r.Task_Description__c, Action_Id__r.Template_Id__c, Action_Id__r.Type__c  
                                         FROM CadenceActions__r order by Index__c) 
-                                       FROM Cadence__c WHERE Status__c = true AND Record_Type__c in : participantType Limit: getAvailableQueryRowsLimit()]);
+                                       FROM Cadence__c WHERE Status__c = true AND Record_Type__c in : participantType]);
     }
     
     public static Map<Id, Cadence__c> getActiveSequenceIdToSequenceMapByFieldValue(Map<String, Set<String>> fieldNameToFieldValueSetMap) {
@@ -109,7 +90,7 @@ public class SequenceEngineHelper {
 	            }
             }
         }
-        query += ' LIMIT ' + getAvailableQueryRowsLimit();
+        query += ' LIMIT ' + maxAvailableQueryRowsLimitInSOSL;
         
         return new Map<Id, Cadence__c>((List<Cadence__c>)DataBase.query(query));
     }
@@ -156,7 +137,6 @@ public class SequenceEngineHelper {
    				requiredParticipantList.add(participant);
    			}
 	   	}
-	   	system.assert(false,requiredParticipantList );
 	   	return requiredParticipantList;
 	}
 	
@@ -172,8 +152,8 @@ public class SequenceEngineHelper {
 	   	System.debug('participantList.size='+participantList.size());
 	   	Map<Id, SObject> participantIdToParticipantMap = new Map<Id, SObject>(participantList);
 	   	
-	   	List<Sequence_Action__c> participantActions = [SELECT Contact_Id__c, Lead_Id__c, CadenceAction_ID__c FROM Sequence_Action__c WHERE Contact_Id__c IN: 
-	   													participantIdToParticipantMap.keySet() OR Lead_Id__c IN: participantIdToParticipantMap.keySet() Limit: getAvailableQueryRowsLimit()];
+	   	List<Sequence_Action__c> participantActions = [SELECT Contact_Id__c, Lead_Id__c, CadenceAction_ID__c FROM Sequence_Action__c 
+	   										WHERE Contact_Id__c IN: participantIdToParticipantMap.keySet() OR Lead_Id__c IN: participantIdToParticipantMap.keySet()];
 	   	
 	   	Id participantId = null;
 	   	
@@ -207,7 +187,7 @@ public class SequenceEngineHelper {
                                   CadenceAction_Id__r.Action_Id__r.Task_Description__c, CadenceAction_Id__r.Action_Id__r.Template_Id__c, 
                                   CadenceAction_Id__r.Index__c, Expected_Execution_Date__c, Actual_Execution_Date__c From Sequence_Action__c 
                                   where (Lead_Id__c IN :participantIds OR Contact_Id__c IN : participantIds) AND CadenceAction_ID__r.Cadence_Id__r.Record_Type__c = : participantType AND isActionPerformed__c = false AND isDeferred__c = false 
-                                  order by CadenceAction_Id__r.Index__c Limit: getAvailableQueryRowsLimit()]; //identify use of isDeferred__c where clause
+                                  order by CadenceAction_Id__r.Index__c]; //identify use of isDeferred__c where clause
                                   
         for(Sequence_Action__c participantAction : unperformedParticipantActionList) {
             if(participantAction.Lead_Id__c == null && participantAction.Contact_Id__c == null) {
@@ -385,6 +365,7 @@ public class SequenceEngineHelper {
                 continue;
             }
             Sequence_Action__c sequenceAction = participantIdToUnperformedParticipantActionsMap.get(participant.Id).get(0);
+         
             if((Boolean)participant.get(nameSpace+'isActivated__c') && sequenceAction.Show_on_Target_List__c == false) {
                 SObject parentParticipant;
                 if(participantIdToParentRecordMap != null && participantIdToParentRecordMap.containsKey(participant.Id)) {
