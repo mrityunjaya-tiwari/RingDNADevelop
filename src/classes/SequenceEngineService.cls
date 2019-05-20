@@ -47,15 +47,19 @@ public class SequenceEngineService {
 		}
 		
 		String sequenceRecordType = sequenceIdToSequenceMap.get(sequenceId).Record_Type__c;
-		String query;
-		
+		String query = '';
+		set<Id> listOfOppContactIds = new set<Id>();
 		if(!sequenceRecordType.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_OBJECT_NAME)) { // Handling for Contact and Lead
 			query = formParticipantSelectQuery(sequenceRecordType, sequenceIdToSequenceMap.get(sequenceId));
 		}
 		else{ // Handling for Opportunity
-			//query = formQueryOpportunity(objName,cadence);
+			query = CadenceController.formQueryOpportunity(sequenceIdToSequenceMap.get(sequenceId).Record_Type__c, sequenceIdToSequenceMap.get(sequenceId), listOfOppContactIds);
 		}
-		
+        
+		if (query == ''){
+            return;
+        }
+        
 		List<SObject> participantListToUpdate = new List<SObject>();
 		Map<Id, List<CadenceAction__c>> particiapntIdToSequenceActionListMap = new Map<Id, List<CadenceAction__c>>();
 		
@@ -127,8 +131,8 @@ public class SequenceEngineService {
 	
 	// to do - can move to util
 	public Static void disableParticipantTrigger(String sequenceRecordType) {
-		Contacts.fireTrigger = (sequenceRecordType == CadenceConstants.CONTACT_OBJECT_NAME) ? false : true;
-		Leads.fireTrigger = (sequenceRecordType == CadenceConstants.LEAD_OBJECT_NAME) ? false : true;
+		Contacts.fireTrigger = false;//(sequenceRecordType == CadenceConstants.CONTACT_OBJECT_NAME) ? false : true;
+		Leads.fireTrigger = false;//(sequenceRecordType == CadenceConstants.LEAD_OBJECT_NAME) ? false : true;
 	}
 	
 	// to do - can move to util

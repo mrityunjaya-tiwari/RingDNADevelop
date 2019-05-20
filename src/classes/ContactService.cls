@@ -4,21 +4,6 @@ public class ContactService implements IParticipant {
         
     public Map<Id, Set<Id>> getSequenceHistory()  
     {
-    	//Need to remove commented code
-    	/**Map<Id, Set<Id>> contactIdToSequenceActionsIdSetMap = new Map<Id, Set<Id>>();
-        Set<Id> sequenceIds;        
-        List<Sequence_Action__c> sequenceActionAllContacts = [select Id, Contact_Id__c from Sequence_Action__c 
-                                                                         where Contact_Id__c != null];    
-                                                                          
-        for(Sequence_Action__c sequenceAction : sequenceActionAllContacts){
-           
-           if(!contactIdToSequenceActionsIdSetMap.containsKey(sequenceAction.Contact_Id__c))
-           {
-           	  contactIdToSequenceActionsIdSetMap.put(sequenceAction.Contact_Id__c, new Set<Id>());
-           }                       
-           contactIdToSequenceActionsIdSetMap.get(sequenceAction.Contact_Id__c).add(sequenceAction.Id);             
-        }  
-    	return contactIdToSequenceActionsIdSetMap;*/
     	Map<Id, Set<Id>> participantIdToSequenceIdHistorySetMap = new Map<Id, Set<Id>>();
     	for(Participant_Sequence_History__c participantSequenceHistory : [SELECT Contact_Id__c, Sequence_Id__c FROM Participant_Sequence_History__c WHERE Contact_Id__c != null]) {
            
@@ -26,7 +11,7 @@ public class ContactService implements IParticipant {
            {
            	  participantIdToSequenceIdHistorySetMap.put(participantSequenceHistory.Contact_Id__c, new Set<Id>());
            }                       
-           participantIdToSequenceIdHistorySetMap.get(participantSequenceHistory.Contact_Id__c).add(participantSequenceHistory.Id);             
+           participantIdToSequenceIdHistorySetMap.get(participantSequenceHistory.Contact_Id__c).add(participantSequenceHistory.Sequence_Id__c);             
         }  
     	return participantIdToSequenceIdHistorySetMap;
     }
@@ -59,6 +44,11 @@ public class ContactService implements IParticipant {
     	
     	if(newSequenceHistory != null && newSequenceHistory.size() > 0)
             insert newSequenceHistory;
+            
+        if(unAssociatedParticipantList != null && unAssociatedParticipantList.size() > 0)
+        {
+        	update unAssociatedParticipantList;
+        }
     	
     	return unAssociatedParticipantList;
     }
@@ -165,7 +155,7 @@ public class ContactService implements IParticipant {
 	
 	public Map<Id, List<Sequence_Action__c>> performParticipantActions(List<sObject> participantListToPerformParticipantAction, Map<Id, List<Sequence_Action__c>> participantIdToUnperformedParticipantActionsMap, Map<Id, Cadence__c> activeSequenceIdToSequenceMap, string participantType)
 	{	
-		Map<Id, List<Sequence_Action__c>> participantIdToSequenceActionsToPerformMap =  SequenceEngineHelper.getTopMostUnPerformedParticipantActions(participantListToPerformParticipantAction, participantIdToUnperformedParticipantActionsMap, null, activeSequenceIdToSequenceMap, participantType);
+		//Map<Id, List<Sequence_Action__c>> participantIdToSequenceActionsToPerformMap =  SequenceEngineHelper.getTopMostUnPerformedParticipantActions(participantListToPerformParticipantAction, participantIdToUnperformedParticipantActionsMap, null, activeSequenceIdToSequenceMap, participantType);
 		//participantIdToUnperformedParticipantActionsMap = participantIdToSequenceActionsToPerformMap;		
 			
 		Map<Id, List<Sequence_Action__c>> participantIdToPerformedParticipantActionsMap = new Map<Id, List<Sequence_Action__c>>();	
@@ -332,25 +322,11 @@ public class ContactService implements IParticipant {
         return participantIdToParticipantMapToUpdate.values();
 	}
 	
-	public void updateParticipants(List<SObject> participantListToPerformParticipantAction, List<SObject> participantListToUpdateFields, boolean isTrigger)
+	public void updateParticipants(List<SObject> participantListToUpdateFields)
 	{	
-		if(!isTrigger) {
-            Database.UpsertResult [] upsertResult;
-            try{
-                Set<SObject> listToUpdateParticipants = new Set<SObject>();
-                
-                listToUpdateParticipants.addAll(participantListToPerformParticipantAction);
-                if(participantListToUpdateFields != null){
-                    listToUpdateParticipants.addAll(New Set<SObject>(participantListToUpdateFields));
-                }
-                if(listToUpdateParticipants.size() > 0) {
-                    Contacts.flag = false;   //--to do use of this statement ?
-                    Database.SaveResult[] results = Database.update(New List<SObject>(listToUpdateParticipants), false); 
-                }
-           	}catch(exception e){    
-            	Contacts.flag =false;
-            }            
-        }  
+		 if(participantListToUpdateFields != null && participantListToUpdateFields.size() > 0) {                    
+               Database.SaveResult[] results = Database.update(participantListToUpdateFields, false); 
+         }  
 	}	
 	
 	// private methods

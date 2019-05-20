@@ -47,6 +47,12 @@ public class TestDataFactory {
 		l.Priority__C = 12;
 		return l;
 	}
+    
+    public static Contact createContact() { 
+		Contact contact = new Contact();
+		contact.LastName = 'Test Contact';
+		return contact;
+	}
 
 	public static Action__c createAction(String actionType) {
 		Action__c action = new Action__c();

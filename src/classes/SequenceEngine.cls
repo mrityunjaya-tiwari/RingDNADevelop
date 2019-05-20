@@ -28,12 +28,18 @@ public class SequenceEngine {
 		
 		List<SObject> participantListToCreateParticipantActions = new List<SObject>();
 		List<SObject> participantListToPerformParticipantAction = new List<SObject>();
-		
+       
 		if (isTrigger) {
-			 Map<Id, Set<Id>> participantIdToSequenceIdHistorySetMap = participantService.getSequenceHistory(); 	
-			 Map<Id, List<SObject>> sequenceIdToParticipantListMap = participantService.checkEntryCriteria(participantList, parentParticipantList, activeSequenceIdToSequenceMap, participantIdToSequenceIdHistorySetMap);
+		     Map<String, List<SObject>> filteredParticipantListsMap = SequenceEngineHelper.getFilteredParticipantListsBySequnce(participantList);
+			 List<SObject> participantListWithSequence = filteredParticipantListsMap.get('participantListWithSequence');
+        	 List<SObject> participantListWithoutSequence = filteredParticipantListsMap.get('participantListWithoutSequence');
+        
+			 Map<Id, Set<Id>> participantIdToSequenceIdHistorySetMap = participantService.getSequenceHistory(); 
+			 
+			 Map<Id, List<SObject>> sequenceIdToParticipantListMap = participantService.checkEntryCriteria(participantListWithoutSequence, parentParticipantList, activeSequenceIdToSequenceMap, participantIdToSequenceIdHistorySetMap);
 			 participantListToCreateParticipantActions = participantService.associateParticipant(sequenceIdToParticipantListMap);
-			 participantListToPerformParticipantAction = participantList; 	 		  			 
+			 participantListWithSequence.addAll(participantListToCreateParticipantActions); 
+			 participantListToPerformParticipantAction = participantListWithSequence;		 
 		}
 		else {
 		     participantListToPerformParticipantAction = SequenceEngineHelper.removeChildListItemsFromParentList(participantList, unAssociatedParticipantList);		
@@ -44,9 +50,8 @@ public class SequenceEngine {
 		
 		Map<Id, List<Sequence_Action__c>> participantIdToUnperformedParticipantActionsMap = SequenceEngineHelper.getUnPerformedParticipantActions(participantListToPerformParticipantAction, participantType);
 		Map<Id, List<Sequence_Action__c>> participantIdToPerformedParticipantActionsMap = participantService.performParticipantActions(participantListToPerformParticipantAction, participantIdToUnperformedParticipantActionsMap, activeSequenceIdToSequenceMap, participantType);
-		
 		List<SObject> participantListToUpdate = participantService.updateParticipantFields(participantListToPerformParticipantAction, participantIdToPerformedParticipantActionsMap, parentParticipantList, participantType, isTrigger);
 		
-		participantService.updateParticipants(participantListToPerformParticipantAction, participantListToUpdate, isTrigger);
+		participantService.updateParticipants(participantListToUpdate);
 	}     
 }

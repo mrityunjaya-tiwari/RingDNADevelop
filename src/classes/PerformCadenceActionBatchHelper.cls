@@ -114,21 +114,10 @@ public class PerformCadenceActionBatchHelper {
 		Map <String, Schema.SObjectType> globalDescribedSchemaMap = Schema.getGlobalDescribe();
 		List<Schema.SObjectField> contactFieldList = getFieldListFromGlobalDescribedSchemaMap(globalDescribedSchemaMap, 'Contact');
 		
-		for(Schema.SObjectField contactField : contactFieldList) {
-			query += contactField.getDescribe().getname() + ',';
-		}
-		
-		List<Schema.SObjectField> parentObjectFieldList;
-		for(String parentObjectName : participantTypeToParentObjectList) {
-			parentObjectFieldList = getFieldListFromGlobalDescribedSchemaMap(globalDescribedSchemaMap, parentObjectName);
-		
-			for(Schema.SObjectField parentObjectField : parentObjectFieldList) {
-				query += parentObjectName + '.' + parentObjectField.getDescribe().getname() + ',';
-			}
-		}
+		query = addFieldsInQuery(query, globalDescribedSchemaMap, contactFieldList, participantTypeToParentObjectList);
 		
 		query = query.subString(0, query.length() - 1);
-		query += ' From Contact WHERE Cadence_ID__c != null AND ID IN : contactIdSet Limit' + SequenceEngineHelper.getAvailableQueryRowsLimit();
+		query += ' From Contact WHERE Cadence_ID__c != null AND ID IN: contactIdSet Limit ' + SequenceEngineHelper.getAvailableQueryRowsLimit();
 		return DataBase.query(query);
 	}
 }

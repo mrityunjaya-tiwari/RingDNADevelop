@@ -1,4 +1,4 @@
-public class PerformCadenceActionBatch implements Database.Batchable<sObject>, Database.stateful, Database.AllowsCallouts {
+public class PerformCadenceActionBatch implements Database.Batchable<sObject>, Database.stateful, Database.AllowsCallouts  { 
 
 	public static String nameSpace = CadenceConstants.NAMESPACE;
 	public String objType;
@@ -18,7 +18,7 @@ public class PerformCadenceActionBatch implements Database.Batchable<sObject>, D
 
 	public void execute(Database.BatchableContext bc, List<sObject> objList) {
 		Map<Id, SObject> parentMap = new Map<Id, SObject>();
-		CadenceService.processParticipantsWithCadences(objList, parentMap, objType, false);
+		//CadenceService.processParticipantsWithCadences(objList, parentMap, objType, false);
 
 	}
 

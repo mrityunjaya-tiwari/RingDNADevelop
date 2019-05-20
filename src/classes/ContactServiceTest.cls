@@ -8,8 +8,68 @@ public class ContactServiceTest {
 	public static Action__c action2;
 	public static Action__c action3;
 	
+    
+    @testSetup
+	static void testSetupData() {
+		List<Cadence__c> sequenceListToInsert = createSequence();
+		createSequenceAction(sequenceListToInsert);
+		createContact();
+	}
+	
+	private static List<Cadence__c> createSequence() {
+		List<Criterion> entryCriterionList = new List<Criterion>();
+		entryCriterionList.add(TestDataFactory.createCriterion(1, 'LastName', 'STRING', 'equals', 'Test Contact'));
+		String entryCriterionJson  = TestDataFactory.createCadenceJSON(entryCriterionList, CadenceConstants.CONDITION_AND, '');
+		
+		List<Criterion> exitCriterionList = new List<Criterion>();
+		exitCriterionList.add(TestDataFactory.createCriterion(1, 'FirstName', 'STRING', 'equals', 'Exit'));
+		String exitCriterionJson = TestDataFactory.createCadenceJSON(exitCriterionList, CadenceConstants.CONDITION_AND, ''); 
+		
+        List<Cadence__c> sequenceListToInsert = new List<Cadence__c>();
+		Cadence__c contactSeqRec = TestDataFactory.createCadence(CadenceConstants.CONTACT_OBJECT_NAME);
+		contactSeqRec.Name = 'Cadence New';
+		contactSeqRec.Entrance_Criteria__c = entryCriterionJson;
+		contactSeqRec.Exit_Criteria__c=  exitCriterionJson;
+		contactSeqRec.Exit_Criteria_PE__c = RuleCriterionMatcher.getPostFixExpression(CUSTOM_LOGIC);
+		contactSeqRec.matching_priority__c = 'P1';
+		contactSeqRec.Participent_Activation__c = 'Automatic';
+        sequenceListToInsert.add(contactSeqRec);
+        
+		insert sequenceListToInsert;
+		return sequenceListToInsert;
+	}
+    
+    private static void createSequenceAction(List<Cadence__c> sequenceList) {
+		Action__c action = createAction();
+		
+        List<CadenceAction__C> seqActionListToInsert = new List<CadenceAction__C>();
+        for(Cadence__c sequence : sequenceList) {
+            CadenceAction__C seqActionRec = TestDataFactory.createCadenceAction(sequence.id, action.Id);
+            seqActionRec.Day__c = 2;
+            seqActionRec.Hour__c = 2;
+            seqActionRec.Trigger_Type__c = 'Time Based';
+            seqActionListToInsert.add(seqActionRec);
+        }
+		insert seqActionListToInsert;
+	}
+	 
+	private static Action__c createAction() {
+		Action__c action = TestDataFactory.createAction(CadenceConstants.ACTION_TYPE_EMAIL);
+		action.Activation_Type__c = 'Automatic';
+		insert action;
+		return action;
+	}
+	
+	private static void createContact() {
+		Contact contactRec = TestDataFactory.createContact(); 
+		contactRec.Email = 'Test12@gmail.com';
+		insert contactRec;
+	}
+    
     static testMethod void getSequenceHistoryTest() {
-    	
+    	Contacts.fireTrigger = false;
+		Leads.fireTrigger = false;
+		
     	Account accountRec = TestDataFactory.createAccount();
 		insert accountRec;
 		Action__c actionRec = TestDataFactory.createAction(CadenceConstants.ACTION_TYPE_CALL);
@@ -28,6 +88,9 @@ public class ContactServiceTest {
     }
     
     static testMethod void unAssociateParticipantsTest() {
+    	Contacts.fireTrigger = false;
+		Leads.fireTrigger = false;
+		
     	List<SObject> participantList = new List<SObject>();
     	SequenceEngineWrapper sequenceEngineWrapper = new SequenceEngineWrapper();
     	Account accountRec = TestDataFactory.createAccount();
@@ -51,6 +114,9 @@ public class ContactServiceTest {
     }
     
     static testMethod void checkExitCriteriaTest() {
+    	Contacts.fireTrigger = false;
+		Leads.fireTrigger = false;
+		
     	Map<Id, Cadence__c> sequenceIdToSequenceMap = new Map<Id, Cadence__c>();
     	SequenceEngineWrapper sequenceEngineWrapper = new SequenceEngineWrapper();
     	
@@ -59,7 +125,7 @@ public class ContactServiceTest {
 		List<Criterion> exitCriterionList = new List<Criterion>();
 		
 		Cadence__c seqRec = TestDataFactory.createCadence(CadenceConstants.CONTACT_OBJECT_NAME);
-		insert seqRec;
+		//insert seqRec;
 		Cadence__c seqRec1 = TestDataFactory.createCadence(CadenceConstants.CONTACT_OBJECT_NAME);
 		seqRec1.Name = 'Test Cadence 1';
 		insert seqRec1;

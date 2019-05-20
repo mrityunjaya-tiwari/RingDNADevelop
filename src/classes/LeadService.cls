@@ -3,22 +3,7 @@ public class LeadService implements IParticipant {
     public static String nameSpace = CadenceConstants.NAMESPACE;
         
     public Map<Id, Set<Id>> getSequenceHistory()  
-    {
-    	//Need to remove commented code
-    	/**Map<Id, Set<Id>> leadIdToSequenceActionsIdSetMap = new Map<Id, Set<Id>>();
-        Set<Id> sequenceIds;         
-        List<Sequence_Action__c> sequenceActionAllLeads = [select Id, Lead_Id__c from Sequence_Action__c 
-                                                                         where Lead_Id__c != null];    
-                                                                          
-        for(Sequence_Action__c sequenceAction : sequenceActionAllLeads){
-           
-           if(!leadIdToSequenceActionsIdSetMap.containsKey(sequenceAction.Lead_Id__c))
-           {
-           	  leadIdToSequenceActionsIdSetMap.put(sequenceAction.Lead_Id__c, new Set<Id>());
-           }                       
-           leadIdToSequenceActionsIdSetMap.get(sequenceAction.Lead_Id__c).add(sequenceAction.Id);             
-        }  
-    	return leadIdToSequenceActionsIdSetMap;*/
+    {    	
     	Map<Id, Set<Id>> participantIdToSequenceIdHistorySetMap = new Map<Id, Set<Id>>();
     	for(Participant_Sequence_History__c participantSequenceHistory : [SELECT Lead_Id__c, Sequence_Id__c FROM Participant_Sequence_History__c WHERE Lead_Id__c != null]) {
            
@@ -26,7 +11,7 @@ public class LeadService implements IParticipant {
            {
            	  participantIdToSequenceIdHistorySetMap.put(participantSequenceHistory.Lead_Id__c, new Set<Id>());
            }                       
-           participantIdToSequenceIdHistorySetMap.get(participantSequenceHistory.Lead_Id__c).add(participantSequenceHistory.Id);             
+           participantIdToSequenceIdHistorySetMap.get(participantSequenceHistory.Lead_Id__c).add(participantSequenceHistory.Sequence_Id__c);             
         }  
     	return participantIdToSequenceIdHistorySetMap;
     }
@@ -40,7 +25,7 @@ public class LeadService implements IParticipant {
 		return sequenceEngineWrapper;		
 	}	
 		
-	public static List<SObject> unAssociateParticipants(SequenceEngineWrapper sequenceEngineWrapper, string participantType)
+	public List<SObject> unAssociateParticipants(SequenceEngineWrapper sequenceEngineWrapper, string participantType)
     {
     	List<Participant_Sequence_History__c> newSequenceHistory = new List<Participant_Sequence_History__c>();
     	List<SObject> unAssociatedParticipantList = new List<Sobject>(); 
@@ -59,12 +44,16 @@ public class LeadService implements IParticipant {
     	
     	if(newSequenceHistory != null && newSequenceHistory.size() > 0)
             insert newSequenceHistory;
-    	
+            
+    	if(unAssociatedParticipantList != null && unAssociatedParticipantList.size() > 0)
+        {
+        	update unAssociatedParticipantList;
+        }
     	return unAssociatedParticipantList;
     }
 		
 	public Map<Id, List<SObject>> checkEntryCriteria(List<SObject> participantList, List<SObject> parentParticipantList, Map<Id, Cadence__c> sequenceIdToSequenceMap, Map<Id, Set<Id>> participantIdToSequenceIdHistorySetMap)
-	{
+	{	
 		Map<Id, List<SObject>> sequenceIdToParticipationListMap = new Map<Id, List<SObject>>();	
 				
 		Map<Id, CriterionSet> sequenceIdToSequenceCriteriasMap = RuleCriterionMatcherHelper.getCadenceWiseCriterions(sequenceIdToSequenceMap.values(), CadenceConstants.CRITERION_TYPE_ENTRY);
@@ -75,8 +64,10 @@ public class LeadService implements IParticipant {
 			if (participant.get(nameSpace+'Cadence_Id__c') != null ){
 				continue;
 			}
+			
 			for(Id sequenceId :  sequenceIdToSequenceMap.keySet())
-			{
+			{	
+				system.assert(false, sequenceId);
 				If(participantIdToSequenceIdHistorySetMap.containsKey(participant.Id) && participantIdToSequenceIdHistorySetMap.get(participant.Id).contains(sequenceId))
 				{
 				  continue;
@@ -88,7 +79,7 @@ public class LeadService implements IParticipant {
 				}
 				
 				if(sequenceIdToSequenceCriteriasMap.containsKey(sequenceId))
-				{
+				{	
 					isCriterionMatches = RuleCriterionMatcherHelper.cadenceCriterionMatches(participant, null, sequenceIdToSequenceCriteriasMap.get(sequenceId), null);
 					if(isCriterionMatches) {
 						if(!sequenceIdToParticipationListMap.containsKey(sequenceId))
@@ -101,7 +92,6 @@ public class LeadService implements IParticipant {
 				}				
 			}
 		}
-		
 		return sequenceIdToParticipationListMap;
 	}
 	
@@ -166,7 +156,7 @@ public class LeadService implements IParticipant {
 	public Map<Id, List<Sequence_Action__c>> performParticipantActions(List<sObject> participantListToPerformParticipantAction, Map<Id, List<Sequence_Action__c>> participantIdToUnperformedParticipantActionsMap, Map<Id, Cadence__c> activeSequenceIdToSequenceMap, string participantType)
 	{	
 		//system.assert(false,participantListToPerformParticipantAction +' \n UnperformedParticipantActionsMap \n ' + participantIdToUnperformedParticipantActionsMap + ' \n Active Sequence Id \n ' + activeSequenceIdToSequenceMap );
-		Map<Id, List<Sequence_Action__c>> participantIdToSequenceActionsToPerformMap =  SequenceEngineHelper.getTopMostUnPerformedParticipantActions(participantListToPerformParticipantAction, participantIdToUnperformedParticipantActionsMap, null, activeSequenceIdToSequenceMap, participantType);
+		//Map<Id, List<Sequence_Action__c>> participantIdToSequenceActionsToPerformMap =  SequenceEngineHelper.getTopMostUnPerformedParticipantActions(participantListToPerformParticipantAction, participantIdToUnperformedParticipantActionsMap, null, activeSequenceIdToSequenceMap, participantType);
 		//participantIdToUnperformedParticipantActionsMap = participantIdToSequenceActionsToPerformMap;		
 		
 		Map<Id, List<Sequence_Action__c>> participantIdToPerformedParticipantActionsMap = new Map<Id, List<Sequence_Action__c>>();	
@@ -327,25 +317,11 @@ public class LeadService implements IParticipant {
         return participantIdToParticipantMapToUpdate.values();
 	}
 	
-	public void updateParticipants(List<SObject> participantListToPerformParticipantAction, List<SObject> participantListToUpdateFields, boolean isTrigger)
+	public void updateParticipants(List<SObject> participantListToUpdateFields)
 	{	
-		if(!isTrigger) {
-            Database.UpsertResult [] upsertResult;
-            try{
-                Set<SObject> listToUpdateParticipants = new Set<SObject>();
-                
-                listToUpdateParticipants.addAll(participantListToPerformParticipantAction);
-                if(participantListToUpdateFields != null){
-                    listToUpdateParticipants.addAll(New Set<SObject>(participantListToUpdateFields));
-                }
-                if(listToUpdateParticipants.size() > 0) {
-                    Leads.flag = 0;   //--to do change to boolean in Leads class
-                    Database.SaveResult[] results = Database.update(New List<SObject>(listToUpdateParticipants), false); 
-                }
-           	}catch(exception e){    
-            	Contacts.flag =false;
-            }            
-        }  
+		 if(participantListToUpdateFields != null && participantListToUpdateFields.size() > 0) {                    
+               Database.SaveResult[] results = Database.update(participantListToUpdateFields, false); 
+          }
 	}	
 	
 	// private methods

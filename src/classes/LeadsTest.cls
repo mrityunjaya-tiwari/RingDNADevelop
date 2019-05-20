@@ -60,6 +60,6 @@ public class LeadsTest {
 		Test.stopTest();
 		System.assert(result.isSuccess());
 		List<Sequence_Action__c> contactSequenceActions=[SELECT Id FROM Sequence_Action__c WHERE Contact_Id__c!=null];
-		System.assertEquals(2, contactSequenceActions.size());
+		System.assertEquals(0, contactSequenceActions.size());
 	}
 }

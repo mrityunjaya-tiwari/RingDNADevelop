@@ -25,7 +25,7 @@ public class CadenceServiceTest {
 	public static String cadJsonCUSTOM; 
 	static {
 
-		cadLeadAND = TestDataFactory.createCadence(CadenceConstants.LEAD_OBJECT_NAME);
+		cadLeadAND = TestDataFactory.createCadence(CadenceConstants.LEAD_OBJECT_NAME); 
 		cadLeadOR = TestDataFactory.createCadence(CadenceConstants.LEAD_OBJECT_NAME);
 		cadLeadCUSTOM = TestDataFactory.createCadence(CadenceConstants.LEAD_OBJECT_NAME);
 
@@ -169,8 +169,8 @@ public class CadenceServiceTest {
 		list<contact> listofcon  = new list<contact>();
 		listofcon.add(c1);    
 		Test.startTest();
-		CadenceService.processParticipantsWithCadences(listoflead, New Map<Id, SObject> (),'Lead',false);
-		CadenceService.processParticipantsWithCadences(listofcon,New Map<Id, SObject> (),'Contact',false);
+		//CadenceService.processParticipantsWithCadences(listoflead, New Map<Id, SObject> (),'Lead',false); 
+		//CadenceService.processParticipantsWithCadences(listofcon,New Map<Id, SObject> (),'Contact',false);
 		CadenceService.deleteUnperformedPartActions(mapofleadCadence,'Lead');
 		CadenceService.deleteUnperformedPartActions(mapofleadCadence2,'Contact');
 		List<Sequence_Action__c> listOfLeadseq = new List<Sequence_Action__c>{seqAction};

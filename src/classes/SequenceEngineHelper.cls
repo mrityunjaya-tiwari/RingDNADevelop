@@ -22,13 +22,6 @@ public class SequenceEngineHelper {
     	return Limits.getLimitDMLRows() - Limits.getDMLRows();
     }
      
-    public static Map<Id, Set<Id>> getSequenceHistory()
-    {
-    	Map<Id, Set<Id>> participantIdToSequenceIdSetMap;
-    	
-    	return participantIdToSequenceIdSetMap;
-    }  
-    
     /**
     * Name: deleteUnPerformedParticipantActions and update sequenceId and fields of participation list.
     * Desc: Method to delete un-performed participation actions (sequences) from Participation action Junction object 
@@ -142,7 +135,7 @@ public class SequenceEngineHelper {
 	   												: new Set<Id>();
 	   		Set<Id> SequenceActionIdSet;
 	   		 
-	   		if(participantType == 'Contact') {
+	   		if(participantType == 'Contact' || participantType == 'Opportunity') {
 	   			Contact contactRecord = (Contact)participant;
 	   			SequenceActionIdSet = sequenceIdToSequenceActionIdSetMap.containsKey(contactRecord.Cadence_ID__c) ? sequenceIdToSequenceActionIdSetMap.get(contactRecord.Cadence_ID__c)
 	   									: new Set<Id>(); 
@@ -156,7 +149,6 @@ public class SequenceEngineHelper {
    				requiredParticipantList.add(participant);
    			}
 	   	}
-	   	system.assert(false,requiredParticipantList );
 	   	return requiredParticipantList;
 	}
 	
@@ -357,6 +349,8 @@ public class SequenceEngineHelper {
 	 * @param fieldType - type of field in sf
 	 */
 	public static SObject updateFieldValue(SObject obj, String fieldName, Object value, String fieldType) {
+		System.debug('fieldName:'+ fieldName);
+		System.debug('value:'+ value);
 		if(fieldType.equalsIgnoreCase('currency') || fieldType.equalsIgnoreCase('double') || fieldType.equalsIgnoreCase('percent') || fieldType.equalsIgnoreCase('decimal')) {
 			obj.put(fieldName, Decimal.valueOf(String.valueOf(value))); 
 		} else if(fieldType.equalsIgnoreCase('boolean')) {
@@ -370,7 +364,7 @@ public class SequenceEngineHelper {
 			obj.put(fieldName, (Integer.valueOf(value)));
 		} else if(fieldType.equalsIgnoreCase('reference')){
 			obj.put(fieldName, (ID)value);
-		} else {
+		} else {			
 			obj.put(fieldName, (string)value);
 		}   
 		return obj;
@@ -426,6 +420,37 @@ public class SequenceEngineHelper {
 		}
 	}  
     
+     public Static Map<String, List<Lead>> processObjectList(List<Lead> leadList){
+       List<Lead> leadListWithCadenceIds = new List<Lead>();
+       List<Lead> leadListWithoutCadenceIds = new List<Lead>();
+       for(Lead conObj : leadList){
+           if (conObj.Cadence_ID__c == null || string.valueOf(conObj.Cadence_ID__c).trim() == ''){
+               leadListWithoutCadenceIds.add(conObj);
+           }else{
+               leadListWithCadenceIds.add(conObj);
+           }
+       }
+       Map<String, List<Lead>> MapOfSobjList = New Map<String, List<Lead>>();
+       MapOfSobjList.put('leadListWithoutCadenceIds',leadListWithoutCadenceIds);
+       MapOfSobjList.put('leadListWithCadenceIds',leadListWithCadenceIds);
+       return MapOfSobjList;
+   }
+   
+   public Static Map<String, List<SObject>> getFilteredParticipantListsBySequnce(List<SObject> participantList){
+       List<SObject> participantListWithSequence = new List<SObject>();
+       List<SObject> participantListWithoutSequence = new List<SObject>();
+       for(SObject participant : participantList){
+           if (participant.get('Cadence_ID__c') != null && string.valueOf(participant.get('Cadence_ID__c')).trim() != ''){
+               participantListWithSequence.add(participant); 
+           }else{
+               participantListWithoutSequence.add(participant);
+           }
+       }
+       Map<String, List<SObject>> participantListsMap = New Map<String, List<SObject>>();
+       participantListsMap.put('participantListWithoutSequence',participantListWithoutSequence);
+       participantListsMap.put('participantListWithSequence',participantListWithSequence);
+       return participantListsMap;
+   }
     
     @future(callout=true)
     public static void sendNativeEmailTroughTrigger(String serializeNativeEmailMessageList)

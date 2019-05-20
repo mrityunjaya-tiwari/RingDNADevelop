@@ -16,6 +16,6 @@ public interface IParticipant {
 	
 	List<SObject> updateParticipantFields(List<sObject> participantListToPerformParticipantAction, Map<Id, List<Sequence_Action__c>> participantIdToPerformedParticipantActionsMap, List<SObject> parentParticipantList, string participantType, boolean isTrigger);
 	
-	void updateParticipants(List<SObject> participantListToPerformParticipantAction, List<SObject> participantListToUpdate, boolean isTrigger);
+	void updateParticipants(List<SObject> participantListToUpdate);
 	
 }

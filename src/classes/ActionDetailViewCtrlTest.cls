@@ -9,12 +9,16 @@ public class ActionDetailViewCtrlTest {
 	public static CadenceAction__c cadAction;
 	public static Account act;
 
+	
 	//Constants 
 	Public static Final String ACTION_TYPE_CALL = 'Call';
 	Public static Final String RECORD_TYPE_CONTACT = 'Contact';
 	Public static Final String RECORD_TYPE_LEAD = 'Lead';
 
 	static {
+		Contacts.fireTrigger = false;
+		Leads.fireTrigger = false;
+			
 		act = TestDataFactory.createAccount();
 		insert act;
 		action1 = TestDataFactory.createAction(ACTION_TYPE_CALL);
@@ -31,7 +35,9 @@ public class ActionDetailViewCtrlTest {
 
 	@isTest
 	static void fetchCadenceActionsTest() {
-
+		Contacts.fireTrigger = false;
+		Leads.fireTrigger = false;	
+	
 		Lead testLead1 = TestDataFactory.createLead(cad1.Id);
 		insert testLead1;
 		Cadence__c cad2 = TestDataFactory.createCadence(RECORD_TYPE_CONTACT);
@@ -54,6 +60,9 @@ public class ActionDetailViewCtrlTest {
 
 	@isTest
 	static void deleteActionsTest() {
+		Contacts.fireTrigger = false;
+		Leads.fireTrigger = false;	
+	
 		Test.startTest();
 		CadenceActionListController.deleteActions(new List<Id>{action1.Id});
 		Test.stopTest();
@@ -64,7 +73,9 @@ public class ActionDetailViewCtrlTest {
 
 	@isTest
 	static void getCadenceParticipantsDataTest() {
-
+		Contacts.fireTrigger = false;
+		
+		Leads.fireTrigger = false;	
 		Lead testLead1 = TestDataFactory.createLead(cad1.Id);
 		testLead1.EntranceCriteria_Matched_Date__c = system.now();
 		testLead1.isActivated__c = true;
@@ -92,6 +103,5 @@ public class ActionDetailViewCtrlTest {
 		System.assertEquals(1, contactWrapper.size());
 		System.assertEquals(false, testLead1.isActivated__c);
 		System.assertEquals(true, cont1.isActivated__c);
-
 	}
 }
