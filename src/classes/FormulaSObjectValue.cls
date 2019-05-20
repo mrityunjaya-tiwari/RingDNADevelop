@@ -47,5 +47,10 @@ public with sharing class FormulaSObjectValue {
 			return null;
 		}
 	}
+	
+	public SObject getCurrent()
+	{
+	   return current;
+	}
 
 }

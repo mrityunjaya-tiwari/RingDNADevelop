@@ -1,6 +1,5 @@
 public with sharing class CadenceController {
 	public static String nameSpace = CadenceConstants.NAMESPACE;
-	public static Set<Id>  listOfOppContactIds;
 	private static string contactRole ='';
 
 	@AuraEnabled
@@ -77,56 +76,12 @@ public with sharing class CadenceController {
 		List<CriterionWrapper> criterions = CadenceService.getFieldsWithLabelsForUpdate(objectList);
 		return criterions;
 	}
-
+	
 	@AuraEnabled
-	public static void activateCadence(Id cadId) {
-		Cadence__c cad = new Cadence__c(Id=cadId, Status__c=true);
-		upsert cad;
-		updateParticipants(cadId); 
-		CadenceService.setParticipantsActivation(cadId, true);
-	}
-
-	@AuraEnabled
-	public static void updateParticipants(Id cadId) {
-		Cadence__c cadence = CadenceSelector.getCadenceById(cadId);
-		Map<Id, List<CadenceAction__c>> objIdToAllCadActListMap = new Map<Id, List<CadenceAction__c>>();
-		String objName = cadence.Record_Type__c;
-		String query2;
-
-		if(!objName.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_OBJECT_NAME))
-			query2 = formQuery2(objName,cadence);
-		else{
-			query2 = formQueryOpportunity(objName,cadence);
-		}
-
-		List<SObject> sObjectListToUpdate = new List<SObject>();
-		if(query2 != null && query2 != ''){
-			for(Sobject obj : Database.query(RemoveBraces(query2) + ' order by lastmodifieddate limit 100')){
-				obj.put(nameSpace+'Cadence_Id__c', cadence.Id);
-				if(cadence.Participent_Activation__c.equalsIgnoreCase(CadenceConstants.PARTICIPANT_ACTIVATION_AUTOMATIC)) {
-					obj.put(nameSpace+'isActivated__c', true);
-					obj.put(nameSpace+'EntranceCriteria_Matched_Date__c', System.now());
-					objIdToAllCadActListMap.put((Id)obj.get('Id'), cadence.CadenceActions__r);
-				} else {
-					obj.put(nameSpace+'isActivated__c', false);
-				}
-				sObjectListToUpdate.add(obj);
-			}
-			if(!objIdToAllCadActListMap.isEmpty()) {
-				List<Sequence_Action__c> testcreateActionParticipants =CadenceService.createActionParticipants(objIdToAllCadActListMap, new Map<Id, SObject>(sObjectListToUpdate), objName);
-			}
-			if(sObjectListToUpdate !=  null && sObjectListToUpdate.size() > 0) {
-				Database.SaveResult[] results = Database.update(sObjectListToUpdate, false);
-				Set<Id> resultIds = (new Map<Id,SObject>(sObjectListToUpdate)).keySet();
-				for(Database.saveResult r: results){
-					if(r.isSuccess()){
-						resultIds.remove(r.getId());
-					}
-				}
-				CadenceSelector.DeleteParticipantAction(resultIds);
-			}
-		}      
-	}   
+	public static void activateSequences(List<Id> sequenceIdList) {
+		SequenceEngineService.activateSequences(sequenceIdList); 
+	} 
+	
 	@AuraEnabled
 	public static void deactivateCadence(Id cadId) {
 		Cadence__c cad = new Cadence__c(Id=cadId, Status__c=false);
@@ -375,7 +330,7 @@ public with sharing class CadenceController {
 		return objectList;
 	}
 
-	public Static String formQueryOpportunity(String objName, Cadence__c cadence){
+	public Static String formQueryOpportunity(String objName, Cadence__c cadence, set<Id> listOfOppContactIds){
 		String query;
 		Map<Id,List<Id>> opportunityContactMap = new Map<Id,List<Id>>();
 		List<Id> contactIds = new List<Id>();
@@ -384,7 +339,6 @@ public with sharing class CadenceController {
 
 			List<Opportunity> listOfopprtunityToUpdate = new List<Opportunity>();
 			List<Opportunity> listOfopprtunity = Database.query(opporQuery);
-			CadenceService.mapOfOppcontact = CadenceService.opporContactMap(listOfopprtunity);
 			String oppContactRoleQuery;
 			if(contactRole!='')
 				oppContactRoleQuery='Select ContactId,OpportunityId From OpportunityContactRole Where OpportunityId In :listOfopprtunity and Role =\''+String.escapeSingleQuotes(contactRole)+'\'';    
@@ -408,7 +362,6 @@ public with sharing class CadenceController {
 					}
 				}
 			}
-
 			Set<Id> resultIds = new Set<Id>();
 
 			if (listOfopprtunityToUpdate != null && listOfopprtunityToUpdate.size() > 0) {
@@ -419,7 +372,6 @@ public with sharing class CadenceController {
 					}
 				}
 			}
-			listOfOppContactIds = new set<Id>();
 			if(opportunityContactMap != null && opportunityContactMap.size() > 0){
 				for(Id opportunityId : resultIds){
 					if(opportunityContactMap.containsKey(opportunityId) ){
@@ -506,7 +458,6 @@ public with sharing class CadenceController {
 				}
 			}
 		}
-
         return RemoveBraces(query);
     }
     

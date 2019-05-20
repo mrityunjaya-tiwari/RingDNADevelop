@@ -21,6 +21,7 @@ public class TestDataFactory {
 		l.Company = 'Test Company';
 		l.Cadence_Id__c = cadenceId;
 		l.Priority__C = 12;
+		l.isActivated__c = true;
 		return l;
 	}
 
@@ -45,6 +46,12 @@ public class TestDataFactory {
 		l.Company = 'Test Company';
 		l.Priority__C = 12;
 		return l;
+	}
+    
+    public static Contact createContact() { 
+		Contact contact = new Contact();
+		contact.LastName = 'Test Contact';
+		return contact;
 	}
 
 	public static Action__c createAction(String actionType) {
@@ -92,6 +99,20 @@ public class TestDataFactory {
 				cadenceAction.Trigger_Type__c);
 
 		return sequenceAction;
+	}
+	
+	public static Sequence_Action__c createParticipantAction(Id participantId, Id sequenceActionId, String participantType) {
+		Sequence_Action__c  participantAction = new Sequence_Action__c();
+		participantAction.Name= 'demoname';
+		if(participantType == 'Contact') {
+			participantAction.Contact_Id__c = participantId;
+		} else {
+			participantAction.Lead_Id__c = participantId;
+		}
+		participantAction.CadenceAction_ID__c=sequenceActionId;
+		participantAction.isActionPerformed__c=false;
+		participantAction.Show_on_Target_List__c = false;
+		return participantAction;
 	}
 
 	public static String createCadenceJSON(List<Criterion> criterionList, String condition, String priorityFormula) {

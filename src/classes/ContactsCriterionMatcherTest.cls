@@ -215,7 +215,7 @@ public class ContactsCriterionMatcherTest {
 		insert c4;
 
 		Test.startTest();
-		CadenceController.updateParticipants(cadContactAND.Id);
+		//CadenceController.updateParticipants(cadContactAND.Id);
 		Test.stopTest();
 
 		c4 = [Select Id, Cadence_Id__c from Contact where Id = :c4.Id];

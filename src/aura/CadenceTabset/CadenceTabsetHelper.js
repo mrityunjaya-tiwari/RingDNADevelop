@@ -5,10 +5,10 @@
 	
 	activateCadence : function(component, event, helper) {
 		var cadence = component.get('v.newCadence');
-        var action = component.get('c.activateCadence');
+        var action = component.get('c.activateSequences');
         component.set('v.isActive', false);
 		action.setParams({
-			"cadId" : cadence.id
+			"sequenceIdList" : [cadence.id]
 		});
 		action.setCallback(this, function(response){
 			var state = response.getState();

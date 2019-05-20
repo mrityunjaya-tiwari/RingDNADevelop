@@ -75,34 +75,6 @@ public class CadenceSTest {
 		CadenceService.setParticipantsActivation(cadence1.Id, True);
 		Test.stopTest();
 	}
-	@isTest
-	public static void processObjectListTest(){
-		List<Lead> leadlist= new List<Lead>();
-		Lead l1= TestDataFactory.createLead();
-		l1.Company='COM';
-		l1.FirstName='Test#11';
-		l1.LastName='lname';
-		l1.Status = 'Open - Not Contacted';
-		l1.LeadSource = 'Web';
-		l1.Title = 'Test';
-		l1.Priority__C = 12;
-		insert l1;
-
-		Lead l2 = TestDataFactory.createLead();
-		l2.status = 'Open - Not Contacted';
-		l2.LeadSource = 'Other';
-		l2.Title = 'Test';
-		l1.Company='SecondCOM';
-		l1.FirstName='fname2';
-		l1.LastName='lname2';
-		insert l2;
-
-		leadlist.add(l1);
-		leadlist.add(l2);
-		Test.startTest();
-		CadenceService.processObjectList(leadList);
-		Test.stopTest();
-	}
 
 	@isTest
 	public static void createEmailMessageTest(){
@@ -117,26 +89,6 @@ public class CadenceSTest {
 		CadenceService.createEmailMessage(c1.Id, emailTemplateObj2.Id);
 		Test.stopTest();
 	}
-
-	@isTest
-	public static void performTaskActionTest(){
-		Contact c2= new Contact();
-		c2.FirstName='fname';
-		c2.LastName='lname';
-		c2.Department='IT';       
-		insert c2;
-
-		Task taskObj = new Task();
-		taskObj.subject = 'Description';
-		taskObj.Description = 'testDesc';
-
-		String jsonString = JSON.serialize(taskObj);
-
-		Test.startTest();
-		CadenceService.performTaskAction(c2.Id, jsonString);
-		Test.stopTest();
-	}
-
 
 	@isTest
 	public static void assignCadenceToParticipantsTest(){
@@ -180,13 +132,12 @@ public class CadenceSTest {
 
 		insert l1;
 		Test.startTest();
-		CadenceController.updateParticipants(cadenceobj.Id);
+		//CadenceController.updateParticipants(cadenceobj.Id);
 		CadenceService.setParticipantsActivation(cadenceobj.Id,true);          
 		Test.stopTest();
 		l1 = [Select Id, Cadence_Id__c from Lead where Id = :l1.Id];
 		l1.EntranceCriteria_Matched_Date__c = system.now();
-		System.assertEquals(cadenceobj.Id, l1.Cadence_Id__c, 'Cadence lookup will populate as its criterion matches');    
-		CadenceService.assignCadenceToParticipants(new Map<Id,Cadence__c>{ cadenceobj.Id => cadenceobj }, new List<Lead>{l1}, New Map<Id, SObject>(), 'lead');
+		System.assertEquals(cadenceobj.Id, l1.Cadence_Id__c, 'Cadence lookup will populate as its criterion matches');    		
 	} 
 
 	@isTest
@@ -207,17 +158,5 @@ public class CadenceSTest {
 		Test.startTest();
 		CadenceService.getRemainingParticipantActions(new Set<Id>{c4.Id}, 'contact');
 		Test.stopTest();
-	}
-
-	@isTest
-	public static void deleteSobjectsByIdsTest(){
-		Contact c3= new Contact();
-		c3.FirstName='fname';
-		c3.LastName='lname';
-		c3.Department='IT';       
-		insert c3;
-		Test.startTest();
-		CadenceService.deleteSobjectsByIds('contact', new List<Id>{c3.Id});
-		Test.stopTest();
-	}
+	}	
 }
