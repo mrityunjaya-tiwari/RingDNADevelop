@@ -93,10 +93,13 @@ public class OpportunityService implements IParticipant {
 				if(sequenceIdToSequenceCriteriasMap.containsKey(sequenceId))
 				{
 					isCriterionMatches = RuleCriterionMatcherHelper.cadenceCriterionMatches(opportunity, null, sequenceIdToSequenceCriteriasMap.get(sequenceId), ruleCriteriaMatcherDataSet);
-                    
+					
                     if(isCriterionMatches) {
 						List<SObject> matchedContactsToUpdateList = new List<Sobject>();	
-						Set<String> matchedRolesForOpportunity = ruleCriteriaMatcherDataSet.opportunityIdwithMatchedContactRoleIds.get(opportunity.Id);
+						Set<String> matchedRolesForOpportunity = new Set<String>();
+                        if (ruleCriteriaMatcherDataSet.opportunityIdwithMatchedContactRoleIds != null && ruleCriteriaMatcherDataSet.opportunityIdwithMatchedContactRoleIds.isEmpty() == false){
+                            matchedRolesForOpportunity = ruleCriteriaMatcherDataSet.opportunityIdwithMatchedContactRoleIds.get(opportunity.Id);
+                        }
 						for(OpportunityContactRole opportunityContactRole : ((Opportunity)opportunity).getSObjects('OpportunityContactRoles'))
 						{								
 							if(matchedRolesForOpportunity.contains(opportunityContactRole.Id))
@@ -108,7 +111,7 @@ public class OpportunityService implements IParticipant {
 	                            opportunity.put(nameSpace+'Cadence_Id__c', sequenceId); 
 	                            matchedOpportunityToUpdate.add(opportunity);
 							}												
-						} 							
+						} 		
 						if(!sequenceIdToParticipationListMap.containsKey(sequenceId))
 						{
 							sequenceIdToParticipationListMap.put(sequenceId, new List<SObject>());

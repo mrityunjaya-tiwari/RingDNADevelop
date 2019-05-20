@@ -37,7 +37,7 @@ public class opportunities extends SObjectDomain {
         List<SObject> participantList = getContactsRelatedToOpportunities(opportunityList);
         system.debug('participantList ' + participantList);
         system.debug('opportunityList ' + opportunityList);
-        SequenceEngine.processSequences(CadenceConstants.CONTACT_OBJECT_NAME, participantList, opportunityList, true);
+        SequenceEngine.processSequences(CadenceConstants.OPPORTUNITY_OBJECT_NAME, participantList, opportunityList, true);
     }
     
     private static String formOpportunityContactSelectQuery(Set<Id> opportunityIdSet) {

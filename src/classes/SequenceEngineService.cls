@@ -133,12 +133,14 @@ public class SequenceEngineService {
 	public Static void disableParticipantTrigger(String sequenceRecordType) {
 		Contacts.fireTrigger = false;//(sequenceRecordType == CadenceConstants.CONTACT_OBJECT_NAME) ? false : true;
 		Leads.fireTrigger = false;//(sequenceRecordType == CadenceConstants.LEAD_OBJECT_NAME) ? false : true;
-	}
+        Opportunities.fireTrigger = false;
+    }
 	
 	// to do - can move to util
 	public Static void enableParticipantTrigger() {
 		Contacts.fireTrigger = true;
 		Leads.fireTrigger = true;
+        Opportunities.fireTrigger = true;
 	}
 	
 	// to do - move to util

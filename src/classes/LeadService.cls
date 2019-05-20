@@ -67,7 +67,6 @@ public class LeadService implements IParticipant {
 			
 			for(Id sequenceId :  sequenceIdToSequenceMap.keySet())
 			{	
-				system.assert(false, sequenceId);
 				If(participantIdToSequenceIdHistorySetMap.containsKey(participant.Id) && participantIdToSequenceIdHistorySetMap.get(participant.Id).contains(sequenceId))
 				{
 				  continue;

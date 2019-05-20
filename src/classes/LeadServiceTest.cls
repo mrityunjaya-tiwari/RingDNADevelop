@@ -148,7 +148,17 @@ public class LeadServiceTest {
     	List<Id> sequenceIdList = new List<Id>{seqIdToSequneceRecMap.values()[0].Id};
     	activateSequences(seqIdToSequneceRecMap.values());
     	
-    	String query = PerformCadenceActionBatchHelper.formQuery(CadenceConstants.LEAD_OBJECT_NAME);
+    	List<String> participantTypeToParentObjectList = PerformCadenceActionBatchHelper.getParticipantTypeToParentObjectListMap().get(CadenceConstants.LEAD_OBJECT_NAME);
+        
+        String query = 'Select ';
+        
+        Map <String, Schema.SObjectType> globalDescribedSchemaMap = Schema.getGlobalDescribe();
+        List<Schema.SObjectField> contactFieldList = PerformCadenceActionBatchHelper.getFieldListFromGlobalDescribedSchemaMap(globalDescribedSchemaMap, 'Lead');
+        
+        query = PerformCadenceActionBatchHelper.addFieldsInQuery(query, globalDescribedSchemaMap, contactFieldList, participantTypeToParentObjectList);
+        query = query.subString(0, query.length() - 1);
+        query += ' From Lead' ;
+        
     	List<Lead> leadList = Database.query(query);
     	
     	Map<Id, Set<Id>> participantIdToSequenceIdHistorySetMap = new LeadService().getSequenceHistory();
@@ -157,162 +167,113 @@ public class LeadServiceTest {
     	Map<Id, List<SObject>> sequenceIdToParticipationListMap = new LeadService().checkEntryCriteria(leadList, null, seqIdToSequneceRecMap, participantIdToSequenceIdHistorySetMap);
     	Test.stopTest();
     	
-    	system.assert(false, sequenceIdToParticipationListMap);
     	System.assertEquals(1, sequenceIdToParticipationListMap.get(seqIdToSequneceRecMap.values()[0].Id).size());
     }
     
-	    
     static testMethod void associateParticipantTest() {
-    	Contacts.fireTrigger = false;
-		Leads.fireTrigger = false;
+    	Map<Id, Cadence__c> seqIdToSequneceRecMap = new Map<Id, Cadence__c>([SELECT Id, Name, Entrance_Criteria__c, Entrance_Criteria_PE__c, Exit_Criteria__c, Exit_Criteria_PE__c,
+                                       Participent_Activation__c, Record_Type__c, Status__c, matching_priority__c, CreatedDate,LastModifiedDate,
+                                       (SELECT Id, Name, Action_Criterion__c, Action_Criteria_PE__c, Action_Id__c,
+                                        Cadence_Id__c, Day__c, Hour__c, Trigger_Type__c, Fields_To_Update_Action__c, Action_Id__r.Activation_Type__c, 
+                                        Action_Id__r.Task_Description__c, Action_Id__r.Template_Id__c, Action_Id__r.Type__c  
+                                        FROM CadenceActions__r order by Index__c) 
+                                       FROM Cadence__c]);
+
+    	List<Id> sequenceIdList = new List<Id>{seqIdToSequneceRecMap.values()[0].Id};
+    	activateSequences(seqIdToSequneceRecMap.values());
     	
-		Map<Id, List<SObject>> sequenceIdToParticipantListMap = new Map<Id, List<SObject>>();
-		List<Cadence__c> seqRecList = new List<Cadence__c>();
-		List<Lead> participantList = new List<Lead>();
-		List<Lead> participantList1 = new List<Lead>();
-		
-    	Action__c actionRec = TestDataFactory.createAction(CadenceConstants.ACTION_TYPE_CALL);
-		insert actionRec;
-		Cadence__c seqRec = TestDataFactory.createCadence(CadenceConstants.LEAD_OBJECT_NAME);
-		insert seqRec;
-		CadenceAction__C seqActionRec = TestDataFactory.createCadenceAction(seqRec.Id, actionRec.Id);
-		insert seqActionRec;
-		Lead leadRec = TestDataFactory.createLead(seqRec.Id);
-		insert leadRec; 
-		Sequence_Action__c participantAction = TestDataFactory.createParticipantAction(leadRec.Id, seqActionRec.Id, CadenceConstants.LEAD_OBJECT_NAME);
-		insert participantAction;
-		
-		Action__c actionRec1 = TestDataFactory.createAction(CadenceConstants.ACTION_TYPE_CALL);
-		insert actionRec1;
-		Cadence__c seqRec1 = TestDataFactory.createCadence(CadenceConstants.LEAD_OBJECT_NAME);
-		seqRec1.Name = 'Cadence New 1';
-		seqRec1.Status__c = false;
-		insert seqRec1;
-		CadenceAction__C seqActionRec1 = TestDataFactory.createCadenceAction(seqRec1.Id, actionRec1.Id);
-		insert seqActionRec1;
-		Lead leadRec1 = TestDataFactory.createLead(seqRec1.Id);
-		leadRec1.LastName = 'Lead New 1';
-		leadRec1.Company = 'Company New 1';
-		insert leadRec1; 
-		Sequence_Action__c participantAction1 = TestDataFactory.createParticipantAction(leadRec1.Id, seqActionRec1.Id, CadenceConstants.LEAD_OBJECT_NAME);
-		insert participantAction1;
-		
-		Action__c actionRec2 = TestDataFactory.createAction(CadenceConstants.ACTION_TYPE_CALL);
-		insert actionRec2;
-		Cadence__c seqRec2 = TestDataFactory.createCadence(CadenceConstants.LEAD_OBJECT_NAME);
-		seqRec2.Name = 'Cadence New 2';
-		seqRec2.Status__c = false;
-		insert seqRec2;
-		CadenceAction__C seqActionRec2 = TestDataFactory.createCadenceAction(seqRec2.Id, actionRec2.Id);
-		insert seqActionRec2;
-		Lead leadRec2 = TestDataFactory.createLead(seqRec2.Id);
-		leadRec2.LastName = 'Lead New 2';
-		leadRec2.Company = 'Company New 2';
-		insert leadRec2; 
-		Sequence_Action__c participantAction2 = TestDataFactory.createParticipantAction(leadRec2.Id, seqActionRec2.Id, CadenceConstants.LEAD_OBJECT_NAME);
-		insert participantAction2;
-		
-		Action__c actionRec3 = TestDataFactory.createAction(CadenceConstants.ACTION_TYPE_CALL);
-		insert actionRec3;
-		Cadence__c seqRec3 = TestDataFactory.createCadence(CadenceConstants.LEAD_OBJECT_NAME);
-		seqRec3.Name = 'Cadence New 3';
-		seqRec3.Status__c = false;
-		insert seqRec3;
-		CadenceAction__C seqActionRec3 = TestDataFactory.createCadenceAction(seqRec3.Id, actionRec3.Id);
-		insert seqActionRec3;
-		Lead leadRec3 = TestDataFactory.createLead(seqRec3.Id);
-		leadRec3.LastName = 'Lead New 3';
-		leadRec3.Company = 'Company New 3';
-		insert leadRec3; 
-		Sequence_Action__c participantAction3 = TestDataFactory.createParticipantAction(leadRec3.Id, seqActionRec3.Id, CadenceConstants.LEAD_OBJECT_NAME);
-		insert participantAction3;
-		
-		participantList.add(leadRec);
-		participantList.add(leadRec1);
-		
-		participantList1.add(leadRec2);
-		participantList1.add(leadRec3);
-		
-		sequenceIdToParticipantListMap.put(seqRec.Id, participantList);
-		sequenceIdToParticipantListMap.put(seqRec2.Id, participantList1);
-		
-		Test.startTest();
-    	List<Lead> associateParticipantList = new LeadService().associateParticipant(sequenceIdToParticipantListMap);
+    	List<String> participantTypeToParentObjectList = PerformCadenceActionBatchHelper.getParticipantTypeToParentObjectListMap().get(CadenceConstants.LEAD_OBJECT_NAME);
+        
+        String query = 'Select ';
+        
+        Map <String, Schema.SObjectType> globalDescribedSchemaMap = Schema.getGlobalDescribe();
+        List<Schema.SObjectField> contactFieldList = PerformCadenceActionBatchHelper.getFieldListFromGlobalDescribedSchemaMap(globalDescribedSchemaMap, 'Lead');
+        
+        query = PerformCadenceActionBatchHelper.addFieldsInQuery(query, globalDescribedSchemaMap, contactFieldList, participantTypeToParentObjectList);
+        query = query.subString(0, query.length() - 1);
+        query += ' From Lead' ;
+        
+    	List<Lead> leadList = Database.query(query);
+    	
+    	Map<Id, Set<Id>> participantIdToSequenceIdHistorySetMap = new LeadService().getSequenceHistory();
+    	
+    	Map<Id, List<SObject>> sequenceIdToParticipationListMap = new LeadService().checkEntryCriteria(leadList, null, seqIdToSequneceRecMap, participantIdToSequenceIdHistorySetMap);
+    	
+    	Test.startTest();
+    	List<SObject> leadList1 = new LeadService().associateParticipant(sequenceIdToParticipationListMap);
     	Test.stopTest();
-    	system.assertEquals(associateParticipantList.size(),4);
+    	
+    	System.assertEquals(seqIdToSequneceRecMap.values()[0].Id, leadList1[0].get('Cadence_Id__c'));
     }
     
     static testMethod void createParticipantActionsTest() {
-    	Contacts.fireTrigger = false;
-		Leads.fireTrigger = false;
-		
-    	Map<Id, Cadence__c> sequenceIdToSequenceMap = new Map<Id, Cadence__c>();
-    	List<SObject> participantList = new List<SObject>();
+    	Map<Id, Cadence__c> seqIdToSequneceRecMap = new Map<Id, Cadence__c>([SELECT Id, Name, Entrance_Criteria__c, Entrance_Criteria_PE__c, Exit_Criteria__c, Exit_Criteria_PE__c,
+                                       Participent_Activation__c, Record_Type__c, Status__c, matching_priority__c, CreatedDate,LastModifiedDate,
+                                       (SELECT Id, Name, Action_Criterion__c, Action_Criteria_PE__c, Action_Id__c,
+                                        Cadence_Id__c, Day__c, Hour__c, Trigger_Type__c, Fields_To_Update_Action__c, Action_Id__r.Activation_Type__c, 
+                                        Action_Id__r.Task_Description__c, Action_Id__r.Template_Id__c, Action_Id__r.Type__c  
+                                        FROM CadenceActions__r order by Index__c) 
+                                       FROM Cadence__c]);
+
+    	List<Id> sequenceIdList = new List<Id>{seqIdToSequneceRecMap.values()[0].Id};
+    	CadenceController.activateSequences(sequenceIdList); 
     	
-    	Action__c actionRec = TestDataFactory.createAction(CadenceConstants.ACTION_TYPE_CALL);
-		List<Sequence_Action__c> seqActRec = new List<Sequence_Action__c>();
-		insert actionRec;
-		Cadence__c seqRec = TestDataFactory.createCadence(CadenceConstants.LEAD_OBJECT_NAME);
-		insert seqRec;
-		CadenceAction__C seqActionRec = TestDataFactory.createCadenceAction(seqRec.Id, actionRec.Id);
-		insert seqActionRec;
-		Lead leadRec = TestDataFactory.createLead(seqRec.Id);
-		insert leadRec; 
-		Sequence_Action__c participantAction = TestDataFactory.createParticipantAction(leadRec.Id, seqActionRec.Id, CadenceConstants.LEAD_OBJECT_NAME);
-		insert participantAction;
-		participantList.add(leadRec);
-		
-		Action__c actionRec1 = TestDataFactory.createAction(CadenceConstants.ACTION_TYPE_CALL);
-		insert actionRec1;
-		Cadence__c seqRec1 = TestDataFactory.createCadence(CadenceConstants.LEAD_OBJECT_NAME);
-		seqRec1.Name = 'Cadence New 1';
- 		insert seqRec1;
-		CadenceAction__C seqActionRec1 = TestDataFactory.createCadenceAction(seqRec1.Id, actionRec1.Id);
-		insert seqActionRec1;
-		Lead leadRec1 = TestDataFactory.createLead(seqRec1.Id);
-		leadRec1.LastName = 'Lead New 1';
-		leadRec1.Company = 'Company New 1';
-		insert leadRec1; 
-		Sequence_Action__c participantAction1 = TestDataFactory.createParticipantAction(leadRec1.Id, seqActionRec1.Id, CadenceConstants.LEAD_OBJECT_NAME);
-		insert participantAction1;
-		participantList.add(leadRec1);
-		
-		Set<Id> seqIds = new Set<Id> {seqRec.Id,seqRec1.Id};
-		List<Cadence__c> seqRecList =[Select Id,Name,Record_Type__c,Status__c,Participent_Activation__c, (Select Id,Cadence_Id__c,Action_Id__c,Name,Trigger_Type__c,Day__c,Hour__c from CadenceActions__r)  From Cadence__c WHERE Id IN: seqIds];
-		for(Cadence__c seqActiveRec : seqRecList) {
-			sequenceIdToSequenceMap.put(seqActiveRec.Id, seqActiveRec);
-		}
-		
-		Test.startTest();
-    	new LeadService().createParticipantActions(participantList,sequenceIdToSequenceMap);
+    	List<String> participantTypeToParentObjectList = PerformCadenceActionBatchHelper.getParticipantTypeToParentObjectListMap().get(CadenceConstants.LEAD_OBJECT_NAME);
+        
+        String query = 'Select ';
+        
+        Map <String, Schema.SObjectType> globalDescribedSchemaMap = Schema.getGlobalDescribe();
+        List<Schema.SObjectField> contactFieldList = PerformCadenceActionBatchHelper.getFieldListFromGlobalDescribedSchemaMap(globalDescribedSchemaMap, 'Lead');
+        
+        query = PerformCadenceActionBatchHelper.addFieldsInQuery(query, globalDescribedSchemaMap, contactFieldList, participantTypeToParentObjectList);
+        query = query.subString(0, query.length() - 1);
+        query += ' From Lead' ;
+        
+    	List<Lead> leadList = Database.query(query);
+    	
+    	Test.startTest();
+    	new LeadService().createParticipantActions(leadList, seqIdToSequneceRecMap);
     	Test.stopTest();
+    	
+    	List<Sequence_Action__c> participantActionList = [SELECT Id, Lead_Id__c FROM Sequence_Action__c WHERE 
+                                                          CadenceAction_ID__r.Cadence_Id__r.Record_Type__c = 'Lead'];
+    	system.assertEquals(true,  (participantActionList[0].Lead_Id__c == leadList[0].Id));
     }
     
     static testMethod void performParticipantActionsTest() {
-		List<Cadence__c> seqRecList = [SELECT ID FROM Cadence__c];
-    	List<Id> sequenceIdList = new List<Id>{seqRecList[0].Id};
-    	
+		Map<Id, Cadence__c> seqIdToSequneceRecMap = new Map<Id, Cadence__c>([SELECT Id, Name, Entrance_Criteria__c, Entrance_Criteria_PE__c, Exit_Criteria__c, Exit_Criteria_PE__c,
+                                       Participent_Activation__c, Record_Type__c, Status__c, matching_priority__c, CreatedDate,LastModifiedDate,
+                                       (SELECT Id, Name, Action_Criterion__c, Action_Criteria_PE__c, Action_Id__c,
+                                        Cadence_Id__c, Day__c, Hour__c, Trigger_Type__c, Fields_To_Update_Action__c, Action_Id__r.Activation_Type__c, 
+                                        Action_Id__r.Task_Description__c, Action_Id__r.Template_Id__c, Action_Id__r.Type__c  
+                                        FROM CadenceActions__r order by Index__c) 
+                                       FROM Cadence__c]);
+
+    	List<Id> sequenceIdList = new List<Id>{seqIdToSequneceRecMap.values()[0].Id};
     	CadenceController.activateSequences(sequenceIdList); 
     	
-    	List<Sobject> participantList = [SELECT Id, Name, Email, OwnerId, Cadence_Id__c FROM Lead];
+    	List<String> participantTypeToParentObjectList = PerformCadenceActionBatchHelper.getParticipantTypeToParentObjectListMap().get(CadenceConstants.LEAD_OBJECT_NAME);
+        
+        String query = 'Select ';
+        
+        Map <String, Schema.SObjectType> globalDescribedSchemaMap = Schema.getGlobalDescribe();
+        List<Schema.SObjectField> contactFieldList = PerformCadenceActionBatchHelper.getFieldListFromGlobalDescribedSchemaMap(globalDescribedSchemaMap, 'Lead');
+        
+        query = PerformCadenceActionBatchHelper.addFieldsInQuery(query, globalDescribedSchemaMap, contactFieldList, participantTypeToParentObjectList);
+        query = query.subString(0, query.length() - 1);
+        query += ' From Lead' ;
+        
+    	List<Lead> leadList = Database.query(query);
     	
-		new LeadService().createParticipantActions(participantList, new Map<Id, Cadence__c>(seqRecList));
+    	new LeadService().createParticipantActions(leadList, seqIdToSequneceRecMap);
 		
-		List<Sequence_Action__c> unperformedParticipantActionList = [SELECT Name, Lead_Id__c, CadenceAction_ID__c, isActionPerformed__c, 
-																		CadenceAction_Id__r.Action_Id__r.Type__c, Show_on_Target_List__c, 
-																		CadenceAction_Id__r.Action_Id__r.Activation_Type__c, CadenceAction_Id__r.Action_Id__r.Email_Type__c,
-																		CadenceAction_Id__r.Action_Id__r.Template_Id__c, CadenceAction_Id__r.Index__c
-																		FROM Sequence_Action__c];
-		
-		
-		Map<Id, List<Sequence_Action__c>> participantIdToUnperformedParticipantActionsMap = new Map<Id, List<Sequence_Action__c>>();
-		participantIdToUnperformedParticipantActionsMap.put(participantList[0].Id, unperformedParticipantActionList);
+		Map<Id, List<Sequence_Action__c>> participantIdToUnperformedParticipantActionsMap = SequenceEngineHelper.getUnPerformedParticipantActions(leadList, 'Lead');
 		
 		Test.startTest();
-    	Map<Id, List<Sequence_Action__c>> participantIdToPerformedParticipantActionsMap = new LeadService().performParticipantActions(participantList, participantIdToUnperformedParticipantActionsMap, new Map<Id, Cadence__c>(seqRecList), CadenceConstants.LEAD_OBJECT_NAME);
+    	Map<Id, List<Sequence_Action__c>> participantIdToPerformedParticipantActionsMap = new LeadService().performParticipantActions(leadList, participantIdToUnperformedParticipantActionsMap, seqIdToSequneceRecMap, 'Lead');
     	Test.stopTest();
     	
-    	system.assertEquals(1, participantIdToPerformedParticipantActionsMap.get(participantList[0].Id).size());
+    	system.assertEquals(1, participantIdToPerformedParticipantActionsMap.get(leadList[0].Id).size());
     }
     
     private static void activateSequences(List<Cadence__c> seqRecList) {
