@@ -128,7 +128,6 @@ public with sharing class RuleCriterionMatcherTest {
 		cadenceService.createEmailMessage(l1.Id,et.Id);
 		// Perform Task Action
 		String taskDesc = '{"attributes":{"type":"Task"},"Status":"Not Started","CallType":"Internal","Subject":"Test Sub"}';
-		cadenceService.performTaskAction(l1.Id,taskDesc);
 		// Update field 
 		CadenceUtil.updateFieldValue(l1, 'isActivated__c', false, 'boolean');
 		CadenceUtil.updateFieldValue(l1, 'FirstName', 'fName', 'String');

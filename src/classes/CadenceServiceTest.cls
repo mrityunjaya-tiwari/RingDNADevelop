@@ -169,10 +169,6 @@ public class CadenceServiceTest {
 		list<contact> listofcon  = new list<contact>();
 		listofcon.add(c1);    
 		Test.startTest();
-		//CadenceService.processParticipantsWithCadences(listoflead, New Map<Id, SObject> (),'Lead',false); 
-		//CadenceService.processParticipantsWithCadences(listofcon,New Map<Id, SObject> (),'Contact',false);
-		CadenceService.deleteUnperformedPartActions(mapofleadCadence,'Lead');
-		CadenceService.deleteUnperformedPartActions(mapofleadCadence2,'Contact');
 		List<Sequence_Action__c> listOfLeadseq = new List<Sequence_Action__c>{seqAction};
 		List<Sequence_Action__c> listOfcontactseq = new List<Sequence_Action__c>{seqAction2};
 
@@ -184,13 +180,11 @@ public class CadenceServiceTest {
 		Ids.add(l1.id);
 		CadenceService.getParticipantSequenceHistory(Ids,'Lead');
 
-		CadenceService.createHistoryObject(cadence1.Id,c1.Id,'Contact');
-
 		Map<Id, Cadence__c> cadMap = new Map<Id, Cadence__c>();
 		cadMap.put(cadence1.Id, cadence1);
 		List<Id> sequenceIds = new List<Id>();
 		sequenceIds.add(cadence1.Id);
-		cadMap = CadenceService.removeCadencefromMap(cadMap,sequenceIds);
+		//cadMap = CadenceService.removeCadencefromMap(cadMap,sequenceIds);
 		System.assertEquals(0,cadMap.size());
 
 
@@ -262,17 +256,7 @@ public class CadenceServiceTest {
 		insert oppRol;
 		System.assertNotEquals(null, oppRol.Id);
 
-		Test.startTest();
-		PerformCadenceActionBatch con=new PerformCadenceActionBatch(new List<string>{CadenceConstants.CONTACT_OBJECT_NAME, CadenceConstants.ACCOUNT_OBJECT_NAME});
-		Database.executeBatch(con,500);
-
-		// Schedule batch for lead
-		PerformCadenceActionBatch led=new PerformCadenceActionBatch(new List<string>{CadenceConstants.LEAD_OBJECT_NAME, CadenceConstants.DB_OBJECT_NAME});
-		Database.executeBatch(led,500);
-
-		// Schedule batch for opportunity
-		PerformCadenceActionBatch opp =new PerformCadenceActionBatch(new List<string>{CadenceConstants.OPPORTUNITY_OBJECT_NAME, CadenceConstants.ACCOUNT_OBJECT_NAME,CadenceConstants.CONTRACT_OBJECT_NAME,CadenceConstants.PRICE_BOOK_OBJECT_NAME});
-		Database.executeBatch(opp,500);
+		Test.startTest();		
 
 		List<SObject> objList = new List<SObject>{opportunity}; 
 		Map<Id, List<Sequence_Action__c>> seqList = new Map<Id, List<Sequence_Action__c>>();
@@ -355,9 +339,6 @@ public class CadenceServiceTest {
 
 		Map<Id, List<Sequence_Action__c>> partActionsMap =  CadenceService.getRemainingParticipantAction(new Set<Id>{c1.Id}, CadenceConstants.OPPORTUNITY_OBJECT_NAME);
 		Test.startTest();
-		// Schedule batch for opportunity
-		PerformCadenceActionBatch oppBatch =new PerformCadenceActionBatch(new List<string>{CadenceConstants.OPPORTUNITY_OBJECT_NAME, CadenceConstants.ACCOUNT_OBJECT_NAME,CadenceConstants.CONTRACT_OBJECT_NAME,CadenceConstants.PRICE_BOOK_OBJECT_NAME});
-		Database.executeBatch(oppBatch,500);
 
 		CadenceService.updateSObjectFields(New List<Contact>{c1}, partActionsMap, CadenceConstants.OPPORTUNITY_OBJECT_NAME , false);
 		System.assertNotEquals(opportunity.IsPrivate, true);
@@ -513,12 +494,6 @@ public class CadenceServiceTest {
 
 
 		Test.startTest();
-		//Schedule batch for contact
-		PerformCadenceActionBatch con = new PerformCadenceActionBatch(new List < string > {
-			CadenceConstants.CONTACT_OBJECT_NAME,
-			CadenceConstants.ACCOUNT_OBJECT_NAME
-		});
-		Database.executeBatch(con, 100);
 		CadenceService.updateActionOnParticipantExpectedDate(seqAction.Actual_Execution_Date__c, (Integer) seqAction.CadenceAction_Id__r.Index__c, new List < Sequence_Action__c > {
 			seqAction
 		});
