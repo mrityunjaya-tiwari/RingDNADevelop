@@ -107,8 +107,8 @@ public with sharing class RuleCriterionMatcherTest {
 		insert l2;
 
 		Test.startTest();
-		CadenceController.updateParticipants(cadLeadAND.Id);
-		CadenceController.updateParticipants(cadLeadOR.Id);
+		// CadenceController.updateParticipants(cadLeadAND.Id);
+		// CadenceController.updateParticipants(cadLeadOR.Id);
 		Test.stopTest();
 
 		l1 = [Select Id, Cadence_Id__c from Lead where Id = :l1.Id];
@@ -146,7 +146,7 @@ public with sharing class RuleCriterionMatcherTest {
 		insert l3;
 
 		Test.startTest();
-		CadenceController.updateParticipants(cadLeadAND.Id);
+		// CadenceController.updateParticipants(cadLeadAND.Id);
 		Test.stopTest();
 
 		l3 = [Select Id, Cadence_Id__c from Lead where Id = :l3.Id];
@@ -165,7 +165,7 @@ public with sharing class RuleCriterionMatcherTest {
 		insert l4;
 
 		Test.startTest();
-		CadenceController.updateParticipants(cadLeadCUSTOM.Id);
+		//CadenceController.updateParticipants(cadLeadCUSTOM.Id);
 		Test.stopTest();
 
 		l4 = [Select Id, Cadence_Id__c from Lead where Id = :l4.Id];
@@ -184,7 +184,7 @@ public with sharing class RuleCriterionMatcherTest {
 		insert l5;
 
 		Test.startTest();
-		CadenceController.updateParticipants(cadLeadCUSTOM.Id);
+		//CadenceController.updateParticipants(cadLeadCUSTOM.Id);
 		Test.stopTest();
 
 		l5 = [Select Id, Cadence_Id__c from Lead where Id = :l5.Id];

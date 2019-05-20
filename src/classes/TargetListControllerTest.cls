@@ -154,8 +154,8 @@ public class TargetListControllerTest {
 
 		Test.startTest();        
 
-		CadenceController.updateParticipants(cadenceContact.Id);
-		CadenceController.updateParticipants(cadenceLead.Id); 
+		// CadenceController.updateParticipants(cadenceContact.Id);
+		// CadenceController.updateParticipants(cadenceLead.Id); 
 
 		TargetListController.getTargetListforSObject('Contact', '');
 		TargetListController.getTargetListforSObject('Lead', '');
@@ -212,8 +212,8 @@ public class TargetListControllerTest {
 
 		Test.startTest();        
 
-		CadenceController.updateParticipants(cadenceContact.Id);
-		CadenceController.updateParticipants(cadenceLead.Id); 
+		// CadenceController.updateParticipants(cadenceContact.Id);
+		// CadenceController.updateParticipants(cadenceLead.Id); 
 
 		TargetListController.getTargetListforSObject('Contact', '');
 		TargetListController.getTargetListforSObject('Lead', '');
@@ -245,7 +245,7 @@ public class TargetListControllerTest {
 		insert contactSMS;
 
 		Test.startTest();        
-		CadenceController.updateParticipants(cadenceContact.Id);
+		//CadenceController.updateParticipants(cadenceContact.Id);
 
 		TargetListController.getTargetListforSObject('Contact', '');
 		List<TargetListController.TargetListWrapper> contactTargetListSMS= TargetListController.getTargetListforSObject('Contact', '');
@@ -274,7 +274,7 @@ public class TargetListControllerTest {
 		insert contactTask;
 
 		Test.startTest(); 
-		CadenceController.updateParticipants(cadenceContact.Id);
+		//CadenceController.updateParticipants(cadenceContact.Id);
 		TargetListController.getTargetListforSObject('Contact', '');
 		List<TargetListController.TargetListWrapper> contactTargetListTask = TargetListController.getTargetListforSObject('Contact', ''); 
 		Test.stopTest();
@@ -369,7 +369,7 @@ public class TargetListControllerTest {
 		lead.Title = 'Test';        
 		insert lead;      
 		Test.startTest();   
-		CadenceController.updateParticipants(cadenceobj.Id);
+		//CadenceController.updateParticipants(cadenceobj.Id);
 		CadenceService.setParticipantsActivation(cadenceobj.Id,true);
 		Test.stopTest();
 		lead = [Select Id, EntranceCriteria_Matched_Date__c, Cadence_Id__c from Lead where Id = :lead.Id];

@@ -180,7 +180,7 @@ public class CadenceSTest {
 
 		insert l1;
 		Test.startTest();
-		CadenceController.updateParticipants(cadenceobj.Id);
+		//CadenceController.updateParticipants(cadenceobj.Id);
 		CadenceService.setParticipantsActivation(cadenceobj.Id,true);          
 		Test.stopTest();
 		l1 = [Select Id, Cadence_Id__c from Lead where Id = :l1.Id];

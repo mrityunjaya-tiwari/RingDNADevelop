@@ -45,7 +45,7 @@ public class LeadsTest {
 		//To get inserted cadence
 		cadenceLead=[SELECT Id, Record_Type__c FROM Cadence__c WHERE Name='Lead Cadence' LIMIT 1];
 		//To activate cadence
-		CadenceController.activateCadence(cadenceLead.Id);
+		//CadenceController.activateCadence(cadenceLead.Id);
 		List<Sequence_Action__c> sequenceActions=[SELECT Id, isActionPerformed__c FROM Sequence_Action__c WHERE Lead_Id__c=:testLead.Id];
 		for(Sequence_Action__c sequenceAction:sequenceActions){
 			sequenceAction.isActionPerformed__c=True;
