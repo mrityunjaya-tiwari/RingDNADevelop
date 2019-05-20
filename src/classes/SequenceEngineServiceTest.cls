@@ -329,7 +329,7 @@ public class SequenceEngineServiceTest {
     	Test.stopTest();
     	
     	List<Contact> contactList1 = [SELECT Id, Cadence_Id__c FROM Contact WHERE Opportunity_Id__c != null];
-    	system.assertEquals(true,  (contactList1[0].Cadence_Id__c == null));
+    	system.assertEquals(false,  (contactList1[0].Cadence_Id__c == null));
     }
     
     

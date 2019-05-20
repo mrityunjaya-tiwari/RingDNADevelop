@@ -91,7 +91,7 @@ public class OpportunityService implements IParticipant {
 				  continue;
 				}
 				if(sequenceIdToSequenceCriteriasMap.containsKey(sequenceId))
-				{
+				{ 
 					isCriterionMatches = RuleCriterionMatcherHelper.cadenceCriterionMatches(opportunity, null, sequenceIdToSequenceCriteriasMap.get(sequenceId), ruleCriteriaMatcherDataSet);
 					
                     if(isCriterionMatches) {
@@ -102,8 +102,15 @@ public class OpportunityService implements IParticipant {
                         }
 						for(OpportunityContactRole opportunityContactRole : ((Opportunity)opportunity).getSObjects('OpportunityContactRoles'))
 						{								
-							if(matchedRolesForOpportunity.contains(opportunityContactRole.Id))
+							if(matchedRolesForOpportunity.size() > 0 && matchedRolesForOpportunity.contains(opportunityContactRole.Id))
 							{
+								Contact contact = new Contact(id=opportunityContactRole.ContactId);
+								contact.Opportunity_Id__c =	opportunity.Id;							
+	                            matchedContactsToUpdateList.add(contact);
+	                                
+	                            opportunity.put(nameSpace+'Cadence_Id__c', sequenceId); 
+	                            matchedOpportunityToUpdate.add(opportunity);
+							}else if (matchedRolesForOpportunity.size() == 0){
 								Contact contact = new Contact(id=opportunityContactRole.ContactId);
 								contact.Opportunity_Id__c =	opportunity.Id;							
 	                            matchedContactsToUpdateList.add(contact);

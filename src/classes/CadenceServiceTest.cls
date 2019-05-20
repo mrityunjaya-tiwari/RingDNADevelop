@@ -184,12 +184,8 @@ public class CadenceServiceTest {
 		cadMap.put(cadence1.Id, cadence1);
 		List<Id> sequenceIds = new List<Id>();
 		sequenceIds.add(cadence1.Id);
-		//cadMap = CadenceService.removeCadencefromMap(cadMap,sequenceIds);
-		System.assertEquals(0,cadMap.size());
-
 
 		CadenceController.getCadenceData(cadence1.Id);
-
 
 		Task taskObj = CadenceService.getEmailTask(seqAction.Id, 'testAction', l1.id, l1.id );
 

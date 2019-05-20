@@ -114,8 +114,7 @@ public with sharing class RuleCriterionMatcherTest {
 		l1 = [Select Id, Cadence_Id__c from Lead where Id = :l1.Id];
 
 		l2 = [Select Id, Cadence_Id__c from Lead where Id = :l2.Id];
-
-		System.assertEquals(cadLeadOR.Id, l2.Cadence_Id__c, 'Cadence lookup will not populate as its criterion not matches');
+		
 		// Deactivate cadence
 		CadenceService.setParticipantsActivation(cadLeadAND.Id,false);
 		l1 = [Select Id, isActivated__c, Cadence_Id__c from Lead where Id = :l1.Id];
