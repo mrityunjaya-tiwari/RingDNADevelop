@@ -116,5 +116,20 @@ public with sharing class CriterionEvaluatorTest {
 		System.assertEquals(false, phoneEvaluator.startWith('', ''));
 		System.assertEquals(false, phoneEvaluator.notContains('', ''));
 	}
-
+	
+	@isTest
+	static void multipicklistCriterionEvaluatorTest() {
+		MultipicklistCriterionEvaluator multipicklistEvaluator = new MultipicklistCriterionEvaluator();
+		System.assertEquals(true, multipicklistEvaluator.equals('test1;test1', 'test1'));
+		System.assertEquals(false, multipicklistEvaluator.equals('test1;test1', null));
+		System.assertEquals(true, multipicklistEvaluator.notEquals('test1;test1', 'test3'));
+		System.assertEquals(false, multipicklistEvaluator.notEquals('test1;test1', null));
+		System.assertEquals(false, multipicklistEvaluator.greater(4, 3));
+		System.assertEquals(false, multipicklistEvaluator.lessThan(3, 4));
+		System.assertEquals(false, multipicklistEvaluator.lessOrEquals(4, 4));
+		System.assertEquals(false, multipicklistEvaluator.greaterOrEquals(4, 4));
+		System.assertEquals(false, multipicklistEvaluator.contains(1, 1));
+		System.assertEquals(false, multipicklistEvaluator.startWith(1, 1));
+		System.assertEquals(false, multipicklistEvaluator.notContains(1, 1));
+	}
 }
