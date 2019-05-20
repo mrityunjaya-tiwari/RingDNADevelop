@@ -824,3 +824,4 @@ global  without sharing class CadenceService {
             return value;
         }
     } 																								   
+}
