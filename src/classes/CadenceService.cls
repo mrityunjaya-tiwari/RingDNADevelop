@@ -469,6 +469,7 @@ global  without sharing class CadenceService {
         }
         return objToParticipantActionsMap;
     }            
+
     
     public static Map<Id,List<Id>> getParticipantSequenceHistory(Set<Id> objIds,String objName){
         //This method will return Map contain ParticipantId as Key and List of sequenceIds as values that assigned Participant in past.
@@ -815,7 +816,7 @@ global  without sharing class CadenceService {
             Database.UpsertResult[] results = Database.upsert(listOfSeqActionToUpdate);
         }
     }
-    
+
     public static Object GetUpdateValue(Object value, String fieldType,Object multipicklistvalues){
         if(fieldType == CadenceConstants.MultiPickList){
             return (Object)((string)multipicklistvalues + (string)value + ';');
@@ -823,4 +824,3 @@ global  without sharing class CadenceService {
             return value;
         }
     } 																								   
-}

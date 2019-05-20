@@ -116,7 +116,7 @@ public with sharing class CriterionEvaluatorTest {
 		System.assertEquals(false, phoneEvaluator.startWith('', ''));
 		System.assertEquals(false, phoneEvaluator.notContains('', ''));
 	}
-	
+
 	@isTest
 	static void multipicklistCriterionEvaluatorTest() {
 		MultipicklistCriterionEvaluator multipicklistEvaluator = new MultipicklistCriterionEvaluator();

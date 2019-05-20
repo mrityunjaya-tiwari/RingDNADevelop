@@ -434,7 +434,7 @@ public class CadenceServiceTest {
 		CadenceService.SendNativeEmail(nativeEmailMessageList);
 		CadenceService.sendNativeEmailTroughTrigger(JSON.serialize(nativeEmailMessageList));
 	}
-	
+
 	@IsTest
 	public static void showOnTargetListActionTimeUpdateTest() {
 		Cadence__c cadence1 = TestDataFactory.createCadence(CadenceConstants.CONTACT_OBJECT_NAME);
@@ -488,12 +488,10 @@ public class CadenceServiceTest {
 		seqAction1.Contact_Id__c = c1.Id;
 		insert seqAction1;
 
-
 		Test.startTest();
 		CadenceService.updateActionOnParticipantExpectedDate(seqAction.Actual_Execution_Date__c, (Integer) seqAction.CadenceAction_Id__r.Index__c, new List < Sequence_Action__c > {
 			seqAction
 		});
 		Test.stopTest();
 	}
-	
 }

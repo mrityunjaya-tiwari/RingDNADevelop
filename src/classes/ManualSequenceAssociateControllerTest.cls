@@ -54,6 +54,8 @@ private class ManualSequenceAssociateControllerTest {
         Contact contact=[SELECT Cadence_Id__c FROM Contact WHERE LastName='Contact1'];
         System.assertEquals(cadenceLead.Id, lead.Cadence_Id__c);
         System.assertEquals(cadenceContact.Id, contact.Cadence_Id__c);
+        System.assertEquals(0, previouslyAssociatedLeads[0]);
+        System.assertEquals(0, previouslyAssociatedContacts[0]);
     }
     @isTest
     public static void testSaveParticipantsWhenPreviouslyAssociated(){
@@ -66,6 +68,7 @@ private class ManualSequenceAssociateControllerTest {
         Test.stopTest();
         Lead lead=[SELECT Cadence_Id__c FROM Lead WHERE LastName='Lead2'];
         System.assertEquals(cadenceLead.Id, lead.Cadence_Id__c);
+        System.assertEquals(1, previouslyAssociatedLeads[0]);
     }
     @isTest
     public static void testStandardSetControllerConstructor(){
