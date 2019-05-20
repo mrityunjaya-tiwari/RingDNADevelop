@@ -17,7 +17,6 @@
     handleCadDynamicRowEvent: function(component, event, helper){
         var ronIndex = event.getParam("ronIndex");
         var rowList = component.get("v.listTask");
-        console.log('in-ev',JSON.stringify(rowList [ronIndex]));
         rowList.splice(ronIndex, 1);
         component.set("v.listTask", rowList);
     },

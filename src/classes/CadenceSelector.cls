@@ -130,7 +130,6 @@ public with sharing class CadenceSelector {
         String query = getQueryForObject(objType);
         String subQuery = getQueryForObject(nameSpace+'Sequence_Action__c');
         subQuery = '( ' + subQuery.replace(nameSpace+'Sequence_Action__c', nameSpace+'Sequence_Actions__r') + ' WHERE '+nameSpace+'isActionPerformed__c = false AND '+nameSpace+'Show_on_Target_List__c = true AND ' + nameSpace+'isDeferred__c = false' +' ) ';
-        //subQuery = subQuery.replace('FROM', ','+nameSpace+'CadenceAction_ID__r.'+nameSpace+'Action_Id__r.'+nameSpace+'Type__c FROM');
         String queryWithSubQuery = query.replace('Select', subQuery);
         if (objType == CadenceConstants.CONTACT_OBJECT_NAME){
             queryWithSubQuery = 'Select Account.Name, Account.Id,'+nameSpace+'Cadence_ID__r.name, ' + queryWithSubQuery ;
@@ -279,5 +278,4 @@ public with sharing class CadenceSelector {
         
         return mapOfCadenceAction;
     }
-  
 }

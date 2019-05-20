@@ -1,0 +1,18 @@
+<apex:page standardController="Lead" extensions="ManualSequenceAssociateController,GetNamespace" sidebar="false" showHeader="true">
+    <script src="/lightning/lightning.out.js"/>
+    <apex:slds />
+    <apex:includeLightning />
+    <div id="componentDiv" />
+        <script>
+        var myUserContext = "{!$User.UITheme}";
+        $Lightning.use("{!namespace}:ManualSequenceAssociateApp", function() {
+            $Lightning.createComponent(
+                "{!namespace}:ManualSequenceAssociate",
+                {themeName: myUserContext, participantId: "{!participantId}", recordType:"{!recordType}"},
+                "componentDiv",
+                function(cmp) {               
+                });
+        });
+    </script>
+    <apex:pageMessages id="messages"/>
+</apex:page>

@@ -5,7 +5,6 @@
             { label: 'Name', fieldName: 'linkName', type: 'url', sortable:'true', 
              typeAttributes: {label: { fieldName: 'name' }, tooltip: {fieldName: 'name'}, target: '_self', sortable: true}},
             { label: 'Priority', fieldName: 'priority', type: 'text', sortable: true },
-            //{ label: 'PriorityNumber', fieldName: 'priorityNumber', type: 'Number', sortable: true },
             { label: 'Company', fieldName: 'companyLink', type: 'url', sortable:'true', 
              typeAttributes: {label: { fieldName: 'company' }, target: '_self', sortable: true}, cellAttributes: 
              {class: 'ringdna-company-td'}},

@@ -53,7 +53,6 @@
                     component.set('v.data', records.tlWList);
                 }
                 component.set('v.totalNumberOfRows', records.tlWList.length);
-//                var setPL = component.get('v.setPhoneLink');
                 component.set('v.setPhoneLink', true);
                 
                 component.set('v.selectedGroup', records.selectedGroup);
@@ -65,7 +64,6 @@
                 helper.setFilterData(component, event, helper);
                 component.set('v.spinner', false);
             } else {
-                console.log('got an error in fething data');
                 component.set('v.spinner', false);
             }
         });
@@ -110,17 +108,11 @@
         action.setParams({
             "ids" : ids
         });
-        console.log('Hello');
+	    
         action.setCallback(this, function(response) {
-            console.log('Deletion performed');
             var state = response.getState();
             if(state === "SUCCESS") {
-                
-                //helper.getData(component, event, helper);
-                console.log('Deletion performed');
                 $A.get('e.force:refreshView').fire();
-            } else {
-                console.log('Deletion not done');
             }
         });
         $A.enqueueAction(action);
@@ -134,7 +126,6 @@
     
     viewParticipant : function(component, event, helper, id) {
         var myUserContext = component.get("v.themeName");
-        console.log('viewParticipant',myUserContext);
         if(myUserContext == 'Theme3' ) {
             window.location = '/'+id;
         } 
@@ -237,8 +228,7 @@
         var phRow = document.getElementsByClassName('ringdna-phone-row');    
         var rawData = component.get('v.data');
         for (var index = 0; index < phRow.length ; index++){
-            try {      
-                
+            try {                      
                 var rdpElement = phRow[index];
                 if (rdpElement){
                     if (rawData[index].phone){
@@ -282,8 +272,8 @@
             }catch(err){
             }
         }
-        //helper.removeRingDNAIcons(component, event, helper);
     },
+	
     removeRingDNAIcons:function(component, event, helper){
         window.setTimeout(
             $A.getCallback(function() {
@@ -323,15 +313,10 @@
         var strEmail = (row.email ? row.email.toString() : "");
         var strPhone = (row.phone ? row.phone.toString() : "");
         var strLinkActionName = (row.linkActionName ? row.linkActionName.toString() : "");
-        return ( (row.name.search(regex) == -1 ? false : true) 
-               // || (strPriproty.search(regex) == -1 ? false : true) 
-               // || (strCompany.search(regex) == -1 ? false : true) 
-               // || (strType.search(regex) == -1 ? false : true) 
-              //  || (strEmail.search(regex) == -1 ? false : true) 
-              //  || (strPhone.search(regex) == -1 ? false : true) 
-              //  || (strLinkActionName.search(regex) == -1 ? false : true) 
+        return ( (row.name.search(regex) == -1 ? false : true)  
                ) ;
     },
+	
     filterObjectType:function(component, event, helper){
         var data = component.get("v.rawData");
         var term = component.get("v.otFilter");
@@ -402,7 +387,6 @@
             var state = response.getState();
             
             if(state === "SUCCESS") {
-                console.log(response.getReturnValue());
                 component.set("v.sessionId", response.getReturnValue());
                 // Connect to the CometD endpoint
 		        $.cometd.init({
@@ -413,13 +397,8 @@
 		       // Subscribe to a topic. JSON-encoded update will be returned
 		       // in the callback
 		       $.cometd.subscribe('/topic/actionperform', function(message) {
-				   console.log('Hello This is fine');
-                   console.log(message);
-                   console.log('Hello This is fine', message.data.sobject);
-		           var pt = component.get('v.pushTopic');
-                   component.set('v.pushTopic', !pt);
-                   //helper.getData(component, event, helper);
-                   
+				var pt = component.get('v.pushTopic');
+				component.set('v.pushTopic', !pt);                  
 		        });
             }
         });
@@ -427,12 +406,10 @@
     }, 
     
     startPushTopic : function(component, event, helper) {
-        console.log('IN start pushh');
     	var action = component.get('c.createPushTopic'); 
         action.setCallback(this, function(response){
             var state = response.getState();
             if(state === "SUCCESS") {
-                console.log('Created PushTopic');        
             }
         });
         $A.enqueueAction(action);

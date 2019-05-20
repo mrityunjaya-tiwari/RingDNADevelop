@@ -5,7 +5,6 @@
     updateTaskField : function(component, event, helper){
         var UpdateFieldList = component.get("v.UpdateFieldList");
         var taskObj = component.get("v.taskObj");
-        console.log('taskObj-Change:'+JSON.stringify(taskObj));
         for(var i=0;UpdateFieldList.length > i;i++){
             var fields =UpdateFieldList[i]["fieldsDetail"];
             for(var fieldObj in fields){

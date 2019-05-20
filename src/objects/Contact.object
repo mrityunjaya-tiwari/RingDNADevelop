@@ -646,6 +646,7 @@ IF(ringdna100__Last_Outbound_Call__c &gt; ringdna100__Last_Email_Attempt__c, (NO
         <customTabListAdditionalFields>FULL_NAME</customTabListAdditionalFields>
         <customTabListAdditionalFields>ACCOUNT.NAME</customTabListAdditionalFields>
         <customTabListAdditionalFields>CONTACT.PHONE1</customTabListAdditionalFields>
+        <listViewButtons>Add_to_Sequence_list_page</listViewButtons>
         <lookupDialogsAdditionalFields>FULL_NAME</lookupDialogsAdditionalFields>
         <lookupDialogsAdditionalFields>ACCOUNT.NAME</lookupDialogsAdditionalFields>
         <lookupDialogsAdditionalFields>ACCOUNT.SITE</lookupDialogsAdditionalFields>
@@ -665,4 +666,29 @@ IF(ringdna100__Last_Outbound_Call__c &gt; ringdna100__Last_Email_Attempt__c, (NO
         <searchResultsAdditionalFields>CORE.USERS.ALIAS</searchResultsAdditionalFields>
     </searchLayouts>
     <sharingModel>ControlledByParent</sharingModel>
+	<webLinks>
+        <fullName>Add_to_Sequence</fullName>
+        <availability>online</availability>
+        <description>On selection, users can associate a contact to an active contact sequence.</description>
+        <displayType>button</displayType>
+        <height>600</height>
+        <linkType>page</linkType>
+        <masterLabel>Add to Sequence</masterLabel>
+        <openType>noSidebar</openType>
+        <page>ContactDetailSequenceList</page>
+        <protected>false</protected>
+    </webLinks>
+    <webLinks>
+        <fullName>Add_to_Sequence_list_page</fullName>
+        <availability>online</availability>
+        <description>On selection, users can associate a contact to an active contact sequence.</description>
+        <displayType>massActionButton</displayType>
+        <height>600</height>
+        <linkType>page</linkType>
+        <masterLabel>Add to Sequence</masterLabel>
+        <openType>sidebar</openType>
+        <page>ContactSequenceList</page>
+        <protected>false</protected>
+        <requireRowSelection>true</requireRowSelection>
+    </webLinks>
 </CustomObject>

@@ -4,8 +4,6 @@ global  without sharing class CadenceService {
     public static map<String,set<String>> mapOfOpportunityRole = new map<String,set<String>>();
     public Static map<String,List<OpportunityContactRole>> mapOfOppContactRoles = new map<String,list<OpportunityContactRole>>();
     public Static map<string,List<String>> mapOfOppcontact = new map<string,List<String>>();
-    // mapOfOppContactRoles= new map<String,List<OpportunityContactRole>>();
-    //mapOfOppContactRoles.put('test',new List<OpportunityContactRole>());
     
     public static List<EmailTemplate> getEmailTemplates(){ 
         List<EmailTemplate> listEmailTemplate = [Select Id, Name, Subject, Body, IsActive, Description,UIType,TemplateType,FolderId,Folder.Name,Folder.Type From EmailTemplate Where IsActive = true]; 
@@ -429,8 +427,8 @@ global  without sharing class CadenceService {
     }
     
     /* Method to create email message
-* @Param : sObjectId - List of sobject having email Ids,EmailTemplateId - Email Template Id
-*/
+	 * @Param : sObjectId - List of sobject having email Ids,EmailTemplateId - Email Template Id
+	 */
     public static Messaging.MassEmailMessage createEmailMessage(Id sObjectId,Id EmailTemplateId){
         Messaging.MassEmailMessage mail = new Messaging.MassEmailMessage();
         mail.setSaveAsActivity(false);
@@ -450,28 +448,8 @@ global  without sharing class CadenceService {
         List<NativeEmailMessage> nativeEmailMessageList = new List<NativeEmailMessage>();
         List<Messaging.MassEmailMessage> sfdcEmailMessageList = New List<Messaging.MassEmailMessage>(); 
         if (System.isBatch()){
-            List<NativeEmailRespose> nativeEmailResposeList = new List<NativeEmailRespose>();
-            try{
-            	nativeEmailResposeList = ringDNAApiCallout.sendNativeMassEmail(nativeEmailToSend);    
-            }catch(exception ex){
-                for(NativeEmailMessage nativeEmailMessage :nativeEmailToSend ){
-                    sfdcEmailMessageList.add(createEmailMessage(nativeEmailMessage.ParticipantId, nativeEmailMessage.TemplateId));
-                }
-            }
-            // Create map of actionId and nativeEmailMessage
-            Map<Id, NativeEmailMessage> actionIdNativeEmailMessageMap = new Map<Id, NativeEmailMessage>();
-            for(NativeEmailMessage nativeEmailMessage : nativeEmailToSend ){
-                actionIdNativeEmailMessageMap.put(NativeEmailMessage.ActionId, NativeEmailMessage);
-            }
-            if (nativeEmailResposeList != null && nativeEmailResposeList.size() > 0 ) {
-                for (NativeEmailRespose nativeEmailRespose : nativeEmailResposeList){
-                    if (nativeEmailRespose.success == false){
-                        NativeEmailMessage nativeEmailMessage = actionIdNativeEmailMessageMap.get(nativeEmailRespose.actionId);
-                        sfdcEmailMessageList.add(createEmailMessage(nativeEmailMessage.ParticipantId, nativeEmailMessage.TemplateId));
-                    }
-                }
-            }
-        }else{
+            System.enqueueJob(new sendNativeEmailQueue(nativeEmailToSend));
+        }else{            
             nativeEmailMessageList = nativeEmailToSend;
         }
         if(nativeEmailMessageList != null && nativeEmailMessageList.size() > 0){
@@ -492,9 +470,9 @@ global  without sharing class CadenceService {
     }
     
     /* 
-* Method to perform Task Actions
-* @Param : Id - Id of sobject (Lead/Contact),taskDescription - Json OfTaskObj
-*/
+	* Method to perform Task Actions
+	* @Param : Id - Id of sobject (Lead/Contact),taskDescription - Json OfTaskObj
+	*/
     public static Task performTaskAction(Id sObjectId, String taskDescription){
         Task taskObj = (Task)JSON.deserialize(taskDescription, Task.class);
         taskObj.WhoId = sObjectId;
@@ -587,7 +565,7 @@ global  without sharing class CadenceService {
         }	     
     }
     
-    public static List<SObject> getSObjectsToProcess(List<SObject> objList, Map<Id, SObject> parentMap, Map<Id, Cadence__c> cadMap, String objName) {
+    public static ParticipantsToProcess getSObjectsToProcess(List<SObject> objList, Map<Id, SObject> parentMap, Map<Id, Cadence__c> cadMap, String objName) {
         //Initializing the soject list as per obj
         List<SObject> sObjectsToProcess;
 		List<SObject> sObjectsForOpportunity = new List<SObject>();
@@ -599,6 +577,7 @@ global  without sharing class CadenceService {
             sObjectsToProcess = new List<Contact>();
         }  
         
+        List<Sobject> unmatchedParticipantsList = new List<Sobject>();
         Map<Id, Id> oldPartActionToDelete = new Map<Id, Id>();
         Map<Id, List<CadenceAction__c>> objIdToAllCadActListMap = new Map<Id, List<CadenceAction__c>>();
         Map<Id,List<Id>> sequenceHistoryMap = getParticipantSequenceHistory((new Map<Id,SObject>(objList)).keySet(),objName);
@@ -618,7 +597,7 @@ global  without sharing class CadenceService {
             }
           
             if(listOfContactids.size() > 0){
-                for(Contact con : [Select id,Cadence_Id__c,isActivated__c,EntranceCriteria_Matched_Date__c,Email from Contact Where Id In :listOfContactids]){
+                for(Contact con : [Select id,Cadence_Id__c,isActivated__c,EntranceCriteria_Matched_Date__c,Email,Name,OwnerId,Opportunity_Id__c from Contact Where Id In :listOfContactids]){
                     mapOfContacts.put(con.id,(Sobject)con);
                     if(con.Cadence_ID__c == null){
                         mapOfContactsWithSequenceIsNull.put(con.id,(Sobject)con);
@@ -676,10 +655,8 @@ global  without sharing class CadenceService {
             } else {
                 Id cadId = (Id)obj.get(nameSpace+'Cadence_Id__c'); 
                 
-                //SObject sObj = RuleCriterionMatcher.matchExitCriterion(cadMapNew.get((Id)obj.get(nameSpace+'Cadence_Id__c')), obj, parentMap.get((Id)obj.get('Id')), objName);
                 SObject sObj;
                 Boolean isexitMatchOpp=false;
-                //List<SObject> sObjList = new List<SObject>() ;
                 if(objName.equalsIgnoreCase(CadenceConstants.OPPORTUNITY_OBJECT_NAME)){
                     isexitMatchOpp = RuleCriterionMatcher.matchExitCriterionOpp(cadMapNew.get(cadId), obj, parentMap.get((Id)obj.get('Id')), objName);
                     if(isexitMatchOpp){
@@ -776,9 +753,8 @@ global  without sharing class CadenceService {
                             }
                         }
                     }else{
-                        sObjectsToProcess.add(obj);
+                         unmatchedParticipantsList.add(obj);
                      }
-                    //sObjectsToProcess.add(obj);
                 }
             }
         }
@@ -800,8 +776,12 @@ global  without sharing class CadenceService {
         CadenceService.deleteUnperformedPartActions(oldPartActionToDelete, objName);
         //Creating new participant actions for new cadence  
         CadenceService.createActionParticipants(objIdToAllCadActListMap, new Map<Id, SObject>(sObjectsToProcess), objName); 
-        
-        return sObjectsToProcess;
+        ParticipantsToProcess participantsToProcess = new ParticipantsToProcess();
+        participantsToProcess.participantsToUpdate = New Set<SObject>(sObjectsToProcess);
+        sObjectsToProcess.addAll(unmatchedParticipantsList);
+        participantsToProcess.allParticipantsToProcess = sObjectsToProcess;
+
+        return participantsToProcess;
     }     
     
     public static Map<Id,List<Id>> getParticipantSequenceHistory(Set<Id> objIds,String objName){
@@ -881,13 +861,6 @@ global  without sharing class CadenceService {
             for(Sequence_Action__c partAct : partActionsMap.get(objId)) {
                 Boolean performed = false,IsTaskNotCompleted = false;
                 if(partAct.CadenceAction_Id__r.Action_Id__r.Activation_Type__c.equals(CadenceConstants.PARTICIPANT_ACTIVATION_AUTOMATIC)) {
-                    //Processing task type of participant action
-                   /* if(partAct.CadenceAction_Id__r.Action_Id__r.Type__c.equals(CadenceConstants.ACTION_TYPE_TASK)) {
-                        Task tsk = performTaskAction(objId, partAct.CadenceAction_Id__r.Action_Id__r.Task_Description__c);
-                        tsk.Sequence_Action__c = partAct.Id; 
-                        tasksToCreate.add(tsk);
-                        performed = true;
-                    }*/
                     //Processing email type of participant action
                     if(partAct.CadenceAction_Id__r.Action_Id__r.Type__c != null && partAct.CadenceAction_Id__r.Action_Id__r.Type__c.equals(CadenceConstants.ACTION_TYPE_EMAIL)) {
                         if(objMap.containsKey(objId) && objMap.get(objId).get('Email')!=null) {
@@ -1042,7 +1015,6 @@ global  without sharing class CadenceService {
                 Map<String, Object> fieldMap = (Map<String, Object>)(JSON.deserializeUntyped(fieldsToUpdate));
                 fieldMap.remove('sobjectType');
                 Id objId;
-                //Pankaj-478
                 if(partAct.Cadence_Type__c.equals(CadenceConstants.OPPORTUNITY_OBJECT_NAME) && String.isNotBlank(partAct.Opportunity_Id__c)){
                     objId = partAct.Opportunity_Id__c;
                 } else if(partAct.Lead_Id__c != null) {
@@ -1050,15 +1022,17 @@ global  without sharing class CadenceService {
                 } else {
                     objId = partAct.Contact_Id__c;
                 }
-
+		Object valueToUpdate = '';
                 for(String fieldName : fieldMap.keySet()) {
                     List<String> apiList;
                     if(partAct.Cadence_Type__c == CadenceConstants.OPPORTUNITY_OBJECT_NAME){
                         apiList = opportunityFieldDataTypeMap.get(fieldName);
-                        CadenceUtil.updateFieldValue(opportunityMap.get(objId), apiList[0], fieldMap.get(fieldName), apiList[1]);
+		        valueToUpdate = GetUpdateValue(fieldMap.get(fieldName), apiList[1], valueToUpdate);
+	     		CadenceUtil.updateFieldValue(opportunityMap.get(objId), apiList[0], valueToUpdate, apiList[1]);
                     }else{
                         apiList = objfieldDataTypeMap.get(fieldName);
-                        CadenceUtil.updateFieldValue(objMap.get(objId), apiList[0], fieldMap.get(fieldName), apiList[1]);
+			valueToUpdate = GetUpdateValue(fieldMap.get(fieldName), apiList[1], valueToUpdate);
+			CadenceUtil.updateFieldValue(objMap.get(objId), apiList[0], valueToUpdate, apiList[1]);
                     }
                     
                 }
@@ -1074,13 +1048,11 @@ global  without sharing class CadenceService {
     
     public static void processParticipantsWithCadences(List<SObject> objList, Map<Id, SObject> parentMap, String objName, Boolean isTrigger) {
         Map<Id, Cadence__c> cadMap = CadenceSelector.getActiveCadencesByRecordType(New List<String> {objName});
-        
         Map<Id, List<Sequence_Action__c>> partActToPerform = new Map<Id, List<Sequence_Action__c>>();
         
         //Getting objList to process (for perform cadence actions on it)
-        Map<Id, SObject> objMap = new Map<Id, SObject>(CadenceService.getSObjectsToProcess(objList, parentMap, cadMap, objName));
-        
-
+        ParticipantsToProcess participantsToProcess = CadenceService.getSObjectsToProcess(objList, parentMap, cadMap, objName);
+        Map<Id, SObject> objMap = new Map<Id, SObject>(participantsToProcess.allParticipantsToProcess);
         //Getting non performed participant actions 
         Map<Id, List<Sequence_Action__c>> partActionsMap = CadenceService.getRemainingParticipantAction(objMap.keySet(), objName);
         
@@ -1106,28 +1078,26 @@ global  without sharing class CadenceService {
        Map<Id, List<Sequence_Action__c>> performedPartAct = CadenceService.performParticipantActions(objMap.values(), partActToPerform);
         
         //perform participant field update
-        if(objName.equals(CadenceConstants.OPPORTUNITY_OBJECT_NAME)){
-            CadenceService.updateSObjectFields(objList, performedPartAct, objName, false);
-        }else{
-            CadenceService.updateSObjectFields(objMap.values(), performedPartAct, objName, false);
-        }
+        List<SObject> fieldsUpdatedParticipants = New List<SObject>(); 
+        fieldsUpdatedParticipants = CadenceService.updateSObjectFields(objMap.values(), performedPartAct, objName, false);
         
         if(!isTrigger) {
             Database.UpsertResult [] upsertResult;
             try{
-                //update objList;
-                upsertResult = Database.upsert(objList, false);
-                if(objMap.keyset().size() > 0 && objMap.values().size()>0) {
-                    Contacts.flag = false;
-                    Database.SaveResult[] results = Database.update(objMap.values(), false);
+                Set<SObject> listToUpdateParticipants = new Set<SObject>();
+                listToUpdateParticipants.addAll(participantsToProcess.participantsToUpdate);
+                if(fieldsUpdatedParticipants != null){
+                    listToUpdateParticipants.addAll(New Set<SObject>(fieldsUpdatedParticipants));
                 }
-            }catch(exception e){ 
-                
-            Contacts.flag =false;
+                if(listToUpdateParticipants.size() > 0) {
+                    Contacts.flag = false;
+                    Database.SaveResult[] results = Database.update(New List<SObject>(listToUpdateParticipants), false); 
+                }
+           	}catch(exception e){    
+            	Contacts.flag =false;
             }
             
-        }
-            
+        }  
         updateRemainingParticipantAction(performedPartAct,partActionsMap);
     }
     
@@ -1290,6 +1260,10 @@ global  without sharing class CadenceService {
         List<Sequence_Action__c> saToUpdate = new List<Sequence_Action__c>();
         Integer day = 0, hour = 0;
         DateTime executionDate = lastExecutionDate,nextDate;
+		
+        if (lastExecutionDate == null) {
+            return saToUpdate;
+        }
         
         if(updateActions == null) {
             return saToUpdate;
@@ -1344,10 +1318,7 @@ global  without sharing class CadenceService {
             update saToUpdate;
         }
     }
-    
-    
-    
-    
+        
     //This method mark action as IsPerformed = True if this is task and Task status is completed. 
    public static void updateIsPerformedOnActionOnParticipant(Set<Id> ids) {
         List<Task> taskList = CadenceSelector.getActionOnParticipantId(ids);   
@@ -1428,7 +1399,6 @@ global  without sharing class CadenceService {
                 fieldList.add(criterionWrapper);
                 
                 if(IsPartnerAccount && Schema.getGlobalDescribe().get('Opportunity').getDescribe().fields.getMap().get('PartnerAccountId') != null){
-                    //Schema.sObjectType sObjectName = Schema.getGlobalDescribe().get(partnerAccountAPIName);
                     for(Criterion c : fieldsWithLabels){
                         String[] fields = c.fieldName.split('\\.');
                         if(fields.size() > 0){
@@ -1460,8 +1430,6 @@ global  without sharing class CadenceService {
     }
     
     public static Sobject UpdateSequenceOnParticipant(Sobject partObj,Cadence__c cadToUpdate){
-        //After matching criteria setting matching cadence data to participant
-        //for(SObject partObj :  partList){
             partObj.put(nameSpace+'Cadence_Id__c', cadToUpdate.Id); 
             if(cadToUpdate.Participent_Activation__c.equalsIgnoreCase(CadenceConstants.PARTICIPANT_ACTIVATION_AUTOMATIC)) {
                 partObj.put(nameSpace+'isActivated__c', true);
@@ -1469,12 +1437,10 @@ global  without sharing class CadenceService {
             } else {
                 partObj.put(nameSpace+'isActivated__c', false);
             }
-        //}
         return partObj;
 		
     }
     public static map<string,List<String>> opporContactMap(List<sobject> sobjectList){
-        //map<String,List<Sobject>> mapofOppContact = new Map<String,List<Sobject>>();
         map<string,List<String>> mapOfoppcontactIds= new map<String,List<string>>();
         List<String> setOfcontactstring = new List<string>();
         List<String> allcontacts = new List<string>();
@@ -1526,7 +1492,6 @@ global  without sharing class CadenceService {
     
     public static void getMapOpporContactRole(List<sobject> sobjectList){
         List<OpportunityContactRole> listOfContactRole = new List<OpportunityContactRole>();
-        //CadenceService.mapOfOppContactRoles
         map<String,list<OpportunityContactRole>> mapOfOppContRole=new map<String,list<OpportunityContactRole>>();
         for(OpportunityContactRole oppCont : [Select ContactId,OpportunityId,Role From OpportunityContactRole Where OpportunityId In :(sobjectList)]){
             if(mapOfOppContRole.containskey(oppCont.OpportunityId)){
@@ -1543,8 +1508,6 @@ global  without sharing class CadenceService {
     }
     
     public static List<Contact> RemoveSequenceFromParticempant(string opportunityId, map<string,List<String>> mapOfOppcontact,map<String,Sobject> mapOfContacts){
-        //map<string,List<String>> mapOfOppcontact =  new map<string,List<String>>();
-        //map<String,Sobject> mapOfContacts= new Map<String,Sobject>();
         List<Contact> contactList = new List<Contact>();
         Contact contactObj = new Contact();
         if(mapOfOppcontact != null && mapOfOppcontact.containsKey(opportunityId) && mapOfOppcontact.get(opportunityId) != null){
@@ -1614,4 +1577,11 @@ global  without sharing class CadenceService {
             Database.UpsertResult[] results = Database.upsert(listOfSeqActionToUpdate);
         }
     }
+    public static Object GetUpdateValue(Object value, String fieldType,Object multipicklistvalues){
+        if(fieldType == CadenceConstants.MultiPickList){
+            return (Object)((string)multipicklistvalues + (string)value + ';');
+        }else{
+            return value;
+        }
+    } 																								   
 }

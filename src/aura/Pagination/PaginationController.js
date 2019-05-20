@@ -1,24 +1,8 @@
 ({
-    
-    doInit : function(component, event, helper) {
-        /*var totalRecords = component.get('v.total'),
-            recordsPerPage = component.get('v.pageOffset');
-        
-        //getting total number of pages
-        var totalPages = Math.ceil(totalRecords/recordsPerPage);
-        component.set('v.pages', totalPages);
-        
-        if(totalRecords == 0) {
-            component.set('v.page', 0);
-        } else {
-            component.set('v.page', 1);
-            helper.firePageEvent(component, event);
-        }*/
-        
+    doInit : function(component, event, helper) {        
           var totalRecords = component.get('v.total'),
             recordsPerPage = component.get('v.pageOffset'),
             currentPage =  component.get('v.page');
-
         //getting total number of pages
         var totalPages = Math.ceil(totalRecords/recordsPerPage);
        component.set('v.total', totalRecords);
